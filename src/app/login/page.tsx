@@ -5,22 +5,27 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
             45deg,
             transparent,
             transparent 35px,
-            hsl(var(--foreground)) 35px,
-            hsl(var(--foreground)) 36px
-          )`
-        }} />
+            var(--color-foreground) 35px,
+            var(--color-foreground) 40px
+          )`,
+          }}
+        />
       </div>
 
       {/* Gradient Orb */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
+      <div
+        className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
         style={{
-          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`
-        }} />
+          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`,
+        }}
+      />
 
       <div className="w-full max-w-md mx-auto px-6 relative z-10">
         {/* Logo/Header */}
@@ -33,7 +38,9 @@ export default function LoginPage() {
               <span className="text-foreground">TRACK</span>
             </h1>
           </Link>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Bienvenido de vuelta</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            Bienvenido de vuelta
+          </h2>
           <p className="text-muted-foreground">Inicia sesión para continuar</p>
         </div>
 
@@ -42,7 +49,10 @@ export default function LoginPage() {
           <form className="space-y-6">
             {/* Email */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-foreground block">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-foreground block"
+              >
                 Email
               </label>
               <input
@@ -57,10 +67,16 @@ export default function LoginPage() {
             {/* Password */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-medium text-foreground block">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium text-foreground block"
+                >
                   Contraseña
                 </label>
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-primary hover:underline"
+                >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
@@ -80,7 +96,10 @@ export default function LoginPage() {
                 type="checkbox"
                 className="w-4 h-4 border-input rounded focus:ring-2 focus:ring-ring"
               />
-              <label htmlFor="remember" className="text-sm text-muted-foreground">
+              <label
+                htmlFor="remember"
+                className="text-sm text-muted-foreground"
+              >
                 Recordarme
               </label>
             </div>
@@ -100,7 +119,9 @@ export default function LoginPage() {
               <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-card text-muted-foreground">O continúa con</span>
+              <span className="px-2 bg-card text-muted-foreground">
+                O continúa con
+              </span>
             </div>
           </div>
 
@@ -124,7 +145,10 @@ export default function LoginPage() {
         {/* Register Link */}
         <p className="text-center mt-6 text-sm text-muted-foreground">
           ¿No tienes cuenta?{" "}
-          <Link href="/register" className="text-primary font-medium hover:underline">
+          <Link
+            href="/register"
+            className="text-primary font-medium hover:underline"
+          >
             Regístrate gratis
           </Link>
         </p>

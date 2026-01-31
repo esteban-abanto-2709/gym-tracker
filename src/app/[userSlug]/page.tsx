@@ -19,8 +19,8 @@ export default function UserHomePage() {
               45deg,
               transparent,
               transparent 35px,
-              hsl(var(--foreground)) 35px,
-              hsl(var(--foreground)) 36px
+              var(--color-foreground) 35px,
+              var(--color-foreground) 40px
             )`,
           }}
         />
@@ -69,10 +69,7 @@ export default function UserHomePage() {
           {/* Selection Cards */}
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
             {/* Tracker Card */}
-            <Link
-              href={routes.tracker(userSlug)}
-              className="group relative"
-            >
+            <Link href={routes.tracker(userSlug)} className="group relative">
               <div
                 className="relative bg-card border-2 border-border rounded-3xl p-8 md:p-10 overflow-hidden transition-all duration-500 hover:border-primary hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 animate-fade-in-up"
                 style={{ animationDelay: "0.1s" }}
@@ -89,7 +86,7 @@ export default function UserHomePage() {
                       viewBox="0 0 24 24"
                       strokeWidth={2}
                       stroke="currentColor"
-                      className="w-8 h-8 md:w-10 md:h-10 text-white"
+                      className="w-8 h-8 md:w-10 md:h-10 text-primary-foreground"
                     >
                       <path
                         strokeLinecap="round"
@@ -184,10 +181,7 @@ export default function UserHomePage() {
             </Link>
 
             {/* Dashboard Card */}
-            <Link
-              href={routes.dashboard(userSlug)}
-              className="group relative"
-            >
+            <Link href={routes.dashboard(userSlug)} className="group relative">
               <div
                 className="relative bg-card border-2 border-border rounded-3xl p-8 md:p-10 overflow-hidden transition-all duration-500 hover:border-primary hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 animate-fade-in-up"
                 style={{ animationDelay: "0.2s" }}
@@ -204,7 +198,7 @@ export default function UserHomePage() {
                       viewBox="0 0 24 24"
                       strokeWidth={2}
                       stroke="currentColor"
-                      className="w-8 h-8 md:w-10 md:h-10 text-white"
+                      className="w-8 h-8 md:w-10 md:h-10 text-primary-foreground"
                     >
                       <path
                         strokeLinecap="round"
@@ -305,9 +299,13 @@ export default function UserHomePage() {
             style={{ animationDelay: "0.4s" }}
           >
             <p className="text-xs md:text-sm text-muted-foreground">
-              Esta semana: <span className="font-semibold text-foreground">3 entrenamientos</span> •{" "}
-              <span className="font-semibold text-foreground">45 series</span> •{" "}
-              <span className="font-semibold text-foreground">1,200 kg</span> volumen total
+              Esta semana:{" "}
+              <span className="font-semibold text-foreground">
+                3 entrenamientos
+              </span>{" "}
+              • <span className="font-semibold text-foreground">45 series</span>{" "}
+              • <span className="font-semibold text-foreground">1,200 kg</span>{" "}
+              volumen total
             </p>
           </div>
         </div>

@@ -26,6 +26,8 @@
   --surface-elevated: 0 0% 98%;
   --brand-gradient-start: 24 100% 50%;
   --brand-gradient-end: 12 100% 45%;
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 100%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,6 +56,8 @@
     --surface-elevated: 20 14% 12%;
     --brand-gradient-start: 24 100% 50%;
     --brand-gradient-end: 12 100% 45%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
   }
 }
 
@@ -73,7 +77,8 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  --color-surface-elevated: hsl(var(--surface-elevated));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

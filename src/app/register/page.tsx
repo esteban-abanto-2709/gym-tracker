@@ -5,22 +5,27 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
             45deg,
             transparent,
             transparent 35px,
-            hsl(var(--foreground)) 35px,
-            hsl(var(--foreground)) 36px
-          )`
-        }} />
+            var(--color-foreground) 35px,
+            var(--color-foreground) 40px
+          )`,
+          }}
+        />
       </div>
 
       {/* Gradient Orb */}
-      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
+      <div
+        className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl"
         style={{
-          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`
-        }} />
+          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`,
+        }}
+      />
 
       <div className="w-full max-w-md mx-auto px-6 relative z-10">
         {/* Logo/Header */}
@@ -33,8 +38,12 @@ export default function RegisterPage() {
               <span className="text-foreground">TRACK</span>
             </h1>
           </Link>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Crea tu cuenta</h2>
-          <p className="text-muted-foreground">Comienza tu viaje de transformación</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            Crea tu cuenta
+          </h2>
+          <p className="text-muted-foreground">
+            Comienza tu viaje de transformación
+          </p>
         </div>
 
         {/* Form Card */}
@@ -42,7 +51,10 @@ export default function RegisterPage() {
           <form className="space-y-6">
             {/* Name */}
             <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium text-foreground block">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-foreground block"
+              >
                 Nombre completo
               </label>
               <input
@@ -56,7 +68,10 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-foreground block">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-foreground block"
+              >
                 Email
               </label>
               <input
@@ -70,7 +85,10 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-foreground block">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-foreground block"
+              >
                 Contraseña
               </label>
               <input
@@ -84,7 +102,10 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label htmlFor="confirm-password" className="text-sm font-medium text-foreground block">
+              <label
+                htmlFor="confirm-password"
+                className="text-sm font-medium text-foreground block"
+              >
                 Confirmar contraseña
               </label>
               <input
@@ -124,7 +145,9 @@ export default function RegisterPage() {
               <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-card text-muted-foreground">O continúa con</span>
+              <span className="px-2 bg-card text-muted-foreground">
+                O continúa con
+              </span>
             </div>
           </div>
 
@@ -148,7 +171,10 @@ export default function RegisterPage() {
         {/* Login Link */}
         <p className="text-center mt-6 text-sm text-muted-foreground">
           ¿Ya tienes cuenta?{" "}
-          <Link href="/login" className="text-primary font-medium hover:underline">
+          <Link
+            href="/login"
+            className="text-primary font-medium hover:underline"
+          >
             Inicia sesión
           </Link>
         </p>

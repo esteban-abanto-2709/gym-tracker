@@ -33,7 +33,6 @@ export default function WorkoutConfirmPage() {
 
         // TODO: Aquí es donde guardaríamos en Supabase
         // await saveExerciseToSupabase(workoutSlug, data);
-
       } catch (e) {
         console.error("Error loading exercise data:", e);
         // Si no hay datos, redirigir de vuelta
@@ -51,7 +50,7 @@ export default function WorkoutConfirmPage() {
     // Guardar datos del ejercicio actual para autocompletar
     sessionStorage.setItem(
       `workout-${workoutSlug}-lastExercise`,
-      JSON.stringify(exerciseData)
+      JSON.stringify(exerciseData),
     );
 
     // Volver al formulario (que se autocompletará)
@@ -88,17 +87,17 @@ export default function WorkoutConfirmPage() {
       <main className="flex-1 flex flex-col px-6 py-8">
         {/* Success Message */}
         <div className="mb-8 animate-scale-in">
-          <div className="max-w-md mx-auto p-6 bg-linear-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-2 border-green-500/30 rounded-3xl">
+          <div className="max-w-md mx-auto p-6 bg-success/10 border-2 border-success/30 rounded-3xl">
             <div className="text-center">
               {/* Check Icon */}
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={3}
-                  stroke="white"
-                  className="w-10 h-10"
+                  stroke="currentColor"
+                  className="w-10 h-10 text-success-foreground"
                 >
                   <path
                     strokeLinecap="round"
@@ -120,7 +119,7 @@ export default function WorkoutConfirmPage() {
 
               {exerciseData.notes && (
                 <p className="mt-3 text-sm text-muted-foreground italic">
-                  "{exerciseData.notes}"
+                  &quot;{exerciseData.notes}&quot;
                 </p>
               )}
             </div>
