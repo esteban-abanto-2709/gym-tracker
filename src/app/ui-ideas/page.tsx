@@ -2,12 +2,22 @@
 
 import { useState } from 'react';
 
+// Definir el tipo para Screen
+type Screen = {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  wireframe: { type: string; content: string; }[];
+  nextScreens: string[];
+};
+
 export default function UXVision() {
   const [activeTab, setActiveTab] = useState('mobile');
-  const [selectedScreen, setSelectedScreen] = useState(null);
+  const [selectedScreen, setSelectedScreen] = useState<Screen | null>(null);
 
   // Definición de pantallas Mobile (registro en el gym)
-  const mobileScreens = [
+  const mobileScreens: Screen[] = [
     {
       id: 'mobile-1',
       name: 'Quick Start',
@@ -83,7 +93,7 @@ export default function UXVision() {
   ];
 
   // Definición de pantallas Desktop (análisis y visualización)
-  const desktopScreens = [
+  const desktopScreens: Screen[] = [
     {
       id: 'desktop-1',
       name: 'Dashboard Principal',
@@ -166,8 +176,8 @@ export default function UXVision() {
   const screens = activeTab === 'mobile' ? mobileScreens : desktopScreens;
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
+    <div style={{
+      minHeight: '100vh',
       background: 'linear-gradient(to bottom right, #0f0f0f, #1a1a1a)',
       color: '#fff',
       fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -175,8 +185,8 @@ export default function UXVision() {
     }}>
       {/* Header */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', marginBottom: '3rem' }}>
-        <h1 style={{ 
-          fontSize: '3rem', 
+        <h1 style={{
+          fontSize: '3rem',
           fontWeight: '900',
           background: 'linear-gradient(to right, #FF7A00, #FF4500)',
           WebkitBackgroundClip: 'text',
@@ -191,8 +201,8 @@ export default function UXVision() {
       </div>
 
       {/* Tabs */}
-      <div style={{ 
-        maxWidth: '1400px', 
+      <div style={{
+        maxWidth: '1400px',
         margin: '0 auto',
         marginBottom: '2rem',
         display: 'flex',
@@ -234,8 +244,8 @@ export default function UXVision() {
       </div>
 
       {/* Screen Grid */}
-      <div style={{ 
-        maxWidth: '1400px', 
+      <div style={{
+        maxWidth: '1400px',
         margin: '0 auto',
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -283,7 +293,7 @@ export default function UXVision() {
             </div>
 
             {/* Screen Name */}
-            <h3 style={{ 
+            <h3 style={{
               fontSize: '1.25rem',
               fontWeight: '700',
               marginBottom: '0.5rem',
@@ -373,7 +383,7 @@ export default function UXVision() {
         <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#FF7A00' }}>
           📋 Resumen del Flujo
         </h3>
-        
+
         {activeTab === 'mobile' ? (
           <div style={{ color: '#aaa', lineHeight: '1.8' }}>
             <p><strong style={{ color: '#fff' }}>Contexto Mobile:</strong> Usuario está en el gym, necesita registro RÁPIDO.</p>
@@ -413,9 +423,9 @@ export default function UXVision() {
             ✅ Próximos pasos:
           </p>
           <p style={{ color: '#aaa', fontSize: '0.875rem' }}>
-            1. Revisa cada pantalla y su flujo<br/>
-            2. Aprueba las que te gusten<br/>
-            3. Dame feedback sobre las que quieras cambiar<br/>
+            1. Revisa cada pantalla y su flujo<br />
+            2. Aprueba las que te gusten<br />
+            3. Dame feedback sobre las que quieras cambiar<br />
             4. Te entrego las páginas implementadas una por una
           </p>
         </div>
@@ -425,8 +435,8 @@ export default function UXVision() {
 }
 
 // Componente auxiliar para renderizar elementos del wireframe
-function WireframeElement({ type, content }) {
-  const styles = {
+function WireframeElement({ type, content }: { type: string; content: string }) {
+  const styles: Record<string, React.CSSProperties> = {
     header: {
       padding: '0.75rem',
       background: '#f5f5f5',

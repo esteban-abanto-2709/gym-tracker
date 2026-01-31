@@ -2,11 +2,32 @@
 
 import { useState } from 'react';
 
+// Definir tipos
+type WireframeElement = {
+  type: string;
+  content: string;
+};
+
+type Screen = {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  wireframe: WireframeElement[];
+  notes: string[];
+  nextScreens: string[];
+};
+
+type FlowState = {
+  title: string;
+  steps: string[];
+};
+
 export default function UXVisionV2() {
-  const [selectedScreen, setSelectedScreen] = useState(null);
+  const [selectedScreen, setSelectedScreen] = useState<Screen | null>(null);
 
   // Flujo simplificado mobile-first
-  const screens = [
+  const screens: Screen[] = [
     {
       id: 'screen-1',
       name: 'Quick Start',
@@ -14,10 +35,10 @@ export default function UXVisionV2() {
       description: 'Pantalla de inicio. Un solo botón grande para empezar a entrenar. Simple y directo.',
       wireframe: [
         { type: 'header', content: 'GymTrack' },
-        { type: 'spacer' },
+        { type: 'spacer', content: '' },
         { type: 'hero-text', content: 'Listo para entrenar?' },
         { type: 'button-huge', content: '💪 Nuevo Entrenamiento' },
-        { type: 'spacer' },
+        { type: 'spacer', content: '' },
         { type: 'hint', content: 'Toca para comenzar' },
       ],
       notes: [
@@ -55,11 +76,11 @@ export default function UXVisionV2() {
       description: 'Confirmación visual + opciones claras. 2 botones grandes con íconos claros.',
       wireframe: [
         { type: 'success', content: '✓ Registrado:\nPress de Banca - 60kg × 12 reps' },
-        { type: 'spacer' },
+        { type: 'spacer', content: '' },
         { type: 'section-title', content: 'Qué sigue?' },
         { type: 'button-primary', content: '↻ Nueva Serie\n(mismo ejercicio)' },
         { type: 'button-secondary', content: '➕ Otro Ejercicio' },
-        { type: 'spacer' },
+        { type: 'spacer', content: '' },
         { type: 'hint', content: 'Cierra la app cuando termines de entrenar' },
       ],
       notes: [
@@ -94,7 +115,7 @@ export default function UXVisionV2() {
   ];
 
   // Estados del flujo
-  const flowStates = [
+  const flowStates: FlowState[] = [
     {
       title: 'Flujo Típico: 3 ejercicios, 3 series cada uno',
       steps: [
@@ -536,13 +557,13 @@ export default function UXVisionV2() {
 }
 
 // Wireframe components
-function WireframeElement({ type, content }) {
-  const baseStyle = {
+function WireframeElement({ type, content }: { type: string; content: string }) {
+  const baseStyle: React.CSSProperties = {
     borderRadius: '6px',
     fontSize: '0.75rem',
   };
 
-  const styles = {
+  const styles: Record<string, React.CSSProperties> = {
     header: {
       ...baseStyle,
       padding: '0.75rem',
