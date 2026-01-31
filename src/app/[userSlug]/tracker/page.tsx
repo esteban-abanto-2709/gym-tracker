@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { routes } from "@/lib/routes";
 
 export default function TrackerPage() {
   const params = useParams();
@@ -20,15 +21,15 @@ export default function TrackerPage() {
   ];
 
   const handleNewWorkout = () => {
-    if (workoutName.trim()) {
-      // Por ahora redirige - después guardaremos en Supabase
-      router.push(`/${userSlug}/tracker/workout/new`);
-    }
+    // Generar un slug temporal para el workout (después será un ID de Supabase)
+    const workoutSlug = `workout-${Date.now()}`;
+    router.push(routes.workout(userSlug, workoutSlug));
   };
 
   const handleSelectPastWorkout = (workoutId: number) => {
     // Por ahora redirige - después cargaremos datos de Supabase
-    router.push(`/${userSlug}/tracker/workout/new`);
+    const workoutSlug = `workout-${workoutId}`;
+    router.push(routes.workout(userSlug, workoutSlug));
   };
 
   return (
@@ -37,7 +38,7 @@ export default function TrackerPage() {
       <header className="shrink-0 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <Link
-            href={`/${userSlug}`}
+            href={routes.userHome(userSlug)}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <svg
@@ -88,7 +89,7 @@ export default function TrackerPage() {
                   className="w-full px-6 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground"
                   autoFocus
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && workoutName.trim()) {
+                    if (e.key === "Enter") {
                       handleNewWorkout();
                     }
                   }}

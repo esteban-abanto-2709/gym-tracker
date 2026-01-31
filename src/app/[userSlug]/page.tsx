@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { routes } from "@/lib/routes";
 
 export default function UserHomePage() {
   const params = useParams();
@@ -36,7 +37,7 @@ export default function UserHomePage() {
       {/* Header */}
       <header className="relative z-10 px-6 py-6 md:py-8">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className="group">
+          <Link href={routes.home} className="group">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tighter">
               <span className="bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] bg-clip-text text-transparent">
                 GYM
@@ -69,7 +70,7 @@ export default function UserHomePage() {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
             {/* Tracker Card */}
             <Link
-              href={`/${userSlug}/tracker`}
+              href={routes.tracker(userSlug)}
               className="group relative"
             >
               <div
@@ -184,7 +185,7 @@ export default function UserHomePage() {
 
             {/* Dashboard Card */}
             <Link
-              href={`/${userSlug}/dashboard`}
+              href={routes.dashboard(userSlug)}
               className="group relative"
             >
               <div
