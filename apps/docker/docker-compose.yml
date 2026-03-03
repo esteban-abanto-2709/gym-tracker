@@ -22,6 +22,25 @@ services:
       timeout: 5s
       retries: 5
 
+  # NestJS API
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: gym-tracker-api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - DIRECT_URL=${DIRECT_URL}
+      - PORT=4000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - gym-tracker-network
+
 volumes:
   postgres_data:
 
