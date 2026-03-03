@@ -41,6 +41,22 @@ services:
     networks:
       - gym-tracker-network
 
+  # Next.js Frontend
+  web:
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+    container_name: gym-tracker-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000/
+    depends_on:
+      - api
+    networks:
+      - gym-tracker-network
+
 volumes:
   postgres_data:
 
