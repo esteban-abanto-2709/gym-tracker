@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { api } from "@/lib/api";
 
 export default function Home() {
   const router = useRouter();
@@ -25,21 +26,10 @@ export default function Home() {
     };
 
     try {
-      const response = await fetch("http://localhost:4000/workouts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        router.push("/success");
-      } else {
-        console.error("Error saving workout");
-      }
+      await api.post("/workouts", data);
+      router.push("/success");
     } catch (error) {
-      console.error("Connection error:", error);
+      console.error("Error saving workout:", error);
     } finally {
       setLoading(false);
     }
