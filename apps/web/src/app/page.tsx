@@ -2,10 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 
@@ -37,122 +33,176 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8 px-4 dark:bg-black font-sans">
-      <main className="mx-auto max-w-lg space-y-6">
-        <header className="mb-8 text-center pt-8">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Registrar Entrenamiento
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden font-sans">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 35px,
+              var(--foreground) 35px,
+              var(--foreground) 36px
+            )`,
+          }}
+        />
+      </div>
+
+      {/* Gradient Orb */}
+      <div
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl pointer-events-none"
+        style={{
+          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`,
+        }}
+      />
+
+      {/* Header - Fixed */}
+      <header className="shrink-0 px-6 py-4 border-b border-border relative z-10 bg-background/50 backdrop-blur-md">
+        <div className="flex items-center justify-between max-w-md mx-auto">
+          <div className="w-6" />{" "}
+          {/* Spacer for symmetry if there's no back button */}
+          <h1 className="text-xl font-bold tracking-tight">
+            <span className="bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] bg-clip-text text-transparent">
+              GYM
+            </span>
+            <span className="text-foreground">TRACK</span>
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-2">
-            Completa los detalles de tu set.
-          </p>
-        </header>
+          <div className="w-6" /> {/* Spacer */}
+        </div>
+      </header>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-          suppressHydrationWarning
+      {/* Main Content */}
+      <main className="flex-1 px-6 py-8 overflow-y-auto relative z-10 animate-fade-in-up">
+        <form 
+          onSubmit={handleSubmit} 
+          className="max-w-md mx-auto space-y-6"
+          autoComplete="off"
         >
-          {/* Nombre del Ejercicio */}
-          <Card className="border-none shadow-sm text-black">
-            <CardContent className="pt-6">
-              <div className="space-y-3">
-                <Label
-                  htmlFor="exercise-name"
-                  className="text-base font-medium"
-                >
-                  Nombre del ejercicio <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="exercise-name"
-                  name="exercise-name"
-                  placeholder="Texto de respuesta breve"
-                  className="border-0 border-b border-zinc-200 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-all shadow-none"
-                  required
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Descripción del Ejercicio */}
-          <Card className="border-none shadow-sm text-black">
-            <CardContent className="pt-6">
-              <div className="space-y-3">
-                <Label htmlFor="description" className="text-base font-medium">
-                  Descripción del ejercicio
-                </Label>
-                <Input
-                  id="description"
-                  name="description"
-                  placeholder="Texto de respuesta breve"
-                  className="border-0 border-b border-zinc-200 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-all shadow-none"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Repeticiones y Peso (Unificados) */}
-          <Card className="border-none shadow-sm text-black">
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <Label htmlFor="reps" className="text-base font-medium">
-                    Repeticiones <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="reps"
-                    name="reps"
-                    type="number"
-                    placeholder="Ejem: 12"
-                    className="border-0 border-b border-zinc-200 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-all shadow-none"
-                    required
-                  />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="weight" className="text-base font-medium">
-                    Peso (kg) <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="weight"
-                    name="weight"
-                    type="number"
-                    step="0.5"
-                    placeholder="Ejem: 60"
-                    className="border-0 border-b border-zinc-200 rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary transition-all shadow-none"
-                    required
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Opinión */}
-          <Card className="border-none shadow-sm text-black">
-            <CardContent className="pt-6">
-              <div className="space-y-3">
-                <Label htmlFor="opinion" className="text-base font-medium">
-                  Opinión del set
-                </Label>
-                <Textarea
-                  id="opinion"
-                  name="opinion"
-                  placeholder="Cuéntanos cómo te sentiste..."
-                  className="min-h-[100px] border-zinc-200 focus-visible:ring-primary h-24"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 bg-zinc-900 text-zinc-50 rounded-xl font-semibold hover:bg-zinc-800 transition-colors dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 disabled:opacity-50"
-              suppressHydrationWarning
-            >
-              {loading ? "Guardando..." : "Guardar Set"}
-            </button>
+          <div className="text-center mb-8">
+            <h2 className="text-lg font-semibold text-foreground">
+              Registrar Entrenamiento
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Completa los detalles de tu set
+            </p>
           </div>
+
+          {/* Nombre del Ejercicio */}
+          <div className="space-y-2">
+            <label
+              htmlFor="exercise-name"
+              className="block text-sm font-medium text-muted-foreground"
+            >
+              Ejercicio <span className="text-primary">*</span>
+            </label>
+            <input
+              id="exercise-name"
+              name="exercise-name"
+              type="text"
+              placeholder="Ej: Press de Banca"
+              className="w-full px-6 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground animate-slide-in-right [animation-delay:0.1s]"
+              required
+              autoFocus
+              autoComplete="off"
+              data-1p-ignore
+            />
+          </div>
+
+          {/* Descripción / Notas */}
+          <div className="space-y-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-muted-foreground"
+            >
+              Descripción del ejercicio
+            </label>
+            <input
+              id="description"
+              name="description"
+              type="text"
+              placeholder="Opcional: Detalles técnicos"
+              className="w-full px-6 py-4 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground animate-slide-in-right [animation-delay:0.4s]"
+            />
+          </div>
+
+          {/* Peso y Reps en una fila */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label
+                htmlFor="weight"
+                className="block text-sm font-medium text-muted-foreground"
+              >
+                Peso (kg) <span className="text-primary">*</span>
+              </label>
+              <input
+                id="weight"
+                name="weight"
+                type="number"
+                step="0.5"
+                inputMode="decimal"
+                placeholder="60"
+                className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
+                required
+                autoComplete="off"
+                data-1p-ignore
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="reps"
+                className="block text-sm font-medium text-muted-foreground"
+              >
+                Repeticiones <span className="text-primary">*</span>
+              </label>
+              <input
+                id="reps"
+                name="reps"
+                type="number"
+                inputMode="numeric"
+                placeholder="12"
+                className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]"
+                required
+                autoComplete="off"
+                data-1p-ignore
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="opinion"
+              className="block text-sm font-medium text-muted-foreground"
+            >
+              ¿Cómo te sentiste?
+            </label>
+            <textarea
+              id="opinion"
+              name="opinion"
+              placeholder="Ej: Me sentí con buena energía hoy"
+              rows={3}
+              className="w-full px-4 py-3 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground resize-none animate-slide-in-right [animation-delay:0.5s]"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s]"
+          >
+            <span className="relative z-10">
+              {loading ? "Guardando..." : "✓ Registrar Set"}
+            </span>
+            <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          </button>
+
+          {/* Hint */}
+          <p className="text-xs text-muted-foreground text-center px-4 opacity-70">
+            Se guardará automáticamente con fecha y hora
+          </p>
         </form>
       </main>
     </div>
