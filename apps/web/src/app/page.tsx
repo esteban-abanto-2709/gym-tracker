@@ -2,8 +2,10 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
+import { History } from "lucide-react";
 
 function HomeContent() {
   const router = useRouter();
@@ -104,7 +106,13 @@ function HomeContent() {
             </span>
             <span className="text-foreground">TRACK</span>
           </h1>
-          <div className="w-6" /> {/* Spacer */}
+          <Link 
+            href="/history" 
+            className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
+            title="Ver Historial"
+          >
+            <History className="w-6 h-6" />
+          </Link>
         </div>
       </header>
 

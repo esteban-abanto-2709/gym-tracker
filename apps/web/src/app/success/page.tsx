@@ -33,7 +33,7 @@ export default function SuccessPage() {
       <header className="shrink-0 px-6 py-4 border-b border-border relative z-10 bg-background/50 backdrop-blur-md">
         <div className="flex items-center justify-between max-w-md mx-auto">
           <div className="w-6" />
-          
+
           <h1 className="text-xl font-bold tracking-tight">
             <span className="bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] bg-clip-text text-transparent">
               GYM
@@ -64,7 +64,7 @@ export default function SuccessPage() {
                 />
               </svg>
             </div>
-            
+
             <div className="space-y-2 animate-fade-in-up [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]">
               <h1 className="text-4xl font-bold tracking-tight text-foreground">
                 ¡Set Guardado!
@@ -92,7 +92,7 @@ export default function SuccessPage() {
             </Link>
           </div>
 
-          <p className="text-xs text-muted-foreground opacity-70 animate-fade-in-up [animation-delay:0.6s] opacity-0 [animation-fill-mode:forwards]">
+          <p className="text-xs text-muted-foreground animate-fade-in-up [animation-delay:0.6s] opacity-0 [animation-fill-mode:forwards]">
             Sigue dándole duro, la constancia es la clave
           </p>
         </div>
