@@ -7,11 +7,11 @@ datasource db {
 }
 
 model Workout {
-  id           String    @id @default(uuid())
-  exercise     String 
-  description  String
-  weight    Float
-  reps      Int
+  id          String   @id @default(uuid())
+  exercise    String
+  description String
+  weight      Float
+  reps        Int
   opinion     String
-  createdAt    DateTime  @default(now())
+  createdAt   DateTime @default(now())
 }
