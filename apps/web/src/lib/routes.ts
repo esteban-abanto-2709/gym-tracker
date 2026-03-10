@@ -5,6 +5,7 @@ export const routes = {
   api: {
     workouts: {
       create: () => "/workouts",
+      list: () => "/workouts",
     },
   },
 } as const;
