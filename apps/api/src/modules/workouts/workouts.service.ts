@@ -17,4 +17,12 @@ export class WorkoutsService {
       },
     });
   }
+
+  async findAll() {
+    return this.prisma.workout.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }
