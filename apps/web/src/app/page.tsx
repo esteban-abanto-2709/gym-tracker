@@ -1,28 +1,63 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+
+  // Form State
+  const [exercise, setExercise] = useState("");
+  const [description, setDescription] = useState("");
+  const [weight, setWeight] = useState("");
+  const [reps, setReps] = useState("");
+  const [opinion, setOpinion] = useState("");
+
+  // Load last set if "repeat" param is present
+  useEffect(() => {
+    const shouldRepeat = searchParams.get("repeat") === "true";
+    if (shouldRepeat) {
+      const savedData = sessionStorage.getItem("gymtrack-last-set");
+      if (savedData) {
+        try {
+          const data = JSON.parse(savedData);
+          setExercise(data.exercise || "");
+          setDescription(data.description || "");
+          setWeight(data.weight || "");
+          setReps(data.reps || "");
+          // Opinion is NOT repeated as per user request (only 4 "most important" fields)
+        } catch (e) {
+          console.error("Error loading last set data:", e);
+        }
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
     const data = {
-      exercise: formData.get("exercise-name"),
-      description: formData.get("description"),
-      reps: Number(formData.get("reps")),
-      weight: Number(formData.get("weight")),
-      opinion: formData.get("opinion"),
+      exercise,
+      description,
+      reps: Number(reps),
+      weight: Number(weight),
+      opinion,
     };
 
     try {
+      // Save for "Repeat" feature
+      sessionStorage.setItem("gymtrack-last-set", JSON.stringify({
+        exercise,
+        description,
+        weight,
+        reps,
+      }));
+
       await api.post(routes.api.workouts.create(), data);
       router.push(routes.success());
     } catch (error) {
@@ -101,6 +136,8 @@ export default function Home() {
               id="exercise-name"
               name="exercise-name"
               type="text"
+              value={exercise}
+              onChange={(e) => setExercise(e.target.value)}
               placeholder="Ej: Press de Banca"
               className="w-full px-6 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground animate-slide-in-right [animation-delay:0.1s]"
               required
@@ -122,6 +159,8 @@ export default function Home() {
               id="description"
               name="description"
               type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Opcional: Detalles técnicos"
               className="w-full px-6 py-4 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground animate-slide-in-right [animation-delay:0.4s]"
             />
@@ -142,6 +181,8 @@ export default function Home() {
                 type="number"
                 step="0.5"
                 inputMode="decimal"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
                 placeholder="60"
                 className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
                 required
@@ -162,6 +203,8 @@ export default function Home() {
                 name="reps"
                 type="number"
                 inputMode="numeric"
+                value={reps}
+                onChange={(e) => setReps(e.target.value)}
                 placeholder="12"
                 className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]"
                 required
@@ -181,6 +224,8 @@ export default function Home() {
             <textarea
               id="opinion"
               name="opinion"
+              value={opinion}
+              onChange={(e) => setOpinion(e.target.value)}
               placeholder="Ej: Me sentí con buena energía hoy"
               rows={3}
               className="w-full px-4 py-3 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground resize-none animate-slide-in-right [animation-delay:0.5s]"
@@ -206,5 +251,13 @@ export default function Home() {
         </form>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
   );
 }

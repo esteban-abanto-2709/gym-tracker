@@ -77,7 +77,7 @@ export default function SuccessPage() {
 
           <div className="space-y-4 pt-8 animate-fade-in-up [animation-delay:0.4s] opacity-0 [animation-fill-mode:forwards]">
             <Link
-              href="/"
+              href="/?repeat=true"
               className="group relative block w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 overflow-hidden"
             >
               <span className="relative z-10">Repetir ejercicio</span>
