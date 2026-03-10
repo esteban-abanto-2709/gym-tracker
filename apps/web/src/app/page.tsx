@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/lib/api";
+import { routes } from "@/lib/routes";
 
 export default function Home() {
   const router = useRouter();
@@ -26,8 +27,8 @@ export default function Home() {
     };
 
     try {
-      await api.post("/workouts", data);
-      router.push("/success");
+      await api.post(routes.api.workouts.create(), data);
+      router.push(routes.success());
     } catch (error) {
       console.error("Error saving workout:", error);
     } finally {
