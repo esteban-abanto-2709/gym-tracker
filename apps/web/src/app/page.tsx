@@ -53,12 +53,15 @@ function HomeContent() {
 
     try {
       // Save for "Repeat" feature
-      sessionStorage.setItem("gymtrack-last-set", JSON.stringify({
-        exercise,
-        description,
-        weight,
-        reps,
-      }));
+      sessionStorage.setItem(
+        "gymtrack-last-set",
+        JSON.stringify({
+          exercise,
+          description,
+          weight,
+          reps,
+        }),
+      );
 
       await api.post(routes.api.workouts.create(), data);
       router.push(routes.success());
@@ -99,7 +102,9 @@ function HomeContent() {
       {loading && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
           <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-          <p className="text-lg font-bold text-foreground animate-pulse">Guardando...</p>
+          <p className="text-lg font-bold text-foreground animate-pulse">
+            Guardando...
+          </p>
         </div>
       )}
 
@@ -126,8 +131,8 @@ function HomeContent() {
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-8 overflow-y-auto relative z-10 animate-fade-in-up">
-        <form 
-          onSubmit={handleSubmit} 
+        <form
+          onSubmit={handleSubmit}
           className="max-w-md mx-auto space-y-6"
           autoComplete="off"
         >
