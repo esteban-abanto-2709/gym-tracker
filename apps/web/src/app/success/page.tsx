@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { History } from "lucide-react";
 
 export default function SuccessPage() {
   return (
@@ -89,6 +90,14 @@ export default function SuccessPage() {
               className="block w-full py-4 text-foreground bg-card/50 backdrop-blur-sm border-2 border-input rounded-2xl font-bold text-lg hover:bg-card hover:border-border transition-all active:scale-95"
             >
               Registrar otro
+            </Link>
+
+            <Link
+              href="/history"
+              className="w-full py-4 text-muted-foreground bg-transparent border-2 border-border rounded-2xl font-bold text-lg hover:text-foreground hover:border-muted-foreground transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              <History className="w-5 h-5" />
+              Ir al historial
             </Link>
           </div>
 
