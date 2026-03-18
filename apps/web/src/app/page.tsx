@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import { History } from "lucide-react";
+import { History, Loader2 } from "lucide-react";
 
 function HomeContent() {
   const router = useRouter();
@@ -95,6 +95,14 @@ function HomeContent() {
         }}
       />
 
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
+          <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
+          <p className="text-lg font-bold text-foreground animate-pulse">Guardando...</p>
+        </div>
+      )}
+
       {/* Header - Fixed */}
       <header className="shrink-0 px-6 py-4 border-b border-border relative z-10 bg-background/50 backdrop-blur-md">
         <div className="flex items-center justify-between max-w-md mx-auto">
@@ -106,8 +114,8 @@ function HomeContent() {
             </span>
             <span className="text-foreground">TRACK</span>
           </h1>
-          <Link 
-            href="/history" 
+          <Link
+            href="/history"
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
             title="Ver Historial"
           >
@@ -246,9 +254,7 @@ function HomeContent() {
             disabled={loading}
             className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s]"
           >
-            <span className="relative z-10">
-              {loading ? "Guardando..." : "✓ Registrar Set"}
-            </span>
+            ✓ Registrar Set
             <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
 
