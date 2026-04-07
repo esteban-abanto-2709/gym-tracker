@@ -6,6 +6,8 @@ export const routes = {
     workouts: {
       create: () => "/workouts",
       list: () => "/workouts",
+      update: (id: string) => `/workouts/${id}`,
+      delete: (id: string) => `/workouts/${id}`,
     },
   },
 } as const;

@@ -11,7 +11,26 @@ import {
   RotateCcw,
   MessageSquare,
   Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Workout {
   id: string;
@@ -33,6 +52,13 @@ export default function HistoryPage() {
   const [groupedWorkouts, setGroupedWorkouts] = useState<GroupedWorkout[]>([]);
   const [selectedDate, setSelectedDate] = useState("Hoy");
   const [loading, setLoading] = useState(true);
+
+  // Edit and Delete state
+  const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
+  const [deletingWorkout, setDeletingWorkout] = useState<Workout | null>(null);
+  const [editReps, setEditReps] = useState("");
+  const [editWeight, setEditWeight] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const fetchWorkouts = async () => {
@@ -105,6 +131,61 @@ export default function HistoryPage() {
       }),
     );
     router.push("/?repeat=true");
+  };
+
+  const handleEditClick = (workout: Workout) => {
+    setEditingWorkout(workout);
+    setEditReps(workout.reps.toString());
+    setEditWeight(workout.weight.toString());
+  };
+
+  const saveEdit = async () => {
+    if (!editingWorkout) return;
+    setActionLoading(true);
+    try {
+      await api.patch(routes.api.workouts.update(editingWorkout.id), {
+        reps: Number(editReps),
+        weight: Number(editWeight),
+      });
+      // Actualizar el estado localmente
+      setGroupedWorkouts((prev) =>
+        prev.map((group) => ({
+          ...group,
+          exercises: group.exercises.map((ex) =>
+            ex.id === editingWorkout.id
+              ? { ...ex, reps: Number(editReps), weight: Number(editWeight) }
+              : ex
+          ),
+        }))
+      );
+      setEditingWorkout(null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingWorkout) return;
+    setActionLoading(true);
+    try {
+      await api.delete(routes.api.workouts.delete(deletingWorkout.id));
+      // Actualizar el estado localmente
+      setGroupedWorkouts((prev) =>
+        prev
+          .map((group) => ({
+            ...group,
+            exercises: group.exercises.filter((ex) => ex.id !== deletingWorkout.id),
+          }))
+          .filter((group) => group.exercises.length > 0)
+      );
+      setDeletingWorkout(null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   return (
@@ -268,14 +349,36 @@ export default function HistoryPage() {
                             </div>
                           </div>
 
-                          {exercise.opinion && (
-                            <div className="mt-4 flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
-                              <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
-                              <p className="italic leading-snug">
-                                &ldquo;{exercise.opinion}&rdquo;
-                              </p>
+                          <div className="flex justify-between items-end mt-4">
+                            <div className="flex-1">
+                              {exercise.opinion && (
+                                <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
+                                  <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
+                                  <p className="italic leading-snug">
+                                    &ldquo;{exercise.opinion}&rdquo;
+                                  </p>
+                                </div>
+                              )}
                             </div>
-                          )}
+                            
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 ml-4">
+                              <button
+                                onClick={() => handleEditClick(exercise)}
+                                className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
+                                title="Editar Set"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setDeletingWorkout(exercise)}
+                                className="p-2.5 text-muted-foreground hover:text-destructive transition-colors rounded-xl bg-muted/30 hover:bg-destructive/10"
+                                title="Eliminar Set"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -293,6 +396,78 @@ export default function HistoryPage() {
       >
         <Plus className="w-7 h-7" strokeWidth={3} />
       </Link>
+
+      {/* Edit Dialog */}
+      <Dialog open={!!editingWorkout} onOpenChange={(open) => !open && setEditingWorkout(null)}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Editar Entrenamiento</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="edit-weight" className="text-sm font-medium">
+                  Peso (kg)
+                </label>
+                <input
+                  id="edit-weight"
+                  type="number"
+                  step="0.5"
+                  value={editWeight}
+                  onChange={(e) => setEditWeight(e.target.value)}
+                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="edit-reps" className="text-sm font-medium">
+                  Repeticiones
+                </label>
+                <input
+                  id="edit-reps"
+                  type="number"
+                  value={editReps}
+                  onChange={(e) => setEditReps(e.target.value)}
+                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <button
+              onClick={saveEdit}
+              disabled={actionLoading}
+              className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
+            >
+              {actionLoading ? "Guardando..." : "Guardar Cambios"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Alert Dialog */}
+      <AlertDialog open={!!deletingWorkout} onOpenChange={(open) => !open && setDeletingWorkout(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar este registro?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. Se eliminarán los datos de esta serie permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
+              onClick={(e) => {
+                e.preventDefault();
+                confirmDelete();
+              }}
+              disabled={actionLoading}
+            >
+              {actionLoading ? "Eliminando..." : "Eliminar Set"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
