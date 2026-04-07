@@ -44,12 +44,14 @@ interface Workout {
 
 export default function HistoryPage() {
   const router = useRouter();
-  
+
   // State for lazy-loading and caching
   const [dates, setDates] = useState<string[]>([]);
-  const [cachedWorkouts, setCachedWorkouts] = useState<Record<string, Workout[]>>({});
+  const [cachedWorkouts, setCachedWorkouts] = useState<
+    Record<string, Workout[]>
+  >({});
   const [selectedDate, setSelectedDate] = useState<string>("");
-  
+
   const [loadingDates, setLoadingDates] = useState(true);
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
 
@@ -63,20 +65,24 @@ export default function HistoryPage() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const fetchedDates = await api.get<string[]>(routes.api.workouts.dates());
+        const fetchedDates = await api.get<string[]>(
+          routes.api.workouts.dates(),
+        );
         setDates(fetchedDates);
 
         if (fetchedDates.length > 0) {
           const initialDate = fetchedDates[0];
           setSelectedDate(initialDate);
-          
+
           // Preload up to 4 dates
           const datesToPreload = fetchedDates.slice(0, 4);
           const preloadedData = await Promise.all(
-            datesToPreload.map(d => api.get<Workout[]>(routes.api.workouts.list(d)))
+            datesToPreload.map((d) =>
+              api.get<Workout[]>(routes.api.workouts.list(d)),
+            ),
           );
-          
-          setCachedWorkouts(prev => {
+
+          setCachedWorkouts((prev) => {
             const newCache = { ...prev };
             datesToPreload.forEach((d, idx) => {
               newCache[d] = preloadedData[idx];
@@ -101,7 +107,9 @@ export default function HistoryPage() {
     const fetchDayWorkouts = async () => {
       setLoadingWorkouts(true);
       try {
-        const data = await api.get<Workout[]>(routes.api.workouts.list(selectedDate));
+        const data = await api.get<Workout[]>(
+          routes.api.workouts.list(selectedDate),
+        );
         setCachedWorkouts((prev) => ({ ...prev, [selectedDate]: data }));
       } catch (error) {
         console.error(error);
@@ -109,7 +117,7 @@ export default function HistoryPage() {
         setLoadingWorkouts(false);
       }
     };
-    
+
     fetchDayWorkouts();
   }, [selectedDate, cachedWorkouts]);
 
@@ -117,11 +125,11 @@ export default function HistoryPage() {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
-    const [y, m, d] = dateStr.split('-');
+
+    const [y, m, d] = dateStr.split("-");
     if (!y || !m || !d) return dateStr;
     const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
-    
+
     if (dateObj.toDateString() === today.toDateString()) return "Hoy";
     if (dateObj.toDateString() === yesterday.toDateString()) return "Ayer";
 
@@ -161,7 +169,7 @@ export default function HistoryPage() {
         reps: Number(editReps),
         weight: Number(editWeight),
       });
-      
+
       // Update Cache Locally
       setCachedWorkouts((prev) => {
         const dayWorkouts = prev[selectedDate] || [];
@@ -170,8 +178,8 @@ export default function HistoryPage() {
           [selectedDate]: dayWorkouts.map((ex) =>
             ex.id === editingWorkout.id
               ? { ...ex, reps: Number(editReps), weight: Number(editWeight) }
-              : ex
-          )
+              : ex,
+          ),
         };
       });
       setEditingWorkout(null);
@@ -187,16 +195,18 @@ export default function HistoryPage() {
     setActionLoading(true);
     try {
       await api.delete(routes.api.workouts.delete(deletingWorkout.id));
-      
+
       // Update Cache Locally
       setCachedWorkouts((prev) => {
         const dayWorkouts = prev[selectedDate] || [];
         return {
           ...prev,
-          [selectedDate]: dayWorkouts.filter((ex) => ex.id !== deletingWorkout.id)
+          [selectedDate]: dayWorkouts.filter(
+            (ex) => ex.id !== deletingWorkout.id,
+          ),
         };
       });
-      
+
       setDeletingWorkout(null);
     } catch (e) {
       console.error(e);
@@ -257,7 +267,9 @@ export default function HistoryPage() {
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
             <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
             {!loadingDates && dates.length === 0 && (
-               <span className="text-sm text-muted-foreground">Sin registros</span>
+              <span className="text-sm text-muted-foreground">
+                Sin registros
+              </span>
             )}
             {dates.map((date) => (
               <button
@@ -339,10 +351,13 @@ export default function HistoryPage() {
                               {exercise.exercise}
                             </h3>
                             <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                              {new Date(exercise.createdAt).toLocaleTimeString("es-ES", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
+                              {new Date(exercise.createdAt).toLocaleTimeString(
+                                "es-ES",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )}
                             </span>
                           </div>
 
@@ -350,7 +365,10 @@ export default function HistoryPage() {
                             onClick={() => handleRepeat(exercise)}
                             className="flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl text-[10px] font-black shadow-md hover:scale-105 active:scale-95 transition-all uppercase tracking-wider"
                           >
-                            <RotateCcw className="w-3.5 h-3.5" strokeWidth={3} />
+                            <RotateCcw
+                              className="w-3.5 h-3.5"
+                              strokeWidth={3}
+                            />
                             Repetir
                           </button>
                         </div>
@@ -360,14 +378,18 @@ export default function HistoryPage() {
                             <span className="text-2xl font-black text-foreground">
                               {exercise.weight}
                             </span>
-                            <span className="text-xs font-bold text-muted-foreground">kg</span>
+                            <span className="text-xs font-bold text-muted-foreground">
+                              kg
+                            </span>
                           </div>
                           <div className="h-4 w-px bg-border" />
                           <div className="flex items-baseline gap-1">
                             <span className="text-2xl font-black text-foreground">
                               {exercise.reps}
                             </span>
-                            <span className="text-xs font-bold text-muted-foreground">reps</span>
+                            <span className="text-xs font-bold text-muted-foreground">
+                              reps
+                            </span>
                           </div>
                         </div>
 
@@ -382,7 +404,7 @@ export default function HistoryPage() {
                               </div>
                             )}
                           </div>
-                          
+
                           {/* Actions */}
                           <div className="flex items-center gap-2 ml-4">
                             <button
@@ -420,7 +442,10 @@ export default function HistoryPage() {
       </Link>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editingWorkout} onOpenChange={(open) => !open && setEditingWorkout(null)}>
+      <Dialog
+        open={!!editingWorkout}
+        onOpenChange={(open) => !open && setEditingWorkout(null)}
+      >
         <DialogContent className="sm:max-w-[425px] rounded-2xl">
           <DialogHeader>
             <DialogTitle>Editar Entrenamiento</DialogTitle>
@@ -467,16 +492,22 @@ export default function HistoryPage() {
       </Dialog>
 
       {/* Delete Confirmation Alert Dialog */}
-      <AlertDialog open={!!deletingWorkout} onOpenChange={(open) => !open && setDeletingWorkout(null)}>
+      <AlertDialog
+        open={!!deletingWorkout}
+        onOpenChange={(open) => !open && setDeletingWorkout(null)}
+      >
         <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar este registro?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminarán los datos de esta serie permanentemente.
+              Esta acción no se puede deshacer. Se eliminarán los datos de esta
+              serie permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl">
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
               onClick={(e) => {

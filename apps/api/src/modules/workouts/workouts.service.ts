@@ -25,13 +25,13 @@ export class WorkoutsService {
       select: { createdAt: true },
       orderBy: { createdAt: 'desc' },
     });
-    
+
     const uniqueDates = new Set<string>();
-    workouts.forEach(w => {
+    workouts.forEach((w) => {
       const dateStr = w.createdAt.toISOString().split('T')[0];
       uniqueDates.add(dateStr);
     });
-    
+
     return Array.from(uniqueDates);
   }
 
