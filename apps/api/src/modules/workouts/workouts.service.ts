@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
+import { UpdateWorkoutDto } from './dto/update-workout.dto';
 
 @Injectable()
 export class WorkoutsService {
@@ -23,6 +24,19 @@ export class WorkoutsService {
       orderBy: {
         createdAt: 'desc',
       },
+    });
+  }
+
+  async update(id: string, updateWorkoutDto: UpdateWorkoutDto) {
+    return this.prisma.workout.update({
+      where: { id },
+      data: updateWorkoutDto,
+    });
+  }
+
+  async remove(id: string) {
+    return this.prisma.workout.delete({
+      where: { id },
     });
   }
 }
