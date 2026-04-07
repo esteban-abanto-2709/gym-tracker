@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Param, Delete, Query } from '@nestjs/common';
 import { WorkoutsService } from './workouts.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
@@ -12,9 +12,14 @@ export class WorkoutsController {
     return this.workoutsService.create(createWorkoutDto);
   }
 
+  @Get('dates')
+  async findDates() {
+    return this.workoutsService.findDistinctDates();
+  }
+
   @Get()
-  async findAll() {
-    return this.workoutsService.findAll();
+  async findAll(@Query('date') date?: string) {
+    return this.workoutsService.findAll(date);
   }
 
   @Patch(':id')

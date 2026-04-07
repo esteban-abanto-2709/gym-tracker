@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/providers/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
 
@@ -19,8 +20,34 @@ export class WorkoutsService {
     });
   }
 
-  async findAll() {
+  async findDistinctDates() {
+    const workouts = await this.prisma.workout.findMany({
+      select: { createdAt: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    
+    const uniqueDates = new Set<string>();
+    workouts.forEach(w => {
+      const dateStr = w.createdAt.toISOString().split('T')[0];
+      uniqueDates.add(dateStr);
+    });
+    
+    return Array.from(uniqueDates);
+  }
+
+  async findAll(dateStr?: string) {
+    const where: Prisma.WorkoutWhereInput = {};
+    if (dateStr) {
+      const start = new Date(`${dateStr}T00:00:00.000Z`);
+      const end = new Date(`${dateStr}T23:59:59.999Z`);
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
+
     return this.prisma.workout.findMany({
+      where,
       orderBy: {
         createdAt: 'desc',
       },

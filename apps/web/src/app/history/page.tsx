@@ -42,16 +42,16 @@ interface Workout {
   createdAt: string;
 }
 
-interface GroupedWorkout {
-  date: string;
-  exercises: Workout[];
-}
-
 export default function HistoryPage() {
   const router = useRouter();
-  const [groupedWorkouts, setGroupedWorkouts] = useState<GroupedWorkout[]>([]);
-  const [selectedDate, setSelectedDate] = useState("Hoy");
-  const [loading, setLoading] = useState(true);
+  
+  // State for lazy-loading and caching
+  const [dates, setDates] = useState<string[]>([]);
+  const [cachedWorkouts, setCachedWorkouts] = useState<Record<string, Workout[]>>({});
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  
+  const [loadingDates, setLoadingDates] = useState(true);
+  const [loadingWorkouts, setLoadingWorkouts] = useState(false);
 
   // Edit and Delete state
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
@@ -61,64 +61,78 @@ export default function HistoryPage() {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    const fetchWorkouts = async () => {
+    const fetchInitialData = async () => {
       try {
-        const data = await api.get<Workout[]>(routes.api.workouts.list());
+        const fetchedDates = await api.get<string[]>(routes.api.workouts.dates());
+        setDates(fetchedDates);
 
-        // Grouping logic
-        const groups: { [key: string]: Workout[] } = {};
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-
-        const formatDate = (date: Date) => {
-          const d = new Date(date);
-          const now = new Date();
-          const yesterday = new Date();
-          yesterday.setDate(now.getDate() - 1);
-
-          if (d.toDateString() === now.toDateString()) return "Hoy";
-          if (d.toDateString() === yesterday.toDateString()) return "Ayer";
-
-          return new Intl.DateTimeFormat("es-ES", {
-            weekday: "long",
-            day: "2-digit",
-            month: "short",
-          })
-            .format(d)
-            .replace(/^\w/, (c) => c.toUpperCase());
-        };
-
-        data.forEach((workout) => {
-          const dateLabel = formatDate(new Date(workout.createdAt));
-          if (!groups[dateLabel]) {
-            groups[dateLabel] = [];
-          }
-          groups[dateLabel].push(workout);
-        });
-
-        const formattedGroups = Object.keys(groups).map((date) => ({
-          date,
-          exercises: groups[date],
-        }));
-
-        setGroupedWorkouts(formattedGroups);
-
-        // Default select first date if exists
-        if (formattedGroups.length > 0) {
-          setSelectedDate(formattedGroups[0].date);
+        if (fetchedDates.length > 0) {
+          const initialDate = fetchedDates[0];
+          setSelectedDate(initialDate);
+          
+          // Preload up to 4 dates
+          const datesToPreload = fetchedDates.slice(0, 4);
+          const preloadedData = await Promise.all(
+            datesToPreload.map(d => api.get<Workout[]>(routes.api.workouts.list(d)))
+          );
+          
+          setCachedWorkouts(prev => {
+            const newCache = { ...prev };
+            datesToPreload.forEach((d, idx) => {
+              newCache[d] = preloadedData[idx];
+            });
+            return newCache;
+          });
         }
       } catch (error) {
-        console.error("Error fetching workouts:", error);
+        console.error("Error fetching dates:", error);
       } finally {
-        setLoading(false);
+        setLoadingDates(false);
       }
     };
 
-    fetchWorkouts();
+    fetchInitialData();
   }, []);
 
-  const dates = groupedWorkouts.map((g) => g.date);
+  useEffect(() => {
+    if (!selectedDate) return;
+    if (cachedWorkouts[selectedDate] !== undefined) return; // Already cached
+
+    const fetchDayWorkouts = async () => {
+      setLoadingWorkouts(true);
+      try {
+        const data = await api.get<Workout[]>(routes.api.workouts.list(selectedDate));
+        setCachedWorkouts((prev) => ({ ...prev, [selectedDate]: data }));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingWorkouts(false);
+      }
+    };
+    
+    fetchDayWorkouts();
+  }, [selectedDate, cachedWorkouts]);
+
+  const getDisplayDate = (dateStr: string) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const [y, m, d] = dateStr.split('-');
+    if (!y || !m || !d) return dateStr;
+    const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
+    
+    if (dateObj.toDateString() === today.toDateString()) return "Hoy";
+    if (dateObj.toDateString() === yesterday.toDateString()) return "Ayer";
+
+    return new Intl.DateTimeFormat("es-ES", {
+      weekday: "long",
+      day: "2-digit",
+      month: "short",
+    })
+      .format(dateObj)
+      .replace(/^\w/, (c) => c.toUpperCase());
+  };
 
   const handleRepeat = (exercise: Workout) => {
     sessionStorage.setItem(
@@ -147,17 +161,19 @@ export default function HistoryPage() {
         reps: Number(editReps),
         weight: Number(editWeight),
       });
-      // Actualizar el estado localmente
-      setGroupedWorkouts((prev) =>
-        prev.map((group) => ({
-          ...group,
-          exercises: group.exercises.map((ex) =>
+      
+      // Update Cache Locally
+      setCachedWorkouts((prev) => {
+        const dayWorkouts = prev[selectedDate] || [];
+        return {
+          ...prev,
+          [selectedDate]: dayWorkouts.map((ex) =>
             ex.id === editingWorkout.id
               ? { ...ex, reps: Number(editReps), weight: Number(editWeight) }
               : ex
-          ),
-        }))
-      );
+          )
+        };
+      });
       setEditingWorkout(null);
     } catch (e) {
       console.error(e);
@@ -171,15 +187,16 @@ export default function HistoryPage() {
     setActionLoading(true);
     try {
       await api.delete(routes.api.workouts.delete(deletingWorkout.id));
-      // Actualizar el estado localmente
-      setGroupedWorkouts((prev) =>
-        prev
-          .map((group) => ({
-            ...group,
-            exercises: group.exercises.filter((ex) => ex.id !== deletingWorkout.id),
-          }))
-          .filter((group) => group.exercises.length > 0)
-      );
+      
+      // Update Cache Locally
+      setCachedWorkouts((prev) => {
+        const dayWorkouts = prev[selectedDate] || [];
+        return {
+          ...prev,
+          [selectedDate]: dayWorkouts.filter((ex) => ex.id !== deletingWorkout.id)
+        };
+      });
+      
       setDeletingWorkout(null);
     } catch (e) {
       console.error(e);
@@ -187,6 +204,8 @@ export default function HistoryPage() {
       setActionLoading(false);
     }
   };
+
+  const currentWorkouts = cachedWorkouts[selectedDate] || [];
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden font-sans">
@@ -237,6 +256,9 @@ export default function HistoryPage() {
           {/* Date Selector Dropdown/Pills */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
             <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
+            {!loadingDates && dates.length === 0 && (
+               <span className="text-sm text-muted-foreground">Sin registros</span>
+            )}
             {dates.map((date) => (
               <button
                 key={date}
@@ -247,7 +269,7 @@ export default function HistoryPage() {
                     : "bg-card/50 border-input text-muted-foreground hover:border-border"
                 }`}
               >
-                {date}
+                {getDisplayDate(date)}
               </button>
             ))}
           </div>
@@ -256,14 +278,14 @@ export default function HistoryPage() {
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-6 pb-24 overflow-y-auto relative z-10 max-w-md mx-auto w-full">
-        {loading ? (
+        {loadingDates ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="text-sm text-muted-foreground font-medium animate-pulse">
               Cargando historial...
             </p>
           </div>
-        ) : groupedWorkouts.length === 0 ? (
+        ) : dates.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-6 text-center animate-fade-in-up">
             <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center">
               <Calendar className="w-10 h-10 text-muted-foreground/50" />
@@ -281,110 +303,110 @@ export default function HistoryPage() {
               Comenzar a entrenar
             </Link>
           </div>
+        ) : loadingWorkouts && !cachedWorkouts[selectedDate] ? (
+          <div className="flex flex-col items-center justify-center h-48 space-y-4">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-muted-foreground font-medium animate-pulse">
+              Cargando rutinas del día...
+            </p>
+          </div>
         ) : (
           <div className="space-y-10">
-            {groupedWorkouts
-              .filter((g) => g.date === selectedDate)
-              .map((group) => (
-                <section key={group.date} className="animate-fade-in-up">
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 px-1">
-                    {group.date}
-                  </h2>
+            <section className="animate-fade-in-up">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 px-1">
+                {getDisplayDate(selectedDate)}
+              </h2>
 
-                  <div className="space-y-3">
-                    {group.exercises.map((exercise, idx) => (
-                      <div
-                        key={exercise.id}
-                        className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-4 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
-                        style={{ animationDelay: `${idx * 0.05}s` }}
-                      >
-                        {/* Brand Accent Line */}
-                        <div className="absolute left-0 top-4 bottom-4 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
+              <div className="space-y-3">
+                {currentWorkouts.length === 0 ? (
+                  <p className="text-sm text-muted-foreground opacity-70">
+                    No hay entrenamientos este día.
+                  </p>
+                ) : (
+                  currentWorkouts.map((exercise, idx) => (
+                    <div
+                      key={exercise.id}
+                      className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-4 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
+                      style={{ animationDelay: `${idx * 0.05}s` }}
+                    >
+                      {/* Brand Accent Line */}
+                      <div className="absolute left-0 top-4 bottom-4 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
 
-                        <div className="pl-3">
-                          <div className="flex justify-between items-start mb-1">
-                            <div className="flex-1">
-                              <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
-                                {exercise.exercise}
-                              </h3>
-                              <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                                {new Date(
-                                  exercise.createdAt,
-                                ).toLocaleTimeString("es-ES", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
-                              </span>
-                            </div>
+                      <div className="pl-3">
+                        <div className="flex justify-between items-start mb-1">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
+                              {exercise.exercise}
+                            </h3>
+                            <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                              {new Date(exercise.createdAt).toLocaleTimeString("es-ES", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
 
+                          <button
+                            onClick={() => handleRepeat(exercise)}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl text-[10px] font-black shadow-md hover:scale-105 active:scale-95 transition-all uppercase tracking-wider"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" strokeWidth={3} />
+                            Repetir
+                          </button>
+                        </div>
+
+                        <div className="flex items-baseline gap-4 mt-3">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-black text-foreground">
+                              {exercise.weight}
+                            </span>
+                            <span className="text-xs font-bold text-muted-foreground">kg</span>
+                          </div>
+                          <div className="h-4 w-px bg-border" />
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-black text-foreground">
+                              {exercise.reps}
+                            </span>
+                            <span className="text-xs font-bold text-muted-foreground">reps</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-end mt-4">
+                          <div className="flex-1">
+                            {exercise.opinion && (
+                              <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
+                                <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
+                                <p className="italic leading-snug">
+                                  &ldquo;{exercise.opinion}&rdquo;
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Actions */}
+                          <div className="flex items-center gap-2 ml-4">
                             <button
-                              onClick={() => handleRepeat(exercise)}
-                              className="flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl text-[10px] font-black shadow-md hover:scale-105 active:scale-95 transition-all uppercase tracking-wider"
+                              onClick={() => handleEditClick(exercise)}
+                              className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
+                              title="Editar Set"
                             >
-                              <RotateCcw
-                                className="w-3.5 h-3.5"
-                                strokeWidth={3}
-                              />
-                              Repetir
+                              <Pencil className="w-4 h-4" />
                             </button>
-                          </div>
-
-                          <div className="flex items-baseline gap-4 mt-3">
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-2xl font-black text-foreground">
-                                {exercise.weight}
-                              </span>
-                              <span className="text-xs font-bold text-muted-foreground">
-                                kg
-                              </span>
-                            </div>
-                            <div className="h-4 w-px bg-border" />
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-2xl font-black text-foreground">
-                                {exercise.reps}
-                              </span>
-                              <span className="text-xs font-bold text-muted-foreground">
-                                reps
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="flex justify-between items-end mt-4">
-                            <div className="flex-1">
-                              {exercise.opinion && (
-                                <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
-                                  <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
-                                  <p className="italic leading-snug">
-                                    &ldquo;{exercise.opinion}&rdquo;
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Actions */}
-                            <div className="flex items-center gap-2 ml-4">
-                              <button
-                                onClick={() => handleEditClick(exercise)}
-                                className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
-                                title="Editar Set"
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => setDeletingWorkout(exercise)}
-                                className="p-2.5 text-muted-foreground hover:text-destructive transition-colors rounded-xl bg-muted/30 hover:bg-destructive/10"
-                                title="Eliminar Set"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
+                            <button
+                              onClick={() => setDeletingWorkout(exercise)}
+                              className="p-2.5 text-muted-foreground hover:text-destructive transition-colors rounded-xl bg-muted/30 hover:bg-destructive/10"
+                              title="Eliminar Set"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </section>
-              ))}
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
           </div>
         )}
       </main>
