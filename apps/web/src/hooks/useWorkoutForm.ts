@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
@@ -7,7 +7,8 @@ import type { Exercise } from "@/lib/types";
 const STORAGE_KEY = "gymtrack-last-set";
 
 interface RepeatData {
-  exercise: Exercise | null;
+  exercise?: Exercise | null;
+  exerciseId?: string;
   weight: string;
   reps: string;
 }
@@ -27,21 +28,18 @@ export function useWorkoutForm(
   );
   const [loading, setLoading] = useState(false);
 
-  // Load repeat data from sessionStorage when ?repeat=true
-  useEffect(() => {
-    if (loadingExercises) return;
-
+  // One-shot repeat processing: runs during render once exercises are loaded
+  const repeatProcessed = useRef(false);
+  if (!loadingExercises && !repeatProcessed.current) {
+    repeatProcessed.current = true;
     const shouldRepeat = searchParams.get("repeat") === "true";
     if (shouldRepeat) {
       const savedData = sessionStorage.getItem(STORAGE_KEY);
       if (savedData) {
         try {
           const data = JSON.parse(savedData) as RepeatData;
-          if (data.exercise || (data as Record<string, unknown>).exerciseId) {
-            // Support both old format (exerciseId) and fallback
-            const exerciseId =
-              data.exercise?.id ||
-              (data as Record<string, unknown>).exerciseId;
+          const exerciseId = data.exercise?.id || data.exerciseId;
+          if (exerciseId) {
             const exToRepeat = exercises.find((ex) => ex.id === exerciseId);
             if (exToRepeat) {
               setSelectedExercise(exToRepeat);
@@ -54,7 +52,7 @@ export function useWorkoutForm(
         }
       }
     }
-  }, [searchParams, loadingExercises, exercises]);
+  }
 
   // Submit workout set
   const handleSubmit = useCallback(

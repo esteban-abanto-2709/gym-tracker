@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { Equipment } from "@/lib/types";
 import { Dumbbell } from "lucide-react";
 import {
@@ -38,14 +38,15 @@ export function CreateExerciseModal({
 }: CreateExerciseModalProps) {
   const [name, setName] = useState(initialName);
   const [equipment, setEquipment] = useState<Equipment>("Sin asignar");
+  const [prevOpen, setPrevOpen] = useState(false);
 
-  // Sync initialName into local state each time the modal opens
-  useEffect(() => {
-    if (open) {
-      setName(initialName);
-      setEquipment("Sin asignar");
-    }
-  }, [open, initialName]);
+  if (open && !prevOpen) {
+    setName(initialName);
+    setEquipment("Sin asignar");
+  }
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
