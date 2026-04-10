@@ -11,8 +11,7 @@ export class WorkoutsService {
   async create(createWorkoutDto: CreateWorkoutDto) {
     return this.prisma.workout.create({
       data: {
-        exercise: createWorkoutDto.exercise,
-        description: createWorkoutDto.description || '',
+        exerciseId: createWorkoutDto.exerciseId,
         reps: createWorkoutDto.reps,
         weight: createWorkoutDto.weight,
         opinion: createWorkoutDto.opinion || '',
@@ -48,6 +47,9 @@ export class WorkoutsService {
 
     return this.prisma.workout.findMany({
       where,
+      include: {
+        exercise: true,
+      },
       orderBy: {
         createdAt: 'desc',
       },

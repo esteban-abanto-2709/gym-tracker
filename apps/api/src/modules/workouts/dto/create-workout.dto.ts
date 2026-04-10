@@ -1,6 +1,5 @@
 export class CreateWorkoutDto {
-  exercise: string;
-  description?: string;
+  exerciseId: string;
   reps: number;
   weight: number;
   opinion?: string;
