@@ -6,12 +6,20 @@ datasource db {
   provider = "postgresql"
 }
 
+model Exercise {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  equipment String
+  workouts  Workout[]
+  createdAt DateTime  @default(now())
+}
+
 model Workout {
-  id          String   @id @default(uuid())
-  exercise    String
-  description String
-  weight      Float
-  reps        Int
-  opinion     String
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  weight     Float
+  reps       Int
+  opinion    String
+  createdAt  DateTime @default(now())
 }
