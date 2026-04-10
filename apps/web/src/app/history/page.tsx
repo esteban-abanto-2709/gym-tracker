@@ -46,9 +46,7 @@ export default function HistoryPage() {
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
           <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
           {!loadingDates && dates.length === 0 && (
-            <span className="text-sm text-muted-foreground">
-              Sin registros
-            </span>
+            <span className="text-sm text-muted-foreground">Sin registros</span>
           )}
           {dates.map((date) => (
             <button

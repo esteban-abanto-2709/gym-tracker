@@ -33,9 +33,7 @@ export function DeleteWorkoutDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-xl">
-            Cancelar
-          </AlertDialogCancel>
+          <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             onClick={(e) => {
