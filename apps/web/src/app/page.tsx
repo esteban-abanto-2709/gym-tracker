@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, Suspense, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense, useRef, useEffect } from "react";
 import Link from "next/link";
-import { api } from "@/lib/api";
-import { routes } from "@/lib/routes";
-import type { Equipment, Exercise } from "@/lib/types";
+import type { Equipment } from "@/lib/types";
+import { useExercises } from "@/hooks/useExercises";
+import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { History, Loader2, Search, Plus, Dumbbell, X } from "lucide-react";
 import {
   Dialog,
@@ -16,81 +15,40 @@ import {
 } from "@/components/ui/dialog";
 
 function HomeContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(false);
+  // --- Hooks de negocio ---
+  const {
+    exercises,
+    loadingExercises,
+    search,
+    setSearch,
+    filteredExercises,
+    createExercise,
+    creatingExercise,
+  } = useExercises();
 
-  // Exercise Data
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [loadingExercises, setLoadingExercises] = useState(true);
+  const {
+    weight,
+    setWeight,
+    reps,
+    setReps,
+    opinion,
+    setOpinion,
+    selectedExercise,
+    setSelectedExercise,
+    loading,
+    handleSubmit,
+  } = useWorkoutForm(exercises, loadingExercises);
 
-  // Combobox State
-  const [search, setSearch] = useState("");
+  // --- Combobox local UI state ---
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
-    null,
-  );
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Modal State
+  // --- Modal local UI state ---
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEquipment, setNewEquipment] = useState<Equipment>("Sin asignar");
 
-  // Form State
-  const [weight, setWeight] = useState("");
-  const [reps, setReps] = useState("");
-  const [opinion, setOpinion] = useState("");
-
-  // 1. Fetch Exercises on Load
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const data = await api.get<Exercise[]>(routes.api.exercises.list());
-        setExercises(data);
-      } catch (e) {
-        console.error("Error fetching exercises:", e);
-      } finally {
-        setLoadingExercises(false);
-      }
-    };
-    fetchExercises();
-  }, []);
-
-  // 2. Load last set if "repeat" param is present (Wait for exercises to load first)
-  useEffect(() => {
-    if (loadingExercises) return;
-
-    const shouldRepeat = searchParams.get("repeat") === "true";
-    if (shouldRepeat) {
-      const savedData = sessionStorage.getItem("gymtrack-last-set");
-      if (savedData) {
-        try {
-          const data = JSON.parse(savedData);
-          if (data.exerciseId) {
-            const exToRepeat = exercises.find(
-              (ex) => ex.id === data.exerciseId,
-            );
-            if (exToRepeat) {
-              setSelectedExercise(exToRepeat);
-              setSearch(exToRepeat.name);
-            }
-          }
-          setWeight(data.weight || "");
-          setReps(data.reps || "");
-        } catch (e) {
-          console.error("Error loading last set data:", e);
-        }
-      }
-    }
-  }, [searchParams, loadingExercises, exercises]);
-
-  // 3. Combobox Filter Logic
-  const filteredExercises = exercises.filter((ex) =>
-    `${ex.name} ${ex.equipment}`.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  // 4. Click Outside Logic
+  // Click outside to close combobox
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -104,73 +62,24 @@ function HomeContent() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 5. Creation Modal
+  // Open creation modal
   const openCreationModal = () => {
-    setNewName(search); // Pre-fill
+    setNewName(search);
     setNewEquipment("Sin asignar");
     setIsOpen(false);
     setIsDialogOpen(true);
   };
 
+  // Create exercise via hook + select it
   const handleCreate = async () => {
     if (!newName.trim()) return;
-    setLoading(true);
-
     try {
-      // POST /exercises
-      const created = await api.post<Exercise>(routes.api.exercises.create(), {
-        name: newName.trim(),
-        equipment: newEquipment,
-      });
-
-      // Update Local State
-      setExercises((prev) =>
-        [...prev, created].sort((a, b) => a.name.localeCompare(b.name)),
-      );
+      const created = await createExercise(newName, newEquipment);
       setSelectedExercise(created);
       setSearch(created.name);
       setIsDialogOpen(false);
     } catch (error) {
       console.error("Error creating exercise:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 6. Submit Workout
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!selectedExercise) {
-      alert("Por favor selecciona un ejercicio antes de guardar.");
-      return;
-    }
-
-    setLoading(true);
-
-    const data = {
-      exerciseId: selectedExercise.id,
-      reps: Number(reps),
-      weight: Number(weight),
-      opinion,
-    };
-
-    try {
-      await api.post(routes.api.workouts.create(), data);
-
-      // Save for "Repeat" flow from Success page
-      sessionStorage.setItem(
-        "gymtrack-last-set",
-        JSON.stringify({
-          exerciseId: selectedExercise.id,
-          weight,
-          reps,
-        }),
-      );
-
-      router.push(routes.success());
-    } catch (error) {
-      console.error("Error saving workout:", error);
-      setLoading(false);
     }
   };
 
@@ -528,10 +437,10 @@ function HomeContent() {
           <DialogFooter className="sm:justify-stretch">
             <button
               onClick={handleCreate}
-              disabled={loading}
+              disabled={creatingExercise}
               className="w-full bg-primary text-primary-foreground font-black py-4 rounded-xl text-lg shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-50"
             >
-              {loading ? "Creando..." : "Crear y Seleccionar"}
+              {creatingExercise ? "Creando..." : "Crear y Seleccionar"}
             </button>
           </DialogFooter>
         </DialogContent>
