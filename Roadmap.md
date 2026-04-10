@@ -5,28 +5,32 @@ Este documento define la visión a largo plazo y los hitos arquitectónicos del 
 ---
 
 ## 🎯 v1.0: "The Foundation" (Fase Actual)
-*El objetivo es dejar la base de código blindada, estructurada y en las mejores prácticas antes de añadir complejidad.*
+
+_El objetivo es dejar la base de código blindada, estructurada y en las mejores prácticas antes de añadir complejidad._
 
 - [x] **Infraestructura Core**: Despliegue en Render + Vercel + Supabase.
 - [x] **Arquitectura y Rendimiento**: Lazy Loading, Caché local en memoria y mejoras de UX.
 - [x] **Seguridad Base**: CORS Mode y entorno Docker productivo.
-- [ ] **Normalización de Datos**: Migración de la base de datos para usar una tabla `Exercise` estandarizada, eliminando el texto libre para permitir métricas futuras.
-- [ ] **Limpieza de UI**: Buscador/Selector inteligente de Ejercicios en el Frontend.
+- [x] **Normalización de Datos**: Migración de la base de datos para usar una tabla `Exercise` estandarizada, eliminando el texto libre para permitir métricas futuras.
+- [x] **Limpieza de UI**: Buscador/Selector inteligente de Ejercicios en el Frontend.
+- [ ] **Refactorización de Arquitectura Frontend**: Modularizar y limpiar `page.tsx` extrayendo la lógica a Custom Hooks (`useExercises.ts`) y Componentes visuales (`ExerciseCombobox.tsx`) independientes.
 
 ---
 
 ## 🏗️ v1.5: "The Blueprint" (Sistema de Rutinas)
-*El usuario no solo "hace" ejercicios, sino que sigue un "Plan".*
+
+_El usuario no solo "hace" ejercicios, sino que sigue un "Plan"._
 
 - [ ] **Modelado de Rutinas**: Crear entidades `Routine` y `RoutineExercise`.
 - [ ] **Asignación de Días**: Capacidad de etiquetar rutinas (ej. Lunes = "Push", Martes = "Pull").
-- [ ] **Tracking Inteligente en Vivo**: UI durante el entrenamiento que liste la rutina seleccionada y marque *cuántas series/sets te faltan* para terminar.
+- [ ] **Tracking Inteligente en Vivo**: UI durante el entrenamiento que liste la rutina seleccionada y marque _cuántas series/sets te faltan_ para terminar.
 - [ ] **Gestión de Sesiones**: Agrupar los sets diarios bajo una entidad `Session` para saber exactamente cuándo empezó y terminó un entrenamiento.
 
 ---
 
 ## 🤝 v2.0: "The Inner Circle" (Autenticación y Social)
-*La app deja de ser personal y se abre al círculo de amigos.*
+
+_La app deja de ser personal y se abre al círculo de amigos._
 
 - [ ] **Sistema de Auth**: Implementación de Supabase Auth (Google/Email).
 - [ ] **Perfiles de Usuario**: Tablas de usuario vinculadas al sistema de Auth.
@@ -36,7 +40,8 @@ Este documento define la visión a largo plazo y los hitos arquitectónicos del 
 ---
 
 ## 📊 v2.5: "The Arena" (Dashboards y Analíticas)
-*Análisis profundo de los datos acumulados.*
+
+_Análisis profundo de los datos acumulados._
 
 - [ ] **Panel Personal**: Gráficas de Volumen total levantado por semana/mes.
 - [ ] **PR Tracking**: Seguimiento visual de 1RM (Fuerza Máxima) histórico por ejercicio.
@@ -46,6 +51,7 @@ Este documento define la visión a largo plazo y los hitos arquitectónicos del 
 ---
 
 ## 🤖 v3.0: "The Coach" (Futuro Lejano)
+
 - Sugerencias IA.
 - Mapeo de fatiga muscular específica.
 - Recomendación de pesos sobrecarga progresiva.
