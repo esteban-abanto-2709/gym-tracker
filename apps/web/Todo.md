@@ -1,23 +1,34 @@
 # WEB TODOs (v1.0: Normalización)
 
-## 🏗️ Refactorización Arquitectónica (Próximo Objetivo)
+## ✅ Refactorización Arquitectónica (Completada)
 
-**Estado**: PENDIENTE (En preparación)
+**Estado**: COMPLETADO
 
-Nuestro `apps/web/src/app/page.tsx` ha superado el límite razonable de líneas (+500) tras implementar las lógicas de UI complejas y llamadas concurrentes. Antes de crear más vistas (Ej. Dashboards o Rutinas), debemos limpiar la casa separando responsabilidades.
+Se modularizó `page.tsx` (567 → 197 líneas) y `history/page.tsx` (530 → 166 líneas) extrayendo lógica a hooks y UI a componentes reutilizables.
 
-### Pasos paso a paso:
+### Lo que se hizo:
 
 1. **Tipados Globales:**
-   - [ ] Aislar las interfaces (`Exercise`, `Equipment`) en un nuevo fichero `apps/web/src/lib/types.ts`.
+   - [x] `lib/types.ts` — Interfaces `Exercise`, `Equipment`, `Workout`
+
 2. **Custom Hooks (Lógica de Negocio):**
-   - [ ] Crear `useExercises.ts` -> Para englobar el fetch inicial del listado, los estados de _loading_, la lógica de `filter` en la búsqueda nativa y enviar el POST de creación.
-   - [ ] Crear `useWorkoutForm.ts` -> Para alojar los `useState` del formulario final (peso, reps), guardar en `sessionStorage` para repeticiones de UX rápidas y hacer POST del Set completado.
+   - [x] `hooks/useExercises.ts` — Fetch, filtrado, creación de ejercicios
+   - [x] `hooks/useWorkoutForm.ts` — Estado del formulario, repeat desde sessionStorage, submit
+   - [x] `hooks/useWorkoutHistory.ts` — Fetch fechas, cache inteligente, CRUD workouts
 
 3. **Componentes UI Aislados:**
-   - [ ] Crear `components/exercises/ExerciseCombobox.tsx` -> Un archivo 100% visual. Toma props de los hooks y decide si muestra la vista del "Input Texto" o si la cambia mágicamente por la "Tarjeta Premium Selección".
-   - [ ] Crear `components/exercises/CreateExerciseModal.tsx` -> Extraer puramente el diseño del `<Dialog>` de Shadcn con sus selectores de _Equipment_.
+   - [x] `components/exercises/ExerciseCombobox.tsx` — Selector visual con tarjeta premium
+   - [x] `components/exercises/CreateExerciseModal.tsx` — Dialog de creación con selector de Equipment
+   - [x] `components/history/WorkoutCard.tsx` — Tarjeta de workout set
+   - [x] `components/history/EditWorkoutDialog.tsx` — Modal de edición
+   - [x] `components/history/DeleteWorkoutDialog.tsx` — Confirmación de borrado
 
-4. **El gran limpieza final:**
-   - [ ] Achicar drásticamente el retorno renderizado en el mismo `page.tsx`, dejando su código a no más de 100 líneas donde solo orquesta enviando data de los _Hooks_ a los _Components Componentes_.
-   - [ ] Testear y revisar todo localmente sin warnings.
+4. **Componentes Layout Compartidos:**
+   - [x] `components/layout/PageShell.tsx` — Wrapper con background pattern + gradient orbs
+   - [x] `components/layout/AppHeader.tsx` — Header flexible con slots reutilizables
+
+5. **Limpieza Final:**
+   - [x] `page.tsx` reducido a orquestador (~197 líneas)
+   - [x] `history/page.tsx` reducido a orquestador (~166 líneas)
+   - [x] `success/page.tsx` usa layout compartido (~83 líneas)
+   - [x] Lint y build sin errores

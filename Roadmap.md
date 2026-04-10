@@ -13,7 +13,7 @@ _El objetivo es dejar la base de código blindada, estructurada y en las mejores
 - [x] **Seguridad Base**: CORS Mode y entorno Docker productivo.
 - [x] **Normalización de Datos**: Migración de la base de datos para usar una tabla `Exercise` estandarizada, eliminando el texto libre para permitir métricas futuras.
 - [x] **Limpieza de UI**: Buscador/Selector inteligente de Ejercicios en el Frontend.
-- [ ] **Refactorización de Arquitectura Frontend**: Modularizar y limpiar `page.tsx` extrayendo la lógica a Custom Hooks (`useExercises.ts`) y Componentes visuales (`ExerciseCombobox.tsx`) independientes.
+- [x] **Refactorización de Arquitectura Frontend**: Modularización completa — Custom Hooks (`useExercises`, `useWorkoutForm`, `useWorkoutHistory`), Componentes UI (`ExerciseCombobox`, `CreateExerciseModal`, `WorkoutCard`), Layout compartido (`PageShell`, `AppHeader`). Pages reducidas de +500 a ~170 líneas.
 
 ---
 
