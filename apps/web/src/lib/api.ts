@@ -40,7 +40,7 @@ class ApiClient {
     });
   }
 
-  async post<T>(endpoint: string, data?: any, token?: string): Promise<T> {
+  async post<T>(endpoint: string, data?: unknown, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: "POST",
       body: JSON.stringify(data),
@@ -48,7 +48,7 @@ class ApiClient {
     });
   }
 
-  async patch<T>(endpoint: string, data?: any, token?: string): Promise<T> {
+  async patch<T>(endpoint: string, data?: unknown, token?: string): Promise<T> {
     return this.request<T>(endpoint, {
       method: "PATCH",
       body: JSON.stringify(data),

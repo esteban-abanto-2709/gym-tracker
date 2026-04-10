@@ -15,7 +15,14 @@ import {
 } from "@/components/ui/dialog";
 
 // Define strict types matching the backend
-type Equipment = "Sin asignar" | "Barra" | "Polea" | "Mancuerna" | "Máquina" | "Peso Corporal" | "Otro";
+type Equipment =
+  | "Sin asignar"
+  | "Barra"
+  | "Polea"
+  | "Mancuerna"
+  | "Máquina"
+  | "Peso Corporal"
+  | "Otro";
 
 interface Exercise {
   id: string;
@@ -29,7 +36,7 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  
+
   // Exercise Data
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loadingExercises, setLoadingExercises] = useState(true);
@@ -37,7 +44,9 @@ function HomeContent() {
   // Combobox State
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
+    null,
+  );
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // Modal State
@@ -76,7 +85,9 @@ function HomeContent() {
         try {
           const data = JSON.parse(savedData);
           if (data.exerciseId) {
-            const exToRepeat = exercises.find((ex) => ex.id === data.exerciseId);
+            const exToRepeat = exercises.find(
+              (ex) => ex.id === data.exerciseId,
+            );
             if (exToRepeat) {
               setSelectedExercise(exToRepeat);
               setSearch(exToRepeat.name);
@@ -93,13 +104,16 @@ function HomeContent() {
 
   // 3. Combobox Filter Logic
   const filteredExercises = exercises.filter((ex) =>
-    `${ex.name} ${ex.equipment}`.toLowerCase().includes(search.toLowerCase())
+    `${ex.name} ${ex.equipment}`.toLowerCase().includes(search.toLowerCase()),
   );
 
   // 4. Click Outside Logic
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -127,7 +141,9 @@ function HomeContent() {
       });
 
       // Update Local State
-      setExercises((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      setExercises((prev) =>
+        [...prev, created].sort((a, b) => a.name.localeCompare(b.name)),
+      );
       setSelectedExercise(created);
       setSearch(created.name);
       setIsDialogOpen(false);
@@ -157,7 +173,7 @@ function HomeContent() {
 
     try {
       await api.post(routes.api.workouts.create(), data);
-      
+
       // Save for "Repeat" flow from Success page
       sessionStorage.setItem(
         "gymtrack-last-set",
@@ -252,9 +268,9 @@ function HomeContent() {
             <label className="text-sm font-bold text-foreground ml-1">
               Ejercicio <span className="text-primary">*</span>
             </label>
-            
+
             {selectedExercise && !isOpen ? (
-              <div 
+              <div
                 className="flex items-center justify-between bg-card border-2 border-primary rounded-2xl p-3 cursor-pointer hover:bg-muted/50 transition-colors animate-fade-in"
                 onClick={() => {
                   setSearch("");
@@ -274,13 +290,13 @@ function HomeContent() {
                     </span>
                   </div>
                 </div>
-                <button 
+                <button
                   type="button"
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    setSelectedExercise(null); 
-                    setSearch(""); 
-                    setIsOpen(true); 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedExercise(null);
+                    setSearch("");
+                    setIsOpen(true);
                   }}
                   className="p-2 mr-1 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
                 >
@@ -288,14 +304,22 @@ function HomeContent() {
                 </button>
               </div>
             ) : (
-              <div 
-                 className={`relative flex items-center bg-card border-2 transition-all rounded-2xl ${isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-input hover:border-primary/50'} animate-slide-in-right [animation-delay:0.1s]`}
+              <div
+                className={`relative flex items-center bg-card border-2 transition-all rounded-2xl ${isOpen ? "border-primary ring-2 ring-primary/20" : "border-input hover:border-primary/50"} animate-slide-in-right [animation-delay:0.1s]`}
               >
-                <Search className={`w-5 h-5 ml-4 shrink-0 transition-colors ${isOpen ? 'text-primary' : 'text-muted-foreground'}`} />
+                <Search
+                  className={`w-5 h-5 ml-4 shrink-0 transition-colors ${isOpen ? "text-primary" : "text-muted-foreground"}`}
+                />
                 <input
                   type="text"
                   autoFocus={isOpen}
-                  placeholder={loadingExercises ? "Cargando ejercicios..." : selectedExercise ? "Buscar otro ejercicio..." : "Busca o escribe para crear..."}
+                  placeholder={
+                    loadingExercises
+                      ? "Cargando ejercicios..."
+                      : selectedExercise
+                        ? "Buscar otro ejercicio..."
+                        : "Busca o escribe para crear..."
+                  }
                   disabled={loadingExercises}
                   className="w-full bg-transparent px-3 py-4 focus:outline-none text-foreground text-lg disabled:opacity-50 placeholder:text-muted-foreground/70"
                   value={search}
@@ -306,9 +330,13 @@ function HomeContent() {
                   onClick={() => setIsOpen(true)}
                 />
                 {search && (
-                  <button 
+                  <button
                     type="button"
-                    onClick={(e) => { e.preventDefault(); setSearch(""); document.querySelector('input')?.focus(); }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSearch("");
+                      document.querySelector("input")?.focus();
+                    }}
                     className="mr-3 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-border transition-colors object-contain z-10"
                   >
                     <X className="w-4 h-4" />
@@ -342,7 +370,7 @@ function HomeContent() {
                       ))}
                     </div>
                   ) : null}
-                  
+
                   {/* BOTÓN CREAR SIEMPRE AL FINAL */}
                   <div className="p-2 border-t border-border bg-muted/30">
                     <button
@@ -352,7 +380,7 @@ function HomeContent() {
                     >
                       <Plus className="w-4 h-4 shrink-0" strokeWidth={3} />
                       <span className="truncate">
-                        Crear "{search || 'Nuevo'}"...
+                        Crear &quot;{search || "Nuevo"}&quot;...
                       </span>
                     </button>
                   </div>
@@ -457,7 +485,9 @@ function HomeContent() {
 
           <div className="space-y-6 py-4">
             <div className="space-y-3">
-              <label className="text-sm font-bold ml-1 text-muted-foreground">¿Cómo se llama?</label>
+              <label className="text-sm font-bold ml-1 text-muted-foreground">
+                ¿Cómo se llama?
+              </label>
               <input
                 autoFocus
                 value={newName}
@@ -468,22 +498,44 @@ function HomeContent() {
             </div>
 
             <div className="space-y-3">
-              <label className="text-sm font-bold ml-1 text-muted-foreground">Tipo / Equipo</label>
+              <label className="text-sm font-bold ml-1 text-muted-foreground">
+                Tipo / Equipo
+              </label>
               <div className="relative">
                 <select
                   value={newEquipment}
                   onChange={(e) => setNewEquipment(e.target.value as Equipment)}
                   className="w-full px-4 py-4 bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-2xl transition-all font-bold text-lg appearance-none cursor-pointer"
                 >
-                  {(["Sin asignar", "Barra", "Mancuerna", "Máquina", "Polea", "Peso Corporal", "Otro"] as Equipment[]).map((equip) => (
+                  {(
+                    [
+                      "Sin asignar",
+                      "Barra",
+                      "Mancuerna",
+                      "Máquina",
+                      "Polea",
+                      "Peso Corporal",
+                      "Otro",
+                    ] as Equipment[]
+                  ).map((equip) => (
                     <option key={equip} value={equip}>
                       {equip}
                     </option>
                   ))}
                 </select>
                 <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-muted-foreground">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -501,7 +553,6 @@ function HomeContent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }

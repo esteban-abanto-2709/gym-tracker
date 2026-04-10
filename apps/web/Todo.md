@@ -1,6 +1,7 @@
 # WEB TODOs (v1.0: Normalización)
 
 ## Objetivo
+
 Consumir la nueva arquitectura de base de datos sin fricción para el usuario en medio de un entrenamiento.
 
 - [ ] **Diseño UI**: Reemplazar el input de texto libre en el index (Pantalla principal) por un "Buscador autocompletable" (Combobox / Select searchable).
