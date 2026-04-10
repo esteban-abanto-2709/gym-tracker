@@ -5,31 +5,10 @@ import { routes } from "@/lib/routes";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
-import {
-  Calendar,
-  RotateCcw,
-  MessageSquare,
-  Plus,
-  Pencil,
-  Trash2,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { WorkoutCard } from "@/components/history/WorkoutCard";
+import { EditWorkoutDialog } from "@/components/history/EditWorkoutDialog";
+import { DeleteWorkoutDialog } from "@/components/history/DeleteWorkoutDialog";
+import { Calendar, Plus } from "lucide-react";
 
 export default function HistoryPage() {
   const {
@@ -134,96 +113,15 @@ export default function HistoryPage() {
                     No hay entrenamientos este día.
                   </p>
                 ) : (
-                  currentWorkouts.map((exercise, idx) => (
-                    <div
-                      key={exercise.id}
-                      className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-4 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
-                      style={{ animationDelay: `${idx * 0.05}s` }}
-                    >
-                      {/* Brand Accent Line */}
-                      <div className="absolute left-0 top-4 bottom-4 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
-
-                      <div className="pl-3">
-                        <div className="flex justify-between items-start mb-1">
-                          <div className="flex-1">
-                            <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
-                              {exercise.exercise.name}
-                            </h3>
-                            <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                              {new Date(exercise.createdAt).toLocaleTimeString(
-                                "es-ES",
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                },
-                              )}
-                            </span>
-                          </div>
-
-                          <button
-                            onClick={() => handleRepeat(exercise)}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl text-[10px] font-black shadow-md hover:scale-105 active:scale-95 transition-all uppercase tracking-wider"
-                          >
-                            <RotateCcw
-                              className="w-3.5 h-3.5"
-                              strokeWidth={3}
-                            />
-                            Repetir
-                          </button>
-                        </div>
-
-                        <div className="flex items-baseline gap-4 mt-3">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-black text-foreground">
-                              {exercise.weight}
-                            </span>
-                            <span className="text-xs font-bold text-muted-foreground">
-                              kg
-                            </span>
-                          </div>
-                          <div className="h-4 w-px bg-border" />
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-black text-foreground">
-                              {exercise.reps}
-                            </span>
-                            <span className="text-xs font-bold text-muted-foreground">
-                              reps
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between items-end mt-4">
-                          <div className="flex-1">
-                            {exercise.opinion && (
-                              <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
-                                <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
-                                <p className="italic leading-snug">
-                                  &ldquo;{exercise.opinion}&rdquo;
-                                </p>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 ml-4">
-                            <button
-                              onClick={() => handleEditClick(exercise)}
-                              className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
-                              title="Editar Set"
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => setDeletingWorkout(exercise)}
-                              className="p-2.5 text-muted-foreground hover:text-destructive transition-colors rounded-xl bg-muted/30 hover:bg-destructive/10"
-                              title="Eliminar Set"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                  currentWorkouts.map((workout, idx) => (
+                    <WorkoutCard
+                      key={workout.id}
+                      workout={workout}
+                      index={idx}
+                      onRepeat={handleRepeat}
+                      onEdit={handleEditClick}
+                      onDelete={setDeletingWorkout}
+                    />
                   ))
                 )}
               </div>
@@ -241,85 +139,24 @@ export default function HistoryPage() {
       </Link>
 
       {/* Edit Dialog */}
-      <Dialog
+      <EditWorkoutDialog
         open={!!editingWorkout}
         onOpenChange={(open) => !open && setEditingWorkout(null)}
-      >
-        <DialogContent className="sm:max-w-[425px] rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>Editar Entrenamiento</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="edit-weight" className="text-sm font-medium">
-                  Peso (kg)
-                </label>
-                <input
-                  id="edit-weight"
-                  type="number"
-                  step="0.5"
-                  value={editWeight}
-                  onChange={(e) => setEditWeight(e.target.value)}
-                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="edit-reps" className="text-sm font-medium">
-                  Repeticiones
-                </label>
-                <input
-                  id="edit-reps"
-                  type="number"
-                  value={editReps}
-                  onChange={(e) => setEditReps(e.target.value)}
-                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <button
-              onClick={saveEdit}
-              disabled={actionLoading}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
-            >
-              {actionLoading ? "Guardando..." : "Guardar Cambios"}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        weight={editWeight}
+        onWeightChange={setEditWeight}
+        reps={editReps}
+        onRepsChange={setEditReps}
+        loading={actionLoading}
+        onSave={saveEdit}
+      />
 
-      {/* Delete Confirmation Alert Dialog */}
-      <AlertDialog
+      {/* Delete Confirmation Dialog */}
+      <DeleteWorkoutDialog
         open={!!deletingWorkout}
         onOpenChange={(open) => !open && setDeletingWorkout(null)}
-      >
-        <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar este registro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminarán los datos de esta
-              serie permanentemente.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-xl">
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
-              onClick={(e) => {
-                e.preventDefault();
-                confirmDelete();
-              }}
-              disabled={actionLoading}
-            >
-              {actionLoading ? "Eliminando..." : "Eliminar Set"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        loading={actionLoading}
+        onConfirm={confirmDelete}
+      />
     </PageShell>
   );
 }
