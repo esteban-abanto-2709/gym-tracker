@@ -7,12 +7,10 @@ export class ExercisesService {
   constructor(private prisma: PrismaService) {}
 
   async create(createExerciseDto: CreateExerciseDto) {
-    // If the exercise already exists by name, we could return it, 
-    // but the schema has @unique on name, so we should do an upsert or findFirst to be safe.
-    let existing = await this.prisma.exercise.findUnique({
-      where: { name: createExerciseDto.name }
+    const existing = await this.prisma.exercise.findUnique({
+      where: { name: createExerciseDto.name },
     });
-    
+
     if (existing) {
       return existing;
     }
@@ -21,7 +19,6 @@ export class ExercisesService {
       data: {
         name: createExerciseDto.name,
         equipment: createExerciseDto.equipment,
-        description: createExerciseDto.description,
       },
     });
   }
