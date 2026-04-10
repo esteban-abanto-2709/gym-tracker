@@ -1,50 +1,12 @@
-"use client";
-
 import Link from "next/link";
 import { History } from "lucide-react";
+import { PageShell } from "@/components/layout/PageShell";
+import { AppHeader } from "@/components/layout/AppHeader";
 
 export default function SuccessPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden font-sans">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 35px,
-              var(--foreground) 35px,
-              var(--foreground) 36px
-            )`,
-          }}
-        />
-      </div>
-
-      {/* Gradient Orb */}
-      <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`,
-        }}
-      />
-
-      {/* Header - Fixed */}
-      <header className="shrink-0 px-6 py-4 border-b border-border relative z-10 bg-background/50 backdrop-blur-md">
-        <div className="flex items-center justify-between max-w-md mx-auto">
-          <div className="w-6" />
-
-          <h1 className="text-xl font-bold tracking-tight">
-            <span className="bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] bg-clip-text text-transparent">
-              GYM
-            </span>
-            <span className="text-foreground">TRACK</span>
-          </h1>
-
-          <div className="w-6" />
-        </div>
-      </header>
+    <PageShell>
+      <AppHeader />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8 relative z-10 text-center animate-fade-in-up">
@@ -106,6 +68,6 @@ export default function SuccessPage() {
           </p>
         </div>
       </main>
-    </div>
+    </PageShell>
   );
 }

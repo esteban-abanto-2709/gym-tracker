@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
+import { PageShell } from "@/components/layout/PageShell";
+import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import {
-  ArrowLeft,
   Calendar,
   RotateCcw,
   MessageSquare,
@@ -208,75 +209,35 @@ export default function HistoryPage() {
   const currentWorkouts = cachedWorkouts[selectedDate] || [];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden font-sans">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 35px,
-              var(--foreground) 35px,
-              var(--foreground) 36px
-            )`,
-          }}
-        />
-      </div>
-
-      {/* Gradient Orbs */}
-      <div
-        className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), transparent)`,
-        }}
-      />
-      <div
-        className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-5 blur-3xl pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, hsl(var(--brand-gradient-end)), transparent)`,
-        }}
-      />
-
-      {/* Header - Fixed */}
-      <header className="shrink-0 px-6 py-4 border-b border-border z-10 bg-background/50 backdrop-blur-md sticky top-0">
-        <div className="max-w-md mx-auto space-y-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href={routes.home()}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+    <PageShell variant="history">
+      <AppHeader
+        leftAction={<BackAction href={routes.home()} />}
+        title="Historial"
+        sticky
+      >
+        {/* Date Selector Pills */}
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
+          <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
+          {!loadingDates && dates.length === 0 && (
+            <span className="text-sm text-muted-foreground">
+              Sin registros
+            </span>
+          )}
+          {dates.map((date) => (
+            <button
+              key={date}
+              onClick={() => setSelectedDate(date)}
+              className={`flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
+                selectedDate === date
+                  ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  : "bg-card/50 border-input text-muted-foreground hover:border-border"
+              }`}
             >
-              <ArrowLeft className="w-6 h-6" strokeWidth={2.5} />
-            </Link>
-            <h1 className="text-xl font-bold tracking-tight">Historial</h1>
-            <div className="w-6" /> {/* Spacer */}
-          </div>
-
-          {/* Date Selector Dropdown/Pills */}
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
-            <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
-            {!loadingDates && dates.length === 0 && (
-              <span className="text-sm text-muted-foreground">
-                Sin registros
-              </span>
-            )}
-            {dates.map((date) => (
-              <button
-                key={date}
-                onClick={() => setSelectedDate(date)}
-                className={`flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
-                  selectedDate === date
-                    ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
-                    : "bg-card/50 border-input text-muted-foreground hover:border-border"
-                }`}
-              >
-                {getDisplayDate(date)}
-              </button>
-            ))}
-          </div>
+              {getDisplayDate(date)}
+            </button>
+          ))}
         </div>
-      </header>
+      </AppHeader>
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-6 pb-24 overflow-y-auto relative z-10 max-w-md mx-auto w-full">
@@ -511,6 +472,6 @@ export default function HistoryPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PageShell>
   );
 }

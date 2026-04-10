@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import Link from "next/link";
 import { useExercises } from "@/hooks/useExercises";
 import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
+import { PageShell } from "@/components/layout/PageShell";
+import { AppHeader, HistoryAction } from "@/components/layout/AppHeader";
 import type { Equipment } from "@/lib/types";
-import { History, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 function HomeContent() {
   // --- Hooks de negocio ---
@@ -50,31 +51,7 @@ function HomeContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden font-sans">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 35px,
-              var(--foreground) 35px,
-              var(--foreground) 36px
-            )`,
-          }}
-        />
-      </div>
-
-      {/* Gradient Orb */}
-      <div
-        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{
-          background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`,
-        }}
-      />
-
+    <PageShell>
       {/* Loading Overlay */}
       {loading && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
@@ -85,25 +62,7 @@ function HomeContent() {
         </div>
       )}
 
-      {/* Header - Fixed */}
-      <header className="shrink-0 px-6 py-4 border-b border-border relative z-10 bg-background/50 backdrop-blur-md">
-        <div className="flex items-center justify-between max-w-md mx-auto">
-          <div className="w-6" />
-          <h1 className="text-xl font-bold tracking-tight">
-            <span className="bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] bg-clip-text text-transparent">
-              GYM
-            </span>
-            <span className="text-foreground">TRACK</span>
-          </h1>
-          <Link
-            href="/history"
-            className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
-            title="Ver Historial"
-          >
-            <History className="w-6 h-6" />
-          </Link>
-        </div>
-      </header>
+      <AppHeader rightAction={<HistoryAction />} />
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-8 overflow-y-visible relative z-10 animate-fade-in-up">
@@ -224,7 +183,7 @@ function HomeContent() {
         loading={creatingExercise}
         onCreate={handleCreate}
       />
-    </div>
+    </PageShell>
   );
 }
 
