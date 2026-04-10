@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
+import type { Equipment, Exercise } from "@/lib/types";
 import { History, Loader2, Search, Plus, Dumbbell, X } from "lucide-react";
 import {
   Dialog,
@@ -13,24 +14,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-
-// Define strict types matching the backend
-type Equipment =
-  | "Sin asignar"
-  | "Barra"
-  | "Polea"
-  | "Mancuerna"
-  | "Máquina"
-  | "Peso Corporal"
-  | "Otro";
-
-interface Exercise {
-  id: string;
-  name: string;
-  equipment: Equipment;
-  description?: string;
-  createdAt?: string;
-}
 
 function HomeContent() {
   const router = useRouter();

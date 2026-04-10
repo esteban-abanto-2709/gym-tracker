@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
+import type { Workout } from "@/lib/types";
 import {
   ArrowLeft,
   Calendar,
@@ -31,20 +32,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-interface Workout {
-  id: string;
-  exerciseId: string;
-  exercise: {
-    id: string;
-    name: string;
-    equipment: string;
-  };
-  weight: number;
-  reps: number;
-  opinion: string;
-  createdAt: string;
-}
 
 export default function HistoryPage() {
   const router = useRouter();
