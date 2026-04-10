@@ -34,8 +34,12 @@ import {
 
 interface Workout {
   id: string;
-  exercise: string;
-  description: string;
+  exerciseId: string;
+  exercise: {
+    id: string;
+    name: string;
+    equipment: string;
+  };
   weight: number;
   reps: number;
   opinion: string;
@@ -146,8 +150,7 @@ export default function HistoryPage() {
     sessionStorage.setItem(
       "gymtrack-last-set",
       JSON.stringify({
-        exercise: exercise.exercise,
-        description: exercise.description || "",
+        exerciseId: exercise.exercise.id,
         weight: exercise.weight.toString(),
         reps: exercise.reps.toString(),
       }),
@@ -348,7 +351,7 @@ export default function HistoryPage() {
                         <div className="flex justify-between items-start mb-1">
                           <div className="flex-1">
                             <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
-                              {exercise.exercise}
+                              {exercise.exercise.name}
                             </h3>
                             <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                               {new Date(exercise.createdAt).toLocaleTimeString(

@@ -10,5 +10,9 @@ export const routes = {
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },
+    exercises: {
+      create: () => "/exercises",
+      list: () => "/exercises",
+    },
   },
 } as const;
