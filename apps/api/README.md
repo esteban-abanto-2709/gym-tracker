@@ -1,98 +1,118 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Gym Tracker — API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API del proyecto Gym Tracker. Construida con NestJS sobre Express, usa Prisma como ORM y PostgreSQL como base de datos.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Stack
 
-## Description
+- **Framework:** NestJS 11 + Express 5
+- **ORM:** Prisma 7 con `@prisma/adapter-pg` (connection pooling)
+- **Base de datos:** PostgreSQL 16
+- **Runtime:** Node.js 20
+- **Testing:** Jest + Supertest
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requisitos
 
-## Project setup
+- Node.js 20+
+- PostgreSQL corriendo (o usar Docker Compose desde `apps/docker/`)
+- npm
+
+## Instalación
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+## Variables de entorno
+
+Crea un archivo `.env` en la raíz de `apps/api/`:
+
+```env
+PORT=4000
+DATABASE_URL=postgresql://user:password@localhost:5432/gym_tracker
+DIRECT_URL=postgresql://user:password@localhost:5432/gym_tracker
+FRONTEND_URL=http://localhost:3000
+```
+
+`DATABASE_URL` se usa en runtime (puede ser una URL de pool como Supabase Transaction Mode).  
+`DIRECT_URL` se usa exclusivamente para migraciones y debe ser una conexión directa.
+
+## Comandos
 
 ```bash
-# development
-$ npm run start
+npm run start:dev      # desarrollo con hot-reload
+npm run start:prod     # producción (requiere build previo)
+npm run build          # compila TypeScript → dist/
 
-# watch mode
-$ npm run start:dev
+npm run test:unit      # tests unitarios
+npm run test:e2e       # tests end-to-end
+npm run test:cov       # cobertura de tests
 
-# production mode
-$ npm run start:prod
+npm run lint           # ESLint con auto-fix
+npm run format         # Prettier
 ```
 
-## Run tests
+## Migraciones (Prisma)
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx prisma migrate dev          # crear y aplicar nueva migración (desarrollo)
+npx prisma migrate deploy       # aplicar migraciones existentes (producción)
+npx prisma generate             # regenerar cliente tras cambios en el schema
+npx prisma studio               # UI visual de la base de datos
 ```
 
-## Deployment
+## Endpoints
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/exercises` | Lista todos los ejercicios (orden alfabético) |
+| `POST` | `/exercises` | Crea un ejercicio nuevo |
+| `GET` | `/workouts` | Lista workouts (filtro opcional `?date=YYYY-MM-DD`) |
+| `POST` | `/workouts` | Registra un workout |
+| `PATCH` | `/workouts/:id` | Edita un workout |
+| `DELETE` | `/workouts/:id` | Elimina un workout |
+| `GET` | `/workouts/dates` | Devuelve las fechas distintas con workouts registrados |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Arquitectura
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```
+src/
+├── main.ts                     # Bootstrap: CORS, prefijo global, puerto
+├── app.module.ts               # Módulo raíz
+├── modules/
+│   ├── exercises/              # ExercisesController + ExercisesService
+│   └── workouts/               # WorkoutsController + WorkoutsService
+└── providers/
+    └── prisma/                 # PrismaService con pg.Pool
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+El `PrismaService` inicializa un `pg.Pool` y lo pasa como adapter a Prisma, lo que permite reusar conexiones de forma eficiente en entornos serverless o con límites de conexiones (Supabase, Render free tier).
 
-## Resources
+## Schema de base de datos
 
-Check out a few resources that may come in handy when working with NestJS:
+```prisma
+model Exercise {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  equipment String
+  workouts  Workout[]
+  createdAt DateTime  @default(now())
+}
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+model Workout {
+  id         String   @id @default(uuid())
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  weight     Float
+  reps       Int
+  opinion    String
+  createdAt  DateTime @default(now())
+}
+```
 
-## Support
+## Docker
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+El `Dockerfile` incluye un build multi-stage. Al iniciar el contenedor ejecuta automáticamente `prisma migrate deploy` antes de levantar el servidor. Para correr junto al resto del stack, usa Docker Compose desde `apps/docker/`.
 
-## Stay in touch
+## Despliegue
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Desplegado en **Render** como servicio web containerizado. En producción, `DIRECT_URL` debe apuntar a la conexión directa de Supabase (Session Mode o IPv4 add-on) para que las migraciones funcionen correctamente.
