@@ -24,7 +24,7 @@ export function useWorkoutHistory() {
   const [editWeight, setEditWeight] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Fetch dates + preload first 4 days on mount
+  // Fetch dates + load the most recent day on mount
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -37,21 +37,10 @@ export function useWorkoutHistory() {
           const initialDate = fetchedDates[0];
           setSelectedDate(initialDate);
 
-          // Preload up to 4 dates
-          const datesToPreload = fetchedDates.slice(0, 4);
-          const preloadedData = await Promise.all(
-            datesToPreload.map((d) =>
-              api.get<Workout[]>(routes.api.workouts.list(d)),
-            ),
+          const initialWorkouts = await api.get<Workout[]>(
+            routes.api.workouts.list(initialDate),
           );
-
-          setCachedWorkouts((prev) => {
-            const newCache = { ...prev };
-            datesToPreload.forEach((d, idx) => {
-              newCache[d] = preloadedData[idx];
-            });
-            return newCache;
-          });
+          setCachedWorkouts({ [initialDate]: initialWorkouts });
         }
       } catch (error) {
         console.error("Error fetching dates:", error);
