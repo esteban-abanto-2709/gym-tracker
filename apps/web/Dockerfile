@@ -3,13 +3,16 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Enable pnpm via corepack (uses version pinned in package.json)
+RUN corepack enable
+
 # Install deps
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 # Copy source and build
 COPY . .
-RUN npm run build
+RUN pnpm run build
 
 
 # ---------- Runtime ----------
