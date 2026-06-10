@@ -13,7 +13,7 @@ Frontend del proyecto Gym Tracker. Construido con Next.js 16 (App Router), React
 
 - Node.js 20+
 - pnpm (`npm install -g pnpm`)
-- API corriendo en `http://localhost:4000` (o configurar `NEXT_PUBLIC_API_URL`)
+- API corriendo en `http://localhost:4000` (o configurar `API_INTERNAL_URL`)
 
 ## Instalación
 
@@ -23,11 +23,15 @@ pnpm install
 
 ## Variables de entorno
 
-Crea un archivo `.env.local` en la raíz de `apps/web/`:
+El navegador siempre llama a la API a través del mismo origen (`/api/...`); el servidor de Next reescribe esas peticiones hacia la API. Por defecto apunta a `http://localhost:4000`, así que en desarrollo local no necesitas configurar nada.
+
+Si la API está en otra dirección, créa un `.env.local` en la raíz de `apps/web/`:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:4000
+API_INTERNAL_URL=http://localhost:4000
 ```
+
+`API_INTERNAL_URL` la usa el servidor de Next (no se expone al navegador), por lo que se puede cambiar sin reconstruir el bundle del cliente.
 
 ## Comandos
 
@@ -80,4 +84,6 @@ El `Dockerfile` usa el output standalone de Next.js para minimizar el tamaño de
 
 ## Despliegue
 
-Desplegado en **Vercel**. La variable `NEXT_PUBLIC_API_URL` debe apuntar a la URL pública de la API en Render.
+Desplegado en **Vercel**. Define la env var `API_INTERNAL_URL` (server-side) con la URL pública de la API (p. ej. la de Render); el servidor de Next reenvía ahí las peticiones `/api/*`.
+
+> **Nota de migración:** desde que la web usa el proxy `/api/*`, la antigua `NEXT_PUBLIC_API_URL` ya no se usa (Vercel la ignora aunque siga configurada). Si redespliegas en Vercel **sin** definir `API_INTERNAL_URL`, el proxy cae al default `http://localhost:4000` y la app no podrá llamar a la API. Setea `API_INTERNAL_URL` en el proyecto de Vercel (Production y Preview) antes de hacer push.

@@ -12,6 +12,11 @@ RUN pnpm install --frozen-lockfile
 
 # Copy source and build
 COPY . .
+
+# Internal API URL baked into the rewrite proxy (overridden in docker-compose)
+ARG API_INTERNAL_URL=http://localhost:4000
+ENV API_INTERNAL_URL=${API_INTERNAL_URL}
+
 RUN pnpm run build
 
 

@@ -11,13 +11,6 @@ Registro de atajos, decisiones pendientes y riesgos a futuro de este proyecto.
 
 ---
 
-## [TD-002] NEXT_PUBLIC_API_URL se inyecta en runtime pero Next.js lo resuelve en build time
-- **Ubicación:** `apps/docker/docker-compose.yml:55` y `apps/web/src/lib/api.ts:1`
-- **Riesgo:** 8/10
-- **Problema:** `NEXT_PUBLIC_*` se inlinea en el bundle del cliente durante `next build`. El compose lo pasa como variable de entorno en runtime, donde ya no tiene efecto: el cliente siempre usa el fallback `http://localhost:4000`. Además el valor del compose tiene slash final (`:4000/`), que generaría URLs con doble slash.
-- **Impacto futuro:** Al acceder vía Cloudflare Tunnel desde el celular, el navegador intentará llamar a `localhost:4000` (el propio teléfono) y la app no funcionará fuera de la PC.
-- **Fecha:** 2026-06-10 · **Estado:** Abierto
-
 ## [TD-003] Agrupación de workouts por fecha usa UTC, no hora local
 - **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:30` y `:40-45`
 - **Riesgo:** 7/10

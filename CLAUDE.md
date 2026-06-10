@@ -59,7 +59,7 @@ npx prisma generate          # regenerate client after schema changes
 - `PORT` — defaults to `4000`
 
 **Web** (`apps/web/.env.local`):
-- `NEXT_PUBLIC_API_URL` — base URL for the API (defaults to `http://localhost:4000`)
+- `API_INTERNAL_URL` — server-side target for the `/api/*` rewrite proxy (defaults to `http://localhost:4000`). The browser only ever calls the web's own origin; the Next server forwards `/api/*` to this URL, so no API URL is exposed to the client bundle.
 
 ## Architecture
 

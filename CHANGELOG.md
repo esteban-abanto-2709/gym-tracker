@@ -1,17 +1,9 @@
 # Changelog
 
-Registro de cambios relevantes de Gym Tracker.
+Registro de cambios relevantes de Gym Tracker. Lo más reciente, arriba.
 
-El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
-y el proyecto usa [commits convencionales](https://www.conventionalcommits.org/).
+## Sin publicar
 
-## [Sin publicar]
-
-### Arreglado
-
-- **Build Docker de la web roto tras migración a pnpm.** El `apps/web/Dockerfile`
-  todavía copiaba `package-lock.json` y ejecutaba `npm ci`, pero ese lockfile se
-  eliminó al migrar el frontend a pnpm, por lo que la imagen web no compilaba y
-  `docker compose up --build` no levantaba el frontend. El stage de build ahora
-  habilita pnpm vía `corepack enable` (usa la versión fijada en `package.json`) e
-  instala con `pnpm install --frozen-lockfile`. (TD-001)
+- (TD-002) La web consume la API vía proxy del servidor Next (`/api/*` → `API_INTERNAL_URL`); se elimina `NEXT_PUBLIC_API_URL` del cliente.
+- (TD-002) Docker: la API deja de publicar puertos al host; solo se expone la web (`:3000`), que es lo único que cruza el tunnel.
+- (TD-001) Arreglado el build Docker de la web: usa pnpm (corepack + `pnpm install --frozen-lockfile`) en vez del `npm ci` con un `package-lock.json` ya eliminado.
