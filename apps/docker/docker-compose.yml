@@ -34,6 +34,7 @@ services:
       - DIRECT_URL=${DIRECT_URL}
       - FRONTEND_URL=${FRONTEND_URL}
       - PORT=4000
+      - APP_TIMEZONE=${APP_TIMEZONE:-America/Lima}
     depends_on:
       postgres:
         condition: service_healthy

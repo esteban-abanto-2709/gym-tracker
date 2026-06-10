@@ -57,6 +57,7 @@ npx prisma generate          # regenerate client after schema changes
 - `DIRECT_URL` — direct Postgres connection (used by Prisma for migrations)
 - `FRONTEND_URL` — CORS allowed origin
 - `PORT` — defaults to `4000`
+- `APP_TIMEZONE` — IANA timezone for grouping/filtering workouts by local day (defaults to `America/Lima`)
 
 **Web** (`apps/web/.env.local`):
 - `API_INTERNAL_URL` — server-side target for the `/api/*` rewrite proxy (defaults to `http://localhost:4000`). The browser only ever calls the web's own origin; the Next server forwards `/api/*` to this URL, so no API URL is exposed to the client bundle.

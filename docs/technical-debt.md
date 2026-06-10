@@ -11,13 +11,6 @@ Registro de atajos, decisiones pendientes y riesgos a futuro de este proyecto.
 
 ---
 
-## [TD-003] Agrupación de workouts por fecha usa UTC, no hora local
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:30` y `:40-45`
-- **Riesgo:** 7/10
-- **Problema:** `findDistinctDates` y el filtro `?date=` truncan `createdAt` en UTC. Para un usuario en UTC-5 (Lima), todo set registrado después de las 19:00 queda agrupado bajo el día siguiente.
-- **Impacto futuro:** El historial muestra entrenamientos nocturnos en el día equivocado ("Hoy" muestra mañana); los datos para futuras analíticas (v2.5) quedan mal bucketizados.
-- **Fecha:** 2026-06-10 · **Estado:** Abierto
-
 ## [TD-004] API sin validación de entrada
 - **Ubicación:** `apps/api/src/main.ts:5` y `apps/api/src/modules/*/dto/*.ts`
 - **Riesgo:** 5/10

@@ -3,6 +3,7 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
+import { localDayRangeUtc, toLocalDateString } from '@/common/timezone.util';
 
 @Injectable()
 export class WorkoutsService {
@@ -27,8 +28,7 @@ export class WorkoutsService {
 
     const uniqueDates = new Set<string>();
     workouts.forEach((w) => {
-      const dateStr = w.createdAt.toISOString().split('T')[0];
-      uniqueDates.add(dateStr);
+      uniqueDates.add(toLocalDateString(w.createdAt));
     });
 
     return Array.from(uniqueDates);
@@ -37,8 +37,7 @@ export class WorkoutsService {
   async findAll(dateStr?: string) {
     const where: Prisma.WorkoutWhereInput = {};
     if (dateStr) {
-      const start = new Date(`${dateStr}T00:00:00.000Z`);
-      const end = new Date(`${dateStr}T23:59:59.999Z`);
+      const { start, end } = localDayRangeUtc(dateStr);
       where.createdAt = {
         gte: start,
         lte: end,
