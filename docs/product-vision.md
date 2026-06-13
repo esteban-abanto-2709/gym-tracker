@@ -1,6 +1,8 @@
-# Gym Tracker - Product Roadmap 🚀
+# Gym Tracker - Visión de Producto 🚀
 
 Este documento define la visión a largo plazo y los hitos arquitectónicos del proyecto. El objetivo es evolucionar de un "bloc de notas de gimnasio" personal a una plataforma social, analítica y basada en rutinas estructuradas, sin perder la ligereza y rapidez actual.
+
+> El trabajo comprometido y el registro operativo viven en [`docs/logbook/`](./logbook/) (roadmap, deuda técnica, wishlist, changelog). Aquí queda solo la visión.
 
 ---
 
@@ -21,10 +23,7 @@ _El objetivo es dejar la base de código blindada, estructurada y en las mejores
 
 _El usuario no solo "hace" ejercicios, sino que sigue un "Plan"._
 
-- [ ] **Modelado de Rutinas**: Crear entidades `Routine` y `RoutineExercise`.
-- [ ] **Asignación de Días**: Capacidad de etiquetar rutinas (ej. Lunes = "Push", Martes = "Pull").
-- [ ] **Tracking Inteligente en Vivo**: UI durante el entrenamiento que liste la rutina seleccionada y marque _cuántas series/sets te faltan_ para terminar.
-- [ ] **Gestión de Sesiones**: Agrupar los sets diarios bajo una entidad `Session` para saber exactamente cuándo empezó y terminó un entrenamiento.
+> Fase comprometida y en ejecución. Desglosada como **RM-001…RM-004** en [`docs/logbook/roadmap.md`](./logbook/roadmap.md): modelado de rutinas, asignación de días, tracking en vivo y gestión de sesiones.
 
 ---
 

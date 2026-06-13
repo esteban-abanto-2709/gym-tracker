@@ -39,14 +39,16 @@ gym-tracker/
 │   ├── api/        # NestJS REST API
 │   ├── web/        # Next.js frontend
 │   └── docker/     # Docker Compose + variables de entorno
-└── Roadmap.md      # Visión del producto y fases planificadas
+└── docs/
+    ├── product-vision.md   # Visión del producto y fases planificadas
+    └── logbook/            # Roadmap, deuda técnica, wishlist y changelog
 ```
 
 Cada app es independiente y tiene su propio `package.json`. Para detalles de comandos, variables de entorno y arquitectura interna, consulta el README de cada app.
 
 ## Roadmap
 
-El proyecto está en desarrollo activo. Consulta [`Roadmap.md`](./Roadmap.md) para ver las fases planificadas:
+El proyecto está en desarrollo activo. Consulta [`docs/product-vision.md`](./docs/product-vision.md) para ver las fases planificadas:
 
 - **v1.5** — Sistema de rutinas (multi-ejercicio por sesión)
 - **v2.0** — Autenticación con Supabase Auth + perfiles de usuario
