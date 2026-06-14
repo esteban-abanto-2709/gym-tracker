@@ -40,20 +40,23 @@ gym-tracker/
 │   ├── web/        # Next.js frontend
 │   └── docker/     # Docker Compose + variables de entorno
 └── docs/
-    ├── product-vision.md   # Visión del producto y fases planificadas
-    └── logbook/            # Roadmap, deuda técnica, wishlist y changelog
+    ├── product-vision.md    # Definición de producto y horizontes
+    ├── milestones.md        # Hitos (versiones estables) y su orden
+    ├── ux-foundations.md    # Fundamentos de UI/UX
+    └── logbook/             # Roadmap, deuda técnica, wishlist y changelog
 ```
 
 Cada app es independiente y tiene su propio `package.json`. Para detalles de comandos, variables de entorno y arquitectura interna, consulta el README de cada app.
 
-## Roadmap
+## Producto y roadmap
 
-El proyecto está en desarrollo activo. Consulta [`docs/product-vision.md`](./docs/product-vision.md) para ver las fases planificadas:
+El proyecto está en desarrollo activo. La [definición de producto](./docs/product-vision.md) explica qué es la app y a dónde va; los [hitos](./docs/milestones.md) la parten en versiones estables:
 
-- **v1.5** — Sistema de rutinas (multi-ejercicio por sesión)
-- **v2.0** — Autenticación con Supabase Auth + perfiles de usuario
-- **v2.5** — Dashboards de analíticas y comparativas sociales
-- **v3.0** — Sugerencias de IA y sobrecarga progresiva
+- **H1 · Registro afilado** (activo) — el registro de 2 s pulido y con identidad: kg/lb, dificultad 1-5, manejo de errores de red.
+- **H2 · Entrenamientos estructurados** — el "entrenador que no te hace pensar".
+- **H3 · Recomendación de peso** — sugerencia de carga que se afina sola.
+
+El roadmap solo lleva las tareas del hito activo; lo demás vive en la [wishlist](./docs/logbook/wishlist.md). El trabajo comprometido y la deuda técnica se siguen en [`docs/logbook/`](./docs/logbook/).
 
 ## Licencia
 

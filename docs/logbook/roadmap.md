@@ -10,22 +10,21 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 
 ---
 
-## [RM-001] Modelado de rutinas (v1.5)
-- **Objetivo:** crear las entidades `Routine` y `RoutineExercise` para que el usuario siga un plan, no solo registre sets sueltos.
-- **Hecho cuando:** existen los modelos Prisma con su relación, migración aplicada y endpoints CRUD básicos de rutinas.
+> Solo tareas del hito activo: **H1 · Registro afilado** (ver
+> [`../milestones.md`](../milestones.md)). Las de hitos futuros se añaden cuando ese
+> hito se active.
+
+## [RM-005] Soporte kg/lb
+- **Objetivo:** registrar en lb o kg sin conversiones manuales en otra pestaña; almacenar siempre en kg.
+- **Hecho cuando:** el usuario elige unidad al registrar, el set se guarda en kg y la UI lo muestra en la unidad elegida, con conversión correcta lb↔kg.
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
 
-## [RM-002] Asignación de días a rutinas (v1.5)
-- **Objetivo:** poder etiquetar rutinas por día/tipo (ej. Lunes = "Push", Martes = "Pull").
-- **Hecho cuando:** una rutina puede asociarse a un día/etiqueta y la web lo muestra al elegir el plan del día.
+## [RM-006] Escala de dificultad 1-5 por set
+- **Objetivo:** capturar qué tan difícil fue un set, de forma opcional y sin sumar fricción.
+- **Hecho cuando:** al registrar se puede marcar 1-5 (o dejarlo vacío) y queda persistido junto al set.
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
 
-## [RM-003] Tracking inteligente en vivo (v1.5)
-- **Objetivo:** UI durante el entrenamiento que liste la rutina seleccionada y marque cuántas series/sets faltan para terminar.
-- **Hecho cuando:** al entrenar se ve el progreso de la rutina (completados vs. pendientes) en tiempo real.
-- **Fecha:** 2026-06-13 · **Estado:** Abierto
-
-## [RM-004] Gestión de sesiones (v1.5)
-- **Objetivo:** agrupar los sets diarios bajo una entidad `Session` para saber cuándo empezó y terminó un entrenamiento.
-- **Hecho cuando:** existe el modelo `Session`, los sets se vinculan a ella y se registra inicio/fin del entrenamiento.
+## [RM-007] Pasada de identidad visual
+- **Objetivo:** que la app refleje la identidad de `ux-foundations.md` (dark + rojo, energía, foco) más allá de lo actual.
+- **Hecho cuando:** registro e historial aplican los fundamentos de UI/UX y el usuario valida que "se siente GYM".
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
