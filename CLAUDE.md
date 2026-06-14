@@ -12,13 +12,15 @@ All commands must be run from within the respective app directory.
 
 ### API (`apps/api`)
 
+Uses **pnpm 11** (pinned via `packageManager` in `package.json`, managed by corepack). Requires Node.js 22+.
+
 ```bash
-npm run start:dev      # start with file watching
-npm run build          # compile TS → dist/
-npm run lint           # eslint --fix
-npm run test:unit      # jest unit tests
-npm run test:e2e       # jest e2e tests
-npm run test:cov       # jest with coverage
+pnpm run start:dev     # start with file watching
+pnpm run build         # compile TS → dist/
+pnpm run lint          # eslint --fix
+pnpm run test:unit     # jest unit tests
+pnpm run test:e2e      # jest e2e tests
+pnpm run test:cov      # jest with coverage
 ```
 
 ### Web (`apps/web`)
@@ -44,10 +46,10 @@ Copy `apps/docker/.env.example` → `apps/docker/.env` before first run.
 
 ```bash
 # from apps/api/
-npx prisma migrate dev       # create and apply a new migration
-npx prisma migrate deploy    # apply existing migrations (used in prod)
-npx prisma studio            # open Prisma Studio UI
-npx prisma generate          # regenerate client after schema changes
+pnpm exec prisma migrate dev       # create and apply a new migration
+pnpm exec prisma migrate deploy    # apply existing migrations (used in prod)
+pnpm exec prisma studio            # open Prisma Studio UI
+pnpm exec prisma generate          # regenerate client after schema changes
 ```
 
 ## Environment Variables

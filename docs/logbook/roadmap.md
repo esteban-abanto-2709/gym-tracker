@@ -33,8 +33,3 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** que al aparecer el teclado el diálogo no quede tapado (hoy se queda centrado y oculto).
 - **Hecho cuando:** en móvil, al enfocar un campo el diálogo permanece visible por encima del teclado.
 - **Fecha:** 2026-06-14 · **Estado:** Abierto
-
-## [RM-013] Pasar la API a pnpm 11
-- **Objetivo:** unificar el gestor de paquetes usando pnpm 11 (última versión) también en `apps/api`, hoy en npm.
-- **Hecho cuando:** `apps/api` usa pnpm 11 (lockfile `pnpm-lock.yaml`, sin `package-lock.json`), scripts/docs/Dockerfile actualizados y el build Docker pasa con pnpm.
-- **Fecha:** 2026-06-14 · **Estado:** Abierto

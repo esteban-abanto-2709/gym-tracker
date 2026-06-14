@@ -35,9 +35,9 @@ changelog y se borra de aquí.
 - **Fecha:** 2026-06-10 · **Estado:** Abierto
 
 ## [TD-007] El contenedor de la API descarga el CLI de Prisma al arrancar
-- **Ubicación:** `apps/api/Dockerfile:42`
+- **Ubicación:** `apps/api/Dockerfile:48`
 - **Riesgo:** 4/10
-- **Problema:** El CMD ejecuta `npx prisma migrate deploy`, pero `prisma` es devDependency y el stage final instala con `--omit=dev`: npx lo descarga de internet en cada arranque del contenedor.
+- **Problema:** El CMD ejecuta `pnpm dlx prisma@7.8.0 migrate deploy`, pero `prisma` es devDependency y el stage final instala con `pnpm install --prod`: pnpm lo descarga de internet en cada arranque del contenedor.
 - **Impacto futuro:** Arranques lentos y fallo del contenedor si no hay red o npm está caído; además `migrate deploy` y el arranque quedan acoplados.
 - **Fecha:** 2026-06-10 · **Estado:** Abierto
 

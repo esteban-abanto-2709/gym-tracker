@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-013] API migrada a pnpm 11 (2026-06-14 10:54)
+`apps/api` pasa de npm a pnpm 11.6.0 (corepack, `pnpm-lock.yaml`, sin `package-lock.json`; `nodeLinker: hoisted` + `allowBuilds` para prisma en `pnpm-workspace.yaml`). Dockerfile a pnpm sobre Node 22 y `*.tsbuildinfo` excluido del contexto; build y stack Docker validados (la API levanta y responde 200).
+
 ## [RM-009] Botón "Repetir" solo icono en el historial (2026-06-14 10:55)
 En `WorkoutCard` el botón "Repetir" pasa a mostrar solo el icono (`RotateCcw`), con `aria-label`/`title` "Repetir Set" para mantener accesibilidad.
 

@@ -12,14 +12,15 @@ REST API del proyecto Gym Tracker. Construida con NestJS sobre Express, usa Pris
 
 ## Requisitos
 
-- Node.js 20+
+- Node.js 22+
 - PostgreSQL corriendo (o usar Docker Compose desde `apps/docker/`)
-- npm
+- pnpm 11 (gestionado vía corepack; la versión está pineada en `package.json`)
 
 ## Instalación
 
 ```bash
-npm install
+corepack enable   # habilita la versión de pnpm pineada en package.json
+pnpm install
 ```
 
 ## Variables de entorno
@@ -39,25 +40,25 @@ FRONTEND_URL=http://localhost:3000
 ## Comandos
 
 ```bash
-npm run start:dev      # desarrollo con hot-reload
-npm run start:prod     # producción (requiere build previo)
-npm run build          # compila TypeScript → dist/
+pnpm run start:dev      # desarrollo con hot-reload
+pnpm run start:prod     # producción (requiere build previo)
+pnpm run build          # compila TypeScript → dist/
 
-npm run test:unit      # tests unitarios
-npm run test:e2e       # tests end-to-end
-npm run test:cov       # cobertura de tests
+pnpm run test:unit      # tests unitarios
+pnpm run test:e2e       # tests end-to-end
+pnpm run test:cov       # cobertura de tests
 
-npm run lint           # ESLint con auto-fix
-npm run format         # Prettier
+pnpm run lint           # ESLint con auto-fix
+pnpm run format         # Prettier
 ```
 
 ## Migraciones (Prisma)
 
 ```bash
-npx prisma migrate dev          # crear y aplicar nueva migración (desarrollo)
-npx prisma migrate deploy       # aplicar migraciones existentes (producción)
-npx prisma generate             # regenerar cliente tras cambios en el schema
-npx prisma studio               # UI visual de la base de datos
+pnpm exec prisma migrate dev          # crear y aplicar nueva migración (desarrollo)
+pnpm exec prisma migrate deploy       # aplicar migraciones existentes (producción)
+pnpm exec prisma generate             # regenerar cliente tras cambios en el schema
+pnpm exec prisma studio               # UI visual de la base de datos
 ```
 
 ## Endpoints
