@@ -8,7 +8,6 @@ RUN corepack enable
 
 # Copy manifest + lockfile + pnpm settings first for better caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY prisma ./prisma/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
