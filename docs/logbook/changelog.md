@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-009] Botón "Repetir" solo icono en el historial (2026-06-14 10:55)
+En `WorkoutCard` el botón "Repetir" pasa a mostrar solo el icono (`RotateCcw`), con `aria-label`/`title` "Repetir Set" para mantener accesibilidad.
+
 ## [RM-008] Compactar las cards del historial (2026-06-14 10:42)
 `WorkoutCard` ahora es más densa (padding `p-3`, acciones junto a las stats) y el bloque de opinión solo se renderiza cuando existe, sin espacio reservado: un set sin comentario ocupa notablemente menos alto.
 

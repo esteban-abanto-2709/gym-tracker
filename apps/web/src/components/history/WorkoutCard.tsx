@@ -40,10 +40,11 @@ export function WorkoutCard({
 
           <button
             onClick={() => onRepeat(workout)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl text-[10px] font-black shadow-md hover:scale-105 active:scale-95 transition-all uppercase tracking-wider"
+            aria-label="Repetir Set"
+            title="Repetir Set"
+            className="flex items-center justify-center p-2.5 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all"
           >
-            <RotateCcw className="w-3.5 h-3.5" strokeWidth={3} />
-            Repetir
+            <RotateCcw className="w-4 h-4" strokeWidth={3} />
           </button>
         </div>
 
