@@ -1,0 +1,19 @@
+name: gym-tracker-dev
+
+services:
+  # PostgreSQL Database (dev only — API and web run on the host with pnpm/npm)
+  postgres-dev:
+    image: postgres:16-alpine
+    container_name: gym-tracker-dev-sql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_dev:

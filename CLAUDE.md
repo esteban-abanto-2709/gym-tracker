@@ -76,7 +76,7 @@ apps/api/src/
 └── providers/prisma/       # PrismaService with pg.Pool connection pooling
 ```
 
-The Prisma service uses `@prisma/adapter-pg` with a `pg.Pool` for connection pooling — important for serverless/Render deployments. Both `DATABASE_URL` (pooled) and `DIRECT_URL` (direct) are required in the schema.
+The Prisma service uses `@prisma/adapter-pg` with a `pg.Pool` for connection pooling. Both `DATABASE_URL` and `DIRECT_URL` are required in the schema; in this self-hosted setup they point to the same in-network Postgres container.
 
 ### Database Schema
 
@@ -140,11 +140,12 @@ State management is handled exclusively via custom hooks — no global state lib
 
 ## Deployment Targets
 
-- **API** → Render (containerized)
-- **Web** → Vercel (Next.js standalone output)
-- **Database** → Supabase (PostgreSQL)
+The whole stack is **self-hosted** via Docker Compose on a single machine; the only thing exposed to the internet is the `web` service, through a Cloudflare Tunnel (`cloudflared` service). `api` and `postgres` stay private inside the `gym-tracker-network`.
 
-In production, `DIRECT_URL` must point to a direct (non-pooled) connection for migrations to work; `DATABASE_URL` uses the pooled connection for runtime queries.
+- **API + Web + Database** → Docker Compose (`apps/docker/docker-compose.yml`)
+- **Public access** → Cloudflare Tunnel (currently a quick tunnel with a random `trycloudflare.com` URL; no custom domain yet)
+
+There is no managed cloud provider (previously Render/Vercel/Supabase — dropped). `DATABASE_URL` and `DIRECT_URL` both point to the in-network Postgres container; they are kept as two separate vars because Prisma's schema requires both, even though here they resolve to the same instance.
 
 ## Roadmap Context
 

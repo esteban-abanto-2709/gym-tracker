@@ -13,9 +13,17 @@ Aplicación full-stack para registrar y analizar entrenamientos de gimnasio. Per
 
 - **Backend:** NestJS · Prisma · PostgreSQL
 - **Frontend:** Next.js 16 · React 19 · Tailwind CSS · shadcn/ui
-- **Infra:** Docker Compose (local) · Render (API) · Vercel (Web) · Supabase (DB)
+- **Infra:** Docker Compose · Cloudflare Tunnel (acceso público del frontend)
+
+## Filosofía: self-hosted
+
+El proyecto es **autohospedado**: todo el stack (PostgreSQL + API + web) corre en Docker en una sola máquina, sin proveedores gestionados (antes Render/Vercel/Supabase, ya retirados). Lo único que sale a internet es el frontend, a través de un Cloudflare Tunnel; la API y la base de datos quedan privadas dentro de la red Docker.
+
+En la práctica esto significa que **cualquiera puede clonar el repo y levantar la app completa en su propia PC** con Docker, sin cuentas en la nube ni claves de servicios externos. El acceso público vía tunnel es opcional y solo hace falta si quieres exponer tu instancia fuera de tu red local.
 
 ## Levantar el proyecto completo (Docker)
+
+Para todos los comandos (prod local, base de datos de desarrollo, reset, tunnel) consulta [`apps/docker/README.md`](./apps/docker/README.md). En resumen:
 
 ```bash
 cd apps/docker
@@ -28,8 +36,8 @@ Servicios disponibles:
 | Servicio | URL |
 |----------|-----|
 | Frontend | http://localhost:3000 |
-| API | http://localhost:4000 |
-| PostgreSQL | localhost:5432 |
+| API | http://localhost:4000 (privado en la red Docker) |
+| PostgreSQL | localhost:5432 (privado en la red Docker) |
 
 ## Estructura del repositorio
 

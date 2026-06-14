@@ -59,6 +59,20 @@ services:
     networks:
       - gym-tracker-network
 
+  # Cloudflare Tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: gym-tracker-tunnel
+    restart: unless-stopped
+    #command: tunnel --no-autoupdate run
+    command: tunnel --no-autoupdate --url http://web:3000
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - web
+    networks:
+      - gym-tracker-network
+
 volumes:
   postgres_data:
 

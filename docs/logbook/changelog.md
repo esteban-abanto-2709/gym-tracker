@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-012] Migración a self-hosted con Cloudflare Tunnel (2026-06-14 08:23)
+Se retiran Render/Vercel/Supabase: el stack queda autohospedado en Docker y solo el frontend sale a internet vía Cloudflare Tunnel (quick tunnel por ahora). Añadidos `docker-compose.dev.yml` (Postgres aislado para dev) y `apps/docker/README.md`; actualizados README raíz y CLAUDE.md.
+
 ## [RM-005] Soporte kg/lb (2026-06-14 01:23)
 Toggle kg/lb local en el formulario de registro: el peso se sigue guardando siempre en kg y se convierte al vuelo (1 lb = 0.45359237 kg, redondeo a 0.5). Sin tocar DB ni historial.
 
