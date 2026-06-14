@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-005] Soporte kg/lb (2026-06-14 01:23)
+Toggle kg/lb local en el formulario de registro: el peso se sigue guardando siempre en kg y se convierte al vuelo (1 lb = 0.45359237 kg, redondeo a 0.5). Sin tocar DB ni historial.
+
 ## [TD-003] Agrupado/filtrado de workouts por día local (2026-06-13)
 Los workouts se agrupan y filtran por día en la zona local (`APP_TIMEZONE`, default `America/Lima`) en vez de UTC, así los sets nocturnos dejan de caer en el día siguiente.
 

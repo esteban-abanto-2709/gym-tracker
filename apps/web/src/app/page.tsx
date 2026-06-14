@@ -8,6 +8,7 @@ import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal"
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, HistoryAction } from "@/components/layout/AppHeader";
 import type { Equipment } from "@/lib/types";
+import { convertWeight } from "@/lib/units";
 import { Loader2 } from "lucide-react";
 
 function HomeContent() {
@@ -25,6 +26,8 @@ function HomeContent() {
   const {
     weight,
     setWeight,
+    unit,
+    toggleUnit,
     reps,
     setReps,
     opinion,
@@ -95,12 +98,39 @@ function HomeContent() {
           {/* Peso y Reps en una fila */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label
-                htmlFor="weight"
-                className="block text-sm font-medium text-muted-foreground"
-              >
-                Peso (kg) <span className="text-primary">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="weight"
+                  className="block text-sm font-medium text-muted-foreground"
+                >
+                  Peso ({unit}) <span className="text-primary">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={toggleUnit}
+                  className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
+                  aria-label="Cambiar unidad de peso"
+                >
+                  <span
+                    className={`px-2 py-0.5 transition-colors ${
+                      unit === "kg"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    kg
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 transition-colors ${
+                      unit === "lb"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    lb
+                  </span>
+                </button>
+              </div>
               <input
                 id="weight"
                 name="weight"
@@ -109,12 +139,22 @@ function HomeContent() {
                 inputMode="decimal"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                placeholder="60"
                 className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
                 required
                 autoComplete="off"
                 data-1p-ignore
               />
+              {weight !== "" && !Number.isNaN(Number(weight)) && (
+                <p className="text-xs text-muted-foreground text-center font-mono">
+                  ≈{" "}
+                  {convertWeight(
+                    Number(weight),
+                    unit,
+                    unit === "kg" ? "lb" : "kg",
+                  )}{" "}
+                  {unit === "kg" ? "lb" : "kg"}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -131,7 +171,6 @@ function HomeContent() {
                 inputMode="numeric"
                 value={reps}
                 onChange={(e) => setReps(e.target.value)}
-                placeholder="12"
                 className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]"
                 required
                 autoComplete="off"
@@ -152,7 +191,6 @@ function HomeContent() {
               name="opinion"
               value={opinion}
               onChange={(e) => setOpinion(e.target.value)}
-              placeholder="Ej: Me sentí con buena energía hoy"
               rows={3}
               className="w-full px-4 py-3 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground resize-none animate-slide-in-right [animation-delay:0.5s]"
             />

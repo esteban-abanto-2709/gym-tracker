@@ -14,11 +14,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > [`../milestones.md`](../milestones.md)). Las de hitos futuros se añaden cuando ese
 > hito se active.
 
-## [RM-005] Soporte kg/lb
-- **Objetivo:** registrar en lb o kg sin conversiones manuales en otra pestaña; almacenar siempre en kg.
-- **Hecho cuando:** el usuario elige unidad al registrar, el set se guarda en kg y la UI lo muestra en la unidad elegida, con conversión correcta lb↔kg.
-- **Fecha:** 2026-06-13 · **Estado:** Abierto
-
 ## [RM-006] Escala de dificultad 1-5 por set
 - **Objetivo:** capturar qué tan difícil fue un set, de forma opcional y sin sumar fricción.
 - **Hecho cuando:** al registrar se puede marcar 1-5 (o dejarlo vacío) y queda persistido junto al set.
@@ -28,3 +23,23 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** que la app refleje la identidad de `ux-foundations.md` (dark + rojo, energía, foco) más allá de lo actual.
 - **Hecho cuando:** registro e historial aplican los fundamentos de UI/UX y el usuario valida que "se siente GYM".
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
+
+## [RM-008] Compactar las cards del historial
+- **Objetivo:** cards más densas; la altura se adapta al contenido, siendo más compacta cuando el set no tiene comentario.
+- **Hecho cuando:** un set sin opinión ocupa notablemente menos alto que uno con opinión, sin espacio reservado para el comentario inexistente.
+- **Fecha:** 2026-06-14 · **Estado:** Abierto
+
+## [RM-009] Botón "Repetir" solo icono en el historial
+- **Objetivo:** reducir ruido visual en la card dejando el botón de repetir como icono sin texto.
+- **Hecho cuando:** en `WorkoutCard` el botón "Repetir" muestra solo el icono, manteniendo accesibilidad (aria-label/title).
+- **Fecha:** 2026-06-14 · **Estado:** Abierto
+
+## [RM-010] Editar el comentario en el diálogo de edición
+- **Objetivo:** poder editar la opinión/comentario de un set al editarlo, sin placeholders en el diálogo.
+- **Hecho cuando:** el diálogo de edición incluye el campo de comentario editable que persiste vía PATCH y ningún campo del diálogo usa placeholder.
+- **Fecha:** 2026-06-14 · **Estado:** Abierto
+
+## [RM-011] Diálogo de edición usable en móvil con el teclado abierto
+- **Objetivo:** que al aparecer el teclado el diálogo no quede tapado (hoy se queda centrado y oculto).
+- **Hecho cuando:** en móvil, al enfocar un campo el diálogo permanece visible por encima del teclado.
+- **Fecha:** 2026-06-14 · **Estado:** Abierto

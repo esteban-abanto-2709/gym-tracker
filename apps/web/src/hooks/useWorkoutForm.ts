@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
+import { convertWeight, lbToKg, type Unit } from "@/lib/units";
 
 const STORAGE_KEY = "gymtrack-last-set";
 
@@ -21,6 +22,7 @@ export function useWorkoutForm(
   const searchParams = useSearchParams();
 
   const [weight, setWeight] = useState("");
+  const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
   const [opinion, setOpinion] = useState("");
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
@@ -54,6 +56,20 @@ export function useWorkoutForm(
     }
   }
 
+  // Switch unit, converting the current input value to the new unit
+  const toggleUnit = useCallback(() => {
+    setUnit((prev) => {
+      const next: Unit = prev === "kg" ? "lb" : "kg";
+      setWeight((current) => {
+        if (current === "") return current;
+        const value = Number(current);
+        if (Number.isNaN(value)) return current;
+        return String(convertWeight(value, prev, next));
+      });
+      return next;
+    });
+  }, []);
+
   // Submit workout set
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -65,22 +81,25 @@ export function useWorkoutForm(
 
       setLoading(true);
 
+      // Persist always in kg, regardless of the unit shown in the form
+      const weightKg = unit === "lb" ? lbToKg(Number(weight)) : Number(weight);
+
       const data = {
         exerciseId: selectedExercise.id,
         reps: Number(reps),
-        weight: Number(weight),
+        weight: weightKg,
         opinion,
       };
 
       try {
         await api.post(routes.api.workouts.create(), data);
 
-        // Save for "Repeat" flow from Success page
+        // Save for "Repeat" flow from Success page (always in kg)
         sessionStorage.setItem(
           STORAGE_KEY,
           JSON.stringify({
             exerciseId: selectedExercise.id,
-            weight,
+            weight: String(weightKg),
             reps,
           }),
         );
@@ -91,12 +110,14 @@ export function useWorkoutForm(
         setLoading(false);
       }
     },
-    [selectedExercise, reps, weight, opinion, router],
+    [selectedExercise, reps, weight, unit, opinion, router],
   );
 
   return {
     weight,
     setWeight,
+    unit,
+    toggleUnit,
     reps,
     setReps,
     opinion,

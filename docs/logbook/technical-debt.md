@@ -48,6 +48,13 @@ changelog y se borra de aquí.
 - **Impacto futuro:** Crecimiento lineal de memoria/latencia con el historial; irrelevante hoy, molesto en unos años de uso diario.
 - **Fecha:** 2026-06-10 · **Estado:** Abierto
 
+## [TD-010] Lint roto: acceso a ref durante el render en useWorkoutForm
+- **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts:35`
+- **Riesgo:** 4/10
+- **Problema:** La lógica one-shot de *repeat* lee `repeatProcessed.current` durante el render, lo que viola la regla `react-hooks/refs` y hace que `pnpm lint` falle con 2 errores (preexistentes, ajenos a kg/lb).
+- **Impacto futuro:** El lint queda en rojo y enmascara errores nuevos; el patrón puede no re-ejecutarse como se espera en futuras versiones de React. Mover la lógica a un `useEffect` o inicializar el ref con el patrón `if (ref.current == null)`.
+- **Fecha:** 2026-06-14 · **Estado:** Abierto
+
 ## [TD-009] PrismaService traga el error de conexión a la BD
 - **Ubicación:** `apps/api/src/providers/prisma/prisma.service.ts:21-27`
 - **Riesgo:** 3/10
