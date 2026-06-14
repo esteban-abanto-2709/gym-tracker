@@ -18,16 +18,16 @@ export function WorkoutCard({
 }: WorkoutCardProps) {
   return (
     <div
-      className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-4 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
+      className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-3 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       {/* Brand Accent Line */}
-      <div className="absolute left-0 top-4 bottom-4 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
+      <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
 
       <div className="pl-3">
-        <div className="flex justify-between items-start mb-1">
-          <div className="flex-1">
-            <h3 className="font-bold text-foreground text-lg leading-tight mb-1">
+        <div className="flex justify-between items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-foreground text-lg leading-tight">
               {workout.exercise.name}
             </h3>
             <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
@@ -47,38 +47,27 @@ export function WorkoutCard({
           </button>
         </div>
 
-        <div className="flex items-baseline gap-4 mt-3">
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black text-foreground">
-              {workout.weight}
-            </span>
-            <span className="text-xs font-bold text-muted-foreground">kg</span>
-          </div>
-          <div className="h-4 w-px bg-border" />
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black text-foreground">
-              {workout.reps}
-            </span>
-            <span className="text-xs font-bold text-muted-foreground">
-              reps
-            </span>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-end mt-4">
-          <div className="flex-1">
-            {workout.opinion && (
-              <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50">
-                <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
-                <p className="italic leading-snug">
-                  &ldquo;{workout.opinion}&rdquo;
-                </p>
-              </div>
-            )}
+        <div className="flex items-center justify-between gap-4 mt-2">
+          <div className="flex items-baseline gap-4">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-foreground">
+                {workout.weight}
+              </span>
+              <span className="text-xs font-bold text-muted-foreground">kg</span>
+            </div>
+            <div className="h-4 w-px bg-border" />
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black text-foreground">
+                {workout.reps}
+              </span>
+              <span className="text-xs font-bold text-muted-foreground">
+                reps
+              </span>
+            </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 ml-4">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => onEdit(workout)}
               className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
@@ -95,6 +84,15 @@ export function WorkoutCard({
             </button>
           </div>
         </div>
+
+        {workout.opinion && (
+          <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50 mt-3">
+            <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
+            <p className="italic leading-snug">
+              &ldquo;{workout.opinion}&rdquo;
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

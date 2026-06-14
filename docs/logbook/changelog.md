@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-008] Compactar las cards del historial (2026-06-14 10:42)
+`WorkoutCard` ahora es más densa (padding `p-3`, acciones junto a las stats) y el bloque de opinión solo se renderiza cuando existe, sin espacio reservado: un set sin comentario ocupa notablemente menos alto.
+
 ## [RM-012] Migración a self-hosted con Cloudflare Tunnel (2026-06-14 08:23)
 Se retiran Render/Vercel/Supabase: el stack queda autohospedado en Docker y solo el frontend sale a internet vía Cloudflare Tunnel (quick tunnel por ahora). Añadidos `docker-compose.dev.yml` (Postgres aislado para dev) y `apps/docker/README.md`; actualizados README raíz y CLAUDE.md.
 

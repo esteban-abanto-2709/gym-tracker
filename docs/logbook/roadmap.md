@@ -24,11 +24,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** registro e historial aplican los fundamentos de UI/UX y el usuario valida que "se siente GYM".
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
 
-## [RM-008] Compactar las cards del historial
-- **Objetivo:** cards más densas; la altura se adapta al contenido, siendo más compacta cuando el set no tiene comentario.
-- **Hecho cuando:** un set sin opinión ocupa notablemente menos alto que uno con opinión, sin espacio reservado para el comentario inexistente.
-- **Fecha:** 2026-06-14 · **Estado:** Abierto
-
 ## [RM-009] Botón "Repetir" solo icono en el historial
 - **Objetivo:** reducir ruido visual en la card dejando el botón de repetir como icono sin texto.
 - **Hecho cuando:** en `WorkoutCard` el botón "Repetir" muestra solo el icono, manteniendo accesibilidad (aria-label/title).
