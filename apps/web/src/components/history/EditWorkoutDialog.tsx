@@ -5,6 +5,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useVisualViewport } from "@/hooks/useVisualViewport";
 
 interface EditWorkoutDialogProps {
   open: boolean;
@@ -31,9 +32,21 @@ export function EditWorkoutDialog({
   loading,
   onSave,
 }: EditWorkoutDialogProps) {
+  const viewport = useVisualViewport(open);
+
+  const viewportStyle = viewport
+    ? {
+        top: `${viewport.offsetTop + viewport.height / 2}px`,
+        maxHeight: `${viewport.height - 32}px`,
+      }
+    : undefined;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] rounded-2xl">
+      <DialogContent
+        className="sm:max-w-[425px] rounded-2xl overflow-y-auto"
+        style={viewportStyle}
+      >
         <DialogHeader>
           <DialogTitle>Editar Entrenamiento</DialogTitle>
         </DialogHeader>

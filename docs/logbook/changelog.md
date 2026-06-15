@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-011] Diálogo de edición usable con el teclado abierto (2026-06-15 12:18)
+Hook `useVisualViewport` que sigue `window.visualViewport`; `EditWorkoutDialog` reposiciona el `DialogContent` al centro del área visible y limita su alto (scrollable) cuando aparece el teclado. En desktop conserva el centrado por defecto.
+
 ## [RM-010] Comentario editable en el diálogo de edición (2026-06-15 11:37)
 El diálogo de edición de sets ahora incluye un `<textarea>` "Comentario" que precarga la opinión actual y persiste vía PATCH (backend ya soportaba `opinion`); ningún campo del diálogo usa placeholder.
 

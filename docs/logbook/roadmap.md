@@ -23,8 +23,3 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** que la app refleje la identidad de `ux-foundations.md` (dark + rojo, energía, foco) más allá de lo actual.
 - **Hecho cuando:** registro e historial aplican los fundamentos de UI/UX y el usuario valida que "se siente GYM".
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
-
-## [RM-011] Diálogo de edición usable en móvil con el teclado abierto
-- **Objetivo:** que al aparecer el teclado el diálogo no quede tapado (hoy se queda centrado y oculto).
-- **Hecho cuando:** en móvil, al enfocar un campo el diálogo permanece visible por encima del teclado.
-- **Fecha:** 2026-06-14 · **Estado:** Abierto
