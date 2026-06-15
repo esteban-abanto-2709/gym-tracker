@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-010] Comentario editable en el diálogo de edición (2026-06-15 11:37)
+El diálogo de edición de sets ahora incluye un `<textarea>` "Comentario" que precarga la opinión actual y persiste vía PATCH (backend ya soportaba `opinion`); ningún campo del diálogo usa placeholder.
+
 ## [RM-013] API migrada a pnpm 11 (2026-06-14 10:54)
 `apps/api` pasa de npm a pnpm 11.6.0 (corepack, `pnpm-lock.yaml`, sin `package-lock.json`; `nodeLinker: hoisted` + `allowBuilds` para prisma en `pnpm-workspace.yaml`). Dockerfile a pnpm sobre Node 22 y `*.tsbuildinfo` excluido del contexto; build y stack Docker validados (la API levanta y responde 200).
 

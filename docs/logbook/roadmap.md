@@ -24,11 +24,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** registro e historial aplican los fundamentos de UI/UX y el usuario valida que "se siente GYM".
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
 
-## [RM-010] Editar el comentario en el diálogo de edición
-- **Objetivo:** poder editar la opinión/comentario de un set al editarlo, sin placeholders en el diálogo.
-- **Hecho cuando:** el diálogo de edición incluye el campo de comentario editable que persiste vía PATCH y ningún campo del diálogo usa placeholder.
-- **Fecha:** 2026-06-14 · **Estado:** Abierto
-
 ## [RM-011] Diálogo de edición usable en móvil con el teclado abierto
 - **Objetivo:** que al aparecer el teclado el diálogo no quede tapado (hoy se queda centrado y oculto).
 - **Hecho cuando:** en móvil, al enfocar un campo el diálogo permanece visible por encima del teclado.

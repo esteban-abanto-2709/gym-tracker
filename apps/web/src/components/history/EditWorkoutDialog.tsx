@@ -13,6 +13,8 @@ interface EditWorkoutDialogProps {
   onWeightChange: (value: string) => void;
   reps: string;
   onRepsChange: (value: string) => void;
+  opinion: string;
+  onOpinionChange: (value: string) => void;
   loading: boolean;
   onSave: () => void;
 }
@@ -24,6 +26,8 @@ export function EditWorkoutDialog({
   onWeightChange,
   reps,
   onRepsChange,
+  opinion,
+  onOpinionChange,
   loading,
   onSave,
 }: EditWorkoutDialogProps) {
@@ -60,6 +64,18 @@ export function EditWorkoutDialog({
                 className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               />
             </div>
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="edit-opinion" className="text-sm font-medium">
+              Comentario
+            </label>
+            <textarea
+              id="edit-opinion"
+              rows={3}
+              value={opinion}
+              onChange={(e) => onOpinionChange(e.target.value)}
+              className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
+            />
           </div>
         </div>
         <DialogFooter>

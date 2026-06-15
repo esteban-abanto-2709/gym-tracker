@@ -22,6 +22,7 @@ export function useWorkoutHistory() {
   const [deletingWorkout, setDeletingWorkout] = useState<Workout | null>(null);
   const [editReps, setEditReps] = useState("");
   const [editWeight, setEditWeight] = useState("");
+  const [editOpinion, setEditOpinion] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   // Fetch dates + load the most recent day on mount
@@ -117,6 +118,7 @@ export function useWorkoutHistory() {
     setEditingWorkout(workout);
     setEditReps(workout.reps.toString());
     setEditWeight(workout.weight.toString());
+    setEditOpinion(workout.opinion);
   }, []);
 
   // Save edited workout
@@ -127,6 +129,7 @@ export function useWorkoutHistory() {
       await api.patch(routes.api.workouts.update(editingWorkout.id), {
         reps: Number(editReps),
         weight: Number(editWeight),
+        opinion: editOpinion,
       });
 
       setCachedWorkouts((prev) => {
@@ -135,7 +138,12 @@ export function useWorkoutHistory() {
           ...prev,
           [selectedDate]: dayWorkouts.map((ex) =>
             ex.id === editingWorkout.id
-              ? { ...ex, reps: Number(editReps), weight: Number(editWeight) }
+              ? {
+                  ...ex,
+                  reps: Number(editReps),
+                  weight: Number(editWeight),
+                  opinion: editOpinion,
+                }
               : ex,
           ),
         };
@@ -146,7 +154,7 @@ export function useWorkoutHistory() {
     } finally {
       setActionLoading(false);
     }
-  }, [editingWorkout, editReps, editWeight, selectedDate]);
+  }, [editingWorkout, editReps, editWeight, editOpinion, selectedDate]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {
@@ -196,6 +204,8 @@ export function useWorkoutHistory() {
     setEditReps,
     editWeight,
     setEditWeight,
+    editOpinion,
+    setEditOpinion,
     handleEditClick,
     saveEdit,
 
