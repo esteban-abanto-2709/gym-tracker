@@ -34,8 +34,7 @@ DIRECT_URL=postgresql://user:password@localhost:5432/gym_tracker
 FRONTEND_URL=http://localhost:3000
 ```
 
-`DATABASE_URL` se usa en runtime (puede ser una URL de pool como Supabase Transaction Mode).  
-`DIRECT_URL` se usa exclusivamente para migraciones y debe ser una conexión directa.
+`DATABASE_URL` se usa en runtime y `DIRECT_URL` exclusivamente para migraciones. En este setup self-hosted ambas apuntan al mismo contenedor de Postgres dentro de la red Docker; se mantienen separadas porque el schema de Prisma requiere las dos.
 
 ## Comandos
 
@@ -86,7 +85,7 @@ src/
     └── prisma/                 # PrismaService con pg.Pool
 ```
 
-El `PrismaService` inicializa un `pg.Pool` y lo pasa como adapter a Prisma, lo que permite reusar conexiones de forma eficiente en entornos serverless o con límites de conexiones (Supabase, Render free tier).
+El `PrismaService` inicializa un `pg.Pool` y lo pasa como adapter a Prisma, lo que permite reusar conexiones de forma eficiente y mantener el pool bajo control frente al Postgres en red.
 
 ## Schema de base de datos
 
@@ -116,4 +115,4 @@ El `Dockerfile` incluye un build multi-stage. Al iniciar el contenedor ejecuta a
 
 ## Despliegue
 
-Desplegado en **Render** como servicio web containerizado. En producción, `DIRECT_URL` debe apuntar a la conexión directa de Supabase (Session Mode o IPv4 add-on) para que las migraciones funcionen correctamente.
+**Self-hosted** vía Docker Compose (`apps/docker/`) en una sola máquina. La API corre dentro de la red privada `gym-tracker-network` y no se expone a internet: solo la web sale al exterior a través de un Cloudflare Tunnel. `DATABASE_URL` y `DIRECT_URL` apuntan al contenedor de Postgres de la misma red.

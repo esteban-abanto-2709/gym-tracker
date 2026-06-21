@@ -84,6 +84,8 @@ El `Dockerfile` usa el output standalone de Next.js para minimizar el tamaño de
 
 ## Despliegue
 
-Desplegado en **Vercel**. Define la env var `API_INTERNAL_URL` (server-side) con la URL pública de la API (p. ej. la de Render); el servidor de Next reenvía ahí las peticiones `/api/*`.
+El stack es **self-hosted** vía Docker Compose (`apps/docker/`): Postgres, API y web corren en la misma máquina dentro de la red `gym-tracker-network`. La web es el único servicio expuesto a internet, a través de un **Cloudflare Tunnel** (`cloudflared`); la API y la base de datos quedan privadas.
 
-> **Nota de migración:** desde que la web usa el proxy `/api/*`, la antigua `NEXT_PUBLIC_API_URL` ya no se usa (Vercel la ignora aunque siga configurada). Si redespliegas en Vercel **sin** definir `API_INTERNAL_URL`, el proxy cae al default `http://localhost:4000` y la app no podrá llamar a la API. Setea `API_INTERNAL_URL` en el proyecto de Vercel (Production y Preview) antes de hacer push.
+Dentro de Compose, `API_INTERNAL_URL` apunta al servicio interno de la API (p. ej. `http://api:4000`); el servidor de Next reenvía ahí las peticiones `/api/*`. El navegador siempre llama al mismo origen de la web, así que no se expone ninguna URL de API al bundle del cliente.
+
+> **Nota:** la antigua `NEXT_PUBLIC_API_URL` ya no se usa desde que la web enruta por el proxy `/api/*`. Si `API_INTERNAL_URL` no se define, el proxy cae al default `http://localhost:4000`.
