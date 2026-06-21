@@ -6,7 +6,11 @@ import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import { PageShell } from "@/components/layout/PageShell";
-import { AppHeader, HistoryAction } from "@/components/layout/AppHeader";
+import {
+  AppHeader,
+  HistoryAction,
+  RoutinesAction,
+} from "@/components/layout/AppHeader";
 import type { Equipment } from "@/lib/types";
 import { convertWeight } from "@/lib/units";
 import { Loader2 } from "lucide-react";
@@ -65,7 +69,10 @@ function HomeContent() {
         </div>
       )}
 
-      <AppHeader rightAction={<HistoryAction />} />
+      <AppHeader
+        leftAction={<RoutinesAction />}
+        rightAction={<HistoryAction />}
+      />
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-8 overflow-y-visible relative z-10 animate-fade-in-up">

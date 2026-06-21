@@ -30,3 +30,23 @@ export interface Workout {
   opinion: string;
   createdAt: string;
 }
+
+export interface RoutineItem {
+  id?: string;
+  exerciseId: string;
+  exercise: {
+    id: string;
+    name: string;
+    equipment: string;
+  };
+  position: number;
+  targetSets: number | null;
+  targetReps: number | null;
+}
+
+export interface Routine {
+  id: string;
+  name: string;
+  items: RoutineItem[];
+  createdAt: string;
+}

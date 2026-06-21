@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { History, ArrowLeft } from "lucide-react";
+import { History, ArrowLeft, ClipboardList } from "lucide-react";
 
 interface AppHeaderProps {
   /** Content to render on the left side (e.g. back button) */
@@ -70,6 +70,18 @@ export function HistoryAction() {
       title="Ver Historial"
     >
       <History className="w-6 h-6" />
+    </Link>
+  );
+}
+
+export function RoutinesAction() {
+  return (
+    <Link
+      href="/routines"
+      className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
+      title="Ver Rutinas"
+    >
+      <ClipboardList className="w-6 h-6" />
     </Link>
   );
 }
