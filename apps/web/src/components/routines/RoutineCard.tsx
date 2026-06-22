@@ -1,15 +1,21 @@
 import Link from "next/link";
 import type { Routine } from "@/lib/types";
 import { routes } from "@/lib/routes";
-import { ListChecks, Pencil, Trash2 } from "lucide-react";
+import { ListChecks, Pencil, Trash2, Play } from "lucide-react";
 
 interface RoutineCardProps {
   routine: Routine;
   index: number;
+  onStart: (routine: Routine) => void;
   onDelete: (routine: Routine) => void;
 }
 
-export function RoutineCard({ routine, index, onDelete }: RoutineCardProps) {
+export function RoutineCard({
+  routine,
+  index,
+  onStart,
+  onDelete,
+}: RoutineCardProps) {
   const count = routine.items.length;
 
   return (
@@ -35,6 +41,15 @@ export function RoutineCard({ routine, index, onDelete }: RoutineCardProps) {
         </Link>
 
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => onStart(routine)}
+            disabled={count === 0}
+            className="flex items-center justify-center p-2.5 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+            title="Empezar Rutina"
+            aria-label="Empezar Rutina"
+          >
+            <Play className="w-4 h-4" strokeWidth={3} />
+          </button>
           <Link
             href={routes.routineEdit(routine.id)}
             className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"

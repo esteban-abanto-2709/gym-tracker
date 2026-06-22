@@ -16,7 +16,15 @@ export class WorkoutsService {
         reps: createWorkoutDto.reps,
         weight: createWorkoutDto.weight,
         opinion: createWorkoutDto.opinion || '',
+        routineId: createWorkoutDto.routineId ?? null,
       },
+    });
+  }
+
+  async findLastByExercise(exerciseId: string) {
+    return this.prisma.workout.findFirst({
+      where: { exerciseId },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

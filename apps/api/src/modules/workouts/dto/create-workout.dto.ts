@@ -3,4 +3,5 @@ export class CreateWorkoutDto {
   reps: number;
   weight: number;
   opinion?: string;
+  routineId?: string;
 }

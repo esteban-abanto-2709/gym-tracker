@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRoutines } from "@/hooks/useRoutines";
 import { routes } from "@/lib/routes";
+import type { Routine } from "@/lib/types";
+import { readActiveSession, startSession } from "@/lib/activeSession";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { RoutineCard } from "@/components/routines/RoutineCard";
@@ -10,6 +13,7 @@ import { DeleteRoutineDialog } from "@/components/routines/DeleteRoutineDialog";
 import { Loader2, Plus, ClipboardList } from "lucide-react";
 
 export default function RoutinesPage() {
+  const router = useRouter();
   const {
     routines,
     loading,
@@ -18,6 +22,21 @@ export default function RoutinesPage() {
     confirmDelete,
     actionLoading,
   } = useRoutines();
+
+  const handleStart = (routine: Routine) => {
+    const active = readActiveSession();
+    if (
+      active &&
+      active.routineId !== routine.id &&
+      !window.confirm(
+        `Tienes "${active.routineName}" en curso. ¿Empezar "${routine.name}" y descartarla?`,
+      )
+    ) {
+      return;
+    }
+    startSession(routine);
+    router.push(routes.train());
+  };
 
   return (
     <PageShell variant="history">
@@ -62,6 +81,7 @@ export default function RoutinesPage() {
                 key={routine.id}
                 routine={routine}
                 index={index}
+                onStart={handleStart}
                 onDelete={setDeletingRoutine}
               />
             ))

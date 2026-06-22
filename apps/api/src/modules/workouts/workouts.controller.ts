@@ -26,6 +26,11 @@ export class WorkoutsController {
     return this.workoutsService.findDistinctDates();
   }
 
+  @Get('last')
+  async findLast(@Query('exerciseId') exerciseId: string) {
+    return this.workoutsService.findLastByExercise(exerciseId);
+  }
+
   @Get()
   async findAll(@Query('date') date?: string) {
     return this.workoutsService.findAll(date);

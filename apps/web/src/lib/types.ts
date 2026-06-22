@@ -28,6 +28,7 @@ export interface Workout {
   weight: number;
   reps: number;
   opinion: string;
+  routineId?: string | null;
   createdAt: string;
 }
 

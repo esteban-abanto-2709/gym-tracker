@@ -11,6 +11,7 @@ import {
   HistoryAction,
   RoutinesAction,
 } from "@/components/layout/AppHeader";
+import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import type { Equipment } from "@/lib/types";
 import { convertWeight } from "@/lib/units";
 import { Loader2 } from "lucide-react";
@@ -76,6 +77,9 @@ function HomeContent() {
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-8 overflow-y-visible relative z-10 animate-fade-in-up">
+        <div className="max-w-md mx-auto mb-6">
+          <ContinueRoutineBanner />
+        </div>
         <form
           onSubmit={handleSubmit}
           className="max-w-md mx-auto space-y-6"

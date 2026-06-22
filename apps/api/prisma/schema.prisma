@@ -19,6 +19,8 @@ model Workout {
   id         String   @id @default(uuid())
   exerciseId String
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  routineId  String?
+  routine    Routine? @relation(fields: [routineId], references: [id], onDelete: SetNull)
   weight     Float
   reps       Int
   opinion    String
@@ -29,6 +31,7 @@ model Routine {
   id        String        @id @default(uuid())
   name      String        @unique
   items     RoutineItem[]
+  workouts  Workout[]
   createdAt DateTime      @default(now())
 }
 

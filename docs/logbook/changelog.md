@@ -12,6 +12,12 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-015] Modo guiado de rutinas (ejecución) — MVP (2026-06-21 18:22)
+Pantalla `/train`: eliges una rutina ("Empezar"), la app guía ejercicio a ejercicio (meta + peso de la última vez vía `GET /workouts/last`), registras series y avanza. Progreso/cursor en localStorage (retoma tras recargar la página, con la misma URL); cada serie se etiqueta con `Workout.routineId` (nullable, `onDelete: SetNull`). Banner "Continuar" en el home. Sin entidad `Session`; el registro libre sigue intacto.
+
+## [RM-014] Crear y gestionar rutinas — CRUD (2026-06-21 17:26)
+Nuevo modelo `Routine`/`RoutineItem` (Prisma) + módulo NestJS CRUD y UI `/routines` (lista, editor con drag & drop `@dnd-kit`, series/reps objetivo opcionales por ejercicio). Sin ejecución guiada ni recomendación: solo se dejan las bases de datos. Entrada desde el header de la home.
+
 ## [RM-011] Diálogo de edición usable con el teclado abierto (2026-06-15 12:18)
 Hook `useVisualViewport` que sigue `window.visualViewport`; `EditWorkoutDialog` reposiciona el `DialogContent` al centro del área visible y limita su alto (scrollable) cuando aparece el teclado. En desktop conserva el centrado por defecto.
 

@@ -4,12 +4,14 @@ export const routes = {
   routines: () => "/routines",
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,
+  train: () => "/train",
 
   api: {
     workouts: {
       dates: () => "/workouts/dates",
       create: () => "/workouts",
       list: (date?: string) => (date ? `/workouts?date=${date}` : "/workouts"),
+      last: (exerciseId: string) => `/workouts/last?exerciseId=${exerciseId}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },
