@@ -23,3 +23,8 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** que la app refleje la identidad de `ux-foundations.md` (dark + rojo, energía, foco) más allá de lo actual.
 - **Hecho cuando:** registro e historial aplican los fundamentos de UI/UX y el usuario valida que "se siente GYM".
 - **Fecha:** 2026-06-13 · **Estado:** Abierto
+
+## [RM-017] Home como hub de inicio (rutina / día libre / crear)
+- **Objetivo:** convertir el root en un hub con 3 botones: **Iniciar una rutina**, **Día libre** (registro suelto, el form actual) y **Crear rutina**. Si hay una sesión en curso, mostrar arriba el slot de **Continuar rutina** que ya existe (`ContinueRoutineBanner`).
+- **Hecho cuando:** el root muestra los 3 accesos; "Día libre" lleva al registro actual y "Crear rutina" al editor; con sesión activa aparece el banner de continuar.
+- **Fecha:** 2026-06-22 · **Estado:** Abierto

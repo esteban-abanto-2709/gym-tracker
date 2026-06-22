@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { Routine, RoutineItem } from "@/lib/types";
+import type { Exercise, Routine, RoutineItem } from "@/lib/types";
 import {
   type ActiveSession,
   readActiveSession,
@@ -10,24 +10,19 @@ import {
   clearActiveSession,
 } from "@/lib/activeSession";
 
-function isItemComplete(item: RoutineItem, done: number): boolean {
-  return item.targetSets ? done >= item.targetSets : done > 0;
-}
-
-function firstIncompleteIndex(
-  items: RoutineItem[],
-  progress: Record<number, number>,
-): number {
-  for (let i = 0; i < items.length; i++) {
-    if (!isItemComplete(items[i], progress[i] ?? 0)) return i;
-  }
-  return -1;
-}
+type Phase = "logging" | "done";
 
 interface LogSetArgs {
   weightKg: number;
   reps: number;
   opinion?: string;
+}
+
+export interface LastResult {
+  exerciseName: string;
+  weightKg: number;
+  reps: number;
+  setNumber: number;
 }
 
 export function useGuidedSession() {
@@ -36,6 +31,8 @@ export function useGuidedSession() {
   const [routine, setRoutine] = useState<Routine | null>(null);
   const [loading, setLoading] = useState(true);
   const [logging, setLogging] = useState(false);
+  const [phase, setPhase] = useState<Phase>("logging");
+  const [lastResult, setLastResult] = useState<LastResult | null>(null);
 
   useEffect(() => {
     const active = readActiveSession();
@@ -56,10 +53,21 @@ export function useGuidedSession() {
     writeActiveSession(next);
   }, []);
 
-  const items = routine?.items ?? [];
+  // Combined sequence: routine items first, then ad-hoc extras.
+  const extraItems: RoutineItem[] = (session?.extras ?? []).map((e, i) => ({
+    exerciseId: e.exerciseId,
+    exercise: e.exercise,
+    position: (routine?.items.length ?? 0) + i,
+    targetSets: null,
+    targetReps: null,
+  }));
+  const items: RoutineItem[] = [...(routine?.items ?? []), ...extraItems];
+
   const currentIndex = session?.currentIndex ?? 0;
   const progress = session?.progress ?? {};
   const currentItem: RoutineItem | null = items[currentIndex] ?? null;
+  const nextItem: RoutineItem | null = items[currentIndex + 1] ?? null;
+  const setsDoneForCurrent = progress[currentIndex] ?? 0;
 
   const logSet = useCallback(
     async ({ weightKg, reps, opinion }: LogSetArgs) => {
@@ -74,62 +82,84 @@ export function useGuidedSession() {
           routineId: session.routineId,
         });
 
-        const done = (progress[currentIndex] ?? 0) + 1;
-        const nextProgress = { ...progress, [currentIndex]: done };
+        const setNumber = (progress[currentIndex] ?? 0) + 1;
+        const nextProgress = { ...progress, [currentIndex]: setNumber };
+        persist({ ...session, progress: nextProgress });
 
-        let nextIndex = currentIndex;
-        if (currentItem.targetSets && done >= currentItem.targetSets) {
-          const ni = firstIncompleteIndex(items, nextProgress);
-          if (ni !== -1) nextIndex = ni;
-        }
-
-        persist({ ...session, progress: nextProgress, currentIndex: nextIndex });
+        setLastResult({
+          exerciseName: currentItem.exercise.name,
+          weightKg,
+          reps,
+          setNumber,
+        });
+        setPhase("done");
       } catch (e) {
         console.error("Error logging set:", e);
       } finally {
         setLogging(false);
       }
     },
-    [session, currentItem, progress, currentIndex, items, persist],
+    [session, currentItem, progress, currentIndex, persist],
   );
 
-  const goTo = useCallback(
-    (index: number) => {
-      if (!session) return;
-      persist({ ...session, currentIndex: index });
-    },
-    [session, persist],
-  );
+  // Stay on the same exercise and log the next set.
+  const continueSet = useCallback(() => {
+    setPhase("logging");
+  }, []);
 
-  const skip = useCallback(() => {
-    if (!session) return;
-    const next = Math.min(currentIndex + 1, Math.max(items.length - 1, 0));
-    persist({ ...session, currentIndex: next });
+  // Advance to the next exercise in the sequence.
+  const goNext = useCallback(() => {
+    if (!session || currentIndex + 1 >= items.length) return;
+    persist({ ...session, currentIndex: currentIndex + 1 });
+    setPhase("logging");
   }, [session, currentIndex, items.length, persist]);
+
+  // Append an ad-hoc exercise and jump to it.
+  const addExercise = useCallback(
+    (exercise: Exercise) => {
+      if (!session) return;
+      const newIndex = items.length;
+      persist({
+        ...session,
+        extras: [
+          ...session.extras,
+          {
+            exerciseId: exercise.id,
+            exercise: {
+              id: exercise.id,
+              name: exercise.name,
+              equipment: exercise.equipment,
+            },
+          },
+        ],
+        currentIndex: newIndex,
+      });
+      setPhase("logging");
+    },
+    [session, items.length, persist],
+  );
 
   const finish = useCallback(() => {
     clearActiveSession();
     router.push(routes.home());
   }, [router]);
 
-  const completedCount = items.filter((item, i) =>
-    isItemComplete(item, progress[i] ?? 0),
-  ).length;
-
   return {
     loading,
     logging,
+    phase,
     routine,
     session,
     items,
     currentIndex,
     currentItem,
-    progress,
-    completedCount,
-    isItemComplete,
+    nextItem,
+    setsDoneForCurrent,
+    lastResult,
     logSet,
-    goTo,
-    skip,
+    continueSet,
+    goNext,
+    addExercise,
     finish,
   };
 }

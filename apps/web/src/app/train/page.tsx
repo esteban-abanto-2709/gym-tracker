@@ -1,29 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { routes } from "@/lib/routes";
 import { PageShell } from "@/components/layout/PageShell";
-import { AppHeader, BackAction } from "@/components/layout/AppHeader";
-import { GuidedExerciseRow } from "@/components/train/GuidedExerciseRow";
+import {
+  AppHeader,
+  BackAction,
+  HistoryAction,
+} from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
-import { Loader2, ClipboardList, SkipForward } from "lucide-react";
+import { SetDoneScreen } from "@/components/train/SetDoneScreen";
+import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
+import { Loader2, ClipboardList, Dumbbell } from "lucide-react";
 
 export default function TrainPage() {
   const {
     loading,
     logging,
+    phase,
     routine,
     items,
-    currentIndex,
-    progress,
-    completedCount,
-    isItemComplete,
+    currentItem,
+    nextItem,
+    setsDoneForCurrent,
+    lastResult,
     logSet,
-    goTo,
-    skip,
+    continueSet,
+    goNext,
+    addExercise,
     finish,
   } = useGuidedSession();
+
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   if (loading) {
     return (
@@ -36,7 +46,7 @@ export default function TrainPage() {
     );
   }
 
-  if (!routine || items.length === 0) {
+  if (!routine || items.length === 0 || !currentItem) {
     return (
       <PageShell>
         <AppHeader leftAction={<BackAction href={routes.home()} />} />
@@ -57,85 +67,91 @@ export default function TrainPage() {
     );
   }
 
-  const total = items.length;
-  const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+  const target = currentItem.targetSets;
+  const hasPendingSets = target != null && setsDoneForCurrent < target;
 
-  const handleFinish = () => {
-    if (
-      completedCount < total &&
-      !window.confirm("Aún no terminas todos los ejercicios. ¿Terminar igual?")
-    ) {
-      return;
-    }
-    finish();
-  };
+  // What the lifter should set up next, shown during rest on the done screen.
+  const nextUp = hasPendingSets
+    ? {
+        label: "Sigue en la misma máquina",
+        name: currentItem.exercise.name,
+        detail: `Serie ${setsDoneForCurrent + 1}${
+          currentItem.targetReps ? ` · objetivo ${currentItem.targetReps} reps` : ""
+        }`,
+      }
+    : nextItem
+      ? {
+          label: "Prepara la siguiente máquina",
+          name: nextItem.exercise.name,
+          detail: `${nextItem.exercise.equipment}${
+            nextItem.targetSets
+              ? ` · ${nextItem.targetSets} × ${nextItem.targetReps ?? "—"}`
+              : ""
+          }`,
+        }
+      : null;
 
   return (
     <PageShell variant="history">
       <AppHeader
         leftAction={<BackAction href={routes.home()} />}
         title={routine.name}
-        rightAction={
-          <button
-            type="button"
-            onClick={handleFinish}
-            className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
-          >
-            Terminar
-          </button>
-        }
+        rightAction={<HistoryAction />}
       />
 
-      <main className="flex-1 px-6 py-6 relative z-10 animate-fade-in-up">
-        <div className="max-w-md mx-auto space-y-4">
-          {/* Progress */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
-              <span>
-                {completedCount} de {total} ejercicios
-              </span>
-              <span>{pct}%</span>
+      {phase === "done" && lastResult ? (
+        <SetDoneScreen
+          result={lastResult}
+          hasPendingSets={hasPendingSets}
+          nextItem={nextItem}
+          nextUp={nextUp}
+          onContinueSet={continueSet}
+          onNext={goNext}
+          onAddExercise={() => setPickerOpen(true)}
+          onFinish={finish}
+        />
+      ) : (
+        <main className="flex-1 flex flex-col justify-center px-6 py-6 relative z-10 animate-fade-in-up">
+          <div className="max-w-md mx-auto w-full space-y-5">
+            {/* Current exercise header */}
+            <div className="flex items-center gap-4 rounded-2xl border-2 border-primary bg-card p-4 shadow-lg shadow-primary/5">
+              <div className="shrink-0 p-3 bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-xl text-primary-foreground shadow-lg shadow-primary/20">
+                <Dumbbell className="w-6 h-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-black text-primary uppercase tracking-wide">
+                  Serie {setsDoneForCurrent + 1}
+                </p>
+                <p className="font-bold text-lg text-foreground leading-tight truncate">
+                  {currentItem.exercise.name}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {target
+                    ? `Meta: ${target} × ${currentItem.targetReps ?? "—"}`
+                    : "Series libres"}
+                </p>
+              </div>
             </div>
-            <div className="h-2 rounded-full bg-muted overflow-hidden">
-              <div
-                className="h-full bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] transition-all"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-          </div>
 
-          {/* Exercise list */}
-          <div className="space-y-2.5">
-            {items.map((item, index) => {
-              const done = progress[index] ?? 0;
-              const isCurrent = index === currentIndex;
-              return (
-                <GuidedExerciseRow
-                  key={`${item.exerciseId}-${index}`}
-                  item={item}
-                  index={index}
-                  done={done}
-                  isCurrent={isCurrent}
-                  isComplete={isItemComplete(item, done)}
-                  onSelect={goTo}
-                >
-                  <SetLogger item={item} logging={logging} onLog={logSet} />
-                  {total > 1 && (
-                    <button
-                      type="button"
-                      onClick={skip}
-                      className="mt-3 w-full flex items-center justify-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <SkipForward className="w-4 h-4" />
-                      Saltar ejercicio
-                    </button>
-                  )}
-                </GuidedExerciseRow>
-              );
-            })}
+            <SetLogger
+              key={`${currentItem.exerciseId}-${setsDoneForCurrent}`}
+              item={currentItem}
+              logging={logging}
+              onLog={logSet}
+            />
           </div>
-        </div>
-      </main>
+        </main>
+      )}
+
+      {pickerOpen && (
+        <AddExerciseSheet
+          onPick={(exercise) => {
+            setPickerOpen(false);
+            addExercise(exercise);
+          }}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
     </PageShell>
   );
 }

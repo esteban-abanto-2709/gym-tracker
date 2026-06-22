@@ -2,12 +2,18 @@ import type { Routine } from "@/lib/types";
 
 const KEY = "gymtrack-active-routine";
 
+export interface ActiveExtra {
+  exerciseId: string;
+  exercise: { id: string; name: string; equipment: string };
+}
+
 export interface ActiveSession {
   routineId: string;
   routineName: string;
   startedAt: string; // ISO
   currentIndex: number;
-  progress: Record<number, number>; // item position index -> sets done
+  progress: Record<number, number>; // combined item index -> sets done
+  extras: ActiveExtra[]; // ad-hoc exercises added mid-session
 }
 
 function isSameLocalDay(iso: string): boolean {
@@ -31,7 +37,7 @@ export function readActiveSession(): ActiveSession | null {
       window.localStorage.removeItem(KEY);
       return null;
     }
-    return parsed;
+    return { ...parsed, extras: parsed.extras ?? [] };
   } catch {
     return null;
   }
@@ -54,6 +60,7 @@ export function startSession(routine: Routine): ActiveSession {
     startedAt: new Date().toISOString(),
     currentIndex: 0,
     progress: {},
+    extras: [],
   };
   writeActiveSession(session);
   return session;

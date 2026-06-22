@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-016] Modo guiado: flujo por pantallas (2026-06-22 14:04)
+Rediseño de `/train`: se elimina la vista de lista con contadores `done/target`; ahora es una máquina de estados pantalla-a-pantalla (registrar serie → confirmación → continuar). Botón principal contextual que sigue la rutina (siguiente serie si quedan, si no siguiente ejercicio) + Otro ejercicio + Terminar. Sin auto-avance; la sesión solo termina manualmente. Confirmación centrada con mensaje "lo que sigue" (máquina/serie a preparar) y animación pop+pulse al completar. "Otro ejercicio" agrega ad-hoc a la sesión (`extras` en localStorage).
+
 ## [RM-015] Modo guiado de rutinas (ejecución) — MVP (2026-06-21 18:22)
 Pantalla `/train`: eliges una rutina ("Empezar"), la app guía ejercicio a ejercicio (meta + peso de la última vez vía `GET /workouts/last`), registras series y avanza. Progreso/cursor en localStorage (retoma tras recargar la página, con la misma URL); cada serie se etiqueta con `Workout.routineId` (nullable, `onDelete: SetNull`). Banner "Continuar" en el home. Sin entidad `Session`; el registro libre sigue intacto.
 
