@@ -108,7 +108,7 @@ export function useWorkoutHistory() {
           reps: exercise.reps.toString(),
         }),
       );
-      router.push("/?repeat=true");
+      router.push("/log?repeat=true");
     },
     [router],
   );

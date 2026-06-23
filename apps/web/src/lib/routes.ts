@@ -5,6 +5,7 @@ export const routes = {
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,
   train: () => "/train",
+  log: () => "/log",
 
   api: {
     workouts: {

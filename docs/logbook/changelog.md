@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-017] Home como hub de inicio (2026-06-23 00:00)
+El root deja de ser el form de registro y pasa a ser un hub con 3 accesos: Iniciar una rutina (→ `/routines`), Día libre (→ nueva ruta `/log`, el form de antes) y Crear rutina (→ `/routines/new`), con el `ContinueRoutineBanner` arriba si hay sesión activa. Re-apuntados a `/log` los enlaces del flujo "repetir set"/"registrar otro" (success, FAB y "Repetir" del historial).
+
 ## [RM-016] Modo guiado: flujo por pantallas (2026-06-22 14:04)
 Rediseño de `/train`: se elimina la vista de lista con contadores `done/target`; ahora es una máquina de estados pantalla-a-pantalla (registrar serie → confirmación → continuar). Botón principal contextual que sigue la rutina (siguiente serie si quedan, si no siguiente ejercicio) + Otro ejercicio + Terminar. Sin auto-avance; la sesión solo termina manualmente. Confirmación centrada con mensaje "lo que sigue" (máquina/serie a preparar) y animación pop+pulse al completar. "Otro ejercicio" agrega ad-hoc a la sesión (`extras` en localStorage).
 

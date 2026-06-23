@@ -87,7 +87,7 @@ export default function HistoryPage() {
               </p>
             </div>
             <Link
-              href="/"
+              href="/log"
               className="px-8 py-3 bg-primary text-primary-foreground rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
             >
               Comenzar a entrenar
@@ -132,7 +132,7 @@ export default function HistoryPage() {
 
       {/* Floating Action Button */}
       <Link
-        href="/"
+        href="/log"
         className="fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-full flex items-center justify-center shadow-xl shadow-primary/40 hover:scale-110 active:scale-90 transition-all z-20"
       >
         <Plus className="w-7 h-7" strokeWidth={3} />
