@@ -24,6 +24,7 @@ export interface LastResult {
   weightKg: number;
   reps: number;
   setNumber: number;
+  suggestedWeight: number | null;
 }
 
 export function useGuidedSession() {
@@ -88,11 +89,25 @@ export function useGuidedSession() {
         const nextProgress = { ...progress, [currentIndex]: setNumber };
         persist({ ...session, progress: nextProgress });
 
+        let suggestedWeight: number | null = null;
+        try {
+          const rec = await api.get<{ suggestedWeight: number | null }>(
+            routes.api.workouts.recommendation(
+              currentItem.exerciseId,
+              isApproximation ?? false,
+            ),
+          );
+          suggestedWeight = rec.suggestedWeight;
+        } catch (e) {
+          console.error("Error fetching recommendation:", e);
+        }
+
         setLastResult({
           exerciseName: currentItem.exercise.name,
           weightKg,
           reps,
           setNumber,
+          suggestedWeight,
         });
         setPhase("done");
       } catch (e) {

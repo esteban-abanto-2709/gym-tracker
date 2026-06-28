@@ -62,6 +62,11 @@ export function SetDoneScreen({
             {result.weightKg} kg ({convertWeight(result.weightKg, "kg", "lb")} lb)
             × {result.reps} reps
           </p>
+          {result.suggestedWeight != null && (
+            <p className="mt-3 text-sm font-bold text-primary">
+              🔼 Recomendamos subir el peso a {result.suggestedWeight} kg
+            </p>
+          )}
 
           {/* What's coming next — set up the next machine at a glance */}
           {nextUp ? (

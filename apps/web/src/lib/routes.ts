@@ -12,7 +12,8 @@ export const routes = {
       dates: () => "/workouts/dates",
       create: () => "/workouts",
       list: (date?: string) => (date ? `/workouts?date=${date}` : "/workouts"),
-      last: (exerciseId: string) => `/workouts/last?exerciseId=${exerciseId}`,
+      recommendation: (exerciseId: string, isApproximation: boolean) =>
+        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },

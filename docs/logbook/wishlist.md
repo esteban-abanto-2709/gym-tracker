@@ -25,5 +25,8 @@ Registrar cardio post-rutina y ejercicios de movilidad/calentamiento antes, sin 
 ## [WL-006] PWA instalable
 Instalar la web como app en el celular. Idea suelta, nunca probada.
 
+## [WL-008] Salto de peso por tipo de equipo en la recomendación
+Hoy `RM-019` sugiere siempre `+2.5 kg`. Mancuernas, máquinas y poleas saltan distinto; usar el `equipment` del ejercicio para proponer un incremento realista por equipo.
+
 ## [WL-007] Tags de anotación para análisis con IA
 Vocabulario de tags de lista cerrada más allá de "aproximación" (ej. "fallo técnico", "sobreesfuerzo") que se apilan sobre la serie y enriquecen el texto que se exporta a la IA (ver `RM-021`). Diferido: hoy solo interesa la marca de aproximación (`RM-018`).

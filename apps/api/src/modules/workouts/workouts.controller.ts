@@ -26,9 +26,15 @@ export class WorkoutsController {
     return this.workoutsService.findDistinctDates();
   }
 
-  @Get('last')
-  async findLast(@Query('exerciseId') exerciseId: string) {
-    return this.workoutsService.findLastByExercise(exerciseId);
+  @Get('recommendation')
+  async getRecommendation(
+    @Query('exerciseId') exerciseId: string,
+    @Query('isApproximation') isApproximation?: string,
+  ) {
+    return this.workoutsService.getRecommendation(
+      exerciseId,
+      isApproximation === 'true',
+    );
   }
 
   @Get()

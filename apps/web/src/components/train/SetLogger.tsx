@@ -3,10 +3,16 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { RoutineItem, Workout } from "@/lib/types";
+import type { RoutineItem } from "@/lib/types";
 import { convertWeight, lbToKg, type Unit } from "@/lib/units";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { Loader2 } from "lucide-react";
+
+interface Recommendation {
+  lastWeight: number | null;
+  lastReps: number | null;
+  suggestedWeight: number | null;
+}
 
 interface SetLoggerProps {
   item: RoutineItem;
@@ -26,26 +32,33 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
   const [isApproximation, setIsApproximation] = useState(
     item.isApproximation ?? false,
   );
-  const [lastSet, setLastSet] = useState<Workout | null>(null);
+  const [recommendation, setRecommendation] = useState<Recommendation | null>(
+    null,
+  );
 
-  // Prefill from the last logged set of this exercise (or the routine target)
+  // Prefill from the last logged set of this segment (or the routine target)
   useEffect(() => {
     let active = true;
     setUnit("kg");
     setWeight("");
     setReps(item.targetReps?.toString() ?? "");
     setIsApproximation(item.isApproximation ?? false);
-    setLastSet(null);
+    setRecommendation(null);
 
     api
-      .get<Workout | null>(routes.api.workouts.last(item.exerciseId))
-      .then((last) => {
-        if (!active || !last) return;
-        setLastSet(last);
-        setWeight(String(last.weight));
-        setReps(String(last.reps));
+      .get<Recommendation>(
+        routes.api.workouts.recommendation(
+          item.exerciseId,
+          item.isApproximation ?? false,
+        ),
+      )
+      .then((rec) => {
+        if (!active) return;
+        setRecommendation(rec);
+        if (rec.lastWeight != null) setWeight(String(rec.lastWeight));
+        if (rec.lastReps != null) setReps(String(rec.lastReps));
       })
-      .catch((e) => console.error("Error fetching last set:", e));
+      .catch((e) => console.error("Error fetching recommendation:", e));
 
     return () => {
       active = false;
@@ -74,11 +87,18 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
-      <p className="text-xs text-muted-foreground text-center">
-        {lastSet
-          ? `Última vez: ${lastSet.weight} kg × ${lastSet.reps} reps`
-          : "Sin registro previo de este ejercicio"}
-      </p>
+      <div className="text-center space-y-1">
+        <p className="text-xs text-muted-foreground">
+          {recommendation?.lastWeight != null
+            ? `Última vez: ${recommendation.lastWeight} kg × ${recommendation.lastReps} reps`
+            : "Sin registro previo de este ejercicio"}
+        </p>
+        {recommendation?.suggestedWeight != null && (
+          <p className="text-xs font-bold text-primary">
+            🔼 Recomendamos subir el peso a {recommendation.suggestedWeight} kg
+          </p>
+        )}
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">

@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-019] Recomendación de peso: ¿subir o mantener? (2026-06-28 15:23)
+Endpoint `GET /workouts/recommendation` que, segmentando por `isApproximation`, compara la mejor serie del día más reciente vs la sesión previa al mismo peso: si la supera por ≥3 reps sugiere `peso+2.5kg`. Se muestra como texto (no auto-aplica valores) en `SetLogger` y `SetDoneScreen`; reemplaza al endpoint `last`.
+
 ## [RM-018] Marcar sets de aproximación (efectivo por defecto) (2026-06-28 10:59)
 Flag booleano `isApproximation` (default `false`) en `Workout` y `RoutineItem`: lo no marcado es efectivo por ausencia. Toggle compartido en registro manual, modo guiado (pre-llenado desde la ranura de rutina), editor de rutina y edición de set; badge "≈ Aprox" en el historial. Prerrequisito de RM-019.
 

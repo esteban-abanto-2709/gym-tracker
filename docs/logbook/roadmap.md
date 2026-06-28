@@ -29,11 +29,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** en una sesión guiada puedo marcar/reordenar libremente los ejercicios del checklist y registrar sustituciones/añadidos sobre la marcha, sin tocar la rutina guardada.
 - **Fecha:** 2026-06-25 · **Estado:** Abierto
 
-## [RM-019] Algoritmo de recomendación: ¿subir peso o reps?
-- **Objetivo:** que el sistema sugiera el siguiente paso de un ejercicio (subir peso, subir reps o mantener) a partir del historial. Usa la marca de aproximación de [[RM-018]] como llave de segmentación: compara aproximación con aproximación y efectiva con efectiva, nunca cruzadas; la ranura de rutina indica de qué segmento recomendar. Núcleo de H3.
-- **Hecho cuando:** en el flujo de registro/guiado aparece una sugerencia accionable basada en los sets previos del mismo segmento.
-- **Fecha:** 2026-06-25 · **Estado:** Abierto
-
 ## [RM-021] Exportar rutina como texto para análisis con IA
 - **Objetivo:** poder copiar/descargar un texto legible con la rutina actual (y quizá historial reciente) para pegárselo a una IA y que la analice.
 - **Hecho cuando:** existe una acción que genera/copia un texto de la rutina actual, listo para pegar en un chat de IA.
