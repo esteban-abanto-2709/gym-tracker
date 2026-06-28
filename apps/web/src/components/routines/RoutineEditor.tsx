@@ -92,6 +92,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             equipment: item.exercise.equipment,
             targetSets: item.targetSets?.toString() ?? "",
             targetReps: item.targetReps?.toString() ?? "",
+            isApproximation: item.isApproximation ?? false,
           })),
         );
       } catch (e) {
@@ -117,6 +118,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         equipment: exercise.equipment,
         targetSets: "",
         targetReps: "",
+        isApproximation: false,
       },
     ]);
     // Clear the search after the combobox sets it to the picked name
@@ -131,6 +133,14 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     setItems((prev) =>
       prev.map((item) =>
         item.key === key ? { ...item, [field]: value } : item,
+      ),
+    );
+  };
+
+  const handleToggleApproximation = (key: string, value: boolean) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.key === key ? { ...item, isApproximation: value } : item,
       ),
     );
   };
@@ -176,6 +186,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
           position: index,
           targetSets: toNullableInt(item.targetSets),
           targetReps: toNullableInt(item.targetReps),
+          isApproximation: item.isApproximation,
         })),
       };
 
@@ -273,6 +284,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
                       key={item.key}
                       item={item}
                       onChangeTargets={handleChangeTargets}
+                      onToggleApproximation={handleToggleApproximation}
                       onRemove={handleRemove}
                     />
                   ))}

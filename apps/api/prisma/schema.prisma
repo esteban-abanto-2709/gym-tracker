@@ -24,6 +24,7 @@ model Workout {
   weight     Float
   reps       Int
   opinion    String
+  isApproximation Boolean @default(false)
   createdAt  DateTime @default(now())
 }
 
@@ -44,5 +45,6 @@ model RoutineItem {
   position   Int
   targetSets Int?
   targetReps Int?
+  isApproximation Boolean @default(false)
   createdAt  DateTime @default(now())
 }

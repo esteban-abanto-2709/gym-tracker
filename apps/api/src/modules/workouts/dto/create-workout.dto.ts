@@ -4,4 +4,5 @@ export class CreateWorkoutDto {
   weight: number;
   opinion?: string;
   routineId?: string;
+  isApproximation?: boolean;
 }

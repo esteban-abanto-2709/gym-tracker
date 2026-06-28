@@ -29,6 +29,8 @@ export default function HistoryPage() {
     setEditWeight,
     editOpinion,
     setEditOpinion,
+    editApproximation,
+    setEditApproximation,
     handleEditClick,
     saveEdit,
     deletingWorkout,
@@ -148,6 +150,8 @@ export default function HistoryPage() {
         onRepsChange={setEditReps}
         opinion={editOpinion}
         onOpinionChange={setEditOpinion}
+        isApproximation={editApproximation}
+        onApproximationChange={setEditApproximation}
         loading={actionLoading}
         onSave={saveEdit}
       />

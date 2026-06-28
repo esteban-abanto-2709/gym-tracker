@@ -77,6 +77,7 @@ export class RoutinesService {
       position: item.position,
       targetSets: item.targetSets ?? null,
       targetReps: item.targetReps ?? null,
+      isApproximation: item.isApproximation ?? false,
     }));
   }
 }

@@ -16,6 +16,7 @@ interface LogSetArgs {
   weightKg: number;
   reps: number;
   opinion?: string;
+  isApproximation?: boolean;
 }
 
 export interface LastResult {
@@ -70,7 +71,7 @@ export function useGuidedSession() {
   const setsDoneForCurrent = progress[currentIndex] ?? 0;
 
   const logSet = useCallback(
-    async ({ weightKg, reps, opinion }: LogSetArgs) => {
+    async ({ weightKg, reps, opinion, isApproximation }: LogSetArgs) => {
       if (!session || !currentItem) return;
       setLogging(true);
       try {
@@ -80,6 +81,7 @@ export function useGuidedSession() {
           weight: weightKg,
           opinion: opinion ?? "",
           routineId: session.routineId,
+          isApproximation: isApproximation ?? false,
         });
 
         const setNumber = (progress[currentIndex] ?? 0) + 1;

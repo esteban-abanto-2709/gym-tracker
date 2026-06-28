@@ -17,6 +17,7 @@ export class WorkoutsService {
         weight: createWorkoutDto.weight,
         opinion: createWorkoutDto.opinion || '',
         routineId: createWorkoutDto.routineId ?? null,
+        isApproximation: createWorkoutDto.isApproximation ?? false,
       },
     });
   }

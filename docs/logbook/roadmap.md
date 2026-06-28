@@ -29,12 +29,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** en una sesión guiada puedo marcar/reordenar libremente los ejercicios del checklist y registrar sustituciones/añadidos sobre la marcha, sin tocar la rutina guardada.
 - **Fecha:** 2026-06-25 · **Estado:** Abierto
 
-## [RM-018] Marcar sets de aproximación (efectivo por defecto)
-- **Objetivo:** poder marcar una serie como **aproximación**; lo que no esté marcado es efectivo (no existe marca de "efectiva", se infiere por ausencia). La marca es un valor controlado (no texto libre, sin CRUD de tags) y vive en dos sitios: en el `RoutineItem` (la rutina declara que esa ranura es de aproximación → segmenta la recomendación y pre-rellena al registrar) y en el `Workout` (fuente de verdad del set registrado, también disponible en día libre). Prerrequisito de [[RM-019]].
-- **Hecho cuando:** puedo marcar una ranura de rutina y/o una serie registrada como aproximación; queda persistido, se distingue de las efectivas, y el historial/recomendación las tratan por separado.
-- **Fuera de alcance:** cualquier otro tag (eventos como "fallo técnico"/"sobreesfuerzo", vocabulario abierto, gestión de tags). Solo la marca de aproximación — el resto vive en [[WL-007]].
-- **Fecha:** 2026-06-25 · **Estado:** Abierto
-
 ## [RM-019] Algoritmo de recomendación: ¿subir peso o reps?
 - **Objetivo:** que el sistema sugiera el siguiente paso de un ejercicio (subir peso, subir reps o mantener) a partir del historial. Usa la marca de aproximación de [[RM-018]] como llave de segmentación: compara aproximación con aproximación y efectiva con efectiva, nunca cruzadas; la ranura de rutina indica de qué segmento recomendar. Núcleo de H3.
 - **Hecho cuando:** en el flujo de registro/guiado aparece una sugerencia accionable basada en los sets previos del mismo segmento.

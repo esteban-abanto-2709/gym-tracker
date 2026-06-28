@@ -28,6 +28,7 @@ export interface Workout {
   weight: number;
   reps: number;
   opinion: string;
+  isApproximation?: boolean;
   routineId?: string | null;
   createdAt: string;
 }
@@ -43,6 +44,7 @@ export interface RoutineItem {
   position: number;
   targetSets: number | null;
   targetReps: number | null;
+  isApproximation?: boolean;
 }
 
 export interface Routine {

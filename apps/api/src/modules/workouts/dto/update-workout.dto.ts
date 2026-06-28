@@ -3,4 +3,5 @@ export class UpdateWorkoutDto {
   reps?: number;
   weight?: number;
   opinion?: string;
+  isApproximation?: boolean;
 }

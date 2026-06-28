@@ -23,6 +23,7 @@ export function useWorkoutHistory() {
   const [editReps, setEditReps] = useState("");
   const [editWeight, setEditWeight] = useState("");
   const [editOpinion, setEditOpinion] = useState("");
+  const [editApproximation, setEditApproximation] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   // Fetch dates + load the most recent day on mount
@@ -119,6 +120,7 @@ export function useWorkoutHistory() {
     setEditReps(workout.reps.toString());
     setEditWeight(workout.weight.toString());
     setEditOpinion(workout.opinion);
+    setEditApproximation(workout.isApproximation ?? false);
   }, []);
 
   // Save edited workout
@@ -130,6 +132,7 @@ export function useWorkoutHistory() {
         reps: Number(editReps),
         weight: Number(editWeight),
         opinion: editOpinion,
+        isApproximation: editApproximation,
       });
 
       setCachedWorkouts((prev) => {
@@ -143,6 +146,7 @@ export function useWorkoutHistory() {
                   reps: Number(editReps),
                   weight: Number(editWeight),
                   opinion: editOpinion,
+                  isApproximation: editApproximation,
                 }
               : ex,
           ),
@@ -154,7 +158,14 @@ export function useWorkoutHistory() {
     } finally {
       setActionLoading(false);
     }
-  }, [editingWorkout, editReps, editWeight, editOpinion, selectedDate]);
+  }, [
+    editingWorkout,
+    editReps,
+    editWeight,
+    editOpinion,
+    editApproximation,
+    selectedDate,
+  ]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {
@@ -206,6 +217,8 @@ export function useWorkoutHistory() {
     setEditWeight,
     editOpinion,
     setEditOpinion,
+    editApproximation,
+    setEditApproximation,
     handleEditClick,
     saveEdit,
 

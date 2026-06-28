@@ -12,6 +12,7 @@ import {
   HistoryAction,
 } from "@/components/layout/AppHeader";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
+import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { routes } from "@/lib/routes";
 import type { Equipment } from "@/lib/types";
 import { convertWeight } from "@/lib/units";
@@ -38,6 +39,8 @@ function LogContent() {
     setReps,
     opinion,
     setOpinion,
+    isApproximation,
+    setIsApproximation,
     selectedExercise,
     setSelectedExercise,
     loading,
@@ -207,6 +210,12 @@ function LogContent() {
               className="w-full px-4 py-3 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground resize-none animate-slide-in-right [animation-delay:0.5s]"
             />
           </div>
+
+          <ApproximationToggle
+            checked={isApproximation}
+            onChange={setIsApproximation}
+            className="px-1"
+          />
 
           {/* Submit Button */}
           <button

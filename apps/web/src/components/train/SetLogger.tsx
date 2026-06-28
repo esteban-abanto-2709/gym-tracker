@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { RoutineItem, Workout } from "@/lib/types";
 import { convertWeight, lbToKg, type Unit } from "@/lib/units";
+import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { Loader2 } from "lucide-react";
 
 interface SetLoggerProps {
@@ -14,6 +15,7 @@ interface SetLoggerProps {
     weightKg: number;
     reps: number;
     opinion?: string;
+    isApproximation?: boolean;
   }) => Promise<void>;
 }
 
@@ -21,6 +23,9 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
+  const [isApproximation, setIsApproximation] = useState(
+    item.isApproximation ?? false,
+  );
   const [lastSet, setLastSet] = useState<Workout | null>(null);
 
   // Prefill from the last logged set of this exercise (or the routine target)
@@ -29,6 +34,7 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
     setUnit("kg");
     setWeight("");
     setReps(item.targetReps?.toString() ?? "");
+    setIsApproximation(item.isApproximation ?? false);
     setLastSet(null);
 
     api
@@ -44,7 +50,7 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
     return () => {
       active = false;
     };
-  }, [item.exerciseId, item.targetReps]);
+  }, [item.exerciseId, item.targetReps, item.isApproximation]);
 
   const toggleUnit = () => {
     setUnit((prev) => {
@@ -63,7 +69,7 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
     e.preventDefault();
     if (weight === "" || reps === "") return;
     const weightKg = unit === "lb" ? lbToKg(Number(weight)) : Number(weight);
-    await onLog({ weightKg, reps: Number(reps), opinion: "" });
+    await onLog({ weightKg, reps: Number(reps), opinion: "", isApproximation });
   };
 
   return (
@@ -135,6 +141,12 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
           />
         </div>
       </div>
+
+      <ApproximationToggle
+        checked={isApproximation}
+        onChange={setIsApproximation}
+        className="justify-center"
+      />
 
       <button
         type="submit"

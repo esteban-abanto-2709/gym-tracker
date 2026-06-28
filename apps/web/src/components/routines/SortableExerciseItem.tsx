@@ -3,6 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X } from "lucide-react";
+import { ApproximationToggle } from "@/components/ApproximationToggle";
 
 export interface DraftItem {
   key: string;
@@ -11,6 +12,7 @@ export interface DraftItem {
   equipment: string;
   targetSets: string;
   targetReps: string;
+  isApproximation: boolean;
 }
 
 interface SortableExerciseItemProps {
@@ -20,12 +22,14 @@ interface SortableExerciseItemProps {
     field: "targetSets" | "targetReps",
     value: string,
   ) => void;
+  onToggleApproximation: (key: string, value: boolean) => void;
   onRemove: (key: string) => void;
 }
 
 export function SortableExerciseItem({
   item,
   onChangeTargets,
+  onToggleApproximation,
   onRemove,
 }: SortableExerciseItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -106,6 +110,13 @@ export function SortableExerciseItem({
           />
           <span className="text-xs font-bold text-muted-foreground">reps</span>
         </div>
+      </div>
+
+      <div className="mt-3 pl-7">
+        <ApproximationToggle
+          checked={item.isApproximation}
+          onChange={(value) => onToggleApproximation(item.key, value)}
+        />
       </div>
     </div>
   );

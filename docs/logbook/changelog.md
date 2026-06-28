@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-018] Marcar sets de aproximación (efectivo por defecto) (2026-06-28 10:59)
+Flag booleano `isApproximation` (default `false`) en `Workout` y `RoutineItem`: lo no marcado es efectivo por ausencia. Toggle compartido en registro manual, modo guiado (pre-llenado desde la ranura de rutina), editor de rutina y edición de set; badge "≈ Aprox" en el historial. Prerrequisito de RM-019.
+
 ## [RM-017] Home como hub de inicio (2026-06-23 00:00)
 El root deja de ser el form de registro y pasa a ser un hub con 3 accesos: Iniciar una rutina (→ `/routines`), Día libre (→ nueva ruta `/log`, el form de antes) y Crear rutina (→ `/routines/new`), con el `ContinueRoutineBanner` arriba si hay sesión activa. Re-apuntados a `/log` los enlaces del flujo "repetir set"/"registrar otro" (success, FAB y "Repetir" del historial).
 

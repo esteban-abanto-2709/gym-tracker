@@ -25,6 +25,7 @@ export function useWorkoutForm(
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
   const [opinion, setOpinion] = useState("");
+  const [isApproximation, setIsApproximation] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
     null,
   );
@@ -89,6 +90,7 @@ export function useWorkoutForm(
         reps: Number(reps),
         weight: weightKg,
         opinion,
+        isApproximation,
       };
 
       try {
@@ -110,7 +112,7 @@ export function useWorkoutForm(
         setLoading(false);
       }
     },
-    [selectedExercise, reps, weight, unit, opinion, router],
+    [selectedExercise, reps, weight, unit, opinion, isApproximation, router],
   );
 
   return {
@@ -122,6 +124,8 @@ export function useWorkoutForm(
     setReps,
     opinion,
     setOpinion,
+    isApproximation,
+    setIsApproximation,
     selectedExercise,
     setSelectedExercise,
     loading,
