@@ -28,5 +28,8 @@ Instalar la web como app en el celular. Idea suelta, nunca probada.
 ## [WL-008] Salto de peso por tipo de equipo en la recomendación
 Hoy `RM-019` sugiere siempre `+2.5 kg`. Mancuernas, máquinas y poleas saltan distinto; usar el `equipment` del ejercicio para proponer un incremento realista por equipo.
 
+## [WL-009] Guardar la unidad original del registro
+Columna `unit` en `Workout` para mostrar el peso en la unidad en que se registró (ej. "45 lb" en vez de "20.4 kg"). Podría servir al análisis IA de v3.0. Hoy se convierte todo a kg redondeado a 1 decimal al guardar.
+
 ## [WL-007] Tags de anotación para análisis con IA
 Vocabulario de tags de lista cerrada más allá de "aproximación" (ej. "fallo técnico", "sobreesfuerzo") que se apilan sobre la serie y enriquecen el texto que se exporta a la IA (ver `RM-021`). Diferido: hoy solo interesa la marca de aproximación (`RM-018`).

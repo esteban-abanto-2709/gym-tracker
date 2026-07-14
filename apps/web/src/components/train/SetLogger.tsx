@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { RoutineItem } from "@/lib/types";
-import { convertWeight, lbToKg, type Unit } from "@/lib/units";
+import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { Loader2 } from "lucide-react";
 
@@ -81,7 +81,7 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (weight === "" || reps === "") return;
-    const weightKg = unit === "lb" ? lbToKg(Number(weight)) : Number(weight);
+    const weightKg = toKg(Number(weight), unit);
     await onLog({ weightKg, reps: Number(reps), opinion: "", isApproximation });
   };
 

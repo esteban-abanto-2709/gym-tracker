@@ -14,6 +14,11 @@ export function roundHalf(n: number): number {
   return Math.round(n * 2) / 2;
 }
 
+export function toKg(value: number, unit: Unit): number {
+  if (unit === "kg") return value;
+  return Math.round(lbToKg(value) * 10) / 10;
+}
+
 export function convertWeight(value: number, from: Unit, to: Unit): number {
   if (from === to) return value;
   const converted = to === "lb" ? kgToLb(value) : lbToKg(value);

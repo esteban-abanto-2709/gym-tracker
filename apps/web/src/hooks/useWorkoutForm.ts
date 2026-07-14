@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
-import { convertWeight, lbToKg, type Unit } from "@/lib/units";
+import { convertWeight, toKg, type Unit } from "@/lib/units";
 
 const STORAGE_KEY = "gymtrack-last-set";
 
@@ -83,7 +83,7 @@ export function useWorkoutForm(
       setLoading(true);
 
       // Persist always in kg, regardless of the unit shown in the form
-      const weightKg = unit === "lb" ? lbToKg(Number(weight)) : Number(weight);
+      const weightKg = toKg(Number(weight), unit);
 
       const data = {
         exerciseId: selectedExercise.id,

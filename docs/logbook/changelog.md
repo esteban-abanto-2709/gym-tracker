@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-011] Peso en lb se guardaba con decimales largos (2026-07-14 07:34)
+Nuevo helper `toKg` en `units.ts` que redondea la conversión lb→kg a 1 decimal antes de persistir; usado por `useWorkoutForm` y `SetLogger`. Las 17 filas existentes con decimales largos se redondearon con un UPDATE directo.
+
 ## [RM-019] Recomendación de peso: ¿subir o mantener? (2026-06-28 15:23)
 Endpoint `GET /workouts/recommendation` que, segmentando por `isApproximation`, compara la mejor serie del día más reciente vs la sesión previa al mismo peso: si la supera por ≥3 reps sugiere `peso+2.5kg`. Se muestra como texto (no auto-aplica valores) en `SetLogger` y `SetDoneScreen`; reemplaza al endpoint `last`.
 
