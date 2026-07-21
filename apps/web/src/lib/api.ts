@@ -15,6 +15,7 @@ class ApiClient {
 
     const config: RequestInit = {
       ...options,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...options.headers,
@@ -22,6 +23,15 @@ class ApiClient {
     };
 
     const response = await fetch(url, config);
+
+    // Session gone/expired on a data call → back to login.
+    if (
+      response.status === 401 &&
+      typeof window !== "undefined" &&
+      window.location.pathname !== "/login"
+    ) {
+      window.location.href = "/login";
+    }
 
     if (!response.ok) {
       const error = await response

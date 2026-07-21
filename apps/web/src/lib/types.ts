@@ -1,5 +1,12 @@
 // Tipos centralizados del dominio Gym Tracker
 
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+  slug: string;
+}
+
 export type Equipment =
   | "Sin asignar"
   | "Barra"

@@ -6,8 +6,16 @@ export const routes = {
   routineEdit: (id: string) => `/routines/${id}`,
   train: () => "/train",
   log: () => "/log",
+  login: () => "/login",
+  register: () => "/register",
 
   api: {
+    auth: {
+      me: () => "/auth/me",
+      login: () => "/auth/login",
+      register: () => "/auth/register",
+      logout: () => "/auth/logout",
+    },
     workouts: {
       dates: () => "/workouts/dates",
       create: () => "/workouts",
