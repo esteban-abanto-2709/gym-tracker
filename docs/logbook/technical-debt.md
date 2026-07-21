@@ -13,13 +13,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-004] API sin validación de entrada
-- **Ubicación:** `apps/api/src/main.ts:5` y `apps/api/src/modules/*/dto/*.ts`
-- **Riesgo:** 5/10
-- **Problema:** No hay `ValidationPipe` global ni decoradores de `class-validator` en los DTOs (ni está instalada la librería). Cualquier payload llega tal cual a Prisma; `reps: NaN` o campos extra producen errores 500 opacos.
-- **Impacto futuro:** Bugs silenciosos (p. ej. `Number("")` → 0 guardado como peso) y respuestas 500 en lugar de 400 descriptivos. Será obligatorio antes de v2.0 (auth multi-usuario).
-- **Fecha:** 2026-06-10 · **Estado:** Abierto
-
 ## [TD-005] API y web sin ninguna autenticación, pronto expuestas a internet
 - **Ubicación:** `apps/api/src/main.ts:7-10`
 - **Riesgo:** 6/10

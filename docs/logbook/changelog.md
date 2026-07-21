@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-004] API con validación de entrada (2026-07-21 12:43)
+`ValidationPipe` global (`whitelist` + `forbidNonWhitelisted` + `transform`) y DTOs de exercises/workouts/routines convertidos a clases con decoradores de `class-validator`. Payloads inválidos (reps no entero, peso negativo, UUID malo, campos extra) ahora dan 400 en vez de 500. Prerrequisito del multiusuario.
+
 ## [TD-011] Peso en lb se guardaba con decimales largos (2026-07-14 07:34)
 Nuevo helper `toKg` en `units.ts` que redondea la conversión lb→kg a 1 decimal antes de persistir; usado por `useWorkoutForm` y `SetLogger`. Las 17 filas existentes con decimales largos se redondearon con un UPDATE directo.
 
