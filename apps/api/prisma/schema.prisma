@@ -6,6 +6,17 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  username     String
+  slug         String    @unique
+  passwordHash String
+  workouts     Workout[]
+  routines     Routine[]
+  createdAt    DateTime  @default(now())
+}
+
 model Exercise {
   id           String        @id @default(uuid())
   name         String        @unique
@@ -17,6 +28,8 @@ model Exercise {
 
 model Workout {
   id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   exerciseId String
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
   routineId  String?
@@ -30,10 +43,14 @@ model Workout {
 
 model Routine {
   id        String        @id @default(uuid())
-  name      String        @unique
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  name      String
   items     RoutineItem[]
   workouts  Workout[]
   createdAt DateTime      @default(now())
+
+  @@unique([userId, name])
 }
 
 model RoutineItem {

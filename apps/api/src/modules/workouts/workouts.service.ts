@@ -13,8 +13,11 @@ export class WorkoutsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createWorkoutDto: CreateWorkoutDto) {
+    // ponytail: interim single-owner; replace with authenticated user in Paso 4
+    const { id: userId } = await this.prisma.user.findFirstOrThrow();
     return this.prisma.workout.create({
       data: {
+        userId,
         exerciseId: createWorkoutDto.exerciseId,
         reps: createWorkoutDto.reps,
         weight: createWorkoutDto.weight,

@@ -15,8 +15,11 @@ export class RoutinesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createRoutineDto: CreateRoutineDto) {
+    // ponytail: interim single-owner; replace with authenticated user in Paso 4
+    const { id: userId } = await this.prisma.user.findFirstOrThrow();
     return this.prisma.routine.create({
       data: {
+        userId,
         name: createRoutineDto.name,
         items: { create: this.mapItems(createRoutineDto.items) },
       },
