@@ -14,9 +14,7 @@ const itemsInclude = {
 export class RoutinesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createRoutineDto: CreateRoutineDto) {
-    // ponytail: interim single-owner; replace with authenticated user in Paso 4
-    const { id: userId } = await this.prisma.user.findFirstOrThrow();
+  async create(userId: string, createRoutineDto: CreateRoutineDto) {
     return this.prisma.routine.create({
       data: {
         userId,
@@ -27,16 +25,17 @@ export class RoutinesService {
     });
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     return this.prisma.routine.findMany({
+      where: { userId },
       include: itemsInclude,
       orderBy: { name: 'asc' },
     });
   }
 
-  async findOne(id: string) {
-    const routine = await this.prisma.routine.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const routine = await this.prisma.routine.findFirst({
+      where: { id, userId },
       include: itemsInclude,
     });
 
@@ -47,8 +46,8 @@ export class RoutinesService {
     return routine;
   }
 
-  async update(id: string, updateRoutineDto: UpdateRoutineDto) {
-    await this.findOne(id);
+  async update(id: string, userId: string, updateRoutineDto: UpdateRoutineDto) {
+    await this.findOne(id, userId);
 
     return this.prisma.$transaction(async (tx) => {
       if (updateRoutineDto.items) {
@@ -69,8 +68,8 @@ export class RoutinesService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
     return this.prisma.routine.delete({ where: { id } });
   }
 

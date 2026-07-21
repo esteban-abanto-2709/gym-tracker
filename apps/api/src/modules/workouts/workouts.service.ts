@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
@@ -12,9 +12,7 @@ const WEIGHT_STEP_KG = 2.5;
 export class WorkoutsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createWorkoutDto: CreateWorkoutDto) {
-    // ponytail: interim single-owner; replace with authenticated user in Paso 4
-    const { id: userId } = await this.prisma.user.findFirstOrThrow();
+  async create(userId: string, createWorkoutDto: CreateWorkoutDto) {
     return this.prisma.workout.create({
       data: {
         userId,
@@ -28,9 +26,13 @@ export class WorkoutsService {
     });
   }
 
-  async getRecommendation(exerciseId: string, isApproximation: boolean) {
+  async getRecommendation(
+    userId: string,
+    exerciseId: string,
+    isApproximation: boolean,
+  ) {
     const sets = await this.prisma.workout.findMany({
-      where: { exerciseId, isApproximation },
+      where: { userId, exerciseId, isApproximation },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -64,8 +66,9 @@ export class WorkoutsService {
     return { lastWeight: last.weight, lastReps: last.reps, suggestedWeight };
   }
 
-  async findDistinctDates() {
+  async findDistinctDates(userId: string) {
     const workouts = await this.prisma.workout.findMany({
+      where: { userId },
       select: { createdAt: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -78,8 +81,8 @@ export class WorkoutsService {
     return Array.from(uniqueDates);
   }
 
-  async findAll(dateStr?: string) {
-    const where: Prisma.WorkoutWhereInput = {};
+  async findAll(userId: string, dateStr?: string) {
+    const where: Prisma.WorkoutWhereInput = { userId };
     if (dateStr) {
       const { start, end } = localDayRangeUtc(dateStr);
       where.createdAt = {
@@ -99,16 +102,28 @@ export class WorkoutsService {
     });
   }
 
-  async update(id: string, updateWorkoutDto: UpdateWorkoutDto) {
+  async update(id: string, userId: string, updateWorkoutDto: UpdateWorkoutDto) {
+    await this.ensureOwned(id, userId);
     return this.prisma.workout.update({
       where: { id },
       data: updateWorkoutDto,
     });
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
+    await this.ensureOwned(id, userId);
     return this.prisma.workout.delete({
       where: { id },
     });
+  }
+
+  private async ensureOwned(id: string, userId: string) {
+    const found = await this.prisma.workout.findFirst({
+      where: { id, userId },
+      select: { id: true },
+    });
+    if (!found) {
+      throw new NotFoundException(`Workout ${id} not found`);
+    }
   }
 }
