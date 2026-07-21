@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-005] API con autenticación (guard JWT global) (2026-07-21 13:11)
+Módulo `auth` (register/login/logout/me) con hash bcrypt, JWT en cookie httpOnly y slug único desde el username; `JwtAuthGuard` como `APP_GUARD` deja todo endpoint protegido salvo los `@Public()` (register/login/healthz). Cierra el acceso anónimo de lectura/escritura vía el tunnel.
+
 ## [TD-004] API con validación de entrada (2026-07-21 12:43)
 `ValidationPipe` global (`whitelist` + `forbidNonWhitelisted` + `transform`) y DTOs de exercises/workouts/routines convertidos a clases con decoradores de `class-validator`. Payloads inválidos (reps no entero, peso negativo, UUID malo, campos extra) ahora dan 400 en vez de 500. Prerrequisito del multiusuario.
 

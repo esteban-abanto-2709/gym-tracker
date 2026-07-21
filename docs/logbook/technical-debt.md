@@ -13,13 +13,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-005] API y web sin ninguna autenticación, pronto expuestas a internet
-- **Ubicación:** `apps/api/src/main.ts:7-10`
-- **Riesgo:** 6/10
-- **Problema:** No existe auth (planificada para v2.0). Hoy lo cubre la oscuridad de las URLs de Vercel/Render, pero al exponer el stack local por Cloudflare Tunnel, cualquiera con la URL puede leer y escribir en la base de datos.
-- **Impacto futuro:** Escritura/borrado anónimo de datos en la BD local. Mitigable sin código con Cloudflare Access delante del tunnel.
-- **Fecha:** 2026-06-10 · **Estado:** Abierto
-
 ## [TD-006] Errores de red silenciados en los hooks del frontend
 - **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts:89-92`, `apps/web/src/hooks/useWorkoutHistory.ts:144-147`
 - **Riesgo:** 5/10
