@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-022] Cuentas de usuario (auth + aislamiento) (2026-07-21 14:18)
+Modelo `User` (email, username, slug) + `userId` en `Workout`/`Routine` (datos existentes migrados a la cuenta owner); auth JWT en cookie httpOnly (register/login/logout/me) y aislamiento por usuario en toda la API. Web con `AuthProvider`, guard de rutas y páginas login/registro; ejercicios siguen globales. Promovido desde WL-001 (ya sin Supabase).
+
 ## [TD-005] API con autenticación (guard JWT global) (2026-07-21 13:11)
 Módulo `auth` (register/login/logout/me) con hash bcrypt, JWT en cookie httpOnly y slug único desde el username; `JwtAuthGuard` como `APP_GUARD` deja todo endpoint protegido salvo los `@Public()` (register/login/healthz). Cierra el acceso anónimo de lectura/escritura vía el tunnel.
 

@@ -58,6 +58,7 @@ pnpm exec prisma generate          # regenerate client after schema changes
 - `DATABASE_URL` — pooled Postgres connection string
 - `DIRECT_URL` — direct Postgres connection (used by Prisma for migrations)
 - `FRONTEND_URL` — CORS allowed origin
+- `JWT_SECRET` — secret used to sign auth JWTs (required)
 - `PORT` — defaults to `4000`
 - `APP_TIMEZONE` — IANA timezone for grouping/filtering workouts by local day (defaults to `America/Lima`)
 
@@ -70,21 +71,37 @@ pnpm exec prisma generate          # regenerate client after schema changes
 
 ```
 apps/api/src/
-├── main.ts                 # bootstrap: CORS, global prefix, port
-├── app.module.ts           # root module — imports PrismaModule, ExercisesModule, WorkoutsModule
+├── main.ts                 # bootstrap: ValidationPipe, cookie-parser, CORS, port
+├── app.module.ts           # root module — global JwtAuthGuard + feature modules
 ├── modules/
-│   ├── exercises/          # ExercisesController + ExercisesService (CRUD)
-│   └── workouts/           # WorkoutsController + WorkoutsService (CRUD + date aggregation)
+│   ├── auth/               # register/login/logout/me — JWT in httpOnly cookie
+│   ├── exercises/          # ExercisesController + ExercisesService (global catalog)
+│   ├── workouts/           # WorkoutsController + WorkoutsService (per-user)
+│   └── routines/           # RoutinesController + RoutinesService (per-user)
+├── common/                 # @Public / @CurrentUser decorators, JwtAuthGuard
 └── providers/prisma/       # PrismaService with pg.Pool connection pooling
 ```
 
 The Prisma service uses `@prisma/adapter-pg` with a `pg.Pool` for connection pooling. Both `DATABASE_URL` and `DIRECT_URL` are required in the schema; in this self-hosted setup they point to the same in-network Postgres container.
 
+**Auth:** every endpoint requires a valid JWT (global `JwtAuthGuard`) except those marked `@Public()` (register, login, healthz). The token rides in an httpOnly cookie; handlers read the caller via `@CurrentUser()` and scope all `Workout`/`Routine` queries to that `userId`. Exercises are a shared global catalog.
+
 ### Database Schema
 
 ```prisma
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  username     String
+  slug         String    @unique
+  passwordHash String
+  workouts     Workout[]
+  routines     Routine[]
+  createdAt    DateTime  @default(now())
+}
+
 model Exercise {
-  id        String    @id @default(uuid())
+  id        String    @id @default(uuid())   // global shared catalog (no userId)
   name      String    @unique
   equipment String
   workouts  Workout[]
@@ -93,6 +110,8 @@ model Exercise {
 
 model Workout {
   id         String   @id @default(uuid())
+  userId     String                          // owner; queries scoped to it
+  user       User     @relation(fields: [userId], references: [id])
   exerciseId String
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
   weight     Float
@@ -102,10 +121,16 @@ model Workout {
 }
 ```
 
+`Routine` also carries `userId` and is unique per `[userId, name]` (so two users can each have a "Push"). Some fields on `Workout`/`Routine` (e.g. `routineId`, `isApproximation`) are omitted here for brevity — see `apps/api/prisma/schema.prisma`.
+
 ### API Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
+| POST | `/auth/register` | Create account, set auth cookie (public) |
+| POST | `/auth/login` | Log in, set auth cookie (public) |
+| POST | `/auth/logout` | Clear auth cookie |
+| GET | `/auth/me` | Current user |
 | GET | `/exercises` | All exercises (ordered by name) |
 | POST | `/exercises` | Create exercise |
 | GET | `/workouts` | All workouts (optional `?date=YYYY-MM-DD` filter) |
@@ -119,11 +144,13 @@ model Workout {
 ```
 apps/web/src/
 ├── app/
-│   ├── page.tsx            # Home: log a new workout
+│   ├── page.tsx            # Home: hub (start routine / free day / create)
+│   ├── login/, register/   # Auth pages
 │   ├── history/page.tsx    # History: view/edit/delete past workouts by date
 │   ├── success/            # Post-submit confirmation
-│   └── layout.tsx
+│   └── layout.tsx          # wraps the app in <AuthProvider>
 ├── components/
+│   ├── auth/               # AccountMenu (username + logout)
 │   ├── exercises/          # ExerciseCombobox, CreateExerciseModal
 │   ├── history/            # WorkoutCard, EditWorkoutDialog, DeleteWorkoutDialog
 │   ├── layout/             # PageShell, AppHeader
@@ -134,11 +161,12 @@ apps/web/src/
 │   └── useWorkoutHistory.ts # workout history state and date filtering
 └── lib/
     ├── api.ts              # ApiClient singleton (get/post/patch/delete)
-    ├── types.ts            # shared TS types: Exercise, Workout, Equipment
+    ├── auth-context.tsx    # AuthProvider + useAuth; route guard, session state
+    ├── types.ts            # shared TS types: AuthUser, Exercise, Workout, Equipment
     └── routes.ts           # API route constants
 ```
 
-State management is handled exclusively via custom hooks — no global state library. The `ApiClient` in `lib/api.ts` is the single point of contact with the backend.
+State management is handled exclusively via custom hooks — no global state library. The `ApiClient` in `lib/api.ts` is the single point of contact with the backend. Auth lives in `lib/auth-context.tsx`: `AuthProvider` checks `/auth/me` on mount, redirects to `/login` when there's no session, and the httpOnly cookie is sent automatically on every same-origin `/api/*` call.
 
 ## Deployment Targets
 
@@ -153,6 +181,6 @@ There is no managed cloud provider (previously Render/Vercel/Supabase — droppe
 
 The project is actively evolving:
 - **v1.5** — routine system (log multiple exercises per session)
-- **v2.0** — Supabase auth + user isolation
+- **v2.0** — user accounts + data isolation ✅ (self-hosted JWT auth, **not** Supabase)
 - **v2.5** — analytics dashboards, social features
 - **v3.0** — AI-powered progressive overload suggestions

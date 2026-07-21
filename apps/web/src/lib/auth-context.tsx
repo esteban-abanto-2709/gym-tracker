@@ -89,12 +89,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isPublic = PUBLIC_PATHS.has(pathname);
 
   useEffect(() => {
-    if (!loading && !user && !isPublic) {
+    if (loading) return;
+    if (!user && !isPublic) {
       router.replace(routes.login());
+    } else if (user && isPublic) {
+      router.replace(routes.home());
     }
   }, [loading, user, isPublic, router]);
 
-  if (loading || (!user && !isPublic)) {
+  if (loading || (!user && !isPublic) || (user && isPublic)) {
     return <FullScreenLoader />;
   }
 

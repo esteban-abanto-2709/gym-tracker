@@ -7,9 +7,6 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
-## [WL-001] Cuentas / multiusuario
-Auth (Supabase) con aislamiento de datos por usuario. Condicional: solo si se expande a amigos. Prerequisito de todo lo social.
-
 ## [WL-002] Copiar rutinas de amigos
 Ir al perfil de un amigo, ver su rutina (ej. "Push de Miguel77") y clonarla con un botón. El golazo social.
 

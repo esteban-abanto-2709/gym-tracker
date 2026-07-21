@@ -9,9 +9,10 @@ import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
-  const { login } = useAuth();
+export default function RegisterPage() {
+  const { register } = useAuth();
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -21,10 +22,10 @@ export default function LoginPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await login(email.trim().toLowerCase(), password.trim());
+      await register(email.trim().toLowerCase(), username.trim(), password.trim());
       // El guard de AuthProvider redirige al home al haber sesión.
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo ingresar");
+      setError(err instanceof Error ? err.message : "No se pudo registrar");
       setSubmitting(false);
     }
   }
@@ -32,11 +33,25 @@ export default function LoginPage() {
   return (
     <main className="min-h-dvh flex items-center justify-center px-6">
       <form onSubmit={onSubmit} className="w-full max-w-sm space-y-5">
-        <h1 className="text-2xl font-bold text-center">Ingresar</h1>
+        <h1 className="text-2xl font-bold text-center">Crear cuenta</h1>
 
         {error && (
           <p className="text-sm text-destructive text-center">{error}</p>
         )}
+
+        <div className="space-y-2">
+          <Label htmlFor="username">Nombre de usuario</Label>
+          <Input
+            id="username"
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            minLength={2}
+            maxLength={30}
+          />
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -57,24 +72,25 @@ export default function LoginPage() {
           <Label htmlFor="password">Contraseña</Label>
           <PasswordInput
             id="password"
-            autoComplete="current-password"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={8}
           />
         </div>
 
         <Button type="submit" className="w-full" disabled={submitting}>
-          {submitting ? "Ingresando…" : "Ingresar"}
+          {submitting ? "Creando…" : "Crear cuenta"}
         </Button>
 
         <p className="text-sm text-center text-muted-foreground">
-          ¿No tienes cuenta?{" "}
+          ¿Ya tienes cuenta?{" "}
           <Link
-            href={routes.register()}
+            href={routes.login()}
             className="text-primary font-medium hover:underline"
           >
-            Regístrate
+            Ingresa
           </Link>
         </p>
       </form>

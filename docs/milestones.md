@@ -54,8 +54,15 @@ con el tiempo. Sin datos → arranca liviano y aprende. Nada obligatorio, fiel a
 
 **Estable cuando:** la app propone la carga y se afina sola sesión a sesión.
 
+## Cuentas y multiusuario — *hecho (`RM-022`)*
+
+Promovido desde la wishlist antes de tiempo. Cada persona tiene su cuenta (email +
+username + contraseña) y ve solo sus datos; los ejercicios siguen siendo un catálogo
+global compartido. Auth propia con JWT en cookie (sin Supabase). Es el prerequisito
+que habilita todo lo **social** de la wishlist.
+
 ---
 
-Más allá de H3, lo **social**, el **multiusuario** y los **extras** viven en la
+Más allá de H3, lo **social** y los **extras** viven en la
 [`wishlist`](./logbook/wishlist.md) hasta que decidamos comprometer alguno como un
 hito nuevo. El orden de los hitos es una propuesta y puede repriorizarse.

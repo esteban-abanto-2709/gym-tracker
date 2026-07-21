@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, HistoryAction } from "@/components/layout/AppHeader";
+import { AccountMenu } from "@/components/auth/AccountMenu";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { routes } from "@/lib/routes";
 import { Play, Zap, Plus } from "lucide-react";
@@ -8,7 +9,7 @@ import { Play, Zap, Plus } from "lucide-react";
 export default function Home() {
   return (
     <PageShell>
-      <AppHeader rightAction={<HistoryAction />} />
+      <AppHeader leftAction={<AccountMenu />} rightAction={<HistoryAction />} />
 
       <main className="flex-1 flex flex-col justify-center px-6 py-8 relative z-10 animate-fade-in-up">
         <div className="max-w-md w-full mx-auto space-y-4">
