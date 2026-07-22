@@ -49,6 +49,7 @@ services:
       dockerfile: Dockerfile
       args:
         API_INTERNAL_URL: http://api:4000
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: gym-tracker-web
     restart: unless-stopped
     environment:

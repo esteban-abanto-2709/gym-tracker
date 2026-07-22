@@ -17,6 +17,10 @@ COPY . .
 ARG API_INTERNAL_URL=http://localhost:4000
 ENV API_INTERNAL_URL=${API_INTERNAL_URL}
 
+# Google OAuth Client ID inlined into the client bundle at build time
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+
 RUN pnpm run build
 
 

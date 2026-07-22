@@ -14,6 +14,7 @@ export const routes = {
       me: () => "/auth/me",
       login: () => "/auth/login",
       register: () => "/auth/register",
+      google: () => "/auth/google",
       logout: () => "/auth/logout",
     },
     workouts: {

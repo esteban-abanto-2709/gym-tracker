@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { GoogleButton } from "@/components/auth/GoogleButton";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -67,6 +68,8 @@ export default function LoginPage() {
         <Button type="submit" className="w-full" disabled={submitting}>
           {submitting ? "Ingresando…" : "Ingresar"}
         </Button>
+
+        <GoogleButton />
 
         <p className="text-sm text-center text-muted-foreground">
           ¿No tienes cuenta?{" "}

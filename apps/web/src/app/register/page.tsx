@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { GoogleButton } from "@/components/auth/GoogleButton";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -83,6 +84,8 @@ export default function RegisterPage() {
         <Button type="submit" className="w-full" disabled={submitting}>
           {submitting ? "Creando…" : "Crear cuenta"}
         </Button>
+
+        <GoogleButton />
 
         <p className="text-sm text-center text-muted-foreground">
           ¿Ya tienes cuenta?{" "}
