@@ -11,7 +11,8 @@ model User {
   email        String    @unique
   username     String
   slug         String    @unique
-  passwordHash String
+  passwordHash String?
+  googleId     String?   @unique
   workouts     Workout[]
   routines     Routine[]
   createdAt    DateTime  @default(now())
