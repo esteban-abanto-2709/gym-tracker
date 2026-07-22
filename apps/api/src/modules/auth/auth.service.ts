@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 import { User } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
@@ -13,6 +14,8 @@ const DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
 
 @Injectable()
 export class AuthService {
+  private readonly googleClient = new OAuth2Client();
+
   constructor(private readonly prisma: PrismaService) {}
 
   async register(dto: RegisterDto) {
@@ -44,6 +47,37 @@ export class AuthService {
     ) {
       throw new UnauthorizedException('Invalid credentials');
     }
+    return this.publicUser(user);
+  }
+
+  async loginWithGoogle(credential: string) {
+    const ticket = await this.googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    if (!payload?.email || !payload.email_verified) {
+      throw new UnauthorizedException('Cuenta de Google no verificada');
+    }
+
+    const existing = await this.prisma.user.findFirst({
+      where: { OR: [{ googleId: payload.sub }, { email: payload.email }] },
+    });
+
+    if (existing) {
+      if (existing.googleId) return this.publicUser(existing);
+      const linked = await this.prisma.user.update({
+        where: { id: existing.id },
+        data: { googleId: payload.sub },
+      });
+      return this.publicUser(linked);
+    }
+
+    const username = payload.name || payload.email.split('@')[0];
+    const slug = await this.uniqueSlug(username);
+    const user = await this.prisma.user.create({
+      data: { email: payload.email, username, slug, googleId: payload.sub },
+    });
     return this.publicUser(user);
   }
 

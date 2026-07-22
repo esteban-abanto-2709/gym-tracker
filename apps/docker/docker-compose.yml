@@ -33,6 +33,7 @@ services:
       - DIRECT_URL=${DIRECT_URL}
       - FRONTEND_URL=${FRONTEND_URL}
       - JWT_SECRET=${JWT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - PORT=4000
       - APP_TIMEZONE=${APP_TIMEZONE:-America/Lima}
     depends_on:

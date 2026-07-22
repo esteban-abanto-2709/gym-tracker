@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
 import { Public } from '@/common/decorators/public.decorator';
 import {
   CurrentUser,
@@ -38,6 +39,17 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.validateUser(dto);
+    this.setAuthCookie(res, user.id);
+    return user;
+  }
+
+  @Public()
+  @Post('google')
+  async google(
+    @Body() dto: GoogleLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const user = await this.authService.loginWithGoogle(dto.credential);
     this.setAuthCookie(res, user.id);
     return user;
   }
