@@ -30,12 +30,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** en una sesión guiada puedo saltar a cualquier ejercicio pendiente (y volver), saltar uno definitivamente y reemplazar uno heredando sus metas, sin tocar la rutina guardada.
 - **Fecha:** 2026-06-25 · **Estado:** Abierto
 
-## [RM-025] Saneo del catálogo de ejercicios (identidad movimiento + equipo)
-- **Objetivo:** formalizar que la identidad de un ejercicio es el par **(nombre normalizado, equipo)** y cerrar las fuentes de basura del catálogo global: hoy `equipment` es texto libre sin validar en el API (`Maquina`/`Máquina`/`Mancuernas` conviven) y `name @unique` es case-sensitive (existen `Press Militar (Máquina)` y `press militar (maquina)` como filas distintas, partiendo el historial de progresión y la recomendación de peso).
-- **Alcance:** (1) validar `equipment` en el servidor contra la lista canónica (`IsIn` en el DTO; enum de Prisma opcional); (2) unicidad case-insensitive por `(nombre normalizado, equipo)` en lugar de nombre solo — variantes legítimas del mismo movimiento en distinto equipo conviven; (3) limpieza de duplicados existentes reasignando `Workout`/`RoutineItem` al canónico antes de borrar la fila. **La limpieza y la migración deben ejecutarse también en la BD de producción** (el análisis se hizo sobre la BD de dev; prod tiene los datos reales de todos los usuarios y debe quedar corregida con el mismo procedimiento: migración de valores de equipo + fusión de duplicados + constraint nuevo).
-- **Hecho cuando:** el API rechaza equipos fuera de la lista, la unicidad `(nombre, equipo)` está en el esquema, y **dev y producción** quedan sin duplicados ni valores de equipo inconsistentes.
-- **Fecha:** 2026-07-23 · **Estado:** Abierto
-
 ## [RM-021] Exportar rutina como texto para análisis con IA
 - **Objetivo:** poder copiar/descargar un texto legible con la rutina actual (y quizá historial reciente) para pegárselo a una IA y que la analice.
 - **Hecho cuando:** existe una acción que genera/copia un texto de la rutina actual, listo para pegar en un chat de IA.

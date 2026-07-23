@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { EQUIPMENT } from '../equipment';
 
 export class CreateExerciseDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsIn(EQUIPMENT)
   equipment: string;
 }

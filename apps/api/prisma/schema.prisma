@@ -20,7 +20,7 @@ model User {
 
 model Exercise {
   id           String        @id @default(uuid())
-  name         String        @unique
+  name         String
   equipment    String
   workouts     Workout[]
   routineItems RoutineItem[]
