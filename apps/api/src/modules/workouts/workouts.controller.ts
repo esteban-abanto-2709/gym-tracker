@@ -28,27 +28,24 @@ export class WorkoutsController {
     return this.workoutsService.create(user.id, createWorkoutDto);
   }
 
-  @Get('dates')
-  async findDates(@CurrentUser() user: AuthUser) {
-    return this.workoutsService.findDistinctDates(user.id);
-  }
-
   @Get('recommendation')
   async getRecommendation(
     @CurrentUser() user: AuthUser,
     @Query('exerciseId') exerciseId: string,
     @Query('isApproximation') isApproximation?: string,
+    @Query('tz') tz?: string,
   ) {
     return this.workoutsService.getRecommendation(
       user.id,
       exerciseId,
       isApproximation === 'true',
+      tz,
     );
   }
 
   @Get()
-  async findAll(@CurrentUser() user: AuthUser, @Query('date') date?: string) {
-    return this.workoutsService.findAll(user.id, date);
+  async findAll(@CurrentUser() user: AuthUser) {
+    return this.workoutsService.findAll(user.id);
   }
 
   @Patch(':id')

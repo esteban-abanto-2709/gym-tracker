@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/providers/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
-import { localDayRangeUtc, toLocalDateString } from '@/common/timezone.util';
+import { toLocalDateString } from '@/common/timezone.util';
 
 const REP_MARGIN = 3;
 const WEIGHT_STEP_KG = 2.5;
@@ -30,6 +29,7 @@ export class WorkoutsService {
     userId: string,
     exerciseId: string,
     isApproximation: boolean,
+    tz?: string,
   ) {
     const sets = await this.prisma.workout.findMany({
       where: { userId, exerciseId, isApproximation },
@@ -47,7 +47,7 @@ export class WorkoutsService {
     const bestRepsByDay = new Map<string, number>();
     for (const s of sets) {
       if (s.weight !== workingWeight) continue;
-      const day = toLocalDateString(s.createdAt);
+      const day = toLocalDateString(s.createdAt, tz);
       bestRepsByDay.set(day, Math.max(bestRepsByDay.get(day) ?? 0, s.reps));
     }
 
@@ -66,33 +66,9 @@ export class WorkoutsService {
     return { lastWeight: last.weight, lastReps: last.reps, suggestedWeight };
   }
 
-  async findDistinctDates(userId: string) {
-    const workouts = await this.prisma.workout.findMany({
-      where: { userId },
-      select: { createdAt: true },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const uniqueDates = new Set<string>();
-    workouts.forEach((w) => {
-      uniqueDates.add(toLocalDateString(w.createdAt));
-    });
-
-    return Array.from(uniqueDates);
-  }
-
-  async findAll(userId: string, dateStr?: string) {
-    const where: Prisma.WorkoutWhereInput = { userId };
-    if (dateStr) {
-      const { start, end } = localDayRangeUtc(dateStr);
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
-    }
-
+  async findAll(userId: string) {
     return this.prisma.workout.findMany({
-      where,
+      where: { userId },
       include: {
         exercise: true,
       },

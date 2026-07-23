@@ -61,7 +61,6 @@ pnpm exec prisma generate          # regenerate client after schema changes
 - `JWT_SECRET` — secret used to sign auth JWTs (required)
 - `GOOGLE_CLIENT_ID` — Google OAuth Client ID; used to verify Google ID tokens on `POST /auth/google` (public value)
 - `PORT` — defaults to `4000`
-- `APP_TIMEZONE` — IANA timezone for grouping/filtering workouts by local day (defaults to `America/Lima`)
 
 **Web** (`apps/web/.env.local`):
 - `API_INTERNAL_URL` — server-side target for the `/api/*` rewrite proxy (defaults to `http://localhost:4000`). The browser only ever calls the web's own origin; the Next server forwards `/api/*` to this URL, so no API URL is exposed to the client bundle.
@@ -137,11 +136,11 @@ model Workout {
 | GET | `/auth/me` | Current user |
 | GET | `/exercises` | All exercises (ordered by name) |
 | POST | `/exercises` | Create exercise |
-| GET | `/workouts` | All workouts (optional `?date=YYYY-MM-DD` filter) |
+| GET | `/workouts` | All workouts for the user (grouping/filtering by local day happens client-side) |
 | POST | `/workouts` | Create workout |
 | PATCH | `/workouts/:id` | Update workout |
 | DELETE | `/workouts/:id` | Delete workout |
-| GET | `/workouts/dates` | Distinct dates that have workouts |
+| GET | `/workouts/recommendation` | Weight suggestion for an exercise (`?exerciseId=&isApproximation=&tz=`) |
 
 ### Frontend (Next.js App Router)
 

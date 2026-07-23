@@ -20,7 +20,6 @@ Variables en `.env`:
 | `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | credenciales de Postgres |
 | `DATABASE_URL` / `DIRECT_URL` | conexión de la API a Postgres (ambas a la red interna) |
 | `FRONTEND_URL` | origen permitido por CORS en la API |
-| `APP_TIMEZONE` | zona horaria para agrupar workouts por día local |
 | `TUNNEL_TOKEN` | token del Cloudflare Tunnel (vacío si usas quick tunnel) |
 
 ## Prod local (stack completo)

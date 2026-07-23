@@ -66,11 +66,11 @@ pnpm exec prisma studio               # UI visual de la base de datos
 |--------|------|-------------|
 | `GET` | `/exercises` | Lista todos los ejercicios (orden alfabético) |
 | `POST` | `/exercises` | Crea un ejercicio nuevo |
-| `GET` | `/workouts` | Lista workouts (filtro opcional `?date=YYYY-MM-DD`) |
+| `GET` | `/workouts` | Lista todos los workouts del usuario (el agrupado/filtro por día local es del frontend) |
 | `POST` | `/workouts` | Registra un workout |
 | `PATCH` | `/workouts/:id` | Edita un workout |
 | `DELETE` | `/workouts/:id` | Elimina un workout |
-| `GET` | `/workouts/dates` | Devuelve las fechas distintas con workouts registrados |
+| `GET` | `/workouts/recommendation` | Sugerencia de peso (`?exerciseId=&isApproximation=&tz=`) |
 
 ## Arquitectura
 
