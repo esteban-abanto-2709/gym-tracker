@@ -213,9 +213,16 @@ body {
 }
 
 @keyframes rotateHint {
-  0%, 100% { transform: rotate(0deg); }
-  40%       { transform: rotate(90deg); }
-  60%       { transform: rotate(90deg); }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(90deg);
+  }
+  60% {
+    transform: rotate(90deg);
+  }
 }
 
 /* Override Browser Autofill Styles */

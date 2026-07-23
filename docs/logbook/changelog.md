@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-006] Feedback de red en escrituras del frontend (2026-07-23 13:16)
+`sonner` + helper `notifyError(msg, retry)`: los 5 `catch` de escritura (registro libre, editar/borrar historial, registrar serie guiada, guardar rutina) ahora muestran un toast de error con botón "Reintentar" en vez de solo `console.error`. `<Toaster>` dark/rojo montado en el layout.
+
 ## [RM-024] Login/registro con Google (2026-07-23 10:27)
 Backend: `passwordHash` opcional + `googleId` en `User`, endpoint público `POST /auth/google` que verifica el ID token con `google-auth-library` y reusa la cookie JWT (crea la cuenta o la vincula por email). Web: `@react-oauth/google` (`GoogleOAuthProvider` en el layout + botón "Continuar con Google" en login y registro).
 

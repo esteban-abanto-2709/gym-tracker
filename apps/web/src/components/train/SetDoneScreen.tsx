@@ -3,7 +3,14 @@
 import type { RoutineItem } from "@/lib/types";
 import type { LastResult } from "@/hooks/useGuidedSession";
 import { convertWeight } from "@/lib/units";
-import { Check, ArrowRight, Plus, Flag, Dumbbell, PartyPopper } from "lucide-react";
+import {
+  Check,
+  ArrowRight,
+  Plus,
+  Flag,
+  Dumbbell,
+  PartyPopper,
+} from "lucide-react";
 
 export interface NextUp {
   label: string;
@@ -49,7 +56,10 @@ export function SetDoneScreen({
             <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
             <span className="absolute inset-0 rounded-full bg-primary/15" />
             <div className="relative w-16 h-16 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/30 animate-pop">
-              <Check className="w-9 h-9 text-primary-foreground" strokeWidth={3.5} />
+              <Check
+                className="w-9 h-9 text-primary-foreground"
+                strokeWidth={3.5}
+              />
             </div>
           </div>
           <p className="text-2xl font-black text-foreground">
@@ -59,8 +69,8 @@ export function SetDoneScreen({
             {result.exerciseName}
           </p>
           <p className="text-sm text-muted-foreground mt-2 font-mono">
-            {result.weightKg} kg ({convertWeight(result.weightKg, "kg", "lb")} lb)
-            × {result.reps} reps
+            {result.weightKg} kg ({convertWeight(result.weightKg, "kg", "lb")}{" "}
+            lb) × {result.reps} reps
           </p>
           {result.suggestedWeight != null && (
             <p className="mt-3 text-sm font-bold text-primary">

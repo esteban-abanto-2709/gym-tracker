@@ -45,11 +45,11 @@ pnpm format     # Prettier
 
 ## Páginas
 
-| Ruta | Descripción |
-|------|-------------|
-| `/` | Registrar un workout: selecciona ejercicio, ingresa peso, reps y valoración |
-| `/history` | Historial de workouts agrupado por fecha, con edición y borrado |
-| `/success` | Confirmación tras registrar un workout |
+| Ruta       | Descripción                                                                 |
+| ---------- | --------------------------------------------------------------------------- |
+| `/`        | Registrar un workout: selecciona ejercicio, ingresa peso, reps y valoración |
+| `/history` | Historial de workouts agrupado por fecha, con edición y borrado             |
+| `/success` | Confirmación tras registrar un workout                                      |
 
 ## Arquitectura
 

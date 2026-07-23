@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 
@@ -34,6 +35,7 @@ export default function RootLayout({
         >
           <AuthProvider>{children}</AuthProvider>
         </GoogleOAuthProvider>
+        <Toaster theme="dark" richColors position="top-center" />
         <div className="portrait-lock" aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"

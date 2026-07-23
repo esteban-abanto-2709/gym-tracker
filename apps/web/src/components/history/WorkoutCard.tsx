@@ -59,7 +59,9 @@ export function WorkoutCard({
               <span className="text-2xl font-black text-foreground">
                 {workout.weight}
               </span>
-              <span className="text-xs font-bold text-muted-foreground">kg</span>
+              <span className="text-xs font-bold text-muted-foreground">
+                kg
+              </span>
             </div>
             <div className="h-4 w-px bg-border" />
             <div className="flex items-baseline gap-1">

@@ -9,6 +9,7 @@ import {
   writeActiveSession,
   clearActiveSession,
 } from "@/lib/activeSession";
+import { notifyError } from "@/lib/notify";
 
 type Phase = "logging" | "done";
 
@@ -75,46 +76,50 @@ export function useGuidedSession() {
     async ({ weightKg, reps, opinion, isApproximation }: LogSetArgs) => {
       if (!session || !currentItem) return;
       setLogging(true);
-      try {
-        await api.post(routes.api.workouts.create(), {
-          exerciseId: currentItem.exerciseId,
-          reps,
-          weight: weightKg,
-          opinion: opinion ?? "",
-          routineId: session.routineId,
-          isApproximation: isApproximation ?? false,
-        });
-
-        const setNumber = (progress[currentIndex] ?? 0) + 1;
-        const nextProgress = { ...progress, [currentIndex]: setNumber };
-        persist({ ...session, progress: nextProgress });
-
-        let suggestedWeight: number | null = null;
+      const run = async () => {
         try {
-          const rec = await api.get<{ suggestedWeight: number | null }>(
-            routes.api.workouts.recommendation(
-              currentItem.exerciseId,
-              isApproximation ?? false,
-            ),
-          );
-          suggestedWeight = rec.suggestedWeight;
-        } catch (e) {
-          console.error("Error fetching recommendation:", e);
-        }
+          await api.post(routes.api.workouts.create(), {
+            exerciseId: currentItem.exerciseId,
+            reps,
+            weight: weightKg,
+            opinion: opinion ?? "",
+            routineId: session.routineId,
+            isApproximation: isApproximation ?? false,
+          });
 
-        setLastResult({
-          exerciseName: currentItem.exercise.name,
-          weightKg,
-          reps,
-          setNumber,
-          suggestedWeight,
-        });
-        setPhase("done");
-      } catch (e) {
-        console.error("Error logging set:", e);
-      } finally {
-        setLogging(false);
-      }
+          const setNumber = (progress[currentIndex] ?? 0) + 1;
+          const nextProgress = { ...progress, [currentIndex]: setNumber };
+          persist({ ...session, progress: nextProgress });
+
+          let suggestedWeight: number | null = null;
+          try {
+            const rec = await api.get<{ suggestedWeight: number | null }>(
+              routes.api.workouts.recommendation(
+                currentItem.exerciseId,
+                isApproximation ?? false,
+              ),
+            );
+            suggestedWeight = rec.suggestedWeight;
+          } catch (e) {
+            console.error("Error fetching recommendation:", e);
+          }
+
+          setLastResult({
+            exerciseName: currentItem.exercise.name,
+            weightKg,
+            reps,
+            setNumber,
+            suggestedWeight,
+          });
+          setPhase("done");
+        } catch (e) {
+          console.error("Error logging set:", e);
+          notifyError("No se pudo registrar la serie", run);
+        } finally {
+          setLogging(false);
+        }
+      };
+      await run();
     },
     [session, currentItem, progress, currentIndex, persist],
   );

@@ -23,7 +23,11 @@ export default function RegisterPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await register(email.trim().toLowerCase(), username.trim(), password.trim());
+      await register(
+        email.trim().toLowerCase(),
+        username.trim(),
+        password.trim(),
+      );
       // El guard de AuthProvider redirige al home al haber sesión.
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo registrar");

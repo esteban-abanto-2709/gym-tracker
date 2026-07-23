@@ -32,8 +32,14 @@ export function SortableExerciseItem({
   onToggleApproximation,
   onRemove,
 }: SortableExerciseItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: item.key });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.key });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -92,7 +98,9 @@ export function SortableExerciseItem({
             }
             className="w-14 px-2 py-2 text-center font-mono bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-xl transition-all"
           />
-          <span className="text-xs font-bold text-muted-foreground">series</span>
+          <span className="text-xs font-bold text-muted-foreground">
+            series
+          </span>
         </div>
 
         <span className="text-muted-foreground font-bold">×</span>

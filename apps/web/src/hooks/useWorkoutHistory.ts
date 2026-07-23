@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
+import { notifyError } from "@/lib/notify";
 
 export function useWorkoutHistory() {
   const router = useRouter();
@@ -127,37 +128,41 @@ export function useWorkoutHistory() {
   const saveEdit = useCallback(async () => {
     if (!editingWorkout) return;
     setActionLoading(true);
-    try {
-      await api.patch(routes.api.workouts.update(editingWorkout.id), {
-        reps: Number(editReps),
-        weight: Number(editWeight),
-        opinion: editOpinion,
-        isApproximation: editApproximation,
-      });
+    const run = async () => {
+      try {
+        await api.patch(routes.api.workouts.update(editingWorkout.id), {
+          reps: Number(editReps),
+          weight: Number(editWeight),
+          opinion: editOpinion,
+          isApproximation: editApproximation,
+        });
 
-      setCachedWorkouts((prev) => {
-        const dayWorkouts = prev[selectedDate] || [];
-        return {
-          ...prev,
-          [selectedDate]: dayWorkouts.map((ex) =>
-            ex.id === editingWorkout.id
-              ? {
-                  ...ex,
-                  reps: Number(editReps),
-                  weight: Number(editWeight),
-                  opinion: editOpinion,
-                  isApproximation: editApproximation,
-                }
-              : ex,
-          ),
-        };
-      });
-      setEditingWorkout(null);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setActionLoading(false);
-    }
+        setCachedWorkouts((prev) => {
+          const dayWorkouts = prev[selectedDate] || [];
+          return {
+            ...prev,
+            [selectedDate]: dayWorkouts.map((ex) =>
+              ex.id === editingWorkout.id
+                ? {
+                    ...ex,
+                    reps: Number(editReps),
+                    weight: Number(editWeight),
+                    opinion: editOpinion,
+                    isApproximation: editApproximation,
+                  }
+                : ex,
+            ),
+          };
+        });
+        setEditingWorkout(null);
+      } catch (e) {
+        console.error(e);
+        notifyError("No se pudieron guardar los cambios", run);
+      } finally {
+        setActionLoading(false);
+      }
+    };
+    await run();
   }, [
     editingWorkout,
     editReps,
@@ -171,25 +176,29 @@ export function useWorkoutHistory() {
   const confirmDelete = useCallback(async () => {
     if (!deletingWorkout) return;
     setActionLoading(true);
-    try {
-      await api.delete(routes.api.workouts.delete(deletingWorkout.id));
+    const run = async () => {
+      try {
+        await api.delete(routes.api.workouts.delete(deletingWorkout.id));
 
-      setCachedWorkouts((prev) => {
-        const dayWorkouts = prev[selectedDate] || [];
-        return {
-          ...prev,
-          [selectedDate]: dayWorkouts.filter(
-            (ex) => ex.id !== deletingWorkout.id,
-          ),
-        };
-      });
+        setCachedWorkouts((prev) => {
+          const dayWorkouts = prev[selectedDate] || [];
+          return {
+            ...prev,
+            [selectedDate]: dayWorkouts.filter(
+              (ex) => ex.id !== deletingWorkout.id,
+            ),
+          };
+        });
 
-      setDeletingWorkout(null);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setActionLoading(false);
-    }
+        setDeletingWorkout(null);
+      } catch (e) {
+        console.error(e);
+        notifyError("No se pudo borrar el set", run);
+      } finally {
+        setActionLoading(false);
+      }
+    };
+    await run();
   }, [deletingWorkout, selectedDate]);
 
   const currentWorkouts = cachedWorkouts[selectedDate] || [];

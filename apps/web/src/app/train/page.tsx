@@ -76,7 +76,9 @@ export default function TrainPage() {
         label: "Sigue en la misma máquina",
         name: currentItem.exercise.name,
         detail: `Serie ${setsDoneForCurrent + 1}${
-          currentItem.targetReps ? ` · objetivo ${currentItem.targetReps} reps` : ""
+          currentItem.targetReps
+            ? ` · objetivo ${currentItem.targetReps} reps`
+            : ""
         }`,
       }
     : nextItem

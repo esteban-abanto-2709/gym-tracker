@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
+import { notifyError } from "@/lib/notify";
 
 const STORAGE_KEY = "gymtrack-last-set";
 
@@ -93,24 +94,29 @@ export function useWorkoutForm(
         isApproximation,
       };
 
-      try {
-        await api.post(routes.api.workouts.create(), data);
+      const run = async () => {
+        try {
+          await api.post(routes.api.workouts.create(), data);
 
-        // Save for "Repeat" flow from Success page (always in kg)
-        sessionStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({
-            exerciseId: selectedExercise.id,
-            weight: String(weightKg),
-            reps,
-          }),
-        );
+          // Save for "Repeat" flow from Success page (always in kg)
+          sessionStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              exerciseId: selectedExercise.id,
+              weight: String(weightKg),
+              reps,
+            }),
+          );
 
-        router.push(routes.success());
-      } catch (error) {
-        console.error("Error saving workout:", error);
-        setLoading(false);
-      }
+          router.push(routes.success());
+        } catch (error) {
+          console.error("Error saving workout:", error);
+          setLoading(false);
+          notifyError("No se pudo guardar el set", run);
+        }
+      };
+
+      await run();
     },
     [selectedExercise, reps, weight, unit, opinion, isApproximation, router],
   );

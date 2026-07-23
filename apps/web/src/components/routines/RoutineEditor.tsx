@@ -23,6 +23,7 @@ import {
 } from "@dnd-kit/modifiers";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
+import { notifyError } from "@/lib/notify";
 import type { Equipment, Routine } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
@@ -178,28 +179,33 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
   const handleSave = async () => {
     if (!canSave) return;
     setSaving(true);
-    try {
-      const payload = {
-        name: name.trim(),
-        items: items.map((item, index) => ({
-          exerciseId: item.exerciseId,
-          position: index,
-          targetSets: toNullableInt(item.targetSets),
-          targetReps: toNullableInt(item.targetReps),
-          isApproximation: item.isApproximation,
-        })),
-      };
+    const payload = {
+      name: name.trim(),
+      items: items.map((item, index) => ({
+        exerciseId: item.exerciseId,
+        position: index,
+        targetSets: toNullableInt(item.targetSets),
+        targetReps: toNullableInt(item.targetReps),
+        isApproximation: item.isApproximation,
+      })),
+    };
 
-      if (routineId) {
-        await api.patch(routes.api.routines.update(routineId), payload);
-      } else {
-        await api.post(routes.api.routines.create(), payload);
+    const run = async () => {
+      try {
+        if (routineId) {
+          await api.patch(routes.api.routines.update(routineId), payload);
+        } else {
+          await api.post(routes.api.routines.create(), payload);
+        }
+        router.push(routes.routines());
+      } catch (e) {
+        console.error("Error saving routine:", e);
+        setSaving(false);
+        notifyError("No se pudo guardar la rutina", run);
       }
-      router.push(routes.routines());
-    } catch (e) {
-      console.error("Error saving routine:", e);
-      setSaving(false);
-    }
+    };
+
+    await run();
   };
 
   if (loadingRoutine) {

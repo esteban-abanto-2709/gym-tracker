@@ -65,7 +65,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    setUser(await authFetch<AuthUser>(routes.api.auth.login(), { email, password }));
+    setUser(
+      await authFetch<AuthUser>(routes.api.auth.login(), { email, password }),
+    );
   }, []);
 
   const register = useCallback(
@@ -82,7 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const loginWithGoogle = useCallback(async (credential: string) => {
-    setUser(await authFetch<AuthUser>(routes.api.auth.google(), { credential }));
+    setUser(
+      await authFetch<AuthUser>(routes.api.auth.google(), { credential }),
+    );
   }, []);
 
   const logout = useCallback(async () => {
