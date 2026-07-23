@@ -15,6 +15,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 ## [RM-025] Saneo del catálogo de ejercicios (2026-07-23 14:02)
 Identidad = `(nombre, equipo)`: `@IsIn` valida el equipo, índice `UNIQUE (lower(name), equipment)` da unicidad case-insensitive, y una migración normalizó equipos + fusionó duplicados (repunta FK al de más workouts). Aplicado en dev y prod.
 
+## [TD-008] Timezone movida al frontend (backend agnóstico) (2026-07-23 14:24)
+En vez de un `SELECT DISTINCT` server-side, se decidió que la timezone es del cliente: se borró `GET /workouts/dates` y el filtro `?date=`, `findAll` devuelve todo y `useWorkoutHistory` agrupa por día local del navegador (`toLocaleDateString("en-CA")`) filtrando en memoria. `getRecommendation` recibe `tz` del cliente; eliminado `APP_TIMEZONE` de env/docker/docs.
+
 ## [TD-006] Feedback de red en escrituras del frontend (2026-07-23 13:16)
 `sonner` + helper `notifyError(msg, retry)`: los 5 `catch` de escritura (registro libre, editar/borrar historial, registrar serie guiada, guardar rutina) ahora muestran un toast de error con botón "Reintentar" en vez de solo `console.error`. `<Toaster>` dark/rojo montado en el layout.
 

@@ -16,9 +16,7 @@ export default function HistoryPage() {
     selectedDate,
     setSelectedDate,
     currentWorkouts,
-    loadingDates,
-    loadingWorkouts,
-    cachedWorkouts,
+    loading,
     getDisplayDate,
     handleRepeat,
     editingWorkout,
@@ -49,7 +47,7 @@ export default function HistoryPage() {
         {/* Date Selector Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
           <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
-          {!loadingDates && dates.length === 0 && (
+          {!loading && dates.length === 0 && (
             <span className="text-sm text-muted-foreground">Sin registros</span>
           )}
           {dates.map((date) => (
@@ -70,7 +68,7 @@ export default function HistoryPage() {
 
       {/* Main Content */}
       <main className="flex-1 px-6 py-6 pb-24 overflow-y-auto relative z-10 max-w-md mx-auto w-full">
-        {loadingDates ? (
+        {loading ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="text-sm text-muted-foreground font-medium animate-pulse">
@@ -94,13 +92,6 @@ export default function HistoryPage() {
             >
               Comenzar a entrenar
             </Link>
-          </div>
-        ) : loadingWorkouts && !cachedWorkouts[selectedDate] ? (
-          <div className="flex flex-col items-center justify-center h-48 space-y-4">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-muted-foreground font-medium animate-pulse">
-              Cargando rutinas del día...
-            </p>
           </div>
         ) : (
           <div className="space-y-10">

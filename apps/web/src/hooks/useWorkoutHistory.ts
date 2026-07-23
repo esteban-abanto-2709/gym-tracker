@@ -1,22 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
 import { notifyError } from "@/lib/notify";
 
+// Local day (browser tz) as YYYY-MM-DD. en-CA formats ISO-like.
+function localDay(date: string): string {
+  return new Date(date).toLocaleDateString("en-CA");
+}
+
 export function useWorkoutHistory() {
   const router = useRouter();
 
-  // State for lazy-loading and caching
-  const [dates, setDates] = useState<string[]>([]);
-  const [cachedWorkouts, setCachedWorkouts] = useState<
-    Record<string, Workout[]>
-  >({});
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
-
-  const [loadingDates, setLoadingDates] = useState(true);
-  const [loadingWorkouts, setLoadingWorkouts] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Edit and Delete state
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
@@ -27,55 +26,47 @@ export function useWorkoutHistory() {
   const [editApproximation, setEditApproximation] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Fetch dates + load the most recent day on mount
+  // Load all workouts once; grouping/filtering by local day happens client-side.
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const run = async () => {
       try {
-        const fetchedDates = await api.get<string[]>(
-          routes.api.workouts.dates(),
-        );
-        setDates(fetchedDates);
-
-        if (fetchedDates.length > 0) {
-          const initialDate = fetchedDates[0];
-          setSelectedDate(initialDate);
-
-          const initialWorkouts = await api.get<Workout[]>(
-            routes.api.workouts.list(initialDate),
-          );
-          setCachedWorkouts({ [initialDate]: initialWorkouts });
-        }
+        const all = await api.get<Workout[]>(routes.api.workouts.list());
+        setWorkouts(all);
+        if (all.length > 0) setSelectedDate(localDay(all[0].createdAt));
       } catch (error) {
-        console.error("Error fetching dates:", error);
+        console.error("Error fetching workouts:", error);
       } finally {
-        setLoadingDates(false);
+        setLoading(false);
       }
     };
-
-    fetchInitialData();
+    run();
   }, []);
 
-  // Lazy-load workouts when selecting a new date
-  useEffect(() => {
-    if (!selectedDate) return;
-    if (cachedWorkouts[selectedDate] !== undefined) return;
-
-    const fetchDayWorkouts = async () => {
-      setLoadingWorkouts(true);
-      try {
-        const data = await api.get<Workout[]>(
-          routes.api.workouts.list(selectedDate),
-        );
-        setCachedWorkouts((prev) => ({ ...prev, [selectedDate]: data }));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoadingWorkouts(false);
+  // Distinct local days, newest first (list already comes ordered desc).
+  const dates = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const w of workouts) {
+      const d = localDay(w.createdAt);
+      if (!seen.has(d)) {
+        seen.add(d);
+        out.push(d);
       }
-    };
+    }
+    return out;
+  }, [workouts]);
 
-    fetchDayWorkouts();
-  }, [selectedDate, cachedWorkouts]);
+  const currentWorkouts = useMemo(
+    () => workouts.filter((w) => localDay(w.createdAt) === selectedDate),
+    [workouts, selectedDate],
+  );
+
+  // Keep a valid day selected after deletions empty out the current one.
+  useEffect(() => {
+    if (dates.length > 0 && !dates.includes(selectedDate)) {
+      setSelectedDate(dates[0]);
+    }
+  }, [dates, selectedDate]);
 
   // Format date string to human-readable
   const getDisplayDate = useCallback((dateStr: string) => {
@@ -137,23 +128,19 @@ export function useWorkoutHistory() {
           isApproximation: editApproximation,
         });
 
-        setCachedWorkouts((prev) => {
-          const dayWorkouts = prev[selectedDate] || [];
-          return {
-            ...prev,
-            [selectedDate]: dayWorkouts.map((ex) =>
-              ex.id === editingWorkout.id
-                ? {
-                    ...ex,
-                    reps: Number(editReps),
-                    weight: Number(editWeight),
-                    opinion: editOpinion,
-                    isApproximation: editApproximation,
-                  }
-                : ex,
-            ),
-          };
-        });
+        setWorkouts((prev) =>
+          prev.map((w) =>
+            w.id === editingWorkout.id
+              ? {
+                  ...w,
+                  reps: Number(editReps),
+                  weight: Number(editWeight),
+                  opinion: editOpinion,
+                  isApproximation: editApproximation,
+                }
+              : w,
+          ),
+        );
         setEditingWorkout(null);
       } catch (e) {
         console.error(e);
@@ -163,14 +150,7 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [
-    editingWorkout,
-    editReps,
-    editWeight,
-    editOpinion,
-    editApproximation,
-    selectedDate,
-  ]);
+  }, [editingWorkout, editReps, editWeight, editOpinion, editApproximation]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {
@@ -179,17 +159,7 @@ export function useWorkoutHistory() {
     const run = async () => {
       try {
         await api.delete(routes.api.workouts.delete(deletingWorkout.id));
-
-        setCachedWorkouts((prev) => {
-          const dayWorkouts = prev[selectedDate] || [];
-          return {
-            ...prev,
-            [selectedDate]: dayWorkouts.filter(
-              (ex) => ex.id !== deletingWorkout.id,
-            ),
-          };
-        });
-
+        setWorkouts((prev) => prev.filter((w) => w.id !== deletingWorkout.id));
         setDeletingWorkout(null);
       } catch (e) {
         console.error(e);
@@ -199,9 +169,7 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [deletingWorkout, selectedDate]);
-
-  const currentWorkouts = cachedWorkouts[selectedDate] || [];
+  }, [deletingWorkout]);
 
   return {
     // Data
@@ -209,9 +177,7 @@ export function useWorkoutHistory() {
     selectedDate,
     setSelectedDate,
     currentWorkouts,
-    loadingDates,
-    loadingWorkouts,
-    cachedWorkouts,
+    loading,
 
     // Helpers
     getDisplayDate,

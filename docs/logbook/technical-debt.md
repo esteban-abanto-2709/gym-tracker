@@ -46,14 +46,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** copiar el CLI de prisma desde el stage builder (ya lo tiene instalado) y ejecutar `migrate deploy` con ese binario local en el CMD/entrypoint.
 - **Fecha:** 2026-06-10 · **Estado:** Abierto
 
-## [TD-008] findDistinctDates carga todos los workouts en memoria
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:69-82`
-- **Riesgo:** 3/10
-- **Problema:** Para obtener fechas distintas se traen todas las filas y se deduplican en JS, en lugar de un `SELECT DISTINCT` / `groupBy` en SQL.
-- **Impacto futuro:** Crecimiento lineal de memoria/latencia con el historial; irrelevante hoy, molesto en unos años de uso diario.
-- **Sugerencia:** `$queryRaw` con `SELECT DISTINCT` sobre la fecha convertida a `APP_TIMEZONE` (el groupBy de Prisma no agrupa por día local).
-- **Fecha:** 2026-06-10 · **Estado:** Abierto
-
 ## [TD-010] Lint roto: acceso a ref durante el render en useWorkoutForm
 - **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts:36`
 - **Riesgo:** 4/10

@@ -50,6 +50,7 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
         routes.api.workouts.recommendation(
           item.exerciseId,
           item.isApproximation ?? false,
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
         ),
       )
       .then((rec) => {

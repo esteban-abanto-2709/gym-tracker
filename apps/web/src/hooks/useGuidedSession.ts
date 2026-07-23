@@ -97,6 +97,7 @@ export function useGuidedSession() {
               routes.api.workouts.recommendation(
                 currentItem.exerciseId,
                 isApproximation ?? false,
+                Intl.DateTimeFormat().resolvedOptions().timeZone,
               ),
             );
             suggestedWeight = rec.suggestedWeight;

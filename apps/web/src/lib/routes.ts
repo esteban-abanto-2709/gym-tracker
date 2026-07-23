@@ -18,11 +18,14 @@ export const routes = {
       logout: () => "/auth/logout",
     },
     workouts: {
-      dates: () => "/workouts/dates",
       create: () => "/workouts",
-      list: (date?: string) => (date ? `/workouts?date=${date}` : "/workouts"),
-      recommendation: (exerciseId: string, isApproximation: boolean) =>
-        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}`,
+      list: () => "/workouts",
+      recommendation: (
+        exerciseId: string,
+        isApproximation: boolean,
+        tz: string,
+      ) =>
+        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}&tz=${encodeURIComponent(tz)}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },
