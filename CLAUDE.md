@@ -59,11 +59,13 @@ pnpm exec prisma generate          # regenerate client after schema changes
 - `DIRECT_URL` — direct Postgres connection (used by Prisma for migrations)
 - `FRONTEND_URL` — CORS allowed origin
 - `JWT_SECRET` — secret used to sign auth JWTs (required)
+- `GOOGLE_CLIENT_ID` — Google OAuth Client ID; used to verify Google ID tokens on `POST /auth/google` (public value)
 - `PORT` — defaults to `4000`
 - `APP_TIMEZONE` — IANA timezone for grouping/filtering workouts by local day (defaults to `America/Lima`)
 
 **Web** (`apps/web/.env.local`):
 - `API_INTERNAL_URL` — server-side target for the `/api/*` rewrite proxy (defaults to `http://localhost:4000`). The browser only ever calls the web's own origin; the Next server forwards `/api/*` to this URL, so no API URL is exposed to the client bundle.
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` — same Google Client ID, inlined into the client bundle at build time for the "Continuar con Google" button (in Docker, passed as a build arg from `GOOGLE_CLIENT_ID`).
 
 ## Architecture
 
@@ -74,7 +76,7 @@ apps/api/src/
 ├── main.ts                 # bootstrap: ValidationPipe, cookie-parser, CORS, port
 ├── app.module.ts           # root module — global JwtAuthGuard + feature modules
 ├── modules/
-│   ├── auth/               # register/login/logout/me — JWT in httpOnly cookie
+│   ├── auth/               # register/login/google/logout/me — JWT in httpOnly cookie
 │   ├── exercises/          # ExercisesController + ExercisesService (global catalog)
 │   ├── workouts/           # WorkoutsController + WorkoutsService (per-user)
 │   └── routines/           # RoutinesController + RoutinesService (per-user)
@@ -94,7 +96,8 @@ model User {
   email        String    @unique
   username     String
   slug         String    @unique
-  passwordHash String
+  passwordHash String?                          // null for Google-only accounts
+  googleId     String?   @unique                // set when linked to a Google account
   workouts     Workout[]
   routines     Routine[]
   createdAt    DateTime  @default(now())
@@ -129,6 +132,7 @@ model Workout {
 |--------|------|-------------|
 | POST | `/auth/register` | Create account, set auth cookie (public) |
 | POST | `/auth/login` | Log in, set auth cookie (public) |
+| POST | `/auth/google` | Log in/register with a Google ID token, set auth cookie (public); creates or links by email |
 | POST | `/auth/logout` | Clear auth cookie |
 | GET | `/auth/me` | Current user |
 | GET | `/exercises` | All exercises (ordered by name) |
@@ -173,7 +177,7 @@ State management is handled exclusively via custom hooks — no global state lib
 The whole stack is **self-hosted** via Docker Compose on a single machine; the only thing exposed to the internet is the `web` service, through a Cloudflare Tunnel (`cloudflared` service). `api` and `postgres` stay private inside the `gym-tracker-network`.
 
 - **API + Web + Database** → Docker Compose (`apps/docker/docker-compose.yml`)
-- **Public access** → Cloudflare Tunnel (currently a quick tunnel with a random `trycloudflare.com` URL; no custom domain yet)
+- **Public access** → Cloudflare **named tunnel** on the custom domain `treno.rocks` (bought on name.com, DNS delegated to Cloudflare). Stable HTTPS URL that survives restarts. The tunnel runs via `TUNNEL_TOKEN`; the `cloudflared` service uses `tunnel --no-autoupdate run`.
 
 There is no managed cloud provider (previously Render/Vercel/Supabase — dropped). `DATABASE_URL` and `DIRECT_URL` both point to the in-network Postgres container; they are kept as two separate vars because Prisma's schema requires both, even though here they resolve to the same instance.
 

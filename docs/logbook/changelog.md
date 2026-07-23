@@ -12,6 +12,12 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-024] Login/registro con Google (2026-07-23 10:27)
+Backend: `passwordHash` opcional + `googleId` en `User`, endpoint público `POST /auth/google` que verifica el ID token con `google-auth-library` y reusa la cookie JWT (crea la cuenta o la vincula por email). Web: `@react-oauth/google` (`GoogleOAuthProvider` en el layout + botón "Continuar con Google" en login y registro).
+
+## [RM-023] Dominio propio + named Cloudflare tunnel (2026-07-23 10:27)
+`treno.rocks` (comprado en name.com, DNS delegado a Cloudflare) y named tunnel en lugar del quick tunnel: la URL pública queda fija con HTTPS y ya no cambia en cada reinicio. Cierra el pendiente de RM-012.
+
 ## [RM-022] Cuentas de usuario (auth + aislamiento) (2026-07-21 14:18)
 Modelo `User` (email, username, slug) + `userId` en `Workout`/`Routine` (datos existentes migrados a la cuenta owner); auth JWT en cookie httpOnly (register/login/logout/me) y aislamiento por usuario en toda la API. Web con `AuthProvider`, guard de rutas y páginas login/registro; ejercicios siguen globales. Promovido desde WL-001 (ya sin Supabase).
 
