@@ -33,6 +33,9 @@ export const routes = {
       create: () => "/exercises",
       list: () => "/exercises",
     },
+    equipment: {
+      list: () => "/equipment",
+    },
     routines: {
       list: () => "/routines",
       create: () => "/routines",

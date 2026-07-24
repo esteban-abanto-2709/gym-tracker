@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { RoutineItem } from "@/lib/types";
+import type { Equipment, RoutineItem } from "@/lib/types";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
+import { getLastEquipment } from "@/lib/equipmentMemory";
+import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { Loader2 } from "lucide-react";
 
@@ -16,19 +18,24 @@ interface Recommendation {
 
 interface SetLoggerProps {
   item: RoutineItem;
+  equipment: Equipment[];
   logging: boolean;
   onLog: (args: {
     weightKg: number;
     reps: number;
     opinion?: string;
+    equipmentId?: string | null;
     isApproximation?: boolean;
   }) => Promise<void>;
 }
 
-export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
+export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
+  const [equipmentId, setEquipmentId] = useState<string | null>(() =>
+    getLastEquipment(item.exerciseId),
+  );
   const [isApproximation, setIsApproximation] = useState(
     item.isApproximation ?? false,
   );
@@ -83,7 +90,13 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
     e.preventDefault();
     if (weight === "" || reps === "") return;
     const weightKg = toKg(Number(weight), unit);
-    await onLog({ weightKg, reps: Number(reps), opinion: "", isApproximation });
+    await onLog({
+      weightKg,
+      reps: Number(reps),
+      opinion: "",
+      equipmentId,
+      isApproximation,
+    });
   };
 
   return (
@@ -162,6 +175,12 @@ export function SetLogger({ item, logging, onLog }: SetLoggerProps) {
           />
         </div>
       </div>
+
+      <EquipmentSelector
+        equipment={equipment}
+        value={equipmentId}
+        onChange={setEquipmentId}
+      />
 
       <ApproximationToggle
         checked={isApproximation}

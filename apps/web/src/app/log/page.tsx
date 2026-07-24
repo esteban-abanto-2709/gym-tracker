@@ -2,8 +2,10 @@
 
 import { useState, Suspense } from "react";
 import { useExercises } from "@/hooks/useExercises";
+import { useEquipment } from "@/hooks/useEquipment";
 import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
+import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -42,9 +44,13 @@ function LogContent() {
     setIsApproximation,
     selectedExercise,
     setSelectedExercise,
+    equipmentId,
+    setEquipmentId,
     loading,
     handleSubmit,
   } = useWorkoutForm(exercises, loadingExercises);
+
+  const { equipment } = useEquipment();
 
   // --- Modal state ---
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -108,6 +114,15 @@ function LogContent() {
             onClearSelection={() => setSelectedExercise(null)}
             onCreateClick={() => setIsDialogOpen(true)}
           />
+
+          {/* Equipo (aparece al elegir ejercicio; default = tu último uso) */}
+          {selectedExercise && (
+            <EquipmentSelector
+              equipment={equipment}
+              value={equipmentId}
+              onChange={setEquipmentId}
+            />
+          )}
 
           {/* Peso y Reps en una fila */}
           <div className="grid grid-cols-2 gap-4">

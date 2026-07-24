@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
+import { useEquipment } from "@/hooks/useEquipment";
 import { routes } from "@/lib/routes";
 import { PageShell } from "@/components/layout/PageShell";
 import {
@@ -33,6 +34,7 @@ export default function TrainPage() {
     finish,
   } = useGuidedSession();
 
+  const { equipment } = useEquipment();
   const [pickerOpen, setPickerOpen] = useState(false);
 
   if (loading) {
@@ -136,6 +138,7 @@ export default function TrainPage() {
             <SetLogger
               key={`${currentItem.exerciseId}-${setsDoneForCurrent}`}
               item={currentItem}
+              equipment={equipment}
               logging={logging}
               onLog={logSet}
             />

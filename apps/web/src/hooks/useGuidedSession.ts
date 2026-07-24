@@ -9,6 +9,7 @@ import {
   writeActiveSession,
   clearActiveSession,
 } from "@/lib/activeSession";
+import { rememberEquipment } from "@/lib/equipmentMemory";
 import { notifyError } from "@/lib/notify";
 
 type Phase = "logging" | "done";
@@ -17,6 +18,7 @@ interface LogSetArgs {
   weightKg: number;
   reps: number;
   opinion?: string;
+  equipmentId?: string | null;
   isApproximation?: boolean;
 }
 
@@ -73,7 +75,13 @@ export function useGuidedSession() {
   const setsDoneForCurrent = progress[currentIndex] ?? 0;
 
   const logSet = useCallback(
-    async ({ weightKg, reps, opinion, isApproximation }: LogSetArgs) => {
+    async ({
+      weightKg,
+      reps,
+      opinion,
+      equipmentId,
+      isApproximation,
+    }: LogSetArgs) => {
       if (!session || !currentItem) return;
       setLogging(true);
       const run = async () => {
@@ -83,9 +91,11 @@ export function useGuidedSession() {
             reps,
             weight: weightKg,
             opinion: opinion ?? "",
+            equipmentId: equipmentId ?? null,
             routineId: session.routineId,
             isApproximation: isApproximation ?? false,
           });
+          rememberEquipment(currentItem.exerciseId, equipmentId ?? null);
 
           const setNumber = (progress[currentIndex] ?? 0) + 1;
           const nextProgress = { ...progress, [currentIndex]: setNumber };

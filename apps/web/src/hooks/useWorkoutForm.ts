@@ -1,9 +1,10 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
+import { getLastEquipment, rememberEquipment } from "@/lib/equipmentMemory";
 import { notifyError } from "@/lib/notify";
 
 const STORAGE_KEY = "gymtrack-last-set";
@@ -30,7 +31,15 @@ export function useWorkoutForm(
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
     null,
   );
+  const [equipmentId, setEquipmentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Al cambiar de ejercicio, el equipo por default = el último que usaste en él.
+  useEffect(() => {
+    setEquipmentId(
+      selectedExercise ? getLastEquipment(selectedExercise.id) : null,
+    );
+  }, [selectedExercise]);
 
   // One-shot repeat processing: runs during render once exercises are loaded
   const repeatProcessed = useRef(false);
@@ -91,12 +100,14 @@ export function useWorkoutForm(
         reps: Number(reps),
         weight: weightKg,
         opinion,
+        equipmentId,
         isApproximation,
       };
 
       const run = async () => {
         try {
           await api.post(routes.api.workouts.create(), data);
+          rememberEquipment(selectedExercise.id, equipmentId);
 
           // Save for "Repeat" flow from Success page (always in kg)
           sessionStorage.setItem(
@@ -118,7 +129,16 @@ export function useWorkoutForm(
 
       await run();
     },
-    [selectedExercise, reps, weight, unit, opinion, isApproximation, router],
+    [
+      selectedExercise,
+      reps,
+      weight,
+      unit,
+      opinion,
+      equipmentId,
+      isApproximation,
+      router,
+    ],
   );
 
   return {
@@ -134,6 +154,8 @@ export function useWorkoutForm(
     setIsApproximation,
     selectedExercise,
     setSelectedExercise,
+    equipmentId,
+    setEquipmentId,
     loading,
     handleSubmit,
   };
