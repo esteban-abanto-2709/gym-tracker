@@ -29,6 +29,10 @@ export class UpdateWorkoutDto {
   opinion?: string;
 
   @IsOptional()
+  @IsString()
+  equipmentId?: string;
+
+  @IsOptional()
   @IsBoolean()
   isApproximation?: boolean;
 }

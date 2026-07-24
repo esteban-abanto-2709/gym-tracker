@@ -26,6 +26,10 @@ export class CreateWorkoutDto {
   opinion?: string;
 
   @IsOptional()
+  @IsString()
+  equipmentId?: string;
+
+  @IsOptional()
   @IsUUID()
   routineId?: string;
 

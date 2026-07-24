@@ -19,6 +19,7 @@ export class WorkoutsService {
         reps: createWorkoutDto.reps,
         weight: createWorkoutDto.weight,
         opinion: createWorkoutDto.opinion || '',
+        equipmentId: createWorkoutDto.equipmentId ?? null,
         routineId: createWorkoutDto.routineId ?? null,
         isApproximation: createWorkoutDto.isApproximation ?? false,
       },
@@ -71,6 +72,7 @@ export class WorkoutsService {
       where: { userId },
       include: {
         exercise: true,
+        equipment: true,
       },
       orderBy: {
         createdAt: 'desc',

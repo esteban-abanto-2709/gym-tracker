@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
+import { slugify } from '../../common/slugify';
 
 @Injectable()
 export class ExercisesService {
@@ -8,21 +9,15 @@ export class ExercisesService {
 
   async create(createExerciseDto: CreateExerciseDto) {
     const name = createExerciseDto.name.trim();
-    const { equipment } = createExerciseDto;
+    const slug = slugify(name);
 
-    const existing = await this.prisma.exercise.findFirst({
-      where: {
-        name: { equals: name, mode: 'insensitive' },
-        equipment,
-      },
-    });
-
+    const existing = await this.prisma.exercise.findUnique({ where: { slug } });
     if (existing) {
       return existing;
     }
 
     return this.prisma.exercise.create({
-      data: { name, equipment },
+      data: { name, slug },
     });
   }
 

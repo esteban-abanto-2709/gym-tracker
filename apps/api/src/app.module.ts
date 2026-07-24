@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { WorkoutsModule } from './modules/workouts/workouts.module';
 import { ExercisesModule } from './modules/exercises/exercises.module';
+import { EquipmentModule } from './modules/equipment/equipment.module';
 import { RoutinesModule } from './modules/routines/routines.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { RoutinesModule } from './modules/routines/routines.module';
     PrismaModule,
     AuthModule,
     ExercisesModule,
+    EquipmentModule,
     WorkoutsModule,
     RoutinesModule,
   ],
