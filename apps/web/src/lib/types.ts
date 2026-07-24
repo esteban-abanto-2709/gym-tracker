@@ -7,19 +7,15 @@ export interface AuthUser {
   slug: string;
 }
 
-export type Equipment =
-  | "Sin asignar"
-  | "Barra"
-  | "Polea"
-  | "Mancuerna"
-  | "Máquina"
-  | "Peso Corporal"
-  | "Otro";
+export interface Equipment {
+  id: string;
+  name: string;
+}
 
 export interface Exercise {
   id: string;
   name: string;
-  equipment: Equipment;
+  slug: string;
   description?: string;
   createdAt?: string;
 }
@@ -30,8 +26,9 @@ export interface Workout {
   exercise: {
     id: string;
     name: string;
-    equipment: string;
   };
+  equipmentId?: string | null;
+  equipment?: Equipment | null;
   weight: number;
   reps: number;
   opinion: string;
@@ -46,7 +43,6 @@ export interface RoutineItem {
   exercise: {
     id: string;
     name: string;
-    equipment: string;
   };
   position: number;
   targetSets: number | null;

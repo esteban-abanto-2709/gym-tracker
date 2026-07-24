@@ -4,7 +4,7 @@ const KEY = "gymtrack-active-routine";
 
 export interface ActiveExtra {
   exerciseId: string;
-  exercise: { id: string; name: string; equipment: string };
+  exercise: { id: string; name: string };
 }
 
 export interface ActiveSession {

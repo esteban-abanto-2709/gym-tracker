@@ -24,7 +24,7 @@ import {
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import type { Equipment, Routine } from "@/lib/types";
+import type { Routine } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
@@ -90,7 +90,6 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             key: newKey(),
             exerciseId: item.exerciseId,
             exerciseName: item.exercise.name,
-            equipment: item.exercise.equipment,
             targetSets: item.targetSets?.toString() ?? "",
             targetReps: item.targetReps?.toString() ?? "",
             isApproximation: item.isApproximation ?? false,
@@ -105,18 +104,13 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     fetchRoutine();
   }, [routineId]);
 
-  const addItem = (exercise: {
-    id: string;
-    name: string;
-    equipment: string;
-  }) => {
+  const addItem = (exercise: { id: string; name: string }) => {
     setItems((prev) => [
       ...prev,
       {
         key: newKey(),
         exerciseId: exercise.id,
         exerciseName: exercise.name,
-        equipment: exercise.equipment,
         targetSets: "",
         targetReps: "",
         isApproximation: false,
@@ -161,12 +155,9 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     });
   };
 
-  const handleCreateExercise = async (
-    exerciseName: string,
-    equipment: Equipment,
-  ) => {
+  const handleCreateExercise = async (exerciseName: string) => {
     try {
-      const created = await createExercise(exerciseName, equipment);
+      const created = await createExercise(exerciseName);
       addItem(created);
       setIsDialogOpen(false);
     } catch (e) {

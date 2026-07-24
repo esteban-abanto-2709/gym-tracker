@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { Equipment, Exercise } from "@/lib/types";
+import type { Exercise } from "@/lib/types";
 
 export function useExercises() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -26,17 +26,17 @@ export function useExercises() {
 
   // Derived: filtered exercises based on search term
   const filteredExercises = exercises.filter((ex) =>
-    `${ex.name} ${ex.equipment}`.toLowerCase().includes(search.toLowerCase()),
+    ex.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   // Create a new exercise and add it to the local list
   const createExercise = useCallback(
-    async (name: string, equipment: Equipment): Promise<Exercise> => {
+    async (name: string): Promise<Exercise> => {
       setCreatingExercise(true);
       try {
         const created = await api.post<Exercise>(
           routes.api.exercises.create(),
-          { name: name.trim(), equipment },
+          { name: name.trim() },
         );
 
         setExercises((prev) =>

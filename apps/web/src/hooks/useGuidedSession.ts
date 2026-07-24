@@ -151,7 +151,6 @@ export function useGuidedSession() {
             exercise: {
               id: exercise.id,
               name: exercise.name,
-              equipment: exercise.equipment,
             },
           },
         ],

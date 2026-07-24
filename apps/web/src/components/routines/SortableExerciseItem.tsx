@@ -9,7 +9,6 @@ export interface DraftItem {
   key: string;
   exerciseId: string;
   exerciseName: string;
-  equipment: string;
   targetSets: string;
   targetReps: string;
   isApproximation: boolean;
@@ -71,9 +70,6 @@ export function SortableExerciseItem({
           <p className="font-bold text-foreground leading-tight truncate">
             {item.exerciseName}
           </p>
-          <span className="text-[10px] font-black text-muted-foreground bg-muted px-2 py-0.5 rounded-md uppercase tracking-wide">
-            {item.equipment}
-          </span>
         </div>
 
         <button

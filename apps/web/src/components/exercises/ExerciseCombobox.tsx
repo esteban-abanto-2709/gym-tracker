@@ -61,11 +61,8 @@ export function ExerciseCombobox({
               <Dumbbell className="w-6 h-6" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-[17px] text-foreground leading-tight mb-0.5">
+              <span className="font-bold text-[17px] text-foreground leading-tight">
                 {selectedExercise.name}
-              </span>
-              <span className="text-[11px] font-black text-muted-foreground bg-muted w-fit px-2 py-0.5 rounded-md uppercase tracking-wide">
-                {selectedExercise.equipment}
               </span>
             </div>
           </div>
@@ -142,9 +139,6 @@ export function ExerciseCombobox({
                     }}
                   >
                     <span className="truncate pr-2">{ex.name}</span>
-                    <span className="text-[10px] font-bold px-2 py-1 bg-background rounded-md text-muted-foreground border-border border shrink-0">
-                      {ex.equipment}
-                    </span>
                   </button>
                 ))}
               </div>

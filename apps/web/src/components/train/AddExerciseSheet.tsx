@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useExercises } from "@/hooks/useExercises";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
-import type { Equipment, Exercise } from "@/lib/types";
+import type { Exercise } from "@/lib/types";
 import { X } from "lucide-react";
 
 interface AddExerciseSheetProps {
@@ -24,9 +24,9 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const handleCreate = async (name: string, equipment: Equipment) => {
+  const handleCreate = async (name: string) => {
     try {
-      const created = await createExercise(name, equipment);
+      const created = await createExercise(name);
       setIsCreateOpen(false);
       onPick(created);
     } catch (error) {

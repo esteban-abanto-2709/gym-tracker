@@ -14,7 +14,6 @@ import {
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { routes } from "@/lib/routes";
-import type { Equipment } from "@/lib/types";
 import { convertWeight } from "@/lib/units";
 import { Loader2 } from "lucide-react";
 
@@ -51,9 +50,9 @@ function LogContent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Create exercise via hook + select it
-  const handleCreate = async (name: string, equipment: Equipment) => {
+  const handleCreate = async (name: string) => {
     try {
-      const created = await createExercise(name, equipment);
+      const created = await createExercise(name);
       setSelectedExercise(created);
       setSearch(created.name);
       setIsDialogOpen(false);

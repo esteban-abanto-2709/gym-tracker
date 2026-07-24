@@ -85,11 +85,9 @@ export default function TrainPage() {
       ? {
           label: "Prepara la siguiente máquina",
           name: nextItem.exercise.name,
-          detail: `${nextItem.exercise.equipment}${
-            nextItem.targetSets
-              ? ` · ${nextItem.targetSets} × ${nextItem.targetReps ?? "—"}`
-              : ""
-          }`,
+          detail: nextItem.targetSets
+            ? `${nextItem.targetSets} × ${nextItem.targetReps ?? "—"}`
+            : "",
         }
       : null;
 
