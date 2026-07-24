@@ -108,6 +108,7 @@ export function useGuidedSession() {
                 currentItem.exerciseId,
                 isApproximation ?? false,
                 Intl.DateTimeFormat().resolvedOptions().timeZone,
+                equipmentId ?? null,
               ),
             );
             suggestedWeight = rec.suggestedWeight;

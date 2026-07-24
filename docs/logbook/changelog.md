@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-026] Equipo por-set + ejercicio puro con slug (2026-07-24 10:56)
+El equipo deja de ser del ejercicio y pasa a cada set (tabla `Equipment` sembrada en la migración + `Workout.equipmentId` nullable); `Exercise` queda puro con identidad `slug` y sus duplicados por-equipo fusionados. Selector al registrar con default sticky por historial (localStorage) + iconos, y recomendación de peso filtrada por equipo. Dev migrado; prod al próximo `migrate deploy`.
+
 ## [RM-025] Saneo del catálogo de ejercicios (2026-07-23 14:02)
 Identidad = `(nombre, equipo)`: `@IsIn` valida el equipo, índice `UNIQUE (lower(name), equipment)` da unicidad case-insensitive, y una migración normalizó equipos + fusionó duplicados (repunta FK al de más workouts). Aplicado en dev y prod.
 

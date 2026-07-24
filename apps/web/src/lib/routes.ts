@@ -24,8 +24,9 @@ export const routes = {
         exerciseId: string,
         isApproximation: boolean,
         tz: string,
+        equipmentId: string | null,
       ) =>
-        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}&tz=${encodeURIComponent(tz)}`,
+        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}&tz=${encodeURIComponent(tz)}&equipmentId=${encodeURIComponent(equipmentId ?? "")}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },

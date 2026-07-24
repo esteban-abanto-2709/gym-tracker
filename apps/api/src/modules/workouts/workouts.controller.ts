@@ -34,12 +34,14 @@ export class WorkoutsController {
     @Query('exerciseId') exerciseId: string,
     @Query('isApproximation') isApproximation?: string,
     @Query('tz') tz?: string,
+    @Query('equipmentId') equipmentId?: string,
   ) {
     return this.workoutsService.getRecommendation(
       user.id,
       exerciseId,
       isApproximation === 'true',
       tz,
+      equipmentId,
     );
   }
 

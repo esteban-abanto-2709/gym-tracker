@@ -31,9 +31,17 @@ export class WorkoutsService {
     exerciseId: string,
     isApproximation: boolean,
     tz?: string,
+    equipmentId?: string,
   ) {
+    // El peso no es comparable entre equipos: la recomendación se hace solo
+    // sobre los sets del mismo equipo (equipmentId vacío => "sin especificar").
     const sets = await this.prisma.workout.findMany({
-      where: { userId, exerciseId, isApproximation },
+      where: {
+        userId,
+        exerciseId,
+        isApproximation,
+        equipmentId: equipmentId || null,
+      },
       orderBy: { createdAt: 'desc' },
     });
 

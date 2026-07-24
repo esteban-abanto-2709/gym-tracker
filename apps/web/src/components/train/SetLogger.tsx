@@ -58,6 +58,7 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
           item.exerciseId,
           item.isApproximation ?? false,
           Intl.DateTimeFormat().resolvedOptions().timeZone,
+          equipmentId,
         ),
       )
       .then((rec) => {
@@ -71,7 +72,7 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
     return () => {
       active = false;
     };
-  }, [item.exerciseId, item.targetReps, item.isApproximation]);
+  }, [item.exerciseId, item.targetReps, item.isApproximation, equipmentId]);
 
   const toggleUnit = () => {
     setUnit((prev) => {
