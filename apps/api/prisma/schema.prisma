@@ -21,10 +21,16 @@ model User {
 model Exercise {
   id           String        @id @default(uuid())
   name         String
-  equipment    String
+  slug         String        @unique
   workouts     Workout[]
   routineItems RoutineItem[]
   createdAt    DateTime      @default(now())
+}
+
+model Equipment {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  workouts Workout[]
 }
 
 model Workout {
@@ -38,6 +44,8 @@ model Workout {
   weight     Float
   reps       Int
   opinion    String
+  equipmentId String?
+  equipment   Equipment? @relation(fields: [equipmentId], references: [id])
   isApproximation Boolean @default(false)
   createdAt  DateTime @default(now())
 }
