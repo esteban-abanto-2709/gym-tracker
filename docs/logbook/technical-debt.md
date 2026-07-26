@@ -30,14 +30,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** guardar un `ref` al input de búsqueda dentro del combobox y enfocar ese ref.
 - **Fecha:** 2026-07-23 · **Estado:** Abierto
 
-## [TD-013] Sesión activa zombi si la rutina referenciada ya no existe
-- **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:46-50`, `apps/web/src/components/train/ContinueRoutineBanner.tsx:21`
-- **Riesgo:** 4/10
-- **Problema:** Si la rutina de la sesión activa se borra (o su GET falla), `/train` muestra el empty state pero nunca limpia el localStorage; el banner "Continuar rutina" sigue apareciendo en Home apuntando a una sesión rota.
-- **Impacto futuro:** Loop confuso Home → Entrenar → "No hay rutina activa" → Home, sin salida visible hasta que la sesión expire al día siguiente.
-- **Sugerencia:** en el catch/404 del GET de la rutina en `/train`, llamar `clearActiveSession()` antes de mostrar el empty state.
-- **Fecha:** 2026-07-23 · **Estado:** Abierto
-
 ## [TD-007] El contenedor de la API descarga el CLI de Prisma al arrancar
 - **Ubicación:** `apps/api/Dockerfile:47`
 - **Riesgo:** 4/10

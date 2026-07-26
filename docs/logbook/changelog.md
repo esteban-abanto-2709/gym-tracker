@@ -12,6 +12,12 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-020] Modo rutina flexible (checklist + desvíos en vivo) (2026-07-26 12:34)
+El modo guiado deja de ser lineal: `ActiveSession` (localStorage) gana `skipped`/`replacedBy` por índice y un `SessionMap` a pantalla completa (abierto desde el header con "N de M") permite adelantar/volver a cualquier ejercicio, saltar (reversible) y reemplazar en el mismo slot heredando metas. Cero cambios de DB; la plantilla guardada no se toca.
+
+## [TD-013] Sesión activa zombi si la rutina ya no existe (2026-07-26 12:34)
+El GET de la rutina en `/train` ahora limpia la sesión (`clearActiveSession`) en el catch/404 en vez de dejar el banner "Continuar" apuntando a una rutina borrada. Colado dentro de RM-020.
+
 ## [RM-026] Equipo por-set + ejercicio puro con slug (2026-07-24 10:56)
 El equipo deja de ser del ejercicio y pasa a cada set (tabla `Equipment` sembrada en la migración + `Workout.equipmentId` nullable); `Exercise` queda puro con identidad `slug` y sus duplicados por-equipo fusionados. Selector al registrar con default sticky por historial (localStorage) + iconos, y recomendación de peso filtrada por equipo. Dev migrado; prod al próximo `migrate deploy`.
 

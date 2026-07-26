@@ -14,6 +14,8 @@ export interface ActiveSession {
   currentIndex: number;
   progress: Record<number, number>; // combined item index -> sets done
   extras: ActiveExtra[]; // ad-hoc exercises added mid-session
+  skipped: Record<number, boolean>; // combined item index -> skipped for today
+  replacedBy: Record<number, ActiveExtra>; // combined item index -> substitute (inherits the slot's targets)
 }
 
 function isSameLocalDay(iso: string): boolean {
@@ -37,7 +39,12 @@ export function readActiveSession(): ActiveSession | null {
       window.localStorage.removeItem(KEY);
       return null;
     }
-    return { ...parsed, extras: parsed.extras ?? [] };
+    return {
+      ...parsed,
+      extras: parsed.extras ?? [],
+      skipped: parsed.skipped ?? {},
+      replacedBy: parsed.replacedBy ?? {},
+    };
   } catch {
     return null;
   }
@@ -61,6 +68,8 @@ export function startSession(routine: Routine): ActiveSession {
     currentIndex: 0,
     progress: {},
     extras: [],
+    skipped: {},
+    replacedBy: {},
   };
   writeActiveSession(session);
   return session;

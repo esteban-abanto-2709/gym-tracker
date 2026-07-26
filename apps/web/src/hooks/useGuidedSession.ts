@@ -5,6 +5,7 @@ import { routes } from "@/lib/routes";
 import type { Exercise, Routine, RoutineItem } from "@/lib/types";
 import {
   type ActiveSession,
+  type ActiveExtra,
   readActiveSession,
   writeActiveSession,
   clearActiveSession,
@@ -13,6 +14,18 @@ import { rememberEquipment } from "@/lib/equipmentMemory";
 import { notifyError } from "@/lib/notify";
 
 type Phase = "logging" | "done";
+
+export type ItemStatus = "done" | "partial" | "pending" | "skipped";
+
+export interface SessionMapItem {
+  index: number;
+  item: RoutineItem; // already reflects a replacement (substitute swapped in place)
+  status: ItemStatus;
+  setsDone: number;
+  isCurrent: boolean;
+  isExtra: boolean;
+  replacedFrom: string | null; // original exercise name when this slot was replaced
+}
 
 interface LogSetArgs {
   weightKg: number;
@@ -49,7 +62,9 @@ export function useGuidedSession() {
     api
       .get<Routine>(routes.api.routines.get(active.routineId))
       .then((r) => setRoutine(r))
-      .catch((e) => console.error("Error loading routine:", e))
+      // Routine gone (deleted / 404): drop the zombie session instead of
+      // stranding the user in a loop (see TD-013).
+      .catch(() => clearActiveSession())
       .finally(() => setLoading(false));
   }, []);
 
@@ -66,13 +81,60 @@ export function useGuidedSession() {
     targetSets: null,
     targetReps: null,
   }));
-  const items: RoutineItem[] = [...(routine?.items ?? []), ...extraItems];
+  const baseItems: RoutineItem[] = [...(routine?.items ?? []), ...extraItems];
 
+  // A replaced slot keeps its position + targets but swaps in the substitute.
+  const replacedBy = session?.replacedBy ?? {};
+  const items: RoutineItem[] = baseItems.map((it, i) => {
+    const sub = replacedBy[i];
+    if (!sub) return it;
+    return { ...it, exerciseId: sub.exerciseId, exercise: sub.exercise };
+  });
+
+  const skipped = session?.skipped ?? {};
   const currentIndex = session?.currentIndex ?? 0;
   const progress = session?.progress ?? {};
   const currentItem: RoutineItem | null = items[currentIndex] ?? null;
-  const nextItem: RoutineItem | null = items[currentIndex + 1] ?? null;
   const setsDoneForCurrent = progress[currentIndex] ?? 0;
+
+  const statusFor = (i: number): ItemStatus => {
+    if (skipped[i]) return "skipped";
+    const done = progress[i] ?? 0;
+    const target = items[i]?.targetSets;
+    if (target != null && done >= target) return "done";
+    if (done > 0) return "partial";
+    return "pending";
+  };
+
+  // Indices still in play (not skipped), in order — the checklist backbone.
+  const liveIndices = items
+    .map((_, i) => i)
+    .filter((i) => !skipped[i]);
+
+  // "Next machine" = first live item after the current one.
+  const nextIndex = liveIndices.find((i) => i > currentIndex) ?? -1;
+  const nextItem: RoutineItem | null = nextIndex >= 0 ? items[nextIndex] : null;
+
+  const routineItemCount = routine?.items.length ?? 0;
+  const mapItems: SessionMapItem[] = items.map((item, i) => ({
+    index: i,
+    item,
+    status: statusFor(i),
+    setsDone: progress[i] ?? 0,
+    isCurrent: i === currentIndex,
+    isExtra: i >= routineItemCount,
+    replacedFrom: replacedBy[i] ? baseItems[i].exercise.name : null,
+  }));
+
+  const totalCount = liveIndices.length; // M in "Ejercicio N de M"
+  const position = liveIndices.indexOf(currentIndex) + 1; // N (1-based)
+  // Completed = every live slot that has a target has met it. Free-set items
+  // (no target) never block completion. ponytail: an all-free routine reads
+  // "completed" from the start — acceptable per the agreed rule.
+  const allDone = !liveIndices.some((i) => {
+    const t = items[i]?.targetSets;
+    return t != null && (progress[i] ?? 0) < t;
+  });
 
   const logSet = useCallback(
     async ({
@@ -141,12 +203,69 @@ export function useGuidedSession() {
     setPhase("logging");
   }, []);
 
-  // Advance to the next exercise in the sequence.
+  // Advance to the next live exercise in the sequence.
   const goNext = useCallback(() => {
-    if (!session || currentIndex + 1 >= items.length) return;
-    persist({ ...session, currentIndex: currentIndex + 1 });
+    if (!session || nextIndex < 0) return;
+    persist({ ...session, currentIndex: nextIndex });
     setPhase("logging");
-  }, [session, currentIndex, items.length, persist]);
+  }, [session, nextIndex, persist]);
+
+  // Jump to any exercise from the session map (un-skips it if it was skipped).
+  const goToIndex = useCallback(
+    (i: number) => {
+      if (!session || i < 0 || i >= items.length) return;
+      const nextSkipped = { ...session.skipped };
+      delete nextSkipped[i];
+      persist({ ...session, currentIndex: i, skipped: nextSkipped });
+      setPhase("logging");
+    },
+    [session, items.length, persist],
+  );
+
+  // Skip an exercise for today. If it was the current one, move on to the
+  // nearest remaining live item.
+  const skipItem = useCallback(
+    (i: number) => {
+      if (!session) return;
+      const nextSkipped = { ...session.skipped, [i]: true };
+      let nextCurrent = session.currentIndex;
+      if (i === session.currentIndex) {
+        const all = items.map((_, idx) => idx);
+        const target =
+          all.find((idx) => idx > i && !nextSkipped[idx]) ??
+          all.find((idx) => !nextSkipped[idx]);
+        if (target != null) nextCurrent = target;
+      }
+      persist({ ...session, skipped: nextSkipped, currentIndex: nextCurrent });
+      setPhase("logging");
+    },
+    [session, items, persist],
+  );
+
+  // Replace a slot with another exercise (e.g. machine occupied). The slot
+  // keeps its targets; its set count resets since it's now a new movement.
+  const replaceItem = useCallback(
+    (i: number, exercise: Exercise) => {
+      if (!session) return;
+      const sub: ActiveExtra = {
+        exerciseId: exercise.id,
+        exercise: { id: exercise.id, name: exercise.name },
+      };
+      const nextSkipped = { ...session.skipped };
+      delete nextSkipped[i];
+      const nextProgress = { ...session.progress };
+      delete nextProgress[i];
+      persist({
+        ...session,
+        replacedBy: { ...session.replacedBy, [i]: sub },
+        skipped: nextSkipped,
+        progress: nextProgress,
+        currentIndex: i,
+      });
+      setPhase("logging");
+    },
+    [session, persist],
+  );
 
   // Append an ad-hoc exercise and jump to it.
   const addExercise = useCallback(
@@ -189,9 +308,16 @@ export function useGuidedSession() {
     nextItem,
     setsDoneForCurrent,
     lastResult,
+    mapItems,
+    position,
+    totalCount,
+    allDone,
     logSet,
     continueSet,
     goNext,
+    goToIndex,
+    skipItem,
+    replaceItem,
     addExercise,
     finish,
   };

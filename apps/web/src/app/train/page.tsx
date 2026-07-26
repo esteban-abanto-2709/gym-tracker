@@ -6,15 +6,12 @@ import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { routes } from "@/lib/routes";
 import { PageShell } from "@/components/layout/PageShell";
-import {
-  AppHeader,
-  BackAction,
-  HistoryAction,
-} from "@/components/layout/AppHeader";
+import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
-import { Loader2, ClipboardList, Dumbbell } from "lucide-react";
+import { SessionMap } from "@/components/train/SessionMap";
+import { Loader2, ClipboardList, Dumbbell, ListChecks } from "lucide-react";
 
 export default function TrainPage() {
   const {
@@ -27,15 +24,22 @@ export default function TrainPage() {
     nextItem,
     setsDoneForCurrent,
     lastResult,
+    mapItems,
+    position,
+    totalCount,
     logSet,
     continueSet,
     goNext,
+    goToIndex,
+    skipItem,
+    replaceItem,
     addExercise,
     finish,
   } = useGuidedSession();
 
   const { equipment } = useEquipment();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
 
   if (loading) {
     return (
@@ -98,7 +102,19 @@ export default function TrainPage() {
       <AppHeader
         leftAction={<BackAction href={routes.home()} />}
         title={routine.name}
-        rightAction={<HistoryAction />}
+        rightAction={
+          <button
+            type="button"
+            onClick={() => setMapOpen(true)}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95"
+            title="Mapa de la sesión"
+          >
+            <ListChecks className="w-6 h-6" />
+            <span className="text-xs font-bold tabular-nums">
+              {position}/{totalCount}
+            </span>
+          </button>
+        }
       />
 
       {phase === "done" && lastResult ? (
@@ -153,6 +169,21 @@ export default function TrainPage() {
             addExercise(exercise);
           }}
           onClose={() => setPickerOpen(false)}
+        />
+      )}
+
+      {mapOpen && (
+        <SessionMap
+          items={mapItems}
+          position={position}
+          totalCount={totalCount}
+          onGoTo={(i) => {
+            goToIndex(i);
+            setMapOpen(false);
+          }}
+          onSkip={skipItem}
+          onReplace={replaceItem}
+          onClose={() => setMapOpen(false)}
         />
       )}
     </PageShell>
