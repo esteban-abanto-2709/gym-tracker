@@ -53,12 +53,14 @@ export function EditWorkoutDialog({
         style={viewportStyle}
       >
         <DialogHeader>
-          <DialogTitle>Editar Entrenamiento</DialogTitle>
+          <DialogTitle className="font-display uppercase tracking-tight text-2xl">
+            Editar Entrenamiento
+          </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label htmlFor="edit-weight" className="text-sm font-medium">
+              <label htmlFor="edit-weight" className="kicker text-muted-foreground text-[0.65rem]">
                 Peso (kg)
               </label>
               <input
@@ -71,7 +73,7 @@ export function EditWorkoutDialog({
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="edit-reps" className="text-sm font-medium">
+              <label htmlFor="edit-reps" className="kicker text-muted-foreground text-[0.65rem]">
                 Repeticiones
               </label>
               <input
@@ -84,7 +86,7 @@ export function EditWorkoutDialog({
             </div>
           </div>
           <div className="space-y-2">
-            <label htmlFor="edit-opinion" className="text-sm font-medium">
+            <label htmlFor="edit-opinion" className="kicker text-muted-foreground text-[0.65rem]">
               Comentario
             </label>
             <textarea
@@ -104,7 +106,7 @@ export function EditWorkoutDialog({
           <button
             onClick={onSave}
             disabled={loading}
-            className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
+            className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-display uppercase tracking-wide text-xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
           >
             {loading ? "Guardando..." : "Guardar Cambios"}
           </button>

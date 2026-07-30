@@ -50,10 +50,10 @@ export default function HistoryPage() {
             <button
               key={date}
               onClick={() => setSelectedDate(date)}
-              className={`flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all border-2 ${
+              className={`flex-none px-4 py-2 rounded-xl kicker text-[0.65rem] transition-all border-2 ${
                 selectedDate === date
                   ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
-                  : "bg-card/50 border-input text-muted-foreground hover:border-border"
+                  : "bg-card border-input text-muted-foreground hover:border-border"
               }`}
             >
               {getDisplayDate(date)}
@@ -77,14 +77,16 @@ export default function HistoryPage() {
               <Calendar className="w-10 h-10 text-muted-foreground/50" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-bold text-xl">Sin entrenamientos aún</h3>
+              <h3 className="font-display font-bold uppercase text-2xl tracking-tight">
+                Sin entrenamientos aún
+              </h3>
               <p className="text-sm text-muted-foreground max-w-[250px]">
                 Tus rutinas aparecerán aquí cuando guardes tu primer set.
               </p>
             </div>
             <Link
               href="/log"
-              className="px-8 py-3 bg-primary text-primary-foreground rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all"
+              className="px-8 py-3 bg-primary text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg shadow-primary/20 hover:scale-105 transition-all"
             >
               Comenzar a entrenar
             </Link>
@@ -92,7 +94,7 @@ export default function HistoryPage() {
         ) : (
           <div className="space-y-10">
             <section className="animate-fade-in-up">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 px-1">
+              <h2 className="kicker text-[0.65rem] text-muted-foreground mb-4 px-1">
                 {getDisplayDate(selectedDate)}
               </h2>
 

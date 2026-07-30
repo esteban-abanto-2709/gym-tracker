@@ -18,7 +18,7 @@ export function WorkoutCard({
 }: WorkoutCardProps) {
   return (
     <div
-      className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-3 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
+      className="group relative bg-card border-2 border-input rounded-2xl p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       {/* Brand Accent Line */}
@@ -30,14 +30,14 @@ export function WorkoutCard({
             <h3 className="font-bold text-foreground text-lg leading-tight">
               {workout.exercise.name}
             </h3>
-            <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-mono text-muted-foreground tracking-wide">
               {new Date(workout.createdAt).toLocaleTimeString("es-ES", {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </span>
             {workout.isApproximation && (
-              <span className="ml-2 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+              <span className="ml-2 kicker text-[0.55rem] text-primary">
                 ≈ Aprox
               </span>
             )}
@@ -56,7 +56,7 @@ export function WorkoutCard({
         <div className="flex items-center justify-between gap-4 mt-2">
           <div className="flex items-baseline gap-4">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black text-foreground">
+              <span className="text-3xl font-display font-bold text-foreground">
                 {workout.weight}
               </span>
               <span className="text-xs font-bold text-muted-foreground">
@@ -65,7 +65,7 @@ export function WorkoutCard({
             </div>
             <div className="h-4 w-px bg-border" />
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black text-foreground">
+              <span className="text-3xl font-display font-bold text-foreground">
                 {workout.reps}
               </span>
               <span className="text-xs font-bold text-muted-foreground">

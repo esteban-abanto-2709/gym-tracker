@@ -26,7 +26,9 @@ export function DeleteWorkoutDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Eliminar este registro?</AlertDialogTitle>
+          <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
+            ¿Eliminar este registro?
+          </AlertDialogTitle>
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminarán los datos de esta
             serie permanentemente.
