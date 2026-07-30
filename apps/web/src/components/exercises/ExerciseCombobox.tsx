@@ -44,7 +44,7 @@ export function ExerciseCombobox({
 
   return (
     <div className="space-y-2 relative" ref={wrapperRef}>
-      <label className="text-sm font-bold text-foreground ml-1">
+      <label className="kicker text-muted-foreground text-[0.6rem] ml-1">
         Ejercicio <span className="text-primary">*</span>
       </label>
 

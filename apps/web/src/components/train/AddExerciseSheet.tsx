@@ -37,7 +37,9 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background/80 backdrop-blur-md animate-fade-in">
       <div className="shrink-0 px-6 py-4 border-b border-border flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">Agregar ejercicio</h2>
+        <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight">
+          Agregar ejercicio
+        </h2>
         <button
           type="button"
           onClick={onClose}

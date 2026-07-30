@@ -18,7 +18,7 @@ export function EquipmentSelector({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-muted-foreground">
+      <label className="kicker text-muted-foreground text-[0.6rem]">
         Equipo
       </label>
       <div className="flex flex-wrap gap-2">

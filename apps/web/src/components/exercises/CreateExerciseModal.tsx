@@ -40,7 +40,7 @@ export function CreateExerciseModal({
       <DialogContent className="sm:max-w-md rounded-3xl border-2 border-border overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))]" />
         <DialogHeader className="pt-4">
-          <DialogTitle className="flex items-center gap-2 text-xl font-black">
+          <DialogTitle className="flex items-center gap-2 font-display uppercase text-2xl tracking-tight">
             <Dumbbell className="w-5 h-5 text-primary" />
             Nuevo Ejercicio
           </DialogTitle>
@@ -48,7 +48,7 @@ export function CreateExerciseModal({
 
         <div className="space-y-6 py-4">
           <div className="space-y-3">
-            <label className="text-sm font-bold ml-1 text-muted-foreground">
+            <label className="kicker text-muted-foreground text-[0.6rem] ml-1">
               ¿Cómo se llama?
             </label>
             <input
@@ -65,7 +65,7 @@ export function CreateExerciseModal({
           <button
             onClick={() => onCreate(name)}
             disabled={loading || !name.trim()}
-            className="w-full bg-primary text-primary-foreground font-black py-4 rounded-xl text-lg shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-50"
+            className="w-full bg-primary text-primary-foreground font-display uppercase tracking-wide py-4 rounded-xl text-xl shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-50"
           >
             {loading ? "Creando..." : "Crear y Seleccionar"}
           </button>
