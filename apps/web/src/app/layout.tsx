@@ -1,18 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Oswald, Space_Grotesk, Space_Mono } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Oswald: display condensado (títulos, números, botones). Space Grotesk:
+// cuerpo/UI. Space Mono: etiquetas "kicker". Ver globals.css (@theme inline).
+const oswald = Oswald({
+  variable: "--font-oswald",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${oswald.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
       >
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
