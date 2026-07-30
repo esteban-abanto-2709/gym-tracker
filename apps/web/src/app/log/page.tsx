@@ -8,11 +8,7 @@ import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import { PageShell } from "@/components/layout/PageShell";
-import {
-  AppHeader,
-  BackAction,
-  HistoryAction,
-} from "@/components/layout/AppHeader";
+import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { routes } from "@/lib/routes";
@@ -81,7 +77,7 @@ function LogContent() {
 
       <AppHeader
         leftAction={<BackAction href={routes.home()} />}
-        rightAction={<HistoryAction />}
+        title="Día libre"
       />
 
       {/* Main Content */}
@@ -94,14 +90,9 @@ function LogContent() {
           className="max-w-md mx-auto space-y-6"
           autoComplete="off"
         >
-          <div className="text-center mb-8">
-            <h2 className="text-lg font-semibold text-foreground">
-              Registrar Entrenamiento
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Completa los detalles de tu set
-            </p>
-          </div>
+          <p className="kicker text-primary text-[0.7rem] mb-2">
+            // registra tu set
+          </p>
 
           {/* Exercise Selector */}
           <ExerciseCombobox
@@ -130,7 +121,7 @@ function LogContent() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="weight"
-                  className="block text-sm font-medium text-muted-foreground"
+                  className="kicker text-muted-foreground text-[0.65rem]"
                 >
                   Peso ({unit}) <span className="text-primary">*</span>
                 </label>
@@ -189,7 +180,7 @@ function LogContent() {
             <div className="space-y-2">
               <label
                 htmlFor="reps"
-                className="block text-sm font-medium text-muted-foreground"
+                className="kicker text-muted-foreground text-[0.65rem]"
               >
                 Repeticiones <span className="text-primary">*</span>
               </label>
@@ -211,7 +202,7 @@ function LogContent() {
           <div className="space-y-2">
             <label
               htmlFor="opinion"
-              className="block text-sm font-medium text-muted-foreground"
+              className="kicker text-muted-foreground text-[0.65rem]"
             >
               ¿Cómo te sentiste?
             </label>
@@ -235,7 +226,7 @@ function LogContent() {
           <button
             type="submit"
             disabled={loading || !selectedExercise}
-            className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s]"
+            className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s]"
           >
             ✓ Registrar Set
             <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
