@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
-import { AppHeader, HistoryAction } from "@/components/layout/AppHeader";
-import { AccountMenu } from "@/components/auth/AccountMenu";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { routes } from "@/lib/routes";
 import { Zap, Plus } from "lucide-react";
@@ -9,9 +8,7 @@ import { Zap, Plus } from "lucide-react";
 export default function Home() {
   return (
     <PageShell>
-      <AppHeader leftAction={<AccountMenu />} rightAction={<HistoryAction />} />
-
-      <main className="flex-1 px-6 py-8 relative z-10 animate-fade-in-up">
+      <main className="flex-1 px-6 pt-14 pb-28 relative z-10 animate-fade-in-up">
         <div className="max-w-md w-full mx-auto space-y-5">
           {/* Hero */}
           <div>
@@ -72,6 +69,8 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      <BottomNav />
     </PageShell>
   );
 }

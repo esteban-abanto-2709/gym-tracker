@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { routes } from "@/lib/routes";
 import { PageShell } from "@/components/layout/PageShell";
-import { AppHeader, BackAction } from "@/components/layout/AppHeader";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
 import { WorkoutCard } from "@/components/history/WorkoutCard";
 import { EditWorkoutDialog } from "@/components/history/EditWorkoutDialog";
@@ -39,11 +39,7 @@ export default function HistoryPage() {
 
   return (
     <PageShell variant="history">
-      <AppHeader
-        leftAction={<BackAction href={routes.home()} />}
-        title="Historial"
-        sticky
-      >
+      <AppHeader title="Historial" sticky>
         {/* Date Selector Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
           <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -126,7 +122,7 @@ export default function HistoryPage() {
       {/* Floating Action Button */}
       <Link
         href="/log"
-        className="fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-full flex items-center justify-center shadow-xl shadow-primary/40 hover:scale-110 active:scale-90 transition-all z-20"
+        className="fixed bottom-24 right-6 w-14 h-14 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-full flex items-center justify-center shadow-xl shadow-primary/40 hover:scale-110 active:scale-90 transition-all z-40"
       >
         <Plus className="w-7 h-7" strokeWidth={3} />
       </Link>
@@ -154,6 +150,8 @@ export default function HistoryPage() {
         loading={actionLoading}
         onConfirm={confirmDelete}
       />
+
+      <BottomNav />
     </PageShell>
   );
 }

@@ -1,6 +1,8 @@
 export const routes = {
   home: () => "/",
   success: () => "/success",
+  history: () => "/history",
+  profile: () => "/perfil",
   routines: () => "/routines",
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,
