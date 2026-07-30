@@ -45,7 +45,7 @@ export default function RootLayout({
         >
           <AuthProvider>{children}</AuthProvider>
         </GoogleOAuthProvider>
-        <Toaster theme="dark" richColors position="top-center" />
+        <Toaster theme="system" richColors position="top-center" />
         <div className="portrait-lock" aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"

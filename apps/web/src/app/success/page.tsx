@@ -29,8 +29,9 @@ export default function SuccessPage() {
             </div>
 
             <div className="space-y-2 animate-fade-in-up [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]">
-              <h1 className="text-4xl font-bold tracking-tight text-foreground">
-                ¡Set Guardado!
+              <p className="kicker text-primary text-[0.6rem]">// registrado</p>
+              <h1 className="font-display font-bold uppercase text-5xl tracking-tight text-foreground">
+                ¡Set guardado!
               </h1>
               <p className="text-muted-foreground text-lg">
                 Tu progreso ha sido registrado correctamente.
@@ -41,7 +42,7 @@ export default function SuccessPage() {
           <div className="space-y-4 pt-8 animate-fade-in-up [animation-delay:0.4s] opacity-0 [animation-fill-mode:forwards]">
             <Link
               href="/log?repeat=true"
-              className="group relative block w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 overflow-hidden"
+              className="group relative block w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 overflow-hidden"
             >
               <span className="relative z-10">Repetir ejercicio</span>
               <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
