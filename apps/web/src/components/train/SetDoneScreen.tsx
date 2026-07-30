@@ -62,8 +62,8 @@ export function SetDoneScreen({
               />
             </div>
           </div>
-          <p className="text-2xl font-black text-foreground">
-            ¡Serie {result.setNumber} registrada!
+          <p className="font-display font-bold uppercase text-4xl text-foreground tracking-tight">
+            Serie {result.setNumber} guardada
           </p>
           <p className="text-base font-bold text-muted-foreground mt-1">
             {result.exerciseName}
@@ -73,9 +73,10 @@ export function SetDoneScreen({
             lb) × {result.reps} reps
           </p>
           {result.suggestedWeight != null && (
-            <p className="mt-3 text-sm font-bold text-primary">
-              🔼 Recomendamos subir el peso a {result.suggestedWeight} kg
-            </p>
+            <div className="mt-3 inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
+              <span className="font-display text-base">↑</span>
+              Sube a {result.suggestedWeight} kg
+            </div>
           )}
 
           {/* What's coming next — set up the next machine at a glance */}
@@ -85,10 +86,10 @@ export function SetDoneScreen({
                 <Dumbbell className="w-6 h-6" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-black text-primary uppercase tracking-wide">
+                <p className="kicker text-[0.6rem] text-primary">
                   {nextUp.label}
                 </p>
-                <p className="font-bold text-lg text-foreground leading-tight truncate">
+                <p className="font-display font-bold uppercase text-xl text-foreground leading-tight truncate">
                   {nextUp.name}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
@@ -97,11 +98,15 @@ export function SetDoneScreen({
               </div>
             </div>
           ) : (
-            <div className="mt-7 flex items-center gap-2 text-primary font-bold animate-fade-in">
+            <div className="mt-7 flex items-center gap-2 text-primary font-display uppercase text-xl animate-fade-in">
               <PartyPopper className="w-5 h-5" />
               ¡Rutina completada!
             </div>
           )}
+
+          <p className="mt-6 text-sm text-muted-foreground">
+            Suelta el celular. Descansa.
+          </p>
         </div>
 
         {/* Actions */}
@@ -110,7 +115,7 @@ export function SetDoneScreen({
             <button
               type="button"
               onClick={primary.onClick}
-              className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
+              className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
             >
               <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
               {primary.label}

@@ -6,9 +6,6 @@ import type { SessionMapItem } from "@/hooks/useGuidedSession";
 import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
 import {
   X,
-  Check,
-  Play,
-  Circle,
   MoreVertical,
   SkipForward,
   Repeat,
@@ -25,14 +22,20 @@ interface SessionMapProps {
   onClose: () => void;
 }
 
-function StatusIcon({ item }: { item: SessionMapItem }) {
-  if (item.status === "skipped")
-    return <SkipForward className="w-5 h-5 text-muted-foreground/60" />;
-  if (item.status === "done")
-    return <Check className="w-5 h-5 text-primary" strokeWidth={3} />;
-  if (item.isCurrent || item.status === "partial")
-    return <Play className="w-5 h-5 text-primary" strokeWidth={3} />;
-  return <Circle className="w-5 h-5 text-muted-foreground/40" />;
+// Punto de estado (estilo del mock): rojo = actual, lima = hecho, ámbar = a
+// medias, tenue = pendiente, borde = saltado.
+function StatusDot({ item }: { item: SessionMapItem }) {
+  const color =
+    item.status === "skipped"
+      ? "bg-border"
+      : item.isCurrent
+        ? "bg-primary"
+        : item.status === "done"
+          ? "bg-success"
+          : item.status === "partial"
+            ? "bg-amber-400"
+            : "bg-muted-foreground/30";
+  return <span className={`block w-3 h-3 rounded-full ${color}`} />;
 }
 
 function detailText(item: SessionMapItem): string {
@@ -57,35 +60,46 @@ export function SessionMap({
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background/90 backdrop-blur-md animate-fade-in">
-      <div className="shrink-0 px-6 py-4 border-b border-border flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-bold text-foreground">Mapa de la sesión</h2>
-          <p className="text-xs text-muted-foreground">
-            Ejercicio {position} de {totalCount}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="p-2 -mr-2 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Cerrar"
-        >
-          <X className="w-6 h-6" />
-        </button>
-      </div>
+    <>
+      {/* Overlay */}
+      <div
+        onClick={onClose}
+        className="fixed inset-0 z-50 bg-black/55 animate-fade-in"
+      />
 
-      <div className="flex-1 px-6 py-6 overflow-y-auto">
-        <div className="max-w-md mx-auto space-y-3">
+      {/* Bottom sheet */}
+      <div className="fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[80%] overflow-y-auto animate-sheet-up px-5 pt-3 pb-8">
+        <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-4" />
+
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight">
+              Mapa de la sesión
+            </h2>
+            <p className="kicker text-[0.6rem] text-muted-foreground mt-1">
+              Ejercicio {position} de {totalCount}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="shrink-0 grid place-items-center w-9 h-9 rounded-full bg-secondary text-foreground hover:text-primary transition-colors"
+            aria-label="Cerrar"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="max-w-md mx-auto space-y-2">
           {items.map((mi) => {
             const isSkipped = mi.status === "skipped";
             return (
               <div
                 key={mi.index}
-                className={`rounded-2xl border-2 bg-card transition-all ${
+                className={`rounded-2xl border-2 transition-all ${
                   mi.isCurrent
-                    ? "border-primary shadow-lg shadow-primary/5"
-                    : "border-input"
+                    ? "border-primary bg-secondary"
+                    : "border-input bg-transparent"
                 }`}
               >
                 <div className="flex items-center gap-3 p-4">
@@ -95,7 +109,7 @@ export function SessionMap({
                     className="flex items-center gap-3 min-w-0 flex-1 text-left active:scale-[0.99] transition-transform"
                   >
                     <span className="shrink-0">
-                      <StatusIcon item={mi} />
+                      <StatusDot item={mi} />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
@@ -191,6 +205,6 @@ export function SessionMap({
           onClose={() => setReplacingIndex(null)}
         />
       )}
-    </div>
+    </>
   );
 }
