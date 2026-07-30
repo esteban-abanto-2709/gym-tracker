@@ -28,7 +28,7 @@ export function DeleteRoutineDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
-          <AlertDialogTitle>
+          <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
             ¿Eliminar {routineName ? `"${routineName}"` : "esta rutina"}?
           </AlertDialogTitle>
           <AlertDialogDescription>

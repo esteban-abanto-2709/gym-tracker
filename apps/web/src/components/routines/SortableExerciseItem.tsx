@@ -16,6 +16,7 @@ export interface DraftItem {
 
 interface SortableExerciseItemProps {
   item: DraftItem;
+  index: number;
   onChangeTargets: (
     key: string,
     field: "targetSets" | "targetReps",
@@ -27,6 +28,7 @@ interface SortableExerciseItemProps {
 
 export function SortableExerciseItem({
   item,
+  index,
   onChangeTargets,
   onToggleApproximation,
   onRemove,
@@ -65,6 +67,10 @@ export function SortableExerciseItem({
         >
           <GripVertical className="w-5 h-5" />
         </button>
+
+        <span className="shrink-0 w-6 text-center font-display text-lg text-muted-foreground/60 tabular-nums">
+          {String(index + 1).padStart(2, "0")}
+        </span>
 
         <div className="min-w-0 flex-1">
           <p className="font-bold text-foreground leading-tight truncate">

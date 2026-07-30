@@ -231,16 +231,16 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
           <div className="space-y-2">
             <label
               htmlFor="routine-name"
-              className="text-sm font-bold text-foreground ml-1"
+              className="kicker text-muted-foreground text-[0.65rem]"
             >
-              Nombre <span className="text-primary">*</span>
+              Nombre de la rutina
             </label>
             <input
               id="routine-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ej. Push Day"
-              className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground font-bold"
+              placeholder="Torso A"
+              className="w-full bg-transparent border-b-2 border-input focus:border-primary text-foreground font-display font-bold uppercase text-4xl tracking-tight px-0 py-2 outline-none transition-colors placeholder:text-muted-foreground/40"
               autoComplete="off"
             />
           </div>
@@ -255,6 +255,10 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             onClearSelection={() => setSearch("")}
             onCreateClick={() => setIsDialogOpen(true)}
           />
+
+          <p className="kicker text-muted-foreground text-[0.65rem]">
+            Ejercicios · {items.length}
+          </p>
 
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-10 px-6 border-2 border-dashed border-border rounded-2xl text-muted-foreground">
@@ -276,9 +280,10 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-3">
-                  {items.map((item) => (
+                  {items.map((item, index) => (
                     <SortableExerciseItem
                       key={item.key}
+                      index={index}
                       item={item}
                       onChangeTargets={handleChangeTargets}
                       onToggleApproximation={handleToggleApproximation}
@@ -294,7 +299,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             type="button"
             onClick={handleSave}
             disabled={!canSave}
-            className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isEdit ? "Guardar Cambios" : "Crear Rutina"}
           </button>

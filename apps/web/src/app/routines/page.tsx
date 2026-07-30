@@ -63,13 +63,15 @@ export default function RoutinesPage() {
           ) : routines.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-16 px-6 text-muted-foreground">
               <ClipboardList className="w-12 h-12 mb-3 opacity-40" />
-              <p className="font-bold text-foreground">Aún no tienes rutinas</p>
+              <p className="font-display font-bold uppercase text-foreground text-2xl tracking-tight">
+                Aún no tienes rutinas
+              </p>
               <p className="text-sm opacity-70 mb-6">
                 Arma tu primera rutina con calma.
               </p>
               <Link
                 href={routes.routineNew()}
-                className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold shadow-lg active:scale-95 transition-all"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
               >
                 <Plus className="w-5 h-5" strokeWidth={3} />
                 Nueva Rutina

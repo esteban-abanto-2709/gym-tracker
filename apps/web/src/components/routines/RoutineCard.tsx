@@ -20,7 +20,7 @@ export function RoutineCard({
 
   return (
     <div
-      className="group relative bg-card/40 backdrop-blur-sm border-2 border-input rounded-2xl p-3 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
+      className="group relative bg-card border-2 border-input rounded-2xl p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
@@ -34,7 +34,7 @@ export function RoutineCard({
           <h3 className="font-bold text-foreground text-lg leading-tight truncate">
             {routine.name}
           </h3>
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full mt-1 uppercase tracking-wide">
+          <span className="inline-flex items-center gap-1.5 kicker text-[0.6rem] text-muted-foreground mt-1.5">
             <ListChecks className="w-3.5 h-3.5" />
             {count} {count === 1 ? "ejercicio" : "ejercicios"}
           </span>
