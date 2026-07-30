@@ -11,7 +11,7 @@ import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
 import { SessionMap } from "@/components/train/SessionMap";
-import { Loader2, ClipboardList, Dumbbell, ListChecks } from "lucide-react";
+import { Loader2, ClipboardList, ListChecks } from "lucide-react";
 
 export default function TrainPage() {
   const {
@@ -58,13 +58,15 @@ export default function TrainPage() {
         <AppHeader leftAction={<BackAction href={routes.home()} />} />
         <main className="flex-1 flex flex-col items-center justify-center px-6 text-center text-muted-foreground">
           <ClipboardList className="w-12 h-12 mb-3 opacity-40" />
-          <p className="font-bold text-foreground">No hay una rutina activa</p>
+          <p className="font-display font-bold uppercase text-2xl tracking-tight text-foreground">
+            No hay una rutina activa
+          </p>
           <p className="text-sm opacity-70 mb-6">
             Empieza una rutina para entrenar guiado.
           </p>
           <Link
             href={routes.routines()}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold shadow-lg active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
           >
             Ver mis rutinas
           </Link>
@@ -132,23 +134,16 @@ export default function TrainPage() {
         <main className="flex-1 flex flex-col justify-center px-6 py-6 relative z-10 animate-fade-in-up">
           <div className="max-w-md mx-auto w-full space-y-5">
             {/* Current exercise header */}
-            <div className="flex items-center gap-4 rounded-2xl border-2 border-primary bg-card p-4 shadow-lg shadow-primary/5">
-              <div className="shrink-0 p-3 bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-xl text-primary-foreground shadow-lg shadow-primary/20">
-                <Dumbbell className="w-6 h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-black text-primary uppercase tracking-wide">
-                  Serie {setsDoneForCurrent + 1}
-                </p>
-                <p className="font-bold text-lg text-foreground leading-tight truncate">
-                  {currentItem.exercise.name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {target
-                    ? `Meta: ${target} × ${currentItem.targetReps ?? "—"}`
-                    : "Series libres"}
-                </p>
-              </div>
+            <div className="rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
+              <p className="kicker text-[0.6rem] text-primary">
+                Serie {setsDoneForCurrent + 1}
+                {target
+                  ? ` · Meta ${target}×${currentItem.targetReps ?? "—"}`
+                  : " · Libre"}
+              </p>
+              <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
+                {currentItem.exercise.name}
+              </p>
             </div>
 
             <SetLogger

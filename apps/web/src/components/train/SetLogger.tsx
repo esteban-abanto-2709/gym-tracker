@@ -102,23 +102,24 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
-      <div className="text-center space-y-1">
-        <p className="text-xs text-muted-foreground">
+      <div className="text-center space-y-2">
+        <p className="kicker text-[0.6rem] text-muted-foreground">
           {recommendation?.lastWeight != null
-            ? `Última vez: ${recommendation.lastWeight} kg × ${recommendation.lastReps} reps`
-            : "Sin registro previo de este ejercicio"}
+            ? `La última vez · ${recommendation.lastWeight} kg × ${recommendation.lastReps}`
+            : "Sin registro previo"}
         </p>
         {recommendation?.suggestedWeight != null && (
-          <p className="text-xs font-bold text-primary">
-            🔼 Recomendamos subir el peso a {recommendation.suggestedWeight} kg
-          </p>
+          <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
+            <span className="font-display text-base">↑</span>
+            Sube a {recommendation.suggestedWeight} kg
+          </div>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium text-muted-foreground">
+            <label className="kicker text-muted-foreground text-[0.6rem]">
               Peso ({unit})
             </label>
             <button
@@ -153,7 +154,7 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
             inputMode="decimal"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
+            className="w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
             required
             autoComplete="off"
             data-1p-ignore
@@ -161,15 +162,15 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-muted-foreground">
-            Reps{item.targetReps ? ` (meta ${item.targetReps})` : ""}
+          <label className="kicker text-muted-foreground text-[0.6rem]">
+            Reps{item.targetReps ? ` · meta ${item.targetReps}` : ""}
           </label>
           <input
             type="number"
             inputMode="numeric"
             value={reps}
             onChange={(e) => setReps(e.target.value)}
-            className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
+            className="w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
             required
             autoComplete="off"
             data-1p-ignore
@@ -192,7 +193,7 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
       <button
         type="submit"
         disabled={logging || weight === "" || reps === ""}
-        className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-bold text-lg shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {logging ? (
           <>
