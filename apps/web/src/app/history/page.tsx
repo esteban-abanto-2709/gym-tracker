@@ -25,6 +25,8 @@ export default function HistoryPage() {
     setEditReps,
     editWeight,
     setEditWeight,
+    editDuration,
+    setEditDuration,
     editOpinion,
     setEditOpinion,
     editApproximation,
@@ -133,10 +135,13 @@ export default function HistoryPage() {
       <EditWorkoutDialog
         open={!!editingWorkout}
         onOpenChange={(open) => !open && setEditingWorkout(null)}
+        isTimed={editingWorkout?.durationSec != null}
         weight={editWeight}
         onWeightChange={setEditWeight}
         reps={editReps}
         onRepsChange={setEditReps}
+        durationSec={editDuration}
+        onDurationChange={setEditDuration}
         opinion={editOpinion}
         onOpinionChange={setEditOpinion}
         isApproximation={editApproximation}

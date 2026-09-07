@@ -14,6 +14,7 @@ interface RepeatData {
   exerciseId?: string;
   weight: string;
   reps: string;
+  durationSec?: string;
 }
 
 export function useWorkoutForm(
@@ -26,6 +27,7 @@ export function useWorkoutForm(
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
+  const [seconds, setSeconds] = useState("");
   const [opinion, setOpinion] = useState("");
   const [isApproximation, setIsApproximation] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
@@ -60,6 +62,7 @@ export function useWorkoutForm(
           }
           setWeight(data.weight || "");
           setReps(data.reps || "");
+          setSeconds(data.durationSec || "");
         } catch (e) {
           console.error("Error loading last set data:", e);
         }
@@ -92,30 +95,39 @@ export function useWorkoutForm(
 
       setLoading(true);
 
+      const isTimed = selectedExercise.isTimed ?? false;
       // Persist always in kg, regardless of the unit shown in the form
-      const weightKg = toKg(Number(weight), unit);
+      const weightKg = isTimed ? null : toKg(Number(weight), unit);
 
-      const data = {
-        exerciseId: selectedExercise.id,
-        reps: Number(reps),
-        weight: weightKg,
-        opinion,
-        equipmentId,
-        isApproximation,
-      };
+      const data = isTimed
+        ? {
+            exerciseId: selectedExercise.id,
+            reps: 1,
+            durationSec: Number(seconds),
+            opinion,
+          }
+        : {
+            exerciseId: selectedExercise.id,
+            reps: Number(reps),
+            weight: weightKg,
+            opinion,
+            equipmentId,
+            isApproximation,
+          };
 
       const run = async () => {
         try {
           await api.post(routes.api.workouts.create(), data);
-          rememberEquipment(selectedExercise.id, equipmentId);
+          if (!isTimed) rememberEquipment(selectedExercise.id, equipmentId);
 
           // Save for "Repeat" flow from Success page (always in kg)
           sessionStorage.setItem(
             STORAGE_KEY,
             JSON.stringify({
               exerciseId: selectedExercise.id,
-              weight: String(weightKg),
-              reps,
+              weight: isTimed ? "" : String(weightKg),
+              reps: isTimed ? "1" : reps,
+              durationSec: isTimed ? seconds : "",
             }),
           );
 
@@ -132,6 +144,7 @@ export function useWorkoutForm(
     [
       selectedExercise,
       reps,
+      seconds,
       weight,
       unit,
       opinion,
@@ -148,6 +161,8 @@ export function useWorkoutForm(
     toggleUnit,
     reps,
     setReps,
+    seconds,
+    setSeconds,
     opinion,
     setOpinion,
     isApproximation,

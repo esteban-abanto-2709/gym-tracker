@@ -34,6 +34,8 @@ function LogContent() {
     toggleUnit,
     reps,
     setReps,
+    seconds,
+    setSeconds,
     opinion,
     setOpinion,
     isApproximation,
@@ -50,6 +52,7 @@ function LogContent() {
 
   // --- Modal state ---
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const isTimed = selectedExercise?.isTimed ?? false;
 
   // Create exercise via hook + select it
   const handleCreate = async (name: string, isTimed: boolean) => {
@@ -107,7 +110,7 @@ function LogContent() {
           />
 
           {/* Equipo (aparece al elegir ejercicio; default = tu último uso) */}
-          {selectedExercise && (
+          {selectedExercise && !isTimed && (
             <EquipmentSelector
               equipment={equipment}
               value={equipmentId}
@@ -115,89 +118,112 @@ function LogContent() {
             />
           )}
 
-          {/* Peso y Reps en una fila */}
-          <div className="grid grid-cols-2 gap-4">
+          {isTimed ? (
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="weight"
-                  className="kicker text-muted-foreground text-[0.65rem]"
-                >
-                  Peso ({unit}) <span className="text-primary">*</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={toggleUnit}
-                  className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
-                  aria-label="Cambiar unidad de peso"
-                >
-                  <span
-                    className={`px-2 py-0.5 transition-colors ${
-                      unit === "kg"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    kg
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 transition-colors ${
-                      unit === "lb"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    lb
-                  </span>
-                </button>
-              </div>
+              <label
+                htmlFor="seconds"
+                className="kicker text-muted-foreground text-[0.65rem]"
+              >
+                Segundos <span className="text-primary">*</span>
+              </label>
               <input
-                id="weight"
-                name="weight"
+                id="seconds"
+                name="seconds"
                 type="number"
-                step="0.5"
-                inputMode="decimal"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
+                inputMode="numeric"
+                value={seconds}
+                onChange={(e) => setSeconds(e.target.value)}
                 className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
                 required
                 autoComplete="off"
                 data-1p-ignore
               />
-              {weight !== "" && !Number.isNaN(Number(weight)) && (
-                <p className="text-xs text-muted-foreground text-center font-mono">
-                  ≈{" "}
-                  {convertWeight(
-                    Number(weight),
-                    unit,
-                    unit === "kg" ? "lb" : "kg",
-                  )}{" "}
-                  {unit === "kg" ? "lb" : "kg"}
-                </p>
-              )}
             </div>
+          ) : (
+            /* Peso y Reps en una fila */
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="weight"
+                    className="kicker text-muted-foreground text-[0.65rem]"
+                  >
+                    Peso ({unit}) <span className="text-primary">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={toggleUnit}
+                    className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
+                    aria-label="Cambiar unidad de peso"
+                  >
+                    <span
+                      className={`px-2 py-0.5 transition-colors ${
+                        unit === "kg"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      kg
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 transition-colors ${
+                        unit === "lb"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      lb
+                    </span>
+                  </button>
+                </div>
+                <input
+                  id="weight"
+                  name="weight"
+                  type="number"
+                  step="0.5"
+                  inputMode="decimal"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
+                  required
+                  autoComplete="off"
+                  data-1p-ignore
+                />
+                {weight !== "" && !Number.isNaN(Number(weight)) && (
+                  <p className="text-xs text-muted-foreground text-center font-mono">
+                    ≈{" "}
+                    {convertWeight(
+                      Number(weight),
+                      unit,
+                      unit === "kg" ? "lb" : "kg",
+                    )}{" "}
+                    {unit === "kg" ? "lb" : "kg"}
+                  </p>
+                )}
+              </div>
 
-            <div className="space-y-2">
-              <label
-                htmlFor="reps"
-                className="kicker text-muted-foreground text-[0.65rem]"
-              >
-                Repeticiones <span className="text-primary">*</span>
-              </label>
-              <input
-                id="reps"
-                name="reps"
-                type="number"
-                inputMode="numeric"
-                value={reps}
-                onChange={(e) => setReps(e.target.value)}
-                className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]"
-                required
-                autoComplete="off"
-                data-1p-ignore
-              />
+              <div className="space-y-2">
+                <label
+                  htmlFor="reps"
+                  className="kicker text-muted-foreground text-[0.65rem]"
+                >
+                  Repeticiones <span className="text-primary">*</span>
+                </label>
+                <input
+                  id="reps"
+                  name="reps"
+                  type="number"
+                  inputMode="numeric"
+                  value={reps}
+                  onChange={(e) => setReps(e.target.value)}
+                  className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]"
+                  required
+                  autoComplete="off"
+                  data-1p-ignore
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-2">
             <label
@@ -216,11 +242,13 @@ function LogContent() {
             />
           </div>
 
-          <ApproximationToggle
-            checked={isApproximation}
-            onChange={setIsApproximation}
-            className="px-1"
-          />
+          {!isTimed && (
+            <ApproximationToggle
+              checked={isApproximation}
+              onChange={setIsApproximation}
+              className="px-1"
+            />
+          )}
 
           {/* Submit Button */}
           <button

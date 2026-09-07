@@ -11,10 +11,13 @@ import { ApproximationToggle } from "@/components/ApproximationToggle";
 interface EditWorkoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  isTimed: boolean;
   weight: string;
   onWeightChange: (value: string) => void;
   reps: string;
   onRepsChange: (value: string) => void;
+  durationSec: string;
+  onDurationChange: (value: string) => void;
   opinion: string;
   onOpinionChange: (value: string) => void;
   isApproximation: boolean;
@@ -26,10 +29,13 @@ interface EditWorkoutDialogProps {
 export function EditWorkoutDialog({
   open,
   onOpenChange,
+  isTimed,
   weight,
   onWeightChange,
   reps,
   onRepsChange,
+  durationSec,
+  onDurationChange,
   opinion,
   onOpinionChange,
   isApproximation,
@@ -58,35 +64,62 @@ export function EditWorkoutDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+          {isTimed ? (
             <div className="space-y-2">
-              <label htmlFor="edit-weight" className="kicker text-muted-foreground text-[0.65rem]">
-                Peso (kg)
+              <label
+                htmlFor="edit-duration"
+                className="kicker text-muted-foreground text-[0.65rem]"
+              >
+                Segundos
               </label>
               <input
-                id="edit-weight"
+                id="edit-duration"
                 type="number"
-                step="0.5"
-                value={weight}
-                onChange={(e) => onWeightChange(e.target.value)}
+                value={durationSec}
+                onChange={(e) => onDurationChange(e.target.value)}
                 className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
               />
             </div>
-            <div className="space-y-2">
-              <label htmlFor="edit-reps" className="kicker text-muted-foreground text-[0.65rem]">
-                Repeticiones
-              </label>
-              <input
-                id="edit-reps"
-                type="number"
-                value={reps}
-                onChange={(e) => onRepsChange(e.target.value)}
-                className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              />
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="edit-weight"
+                  className="kicker text-muted-foreground text-[0.65rem]"
+                >
+                  Peso (kg)
+                </label>
+                <input
+                  id="edit-weight"
+                  type="number"
+                  step="0.5"
+                  value={weight}
+                  onChange={(e) => onWeightChange(e.target.value)}
+                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="edit-reps"
+                  className="kicker text-muted-foreground text-[0.65rem]"
+                >
+                  Repeticiones
+                </label>
+                <input
+                  id="edit-reps"
+                  type="number"
+                  value={reps}
+                  onChange={(e) => onRepsChange(e.target.value)}
+                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
             </div>
-          </div>
+          )}
           <div className="space-y-2">
-            <label htmlFor="edit-opinion" className="kicker text-muted-foreground text-[0.65rem]">
+            <label
+              htmlFor="edit-opinion"
+              className="kicker text-muted-foreground text-[0.65rem]"
+            >
               Comentario
             </label>
             <textarea
@@ -97,10 +130,12 @@ export function EditWorkoutDialog({
               className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
             />
           </div>
-          <ApproximationToggle
-            checked={isApproximation}
-            onChange={onApproximationChange}
-          />
+          {!isTimed && (
+            <ApproximationToggle
+              checked={isApproximation}
+              onChange={onApproximationChange}
+            />
+          )}
         </div>
         <DialogFooter>
           <button

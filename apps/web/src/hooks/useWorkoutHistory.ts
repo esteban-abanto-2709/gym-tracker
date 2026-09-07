@@ -22,6 +22,7 @@ export function useWorkoutHistory() {
   const [deletingWorkout, setDeletingWorkout] = useState<Workout | null>(null);
   const [editReps, setEditReps] = useState("");
   const [editWeight, setEditWeight] = useState("");
+  const [editDuration, setEditDuration] = useState("");
   const [editOpinion, setEditOpinion] = useState("");
   const [editApproximation, setEditApproximation] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -99,6 +100,7 @@ export function useWorkoutHistory() {
           exerciseId: exercise.exercise.id,
           weight: exercise.weight?.toString() ?? "",
           reps: exercise.reps.toString(),
+          durationSec: exercise.durationSec?.toString() ?? "",
         }),
       );
       router.push("/log?repeat=true");
@@ -111,6 +113,7 @@ export function useWorkoutHistory() {
     setEditingWorkout(workout);
     setEditReps(workout.reps.toString());
     setEditWeight(workout.weight?.toString() ?? "");
+    setEditDuration(workout.durationSec?.toString() ?? "");
     setEditOpinion(workout.opinion);
     setEditApproximation(workout.isApproximation ?? false);
   }, []);
@@ -121,24 +124,21 @@ export function useWorkoutHistory() {
     setActionLoading(true);
     const run = async () => {
       try {
-        await api.patch(routes.api.workouts.update(editingWorkout.id), {
-          reps: Number(editReps),
-          weight: Number(editWeight),
-          opinion: editOpinion,
-          isApproximation: editApproximation,
-        });
+        const isTimed = editingWorkout.durationSec != null;
+        const changes = isTimed
+          ? { reps: 1, durationSec: Number(editDuration), opinion: editOpinion }
+          : {
+              reps: Number(editReps),
+              weight: Number(editWeight),
+              opinion: editOpinion,
+              isApproximation: editApproximation,
+            };
+
+        await api.patch(routes.api.workouts.update(editingWorkout.id), changes);
 
         setWorkouts((prev) =>
           prev.map((w) =>
-            w.id === editingWorkout.id
-              ? {
-                  ...w,
-                  reps: Number(editReps),
-                  weight: Number(editWeight),
-                  opinion: editOpinion,
-                  isApproximation: editApproximation,
-                }
-              : w,
+            w.id === editingWorkout.id ? { ...w, ...changes } : w,
           ),
         );
         setEditingWorkout(null);
@@ -150,7 +150,14 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [editingWorkout, editReps, editWeight, editOpinion, editApproximation]);
+  }, [
+    editingWorkout,
+    editReps,
+    editWeight,
+    editDuration,
+    editOpinion,
+    editApproximation,
+  ]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {
@@ -190,6 +197,8 @@ export function useWorkoutHistory() {
     setEditReps,
     editWeight,
     setEditWeight,
+    editDuration,
+    setEditDuration,
     editOpinion,
     setEditOpinion,
     editApproximation,
