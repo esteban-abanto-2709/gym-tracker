@@ -25,6 +25,11 @@ export class UpdateWorkoutDto {
   weight?: number;
 
   @IsOptional()
+  @IsInt()
+  @IsPositive()
+  durationSec?: number;
+
+  @IsOptional()
   @IsString()
   opinion?: string;
 

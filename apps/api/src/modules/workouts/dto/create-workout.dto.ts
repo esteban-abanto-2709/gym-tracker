@@ -7,6 +7,7 @@ import {
   IsString,
   IsUUID,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateWorkoutDto {
@@ -17,9 +18,15 @@ export class CreateWorkoutDto {
   @IsPositive()
   reps: number;
 
+  @ValidateIf((o: CreateWorkoutDto) => o.durationSec == null)
   @IsNumber()
   @Min(0)
-  weight: number;
+  weight?: number;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  durationSec?: number;
 
   @IsOptional()
   @IsString()

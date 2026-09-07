@@ -17,7 +17,8 @@ export class WorkoutsService {
         userId,
         exerciseId: createWorkoutDto.exerciseId,
         reps: createWorkoutDto.reps,
-        weight: createWorkoutDto.weight,
+        weight: createWorkoutDto.weight ?? null,
+        durationSec: createWorkoutDto.durationSec ?? null,
         opinion: createWorkoutDto.opinion || '',
         equipmentId: createWorkoutDto.equipmentId ?? null,
         routineId: createWorkoutDto.routineId ?? null,
@@ -46,7 +47,12 @@ export class WorkoutsService {
     });
 
     if (sets.length === 0) {
-      return { lastWeight: null, lastReps: null, suggestedWeight: null };
+      return {
+        lastWeight: null,
+        lastReps: null,
+        lastDurationSec: null,
+        suggestedWeight: null,
+      };
     }
 
     const last = sets[0];
@@ -72,7 +78,12 @@ export class WorkoutsService {
       }
     }
 
-    return { lastWeight: last.weight, lastReps: last.reps, suggestedWeight };
+    return {
+      lastWeight: last.weight,
+      lastReps: last.reps,
+      lastDurationSec: last.durationSec,
+      suggestedWeight,
+    };
   }
 
   async findAll(userId: string) {

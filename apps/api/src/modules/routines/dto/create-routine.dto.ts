@@ -32,6 +32,11 @@ export class RoutineItemDto {
   targetReps?: number | null;
 
   @IsOptional()
+  @IsInt()
+  @IsPositive()
+  targetDurationSec?: number | null;
+
+  @IsOptional()
   @IsBoolean()
   isApproximation?: boolean;
 }
