@@ -13,7 +13,7 @@ import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner"
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { routes } from "@/lib/routes";
 import { convertWeight } from "@/lib/units";
-import { Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 
 function LogContent() {
   // --- Hooks de negocio ---
@@ -226,9 +226,10 @@ function LogContent() {
           <button
             type="submit"
             disabled={loading || !selectedExercise}
-            className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s]"
+            className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s] flex items-center justify-center gap-2"
           >
-            ✓ Registrar Set
+            <Check className="w-6 h-6" strokeWidth={3} />
+            Registrar Set
             <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
 

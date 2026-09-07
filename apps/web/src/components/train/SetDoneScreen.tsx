@@ -6,6 +6,7 @@ import { convertWeight } from "@/lib/units";
 import {
   Check,
   ArrowRight,
+  ArrowUp,
   Plus,
   Flag,
   Dumbbell,
@@ -74,7 +75,7 @@ export function SetDoneScreen({
           </p>
           {result.suggestedWeight != null && (
             <div className="mt-3 inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
-              <span className="font-display text-base">↑</span>
+              <ArrowUp className="w-4 h-4" strokeWidth={3} />
               Sube a {result.suggestedWeight} kg
             </div>
           )}

@@ -22,7 +22,7 @@ export class PrismaService
     try {
       await this.$connect();
     } catch (error) {
-      console.error('❌ Error connecting to database:', error);
+      console.error('Error connecting to database:', error);
     }
   }
 

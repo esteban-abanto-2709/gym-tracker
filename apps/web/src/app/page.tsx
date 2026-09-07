@@ -3,7 +3,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { routes } from "@/lib/routes";
-import { Zap, Plus } from "lucide-react";
+import { Zap, Plus, Play } from "lucide-react";
 
 export default function Home() {
   return (
@@ -39,7 +39,8 @@ export default function Home() {
               rutina
             </p>
             <p className="text-sm mt-3 opacity-60 relative">
-              Elige tu rutina y ve paso a paso · ▶
+              Elige tu rutina y ve paso a paso ·{" "}
+              <Play className="inline w-3.5 h-3.5 fill-current align-[-2px]" />
             </p>
           </Link>
 

@@ -8,7 +8,7 @@ import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
-import { Loader2 } from "lucide-react";
+import { ArrowUp, Check, Loader2 } from "lucide-react";
 
 interface Recommendation {
   lastWeight: number | null;
@@ -110,7 +110,7 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
         </p>
         {recommendation?.suggestedWeight != null && (
           <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
-            <span className="font-display text-base">↑</span>
+            <ArrowUp className="w-4 h-4" strokeWidth={3} />
             Sube a {recommendation.suggestedWeight} kg
           </div>
         )}
@@ -201,7 +201,10 @@ export function SetLogger({ item, equipment, logging, onLog }: SetLoggerProps) {
             Guardando...
           </>
         ) : (
-          "✓ Registrar serie"
+          <>
+            <Check className="w-6 h-6" strokeWidth={3} />
+            Registrar serie
+          </>
         )}
       </button>
     </form>

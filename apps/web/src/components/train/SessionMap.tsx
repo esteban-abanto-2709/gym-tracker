@@ -5,6 +5,7 @@ import type { Exercise } from "@/lib/types";
 import type { SessionMapItem } from "@/hooks/useGuidedSession";
 import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
 import {
+  ArrowLeftRight,
   X,
   MoreVertical,
   SkipForward,
@@ -125,7 +126,8 @@ export function SessionMap({
                         {detailText(mi)}
                         {mi.replacedFrom && (
                           <span className="text-primary">
-                            {" · ↔ "}
+                            {" · "}
+                            <ArrowLeftRight className="inline w-3 h-3 align-[-2px]" />{" "}
                             {mi.replacedFrom}
                           </span>
                         )}
