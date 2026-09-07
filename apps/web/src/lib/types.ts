@@ -16,6 +16,7 @@ export interface Exercise {
   id: string;
   name: string;
   slug: string;
+  isTimed?: boolean;
   description?: string;
   createdAt?: string;
 }
@@ -29,8 +30,9 @@ export interface Workout {
   };
   equipmentId?: string | null;
   equipment?: Equipment | null;
-  weight: number;
+  weight: number | null;
   reps: number;
+  durationSec?: number | null;
   opinion: string;
   isApproximation?: boolean;
   routineId?: string | null;
@@ -47,6 +49,7 @@ export interface RoutineItem {
   position: number;
   targetSets: number | null;
   targetReps: number | null;
+  targetDurationSec?: number | null;
   isApproximation?: boolean;
 }
 

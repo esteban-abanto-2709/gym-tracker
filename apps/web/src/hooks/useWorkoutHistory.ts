@@ -97,7 +97,7 @@ export function useWorkoutHistory() {
         "gymtrack-last-set",
         JSON.stringify({
           exerciseId: exercise.exercise.id,
-          weight: exercise.weight.toString(),
+          weight: exercise.weight?.toString() ?? "",
           reps: exercise.reps.toString(),
         }),
       );
@@ -110,7 +110,7 @@ export function useWorkoutHistory() {
   const handleEditClick = useCallback((workout: Workout) => {
     setEditingWorkout(workout);
     setEditReps(workout.reps.toString());
-    setEditWeight(workout.weight.toString());
+    setEditWeight(workout.weight?.toString() ?? "");
     setEditOpinion(workout.opinion);
     setEditApproximation(workout.isApproximation ?? false);
   }, []);

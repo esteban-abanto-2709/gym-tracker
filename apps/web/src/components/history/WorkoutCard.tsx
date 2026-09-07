@@ -1,4 +1,6 @@
+import { Fragment } from "react";
 import type { Workout } from "@/lib/types";
+import { setMetrics } from "@/lib/setDisplay";
 import { RotateCcw, MessageSquare, Pencil, Trash2 } from "lucide-react";
 
 interface WorkoutCardProps {
@@ -55,23 +57,19 @@ export function WorkoutCard({
 
         <div className="flex items-center justify-between gap-4 mt-2">
           <div className="flex items-baseline gap-4">
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-display font-bold text-foreground">
-                {workout.weight}
-              </span>
-              <span className="text-xs font-bold text-muted-foreground">
-                kg
-              </span>
-            </div>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-display font-bold text-foreground">
-                {workout.reps}
-              </span>
-              <span className="text-xs font-bold text-muted-foreground">
-                reps
-              </span>
-            </div>
+            {setMetrics(workout).map((metric, i) => (
+              <Fragment key={metric.unit}>
+                {i > 0 && <div className="h-4 w-px bg-border" />}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-display font-bold text-foreground">
+                    {metric.value}
+                  </span>
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {metric.unit}
+                  </span>
+                </div>
+              </Fragment>
+            ))}
           </div>
 
           {/* Actions */}

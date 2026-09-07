@@ -37,8 +37,9 @@ interface LogSetArgs {
 
 export interface LastResult {
   exerciseName: string;
-  weightKg: number;
+  weightKg: number | null;
   reps: number;
+  durationSec: number | null;
   setNumber: number;
   suggestedWeight: number | null;
 }
@@ -182,6 +183,7 @@ export function useGuidedSession() {
             exerciseName: currentItem.exercise.name,
             weightKg,
             reps,
+            durationSec: null,
             setNumber,
             suggestedWeight,
           });

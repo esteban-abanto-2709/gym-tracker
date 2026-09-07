@@ -3,6 +3,7 @@
 import type { RoutineItem } from "@/lib/types";
 import type { LastResult } from "@/hooks/useGuidedSession";
 import { convertWeight } from "@/lib/units";
+import { formatDuration } from "@/lib/setDisplay";
 import {
   Check,
   ArrowRight,
@@ -42,6 +43,12 @@ export function SetDoneScreen({
 }: SetDoneScreenProps) {
   // Primary action follows the routine: pending target sets first, then the
   // next exercise. When the routine is finished there is no primary button.
+  const duration =
+    result.durationSec != null ? formatDuration(result.durationSec) : null;
+  const resultLine = duration
+    ? `${duration.value} ${duration.unit}`
+    : `${result.weightKg} kg (${convertWeight(result.weightKg ?? 0, "kg", "lb")} lb) × ${result.reps} reps`;
+
   const primary = hasPendingSets
     ? { label: "Siguiente serie", onClick: onContinueSet }
     : nextItem
@@ -70,8 +77,7 @@ export function SetDoneScreen({
             {result.exerciseName}
           </p>
           <p className="text-sm text-muted-foreground mt-2 font-mono">
-            {result.weightKg} kg ({convertWeight(result.weightKg, "kg", "lb")}{" "}
-            lb) × {result.reps} reps
+            {resultLine}
           </p>
           {result.suggestedWeight != null && (
             <div className="mt-3 inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
