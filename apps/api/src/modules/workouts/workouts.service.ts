@@ -64,7 +64,7 @@ export class WorkoutsService {
     // day at this weight by the margin. Different weight => fresh track.
     const days = [...bestRepsByDay.keys()].sort().reverse();
     let suggestedWeight: number | null = null;
-    if (days.length >= 2) {
+    if (workingWeight != null && days.length >= 2) {
       const bestNow = bestRepsByDay.get(days[0]) ?? 0;
       const bestPrev = bestRepsByDay.get(days[1]) ?? 0;
       if (bestNow >= bestPrev + REP_MARGIN) {

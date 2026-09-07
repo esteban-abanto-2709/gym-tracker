@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-017] `pnpm run build` local no regenera el cliente de Prisma (falso verde)
+- **Ubicación:** `apps/api/package.json` (script `build` = `nest build`); el Dockerfile sí lo hace bien (`apps/api/Dockerfile:19`).
+- **Riesgo:** 3/10
+- **Problema:** Tras cambiar `schema.prisma`, `nest build` compila contra el cliente generado **anterior**. `prisma migrate dev` tampoco regeneró en la práctica. Resultado: el build pasa en verde aunque el código ya no sea válido contra el schema nuevo; solo tras un `prisma generate` explícito aparecen los errores reales.
+- **Impacto futuro:** Cambios de schema que parecen compilar y revientan en runtime o recién al construir la imagen Docker. Cuanto más tarde aparece el error, más caro. Pasó de verdad al hacer `weight` nullable en RM-028: el build dio verde y el error estaba ahí.
+- **Sugerencia:** encadenar el generate en el script (`"build": "prisma generate && nest build"`), o dejarlo en un `postinstall`.
+- **Fecha:** 2026-09-07 · **Estado:** Abierto
+
 ## [TD-016] El README de docker miente sobre qué tablas cubren backup y restore
 - **Ubicación:** `apps/docker/README.md` (secciones "Backups de prod" y "Restaurar un backup")
 - **Riesgo:** 4/10
