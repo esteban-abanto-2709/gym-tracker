@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { routes } from "@/lib/routes";
+import { formatTarget } from "@/lib/setDisplay";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
@@ -84,18 +85,18 @@ export default function TrainPage() {
         label: "Sigue en la misma máquina",
         name: currentItem.exercise.name,
         detail: `Serie ${setsDoneForCurrent + 1}${
-          currentItem.targetReps
-            ? ` · objetivo ${currentItem.targetReps} reps`
-            : ""
+          currentItem.targetDurationSec
+            ? ` · objetivo ${currentItem.targetDurationSec} s`
+            : currentItem.targetReps
+              ? ` · objetivo ${currentItem.targetReps} reps`
+              : ""
         }`,
       }
     : nextItem
       ? {
           label: "Prepara la siguiente máquina",
           name: nextItem.exercise.name,
-          detail: nextItem.targetSets
-            ? `${nextItem.targetSets} × ${nextItem.targetReps ?? "—"}`
-            : "",
+          detail: formatTarget(nextItem) ?? "",
         }
       : null;
 
@@ -137,9 +138,7 @@ export default function TrainPage() {
             <div className="rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
               <p className="kicker text-[0.6rem] text-primary">
                 Serie {setsDoneForCurrent + 1}
-                {target
-                  ? ` · Meta ${target}×${currentItem.targetReps ?? "—"}`
-                  : " · Libre"}
+                {target ? ` · Meta ${formatTarget(currentItem)}` : " · Libre"}
               </p>
               <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
                 {currentItem.exercise.name}

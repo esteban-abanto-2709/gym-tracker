@@ -45,6 +45,7 @@ export interface RoutineItem {
   exercise: {
     id: string;
     name: string;
+    isTimed?: boolean;
   };
   position: number;
   targetSets: number | null;

@@ -28,8 +28,9 @@ export interface SessionMapItem {
 }
 
 interface LogSetArgs {
-  weightKg: number;
+  weightKg?: number | null;
   reps: number;
+  durationSec?: number | null;
   opinion?: string;
   equipmentId?: string | null;
   isApproximation?: boolean;
@@ -141,6 +142,7 @@ export function useGuidedSession() {
     async ({
       weightKg,
       reps,
+      durationSec,
       opinion,
       equipmentId,
       isApproximation,
@@ -152,7 +154,8 @@ export function useGuidedSession() {
           await api.post(routes.api.workouts.create(), {
             exerciseId: currentItem.exerciseId,
             reps,
-            weight: weightKg,
+            weight: weightKg ?? null,
+            durationSec: durationSec ?? null,
             opinion: opinion ?? "",
             equipmentId: equipmentId ?? null,
             routineId: session.routineId,
@@ -181,9 +184,9 @@ export function useGuidedSession() {
 
           setLastResult({
             exerciseName: currentItem.exercise.name,
-            weightKg,
+            weightKg: weightKg ?? null,
             reps,
-            durationSec: null,
+            durationSec: durationSec ?? null,
             setNumber,
             suggestedWeight,
           });
@@ -251,7 +254,11 @@ export function useGuidedSession() {
       if (!session) return;
       const sub: ActiveExtra = {
         exerciseId: exercise.id,
-        exercise: { id: exercise.id, name: exercise.name },
+        exercise: {
+          id: exercise.id,
+          name: exercise.name,
+          isTimed: exercise.isTimed ?? false,
+        },
       };
       const nextSkipped = { ...session.skipped };
       delete nextSkipped[i];
@@ -283,6 +290,7 @@ export function useGuidedSession() {
             exercise: {
               id: exercise.id,
               name: exercise.name,
+              isTimed: exercise.isTimed ?? false,
             },
           },
         ],

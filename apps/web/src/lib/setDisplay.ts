@@ -23,6 +23,19 @@ export function formatDuration(totalSec: number): SetMetric {
   };
 }
 
+export function formatTarget(item: {
+  targetSets?: number | null;
+  targetReps?: number | null;
+  targetDurationSec?: number | null;
+}): string | null {
+  if (item.targetSets == null) return null;
+  if (item.targetDurationSec != null) {
+    const d = formatDuration(item.targetDurationSec);
+    return `${item.targetSets} × ${d.value} ${d.unit}`;
+  }
+  return `${item.targetSets} × ${item.targetReps ?? "—"}`;
+}
+
 export function setMetrics(set: DisplayableSet): SetMetric[] {
   if (set.durationSec != null) return [formatDuration(set.durationSec)];
   return [
