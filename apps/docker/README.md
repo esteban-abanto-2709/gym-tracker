@@ -79,7 +79,8 @@ pnpm dev
 
 ## Backups de prod
 
-Genera un dump de **solo datos** (tablas `Exercise` y `Workout`) de la BD de prod
+Genera un dump de **solo datos** (tablas `User`, `Exercise`, `Routine`,
+`RoutineItem` y `Workout`) de la BD de prod
 en un solo comando. El archivo cae en `apps/docker/backups/` (ignorada por git)
 con nombre `gym-prod_YYYY-MM-DD_HHmmss.sql`.
 
@@ -108,13 +109,13 @@ backup-prod.cmd "D:\mis-backups"
 
 ### ¿Y si cambia el schema de la base de datos?
 
-El script dumpea explícitamente las tablas `Exercise` y `Workout` (líneas `-t` en
-`backup-prod.cmd`). Según el cambio:
+El script dumpea explícitamente cinco tablas: `User`, `Exercise`, `Routine`,
+`RoutineItem` y `Workout` (los `-t` de `backup-prod.cmd`). Según el cambio:
 
 | Cambio en el schema | ¿Hay que tocar el script? |
 |---------------------|---------------------------|
-| Agregar/quitar columnas en `Exercise` o `Workout` | **No** — `--data-only` toma las columnas que existan al momento del dump. |
-| Agregar una tabla nueva (p. ej. rutinas v1.5, usuarios v2.0) | **Sí** — añade otra línea `-t 'public."NuevaTabla"'` o quedará fuera del backup. |
+| Agregar/quitar columnas en cualquiera de las cinco | **No** — `--data-only` toma las columnas que existan al momento del dump, y cada `COPY` lleva su lista de columnas explícita. Por eso un backup viejo también carga en un esquema nuevo: las columnas que no menciona toman su valor por defecto. |
+| Agregar una tabla nueva | **Sí** — añade otra línea `-t 'public."NuevaTabla"'` o quedará fuera del backup. |
 | Renombrar una tabla | **Sí** — actualiza el patrón `-t` correspondiente. |
 
 > El backup es **solo datos**, no incluye el schema. Por eso al restaurar, la BD
@@ -122,8 +123,10 @@ El script dumpea explícitamente las tablas `Exercise` y `Workout` (líneas `-t`
 
 ## Restaurar un backup (llenar dev o prod)
 
-Carga un backup en la BD que elijas. **Reemplaza** los datos: hace `TRUNCATE` de
-`Exercise`/`Workout` y luego carga el backup.
+Carga un backup en la BD que elijas. **Reemplaza** los datos: hace `TRUNCATE`
+de `Workout`, `RoutineItem`, `Routine`, `Exercise` y `User` (con `CASCADE`) y
+luego carga el backup. Ojo: es marcha atrás **total**, no quirúrgica — también
+se van los usuarios y las rutinas, no solo los sets.
 
 ```cmd
 restore.cmd dev          :: llena dev con el backup mas reciente de backups/

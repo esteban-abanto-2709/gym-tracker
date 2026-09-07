@@ -22,14 +22,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** encadenar el generate en el script (`"build": "prisma generate && nest build"`), o dejarlo en un `postinstall`.
 - **Fecha:** 2026-09-07 · **Estado:** Abierto
 
-## [TD-016] El README de docker miente sobre qué tablas cubren backup y restore
-- **Ubicación:** `apps/docker/README.md` (secciones "Backups de prod" y "Restaurar un backup")
-- **Riesgo:** 4/10
-- **Problema:** El README dice que `backup-prod.cmd` dumpea "solo `Exercise` y `Workout`" y que `restore.cmd` trunca "`Exercise`/`Workout`". Los scripts reales operan sobre **cinco** tablas: `User`, `Exercise`, `Routine`, `RoutineItem` y `Workout` (`backup-prod.cmd:59`, `restore.cmd:76`). La tabla "¿Y si cambia el schema?" también sigue diciendo que rutinas y usuarios "quedarían fuera del backup".
-- **Impacto futuro:** Doble filo. Alguien cree que sus rutinas y usuarios NO están respaldados y rehace trabajo de más; o peor, corre `restore.cmd` creyendo que solo toca ejercicios y sets, y en realidad borra usuarios y rutinas por `TRUNCATE ... CASCADE`.
-- **Sugerencia:** actualizar las tres menciones del README a la lista real de cinco tablas; el script es el correcto.
-- **Fecha:** 2026-09-07 · **Estado:** Abierto
-
 ## [TD-015] GoogleLogin re-inicializa GSI varias veces (warning en consola)
 - **Ubicación:** `apps/web/src/components/auth/GoogleButton.tsx` (usa `GoogleLogin`), montado en `/login` y `/register`; provider en `apps/web/src/app/layout.tsx`.
 - **Riesgo:** 2/10
