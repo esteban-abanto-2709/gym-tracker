@@ -9,8 +9,10 @@ export interface DraftItem {
   key: string;
   exerciseId: string;
   exerciseName: string;
+  isTimed: boolean;
   targetSets: string;
   targetReps: string;
+  targetDurationSec: string;
   isApproximation: boolean;
 }
 
@@ -19,7 +21,7 @@ interface SortableExerciseItemProps {
   index: number;
   onChangeTargets: (
     key: string,
-    field: "targetSets" | "targetReps",
+    field: "targetSets" | "targetReps" | "targetDurationSec",
     value: string,
   ) => void;
   onToggleApproximation: (key: string, value: boolean) => void;
@@ -112,22 +114,30 @@ export function SortableExerciseItem({
             type="number"
             inputMode="numeric"
             min={0}
-            value={item.targetReps}
+            value={item.isTimed ? item.targetDurationSec : item.targetReps}
             onChange={(e) =>
-              onChangeTargets(item.key, "targetReps", e.target.value)
+              onChangeTargets(
+                item.key,
+                item.isTimed ? "targetDurationSec" : "targetReps",
+                e.target.value,
+              )
             }
             className="w-14 px-2 py-2 text-center font-mono bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-xl transition-all"
           />
-          <span className="text-xs font-bold text-muted-foreground">reps</span>
+          <span className="text-xs font-bold text-muted-foreground">
+            {item.isTimed ? "seg" : "reps"}
+          </span>
         </div>
       </div>
 
-      <div className="mt-3 pl-7">
-        <ApproximationToggle
-          checked={item.isApproximation}
-          onChange={(value) => onToggleApproximation(item.key, value)}
-        />
-      </div>
+      {!item.isTimed && (
+        <div className="mt-3 pl-7">
+          <ApproximationToggle
+            checked={item.isApproximation}
+            onChange={(value) => onToggleApproximation(item.key, value)}
+          />
+        </div>
+      )}
     </div>
   );
 }

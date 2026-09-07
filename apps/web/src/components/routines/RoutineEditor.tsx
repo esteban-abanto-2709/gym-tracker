@@ -24,7 +24,7 @@ import {
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import type { Routine } from "@/lib/types";
+import type { Exercise, Routine } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
@@ -90,8 +90,10 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             key: newKey(),
             exerciseId: item.exerciseId,
             exerciseName: item.exercise.name,
+            isTimed: item.exercise.isTimed ?? false,
             targetSets: item.targetSets?.toString() ?? "",
             targetReps: item.targetReps?.toString() ?? "",
+            targetDurationSec: item.targetDurationSec?.toString() ?? "",
             isApproximation: item.isApproximation ?? false,
           })),
         );
@@ -104,15 +106,17 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     fetchRoutine();
   }, [routineId]);
 
-  const addItem = (exercise: { id: string; name: string }) => {
+  const addItem = (exercise: Exercise) => {
     setItems((prev) => [
       ...prev,
       {
         key: newKey(),
         exerciseId: exercise.id,
         exerciseName: exercise.name,
+        isTimed: exercise.isTimed ?? false,
         targetSets: "",
         targetReps: "",
+        targetDurationSec: "",
         isApproximation: false,
       },
     ]);
@@ -122,7 +126,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
 
   const handleChangeTargets = (
     key: string,
-    field: "targetSets" | "targetReps",
+    field: "targetSets" | "targetReps" | "targetDurationSec",
     value: string,
   ) => {
     setItems((prev) =>
@@ -176,8 +180,11 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         exerciseId: item.exerciseId,
         position: index,
         targetSets: toNullableInt(item.targetSets),
-        targetReps: toNullableInt(item.targetReps),
-        isApproximation: item.isApproximation,
+        targetReps: item.isTimed ? null : toNullableInt(item.targetReps),
+        targetDurationSec: item.isTimed
+          ? toNullableInt(item.targetDurationSec)
+          : null,
+        isApproximation: item.isTimed ? false : item.isApproximation,
       })),
     };
 
