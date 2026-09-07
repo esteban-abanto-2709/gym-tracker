@@ -24,9 +24,9 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const handleCreate = async (name: string) => {
+  const handleCreate = async (name: string, isTimed: boolean) => {
     try {
-      const created = await createExercise(name);
+      const created = await createExercise(name, isTimed);
       setIsCreateOpen(false);
       onPick(created);
     } catch (error) {

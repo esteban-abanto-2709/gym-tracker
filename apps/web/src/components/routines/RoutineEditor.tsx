@@ -159,9 +159,12 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     });
   };
 
-  const handleCreateExercise = async (exerciseName: string) => {
+  const handleCreateExercise = async (
+    exerciseName: string,
+    isTimed: boolean,
+  ) => {
     try {
-      const created = await createExercise(exerciseName);
+      const created = await createExercise(exerciseName, isTimed);
       addItem(created);
       setIsDialogOpen(false);
     } catch (e) {

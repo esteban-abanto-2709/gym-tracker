@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Timer } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ interface CreateExerciseModalProps {
   onOpenChange: (open: boolean) => void;
   initialName: string;
   loading: boolean;
-  onCreate: (name: string) => void;
+  onCreate: (name: string, isTimed: boolean) => void;
 }
 
 export function CreateExerciseModal({
@@ -26,10 +26,12 @@ export function CreateExerciseModal({
   onCreate,
 }: CreateExerciseModalProps) {
   const [name, setName] = useState(initialName);
+  const [isTimed, setIsTimed] = useState(false);
   const [prevOpen, setPrevOpen] = useState(false);
 
   if (open && !prevOpen) {
     setName(initialName);
+    setIsTimed(false);
   }
   if (open !== prevOpen) {
     setPrevOpen(open);
@@ -59,11 +61,29 @@ export function CreateExerciseModal({
               className="w-full px-4 py-4 bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-2xl transition-all font-bold text-lg"
             />
           </div>
+
+          <label className="flex items-start gap-3 cursor-pointer select-none ml-1">
+            <input
+              type="checkbox"
+              checked={isTimed}
+              onChange={(e) => setIsTimed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-2 border-input accent-primary"
+            />
+            <span className="min-w-0">
+              <span className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+                <Timer className="w-4 h-4 text-primary" />
+                Se mide en tiempo
+              </span>
+              <span className="block text-xs text-muted-foreground mt-0.5">
+                Planchas, estiramientos. Registras segundos en vez de peso.
+              </span>
+            </span>
+          </label>
         </div>
 
         <DialogFooter className="sm:justify-stretch">
           <button
-            onClick={() => onCreate(name)}
+            onClick={() => onCreate(name, isTimed)}
             disabled={loading || !name.trim()}
             className="w-full bg-primary text-primary-foreground font-display uppercase tracking-wide py-4 rounded-xl text-xl shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-50"
           >

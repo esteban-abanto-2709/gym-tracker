@@ -52,9 +52,9 @@ function LogContent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Create exercise via hook + select it
-  const handleCreate = async (name: string) => {
+  const handleCreate = async (name: string, isTimed: boolean) => {
     try {
-      const created = await createExercise(name);
+      const created = await createExercise(name, isTimed);
       setSelectedExercise(created);
       setSearch(created.name);
       setIsDialogOpen(false);

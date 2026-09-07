@@ -17,7 +17,7 @@ export class ExercisesService {
     }
 
     return this.prisma.exercise.create({
-      data: { name, slug },
+      data: { name, slug, isTimed: createExerciseDto.isTimed ?? false },
     });
   }
 
