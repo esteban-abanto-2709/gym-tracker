@@ -12,6 +12,7 @@ import {
 } from "@/lib/activeSession";
 import { rememberEquipment } from "@/lib/equipmentMemory";
 import { plannedSetCount } from "@/lib/blocks";
+import type { LogSetInput } from "@/components/train/SetForm";
 import { notifyError } from "@/lib/notify";
 
 type Phase = "logging" | "done";
@@ -26,15 +27,6 @@ export interface SessionMapItem {
   isCurrent: boolean;
   isExtra: boolean;
   replacedFrom: string | null; // original exercise name when this slot was replaced
-}
-
-interface LogSetArgs {
-  weightKg?: number | null;
-  reps: number;
-  durationSec?: number | null;
-  opinion?: string;
-  equipmentId?: string | null;
-  isApproximation?: boolean;
 }
 
 export interface LastResult {
@@ -145,7 +137,8 @@ export function useGuidedSession() {
       opinion,
       equipmentId,
       isApproximation,
-    }: LogSetArgs) => {
+      setType = "WORKING",
+    }: LogSetInput) => {
       if (!session || !currentItem) return;
       setLogging(true);
       const run = async () => {
@@ -159,6 +152,7 @@ export function useGuidedSession() {
             equipmentId: equipmentId ?? null,
             routineId: session.routineId,
             isApproximation: isApproximation ?? false,
+            setType,
           });
           rememberEquipment(currentItem.exerciseId, equipmentId ?? null);
 
@@ -167,18 +161,20 @@ export function useGuidedSession() {
           persist({ ...session, progress: nextProgress });
 
           let suggestedWeight: number | null = null;
-          try {
-            const rec = await api.get<{ suggestedWeight: number | null }>(
-              routes.api.workouts.recommendation(
-                currentItem.exerciseId,
-                isApproximation ?? false,
-                Intl.DateTimeFormat().resolvedOptions().timeZone,
-                equipmentId ?? null,
-              ),
-            );
-            suggestedWeight = rec.suggestedWeight;
-          } catch (e) {
-            console.error("Error fetching recommendation:", e);
+          if (setType === "WORKING" && weightKg != null) {
+            try {
+              const rec = await api.get<{ suggestedWeight: number | null }>(
+                routes.api.workouts.recommendation(
+                  currentItem.exerciseId,
+                  isApproximation ?? false,
+                  Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  equipmentId ?? null,
+                ),
+              );
+              suggestedWeight = rec.suggestedWeight;
+            } catch (e) {
+              console.error("Error fetching recommendation:", e);
+            }
           }
 
           setLastResult({

@@ -4,10 +4,17 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, X } from "lucide-react";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
+import type { RoutineBlock } from "@/lib/types";
+
+const usesSeconds = (block: DraftBlock, isTimed: boolean) =>
+  block.kind === "time" || (block.kind === "legacy" && isTimed);
+
+const usesApprox = (block: DraftBlock, isTimed: boolean) =>
+  block.kind === "weight_reps" || (block.kind === "legacy" && !isTimed);
 
 export interface DraftBlock {
   key: string;
-  kind: "legacy";
+  kind: RoutineBlock["kind"];
   sets: string;
   reps: string;
   durationSec: string;
@@ -137,12 +144,16 @@ export function SortableExerciseItem({
                   type="number"
                   inputMode="numeric"
                   min={0}
-                  value={item.isTimed ? block.durationSec : block.reps}
+                  value={
+                    usesSeconds(block, item.isTimed)
+                      ? block.durationSec
+                      : block.reps
+                  }
                   onChange={(e) =>
                     onChangeBlock(
                       item.key,
                       block.key,
-                      item.isTimed
+                      usesSeconds(block, item.isTimed)
                         ? { durationSec: e.target.value }
                         : { reps: e.target.value },
                     )
@@ -150,7 +161,7 @@ export function SortableExerciseItem({
                   className={numberInputClass}
                 />
                 <span className="text-xs font-bold text-muted-foreground">
-                  {item.isTimed ? "seg" : "reps"}
+                  {usesSeconds(block, item.isTimed) ? "seg" : "reps"}
                 </span>
               </div>
 
@@ -164,7 +175,7 @@ export function SortableExerciseItem({
               </button>
             </div>
 
-            {!item.isTimed && (
+            {usesApprox(block, item.isTimed) && (
               <ApproximationToggle
                 checked={block.approx}
                 onChange={(value) =>

@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { Equipment, LegacyBlock } from "@/lib/types";
+import type { Equipment, SetType } from "@/lib/types";
+import type { SetPlan } from "@/lib/blocks";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
@@ -25,28 +26,29 @@ export interface LogSetInput {
   opinion?: string;
   equipmentId?: string | null;
   isApproximation?: boolean;
+  setType?: SetType;
 }
 
-interface LegacySetFormProps {
+interface SetFormProps {
   exerciseId: string;
-  isTimed: boolean;
-  block: LegacyBlock | null;
+  plan: SetPlan;
   equipment: Equipment[];
   logging: boolean;
   onLog: (args: LogSetInput) => Promise<void>;
 }
 
-export function LegacySetForm({
+const inputClass =
+  "w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono";
+
+export function SetForm({
   exerciseId,
-  isTimed,
-  block,
+  plan,
   equipment,
   logging,
   onLog,
-}: LegacySetFormProps) {
-  const approx = block?.approx ?? false;
-  const targetReps = block?.reps ?? null;
-  const targetDurationSec = block?.durationSec ?? null;
+}: SetFormProps) {
+  const { measure, setType, showApprox, approx, targetReps, targetDurationSec } =
+    plan;
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
@@ -76,12 +78,14 @@ export function LegacySetForm({
           approx,
           Intl.DateTimeFormat().resolvedOptions().timeZone,
           equipmentId,
+          setType,
         ),
       )
       .then((rec) => {
         if (!active) return;
         setRecommendation(rec);
-        if (rec.lastWeight != null) setWeight(String(rec.lastWeight));
+        if (measure === "weight_reps" && rec.lastWeight != null)
+          setWeight(String(rec.lastWeight));
         if (rec.lastReps != null) setReps(String(rec.lastReps));
         if (rec.lastDurationSec != null)
           setSeconds(String(rec.lastDurationSec));
@@ -91,7 +95,15 @@ export function LegacySetForm({
     return () => {
       active = false;
     };
-  }, [exerciseId, targetReps, targetDurationSec, approx, equipmentId]);
+  }, [
+    exerciseId,
+    measure,
+    setType,
+    targetReps,
+    targetDurationSec,
+    approx,
+    equipmentId,
+  ]);
 
   const toggleUnit = () => {
     setUnit((prev) => {
@@ -106,51 +118,86 @@ export function LegacySetForm({
     });
   };
 
+  const incomplete =
+    measure === "time"
+      ? seconds === ""
+      : reps === "" || (measure === "weight_reps" && weight === "");
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isTimed) {
-      if (seconds === "") return;
-      await onLog({ reps: 1, durationSec: Number(seconds), opinion: "" });
+    if (incomplete) return;
+    if (measure === "time") {
+      await onLog({
+        reps: 1,
+        durationSec: Number(seconds),
+        opinion: "",
+        setType,
+      });
       return;
     }
-    if (weight === "" || reps === "") return;
-    const weightKg = toKg(Number(weight), unit);
     await onLog({
-      weightKg,
+      weightKg: measure === "weight_reps" ? toKg(Number(weight), unit) : null,
       reps: Number(reps),
       opinion: "",
       equipmentId,
-      isApproximation,
+      isApproximation: showApprox && isApproximation,
+      setType,
     });
   };
 
-  const lastDuration =
-    recommendation?.lastDurationSec != null
-      ? formatDuration(recommendation.lastDurationSec)
-      : null;
-  const lastLabel = isTimed
-    ? lastDuration
-      ? `La última vez · ${lastDuration.value} ${lastDuration.unit}`
-      : "Sin registro previo"
-    : recommendation?.lastWeight != null
-      ? `La última vez · ${recommendation.lastWeight} kg × ${recommendation.lastReps}`
+  const lastLabel = (() => {
+    if (!recommendation) return "Sin registro previo";
+    const { lastWeight, lastReps, lastDurationSec } = recommendation;
+    if (measure === "time") {
+      if (lastDurationSec == null) return "Sin registro previo";
+      const d = formatDuration(lastDurationSec);
+      return `La última vez · ${d.value} ${d.unit}`;
+    }
+    if (measure === "reps") {
+      return lastReps != null
+        ? `La última vez · ${lastReps} reps`
+        : "Sin registro previo";
+    }
+    return lastWeight != null
+      ? `La última vez · ${lastWeight} kg × ${lastReps}`
       : "Sin registro previo";
+  })();
+
+  const repsInput = (
+    <div className="space-y-2">
+      <label className="kicker text-muted-foreground text-[0.6rem]">
+        Reps{targetReps ? ` · meta ${targetReps}` : ""}
+      </label>
+      <input
+        type="number"
+        inputMode="numeric"
+        value={reps}
+        onChange={(e) => setReps(e.target.value)}
+        className={inputClass}
+        required
+        autoComplete="off"
+        data-1p-ignore
+      />
+    </div>
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
       <div className="text-center space-y-2">
         <p className="kicker text-[0.6rem] text-muted-foreground">
-          {lastLabel}
+          {setType === "WARMUP" ? `Calentamiento · ${lastLabel}` : lastLabel}
         </p>
-        {recommendation?.suggestedWeight != null && (
-          <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
-            <ArrowUp className="w-4 h-4" strokeWidth={3} />
-            Sube a {recommendation.suggestedWeight} kg
-          </div>
-        )}
+        {measure === "weight_reps" &&
+          setType === "WORKING" &&
+          recommendation?.suggestedWeight != null && (
+            <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
+              <ArrowUp className="w-4 h-4" strokeWidth={3} />
+              Sube a {recommendation.suggestedWeight} kg
+            </div>
+          )}
       </div>
 
-      {isTimed ? (
+      {measure === "time" && (
         <div className="space-y-2">
           <label className="kicker text-muted-foreground text-[0.6rem]">
             Segundos
@@ -161,13 +208,17 @@ export function LegacySetForm({
             inputMode="numeric"
             value={seconds}
             onChange={(e) => setSeconds(e.target.value)}
-            className="w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
+            className={inputClass}
             required
             autoComplete="off"
             data-1p-ignore
           />
         </div>
-      ) : (
+      )}
+
+      {measure === "reps" && repsInput}
+
+      {measure === "weight_reps" && (
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -206,52 +257,36 @@ export function LegacySetForm({
               inputMode="decimal"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
+              className={inputClass}
               required
               autoComplete="off"
               data-1p-ignore
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="kicker text-muted-foreground text-[0.6rem]">
-              Reps{targetReps ? ` · meta ${targetReps}` : ""}
-            </label>
-            <input
-              type="number"
-              inputMode="numeric"
-              value={reps}
-              onChange={(e) => setReps(e.target.value)}
-              className="w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono"
-              required
-              autoComplete="off"
-              data-1p-ignore
-            />
-          </div>
+          {repsInput}
         </div>
       )}
 
-      {!isTimed && (
-        <>
-          <EquipmentSelector
-            equipment={equipment}
-            value={equipmentId}
-            onChange={setEquipmentId}
-          />
+      {measure !== "time" && (
+        <EquipmentSelector
+          equipment={equipment}
+          value={equipmentId}
+          onChange={setEquipmentId}
+        />
+      )}
 
-          <ApproximationToggle
-            checked={isApproximation}
-            onChange={setIsApproximation}
-            className="justify-center"
-          />
-        </>
+      {showApprox && (
+        <ApproximationToggle
+          checked={isApproximation}
+          onChange={setIsApproximation}
+          className="justify-center"
+        />
       )}
 
       <button
         type="submit"
-        disabled={
-          logging || (isTimed ? seconds === "" : weight === "" || reps === "")
-        }
+        disabled={logging || incomplete}
         className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {logging ? (

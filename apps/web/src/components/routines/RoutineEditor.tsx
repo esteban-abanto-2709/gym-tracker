@@ -66,18 +66,35 @@ const toDraftBlock = (block: RoutineBlock): DraftBlock => ({
   key: newKey(),
   kind: block.kind,
   sets: block.sets?.toString() ?? "",
-  reps: block.reps?.toString() ?? "",
-  durationSec: block.durationSec?.toString() ?? "",
-  approx: block.approx,
+  reps: ("reps" in block ? block.reps : null)?.toString() ?? "",
+  durationSec:
+    ("durationSec" in block ? block.durationSec : null)?.toString() ?? "",
+  approx: "approx" in block ? block.approx : false,
 });
 
-const toBlock = (block: DraftBlock, isTimed: boolean): RoutineBlock => ({
-  kind: block.kind,
-  sets: toNullableInt(block.sets),
-  reps: isTimed ? null : toNullableInt(block.reps),
-  durationSec: isTimed ? toNullableInt(block.durationSec) : null,
-  approx: isTimed ? false : block.approx,
-});
+const toBlock = (block: DraftBlock, isTimed: boolean): RoutineBlock => {
+  const sets = toNullableInt(block.sets);
+  const reps = toNullableInt(block.reps);
+  const durationSec = toNullableInt(block.durationSec);
+  switch (block.kind) {
+    case "legacy":
+      return {
+        kind: "legacy",
+        sets,
+        reps: isTimed ? null : reps,
+        durationSec: isTimed ? durationSec : null,
+        approx: isTimed ? false : block.approx,
+      };
+    case "weight_reps":
+      return { kind: "weight_reps", sets, reps, approx: block.approx };
+    case "reps":
+      return { kind: "reps", sets, reps };
+    case "time":
+      return { kind: "time", sets, durationSec };
+    case "warmup":
+      return { kind: "warmup", sets, reps };
+  }
+};
 
 export function RoutineEditor({ routineId }: RoutineEditorProps) {
   const router = useRouter();

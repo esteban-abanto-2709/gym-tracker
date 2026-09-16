@@ -1,3 +1,5 @@
+import type { SetType } from "@/lib/types";
+
 export const routes = {
   home: () => "/",
   success: () => "/success",
@@ -27,8 +29,9 @@ export const routes = {
         isApproximation: boolean,
         tz: string,
         equipmentId: string | null,
+        setType: SetType = "WORKING",
       ) =>
-        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}&tz=${encodeURIComponent(tz)}&equipmentId=${encodeURIComponent(equipmentId ?? "")}`,
+        `/workouts/recommendation?exerciseId=${exerciseId}&isApproximation=${isApproximation}&tz=${encodeURIComponent(tz)}&equipmentId=${encodeURIComponent(equipmentId ?? "")}&setType=${setType}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },

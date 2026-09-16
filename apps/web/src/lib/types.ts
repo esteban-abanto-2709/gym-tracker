@@ -47,7 +47,39 @@ export interface LegacyBlock {
   approx: boolean;
 }
 
-export type RoutineBlock = LegacyBlock;
+export interface WeightRepsBlock {
+  kind: "weight_reps";
+  sets: number | null;
+  reps: number | null;
+  approx: boolean;
+}
+
+export interface RepsBlock {
+  kind: "reps";
+  sets: number | null;
+  reps: number | null;
+}
+
+export interface TimeBlock {
+  kind: "time";
+  sets: number | null;
+  durationSec: number | null;
+}
+
+export interface WarmupBlock {
+  kind: "warmup";
+  sets: number | null;
+  reps: number | null;
+}
+
+export type RoutineBlock =
+  | LegacyBlock
+  | WeightRepsBlock
+  | RepsBlock
+  | TimeBlock
+  | WarmupBlock;
+
+export type SetType = "WORKING" | "WARMUP";
 
 export interface RoutineItem {
   id?: string;

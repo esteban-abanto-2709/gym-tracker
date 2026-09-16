@@ -47,7 +47,9 @@ export function SetDoneScreen({
     result.durationSec != null ? formatDuration(result.durationSec) : null;
   const resultLine = duration
     ? `${duration.value} ${duration.unit}`
-    : `${result.weightKg} kg (${convertWeight(result.weightKg ?? 0, "kg", "lb")} lb) × ${result.reps} reps`;
+    : result.weightKg == null
+      ? `${result.reps} reps`
+      : `${result.weightKg} kg (${convertWeight(result.weightKg, "kg", "lb")} lb) × ${result.reps} reps`;
 
   const primary = hasPendingSets
     ? { label: "Siguiente serie", onClick: onContinueSet }

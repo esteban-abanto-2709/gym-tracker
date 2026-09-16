@@ -1,10 +1,8 @@
 "use client";
 
 import type { Equipment, RoutineBlock, RoutineItem } from "@/lib/types";
-import {
-  LegacySetForm,
-  type LogSetInput,
-} from "@/components/train/LegacySetForm";
+import { setPlan } from "@/lib/blocks";
+import { SetForm, type LogSetInput } from "@/components/train/SetForm";
 
 interface SetLoggerProps {
   item: RoutineItem;
@@ -21,17 +19,13 @@ export function SetLogger({
   logging,
   onLog,
 }: SetLoggerProps) {
-  switch (block?.kind ?? "legacy") {
-    case "legacy":
-      return (
-        <LegacySetForm
-          exerciseId={item.exerciseId}
-          isTimed={item.exercise.isTimed ?? false}
-          block={block}
-          equipment={equipment}
-          logging={logging}
-          onLog={onLog}
-        />
-      );
-  }
+  return (
+    <SetForm
+      exerciseId={item.exerciseId}
+      plan={setPlan(block, item.exercise.isTimed ?? false)}
+      equipment={equipment}
+      logging={logging}
+      onLog={onLog}
+    />
+  );
 }
