@@ -81,8 +81,6 @@ export function useGuidedSession() {
     exerciseId: e.exerciseId,
     exercise: e.exercise,
     position: (routine?.items.length ?? 0) + i,
-    targetSets: null,
-    targetReps: null,
     blocks: [],
   }));
   const baseItems: RoutineItem[] = [...(routine?.items ?? []), ...extraItems];

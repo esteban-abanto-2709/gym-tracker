@@ -2,11 +2,8 @@ import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
-  IsBoolean,
   IsInt,
   IsNotEmpty,
-  IsOptional,
-  IsPositive,
   IsString,
   IsUUID,
   Min,
@@ -26,30 +23,10 @@ export class RoutineItemDto {
   @Min(0)
   position: number;
 
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  targetSets?: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  targetReps?: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  targetDurationSec?: number | null;
-
-  @IsOptional()
-  @IsBoolean()
-  isApproximation?: boolean;
-
-  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RoutineBlockDto, blockDiscriminator)
-  blocks?: LegacyBlockDto[];
+  blocks: LegacyBlockDto[];
 }
 
 export class CreateRoutineDto {

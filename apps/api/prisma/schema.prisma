@@ -65,16 +65,12 @@ model Routine {
 }
 
 model RoutineItem {
-  id                String   @id @default(uuid())
-  routineId         String
-  routine           Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
-  exerciseId        String
-  exercise          Exercise @relation(fields: [exerciseId], references: [id])
-  position          Int
-  targetSets        Int?
-  targetReps        Int?
-  targetDurationSec Int?
-  isApproximation   Boolean  @default(false)
-  blocks            Json     @default("[]")
-  createdAt         DateTime @default(now())
+  id         String   @id @default(uuid())
+  routineId  String
+  routine    Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  position   Int
+  blocks     Json     @default("[]")
+  createdAt  DateTime @default(now())
 }

@@ -78,18 +78,7 @@ export class RoutinesService {
     return items.map((item) => ({
       exerciseId: item.exerciseId,
       position: item.position,
-      targetSets: item.targetSets ?? null,
-      targetReps: item.targetReps ?? null,
-      targetDurationSec: item.targetDurationSec ?? null,
-      isApproximation: item.isApproximation ?? false,
-      blocks: item.blocks?.map(legacyBlock) ?? [
-        legacyBlock({
-          sets: item.targetSets,
-          reps: item.targetReps,
-          durationSec: item.targetDurationSec,
-          approx: item.isApproximation,
-        }),
-      ],
+      blocks: item.blocks.map(legacyBlock),
     }));
   }
 }

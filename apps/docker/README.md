@@ -114,7 +114,25 @@ El script dumpea explícitamente cinco tablas: `User`, `Exercise`, `Routine`,
 
 | Cambio en el schema | ¿Hay que tocar el script? |
 |---------------------|---------------------------|
-| Agregar/quitar columnas en cualquiera de las cinco | **No** — `--data-only` toma las columnas que existan al momento del dump, y cada `COPY` lleva su lista de columnas explícita. Por eso un backup viejo también carga en un esquema nuevo: las columnas que no menciona toman su valor por defecto. |
+| Agregar/quitar columnas en cualquiera de las cinco | **No** — `--data-only` toma las columnas que existan al momento del dump, y cada `COPY` lleva su lista de columnas explícita. Un backup viejo carga en un esquema que **agregó** columnas (las que no menciona toman su valor por defecto), pero **no** en uno que **quitó** columnas que el backup sí trae. |
+
+> **Backups anteriores a los bloques de rutina (RM-031).** Desde la migración
+> `20260916180000_drop_routine_item_targets`, `RoutineItem` guarda sus metas en
+> `blocks` y ya no tiene `targetSets`/`targetReps`/`targetDurationSec`/`isApproximation`.
+> Un backup previo (por ejemplo `gym-prod_2026-09-16_161847.sql`) trae esas columnas,
+> así que su `COPY "RoutineItem"` falla contra el esquema actual. Para usarlo:
+>
+> 1. Vuelve a crear temporalmente las columnas viejas en la BD destino:
+>    ```sql
+>    ALTER TABLE "RoutineItem" ADD COLUMN "targetSets" INTEGER,
+>      ADD COLUMN "targetReps" INTEGER, ADD COLUMN "targetDurationSec" INTEGER,
+>      ADD COLUMN "isApproximation" BOOLEAN NOT NULL DEFAULT false;
+>    ```
+> 2. Corre `restore.cmd` con ese backup.
+> 3. Ejecuta el `UPDATE` de `prisma/migrations/20260916120000_add_routine_item_blocks/migration.sql`
+>    (convierte las metas en bloques `legacy`).
+> 4. Borra de nuevo las columnas con el SQL de
+>    `prisma/migrations/20260916180000_drop_routine_item_targets/migration.sql`.
 | Agregar una tabla nueva | **Sí** — añade otra línea `-t 'public."NuevaTabla"'` o quedará fuera del backup. |
 | Renombrar una tabla | **Sí** — actualiza el patrón `-t` correspondiente. |
 

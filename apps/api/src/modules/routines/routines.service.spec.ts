@@ -26,25 +26,13 @@ const dtoErrors = async (items: unknown[]) =>
   validate(plainToInstance(CreateRoutineDto, { name: 'Upper A', items }));
 
 describe('RoutinesService blocks', () => {
-  it('arma un bloque legacy desde las metas viejas', async () => {
+  it('completa con null los campos que el bloque no trae', async () => {
     const [item] = await createdItems([
       {
         exerciseId: EXERCISE_ID,
         position: 0,
-        targetSets: 1,
-        targetReps: 10,
-        isApproximation: true,
+        blocks: [{ kind: 'legacy' }],
       },
-    ]);
-
-    expect(item.blocks).toEqual([
-      { kind: 'legacy', sets: 1, reps: 10, durationSec: null, approx: true },
-    ]);
-  });
-
-  it('un slot sin metas queda como un bloque legacy vacio', async () => {
-    const [item] = await createdItems([
-      { exerciseId: EXERCISE_ID, position: 0 },
     ]);
 
     expect(item.blocks).toEqual([
@@ -56,6 +44,14 @@ describe('RoutinesService blocks', () => {
         approx: false,
       },
     ]);
+  });
+
+  it('un slot sin bloques queda libre', async () => {
+    const [item] = await createdItems([
+      { exerciseId: EXERCISE_ID, position: 0, blocks: [] },
+    ]);
+
+    expect(item.blocks).toEqual([]);
   });
 
   it('respeta los bloques enviados, en orden', async () => {
@@ -88,6 +84,12 @@ describe('CreateRoutineDto blocks', () => {
     ]);
 
     expect(errors).toHaveLength(0);
+  });
+
+  it('rechaza un slot sin la lista de bloques', async () => {
+    const errors = await dtoErrors([{ exerciseId: EXERCISE_ID, position: 0 }]);
+
+    expect(errors).not.toHaveLength(0);
   });
 
   it('rechaza un tipo de bloque desconocido', async () => {

@@ -58,10 +58,6 @@ export interface RoutineItem {
     isTimed?: boolean;
   };
   position: number;
-  targetSets: number | null;
-  targetReps: number | null;
-  targetDurationSec?: number | null;
-  isApproximation?: boolean;
   blocks: RoutineBlock[];
 }
 
