@@ -24,7 +24,7 @@ import {
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import type { Exercise, Routine } from "@/lib/types";
+import type { Exercise, Routine, RoutineBlock } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
@@ -32,6 +32,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import {
   SortableExerciseItem,
+  type DraftBlock,
   type DraftItem,
 } from "@/components/routines/SortableExerciseItem";
 import { Loader2, Plus } from "lucide-react";
@@ -51,6 +52,32 @@ const toNullableInt = (value: string): number | null => {
   const n = Number(trimmed);
   return Number.isFinite(n) ? Math.trunc(n) : null;
 };
+
+const emptyBlock = (): DraftBlock => ({
+  key: newKey(),
+  kind: "legacy",
+  sets: "",
+  reps: "",
+  durationSec: "",
+  approx: false,
+});
+
+const toDraftBlock = (block: RoutineBlock): DraftBlock => ({
+  key: newKey(),
+  kind: block.kind,
+  sets: block.sets?.toString() ?? "",
+  reps: block.reps?.toString() ?? "",
+  durationSec: block.durationSec?.toString() ?? "",
+  approx: block.approx,
+});
+
+const toBlock = (block: DraftBlock, isTimed: boolean): RoutineBlock => ({
+  kind: block.kind,
+  sets: toNullableInt(block.sets),
+  reps: isTimed ? null : toNullableInt(block.reps),
+  durationSec: isTimed ? toNullableInt(block.durationSec) : null,
+  approx: isTimed ? false : block.approx,
+});
 
 export function RoutineEditor({ routineId }: RoutineEditorProps) {
   const router = useRouter();
@@ -91,10 +118,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             exerciseId: item.exerciseId,
             exerciseName: item.exercise.name,
             isTimed: item.exercise.isTimed ?? false,
-            targetSets: item.targetSets?.toString() ?? "",
-            targetReps: item.targetReps?.toString() ?? "",
-            targetDurationSec: item.targetDurationSec?.toString() ?? "",
-            isApproximation: item.isApproximation ?? false,
+            blocks: item.blocks.map(toDraftBlock),
           })),
         );
       } catch (e) {
@@ -114,35 +138,42 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         exerciseId: exercise.id,
         exerciseName: exercise.name,
         isTimed: exercise.isTimed ?? false,
-        targetSets: "",
-        targetReps: "",
-        targetDurationSec: "",
-        isApproximation: false,
+        blocks: [emptyBlock()],
       },
     ]);
     // Clear the search after the combobox sets it to the picked name
     setTimeout(() => setSearch(""), 0);
   };
 
-  const handleChangeTargets = (
-    key: string,
-    field: "targetSets" | "targetReps" | "targetDurationSec",
-    value: string,
+  const updateBlocks = (
+    itemKey: string,
+    update: (blocks: DraftBlock[]) => DraftBlock[],
   ) => {
     setItems((prev) =>
       prev.map((item) =>
-        item.key === key ? { ...item, [field]: value } : item,
+        item.key === itemKey ? { ...item, blocks: update(item.blocks) } : item,
       ),
     );
   };
 
-  const handleToggleApproximation = (key: string, value: boolean) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.key === key ? { ...item, isApproximation: value } : item,
+  const handleChangeBlock = (
+    itemKey: string,
+    blockKey: string,
+    patch: Partial<DraftBlock>,
+  ) =>
+    updateBlocks(itemKey, (blocks) =>
+      blocks.map((block) =>
+        block.key === blockKey ? { ...block, ...patch } : block,
       ),
     );
-  };
+
+  const handleAddBlock = (itemKey: string) =>
+    updateBlocks(itemKey, (blocks) => [...blocks, emptyBlock()]);
+
+  const handleRemoveBlock = (itemKey: string, blockKey: string) =>
+    updateBlocks(itemKey, (blocks) =>
+      blocks.filter((block) => block.key !== blockKey),
+    );
 
   const handleRemove = (key: string) => {
     setItems((prev) => prev.filter((item) => item.key !== key));
@@ -182,12 +213,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
       items: items.map((item, index) => ({
         exerciseId: item.exerciseId,
         position: index,
-        targetSets: toNullableInt(item.targetSets),
-        targetReps: item.isTimed ? null : toNullableInt(item.targetReps),
-        targetDurationSec: item.isTimed
-          ? toNullableInt(item.targetDurationSec)
-          : null,
-        isApproximation: item.isTimed ? false : item.isApproximation,
+        blocks: item.blocks.map((block) => toBlock(block, item.isTimed)),
       })),
     };
 
@@ -295,8 +321,9 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
                       key={item.key}
                       index={index}
                       item={item}
-                      onChangeTargets={handleChangeTargets}
-                      onToggleApproximation={handleToggleApproximation}
+                      onChangeBlock={handleChangeBlock}
+                      onAddBlock={handleAddBlock}
+                      onRemoveBlock={handleRemoveBlock}
                       onRemove={handleRemove}
                     />
                   ))}

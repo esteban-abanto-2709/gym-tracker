@@ -2,37 +2,48 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, X } from "lucide-react";
+import { GripVertical, Plus, X } from "lucide-react";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
+
+export interface DraftBlock {
+  key: string;
+  kind: "legacy";
+  sets: string;
+  reps: string;
+  durationSec: string;
+  approx: boolean;
+}
 
 export interface DraftItem {
   key: string;
   exerciseId: string;
   exerciseName: string;
   isTimed: boolean;
-  targetSets: string;
-  targetReps: string;
-  targetDurationSec: string;
-  isApproximation: boolean;
+  blocks: DraftBlock[];
 }
 
 interface SortableExerciseItemProps {
   item: DraftItem;
   index: number;
-  onChangeTargets: (
-    key: string,
-    field: "targetSets" | "targetReps" | "targetDurationSec",
-    value: string,
+  onChangeBlock: (
+    itemKey: string,
+    blockKey: string,
+    patch: Partial<DraftBlock>,
   ) => void;
-  onToggleApproximation: (key: string, value: boolean) => void;
+  onAddBlock: (itemKey: string) => void;
+  onRemoveBlock: (itemKey: string, blockKey: string) => void;
   onRemove: (key: string) => void;
 }
+
+const numberInputClass =
+  "w-14 px-2 py-2 text-center font-mono bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-xl transition-all";
 
 export function SortableExerciseItem({
   item,
   index,
-  onChangeTargets,
-  onToggleApproximation,
+  onChangeBlock,
+  onAddBlock,
+  onRemoveBlock,
   onRemove,
 }: SortableExerciseItemProps) {
   const {
@@ -90,54 +101,89 @@ export function SortableExerciseItem({
         </button>
       </div>
 
-      <div className="flex items-center gap-2 mt-3 pl-7">
-        <div className="flex items-center gap-1.5">
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            value={item.targetSets}
-            onChange={(e) =>
-              onChangeTargets(item.key, "targetSets", e.target.value)
-            }
-            className="w-14 px-2 py-2 text-center font-mono bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-xl transition-all"
-          />
-          <span className="text-xs font-bold text-muted-foreground">
-            series
-          </span>
-        </div>
+      <div className="mt-3 pl-7 space-y-2">
+        {item.blocks.length === 0 && (
+          <p className="text-xs text-muted-foreground">Series libres</p>
+        )}
 
-        <span className="text-muted-foreground font-bold">×</span>
+        {item.blocks.map((block) => (
+          <div
+            key={block.key}
+            className="rounded-xl border border-border/60 p-2 space-y-2"
+          >
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={block.sets}
+                  onChange={(e) =>
+                    onChangeBlock(item.key, block.key, {
+                      sets: e.target.value,
+                    })
+                  }
+                  className={numberInputClass}
+                />
+                <span className="text-xs font-bold text-muted-foreground">
+                  series
+                </span>
+              </div>
 
-        <div className="flex items-center gap-1.5">
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            value={item.isTimed ? item.targetDurationSec : item.targetReps}
-            onChange={(e) =>
-              onChangeTargets(
-                item.key,
-                item.isTimed ? "targetDurationSec" : "targetReps",
-                e.target.value,
-              )
-            }
-            className="w-14 px-2 py-2 text-center font-mono bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-xl transition-all"
-          />
-          <span className="text-xs font-bold text-muted-foreground">
-            {item.isTimed ? "seg" : "reps"}
-          </span>
-        </div>
+              <span className="text-muted-foreground font-bold">×</span>
+
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={item.isTimed ? block.durationSec : block.reps}
+                  onChange={(e) =>
+                    onChangeBlock(
+                      item.key,
+                      block.key,
+                      item.isTimed
+                        ? { durationSec: e.target.value }
+                        : { reps: e.target.value },
+                    )
+                  }
+                  className={numberInputClass}
+                />
+                <span className="text-xs font-bold text-muted-foreground">
+                  {item.isTimed ? "seg" : "reps"}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => onRemoveBlock(item.key, block.key)}
+                aria-label="Quitar bloque"
+                className="ml-auto shrink-0 p-1.5 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {!item.isTimed && (
+              <ApproximationToggle
+                checked={block.approx}
+                onChange={(value) =>
+                  onChangeBlock(item.key, block.key, { approx: value })
+                }
+              />
+            )}
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => onAddBlock(item.key)}
+          className="flex items-center gap-1.5 text-xs font-bold text-primary hover:opacity-80 transition-opacity"
+        >
+          <Plus className="w-3.5 h-3.5" strokeWidth={3} />
+          Agregar bloque
+        </button>
       </div>
-
-      {!item.isTimed && (
-        <div className="mt-3 pl-7">
-          <ApproximationToggle
-            checked={item.isApproximation}
-            onChange={(value) => onToggleApproximation(item.key, value)}
-          />
-        </div>
-      )}
     </div>
   );
 }
