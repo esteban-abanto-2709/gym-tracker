@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateRoutineDto, RoutineItemDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
+import { legacyBlock } from './blocks';
 
 const itemsInclude = {
   items: {
@@ -81,6 +82,14 @@ export class RoutinesService {
       targetReps: item.targetReps ?? null,
       targetDurationSec: item.targetDurationSec ?? null,
       isApproximation: item.isApproximation ?? false,
+      blocks: item.blocks?.map(legacyBlock) ?? [
+        legacyBlock({
+          sets: item.targetSets,
+          reps: item.targetReps,
+          durationSec: item.targetDurationSec,
+          approx: item.isApproximation,
+        }),
+      ],
     }));
   }
 }

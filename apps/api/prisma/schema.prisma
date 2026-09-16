@@ -75,5 +75,6 @@ model RoutineItem {
   targetReps        Int?
   targetDurationSec Int?
   isApproximation   Boolean  @default(false)
+  blocks            Json     @default("[]")
   createdAt         DateTime @default(now())
 }

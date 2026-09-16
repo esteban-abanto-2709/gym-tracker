@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-018] `Exercise.isTimed` decide la medición del bloque `legacy`
+- **Ubicación:** `apps/api/prisma/schema.prisma` (`Exercise.isTimed`); se lee en `apps/web/src/components/train/SetLogger.tsx`, `apps/web/src/hooks/useWorkoutForm.ts` y el editor de rutinas.
+- **Riesgo:** 4/10
+- **Problema:** La forma de medir un set (peso × reps o tiempo) es un booleano del ejercicio, un parche de RM-028. En la etapa 1 de RM-031 el bloque `legacy` lo sigue usando para no cambiar el comportamiento, aunque la medición debería vivir en el tipo de bloque.
+- **Impacto futuro:** un mismo ejercicio no puede medirse distinto en otra rutina, y cada tipo de medición nuevo (solo reps) tentaría a sumar otro booleano.
+- **Sugerencia:** en la etapa 2 de RM-031, los tipos `weight_reps`/`reps`/`time` reemplazan la lectura de `isTimed`, se migran los bloques `legacy` y se borra la columna.
+- **Fecha:** 2026-09-16 · **Estado:** Abierto
+
 ## [TD-017] `pnpm run build` local no regenera el cliente de Prisma (falso verde)
 - **Ubicación:** `apps/api/package.json` (script `build` = `nest build`); el Dockerfile sí lo hace bien (`apps/api/Dockerfile:19`).
 - **Riesgo:** 3/10
