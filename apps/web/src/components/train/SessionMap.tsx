@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Exercise } from "@/lib/types";
 import type { SessionMapItem } from "@/hooks/useGuidedSession";
+import { plannedSetCount } from "@/lib/blocks";
 import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
 import {
   ArrowLeftRight,
@@ -40,9 +41,9 @@ function StatusDot({ item }: { item: SessionMapItem }) {
 }
 
 function detailText(item: SessionMapItem): string {
-  const target = item.item.targetSets;
+  const target = plannedSetCount(item.item.blocks);
   if (item.status === "skipped") return "Saltado";
-  if (target != null) return `${item.setsDone}/${target} series`;
+  if (target > 0) return `${item.setsDone}/${target} series`;
   if (item.setsDone > 0)
     return `${item.setsDone} ${item.setsDone === 1 ? "serie" : "series"}`;
   return "Series libres";

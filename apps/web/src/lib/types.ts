@@ -39,6 +39,16 @@ export interface Workout {
   createdAt: string;
 }
 
+export interface LegacyBlock {
+  kind: "legacy";
+  sets: number | null;
+  reps: number | null;
+  durationSec: number | null;
+  approx: boolean;
+}
+
+export type RoutineBlock = LegacyBlock;
+
 export interface RoutineItem {
   id?: string;
   exerciseId: string;
@@ -52,6 +62,7 @@ export interface RoutineItem {
   targetReps: number | null;
   targetDurationSec?: number | null;
   isApproximation?: boolean;
+  blocks: RoutineBlock[];
 }
 
 export interface Routine {

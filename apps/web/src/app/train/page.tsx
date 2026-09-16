@@ -5,7 +5,12 @@ import Link from "next/link";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { routes } from "@/lib/routes";
-import { formatTarget } from "@/lib/setDisplay";
+import {
+  blockForSet,
+  formatBlocks,
+  formatSetGoal,
+  plannedSetCount,
+} from "@/lib/blocks";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
@@ -76,8 +81,11 @@ export default function TrainPage() {
     );
   }
 
-  const target = currentItem.targetSets;
-  const hasPendingSets = target != null && setsDoneForCurrent < target;
+  const plannedSets = plannedSetCount(currentItem.blocks);
+  const hasPendingSets = setsDoneForCurrent < plannedSets;
+  const currentBlock = blockForSet(currentItem.blocks, setsDoneForCurrent);
+  const currentTarget = formatBlocks(currentItem.blocks);
+  const nextGoal = formatSetGoal(currentBlock);
 
   // What the lifter should set up next, shown during rest on the done screen.
   const nextUp = hasPendingSets
@@ -85,18 +93,14 @@ export default function TrainPage() {
         label: "Sigue en la misma máquina",
         name: currentItem.exercise.name,
         detail: `Serie ${setsDoneForCurrent + 1}${
-          currentItem.targetDurationSec
-            ? ` · objetivo ${currentItem.targetDurationSec} s`
-            : currentItem.targetReps
-              ? ` · objetivo ${currentItem.targetReps} reps`
-              : ""
+          nextGoal ? ` · objetivo ${nextGoal}` : ""
         }`,
       }
     : nextItem
       ? {
           label: "Prepara la siguiente máquina",
           name: nextItem.exercise.name,
-          detail: formatTarget(nextItem) ?? "",
+          detail: formatBlocks(nextItem.blocks) ?? "",
         }
       : null;
 
@@ -138,7 +142,7 @@ export default function TrainPage() {
             <div className="rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
               <p className="kicker text-[0.6rem] text-primary">
                 Serie {setsDoneForCurrent + 1}
-                {target ? ` · Meta ${formatTarget(currentItem)}` : " · Libre"}
+                {currentTarget ? ` · Meta ${currentTarget}` : " · Libre"}
               </p>
               <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
                 {currentItem.exercise.name}
@@ -148,6 +152,7 @@ export default function TrainPage() {
             <SetLogger
               key={`${currentItem.exerciseId}-${setsDoneForCurrent}`}
               item={currentItem}
+              block={currentBlock}
               equipment={equipment}
               logging={logging}
               onLog={logSet}

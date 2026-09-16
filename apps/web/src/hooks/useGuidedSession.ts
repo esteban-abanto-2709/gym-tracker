@@ -11,6 +11,7 @@ import {
   clearActiveSession,
 } from "@/lib/activeSession";
 import { rememberEquipment } from "@/lib/equipmentMemory";
+import { plannedSetCount } from "@/lib/blocks";
 import { notifyError } from "@/lib/notify";
 
 type Phase = "logging" | "done";
@@ -82,6 +83,7 @@ export function useGuidedSession() {
     position: (routine?.items.length ?? 0) + i,
     targetSets: null,
     targetReps: null,
+    blocks: [],
   }));
   const baseItems: RoutineItem[] = [...(routine?.items ?? []), ...extraItems];
 
@@ -102,8 +104,8 @@ export function useGuidedSession() {
   const statusFor = (i: number): ItemStatus => {
     if (skipped[i]) return "skipped";
     const done = progress[i] ?? 0;
-    const target = items[i]?.targetSets;
-    if (target != null && done >= target) return "done";
+    const target = plannedSetCount(items[i]?.blocks ?? []);
+    if (target > 0 && done >= target) return "done";
     if (done > 0) return "partial";
     return "pending";
   };
@@ -134,8 +136,7 @@ export function useGuidedSession() {
   // (no target) never block completion. ponytail: an all-free routine reads
   // "completed" from the start — acceptable per the agreed rule.
   const allDone = !liveIndices.some((i) => {
-    const t = items[i]?.targetSets;
-    return t != null && (progress[i] ?? 0) < t;
+    return (progress[i] ?? 0) < plannedSetCount(items[i]?.blocks ?? []);
   });
 
   const logSet = useCallback(
