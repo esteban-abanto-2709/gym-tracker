@@ -6,6 +6,13 @@ import { GripVertical, Plus, X } from "lucide-react";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
 import type { RoutineBlock } from "@/lib/types";
 
+const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
+  { value: "weight_reps", label: "Peso × reps" },
+  { value: "reps", label: "Solo reps" },
+  { value: "time", label: "Tiempo" },
+  { value: "warmup", label: "Calentamiento" },
+];
+
 const usesSeconds = (block: DraftBlock, isTimed: boolean) =>
   block.kind === "time" || (block.kind === "legacy" && isTimed);
 
@@ -119,6 +126,37 @@ export function SortableExerciseItem({
             className="rounded-xl border border-border/60 p-2 space-y-2"
           >
             <div className="flex items-center gap-2">
+              <select
+                value={block.kind}
+                onChange={(e) =>
+                  onChangeBlock(item.key, block.key, {
+                    kind: e.target.value as DraftBlock["kind"],
+                  })
+                }
+                aria-label="Tipo de bloque"
+                className="min-w-0 flex-1 bg-muted rounded-lg px-2 py-1.5 text-xs font-bold text-foreground outline-none border-2 border-transparent focus:border-primary transition-colors"
+              >
+                {block.kind === "legacy" && (
+                  <option value="legacy">Formato anterior</option>
+                )}
+                {KIND_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={() => onRemoveBlock(item.key, block.key)}
+                aria-label="Quitar bloque"
+                className="shrink-0 p-1.5 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5">
                 <input
                   type="number"
@@ -164,15 +202,6 @@ export function SortableExerciseItem({
                   {usesSeconds(block, item.isTimed) ? "seg" : "reps"}
                 </span>
               </div>
-
-              <button
-                type="button"
-                onClick={() => onRemoveBlock(item.key, block.key)}
-                aria-label="Quitar bloque"
-                className="ml-auto shrink-0 p-1.5 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
             </div>
 
             {usesApprox(block, item.isTimed) && (

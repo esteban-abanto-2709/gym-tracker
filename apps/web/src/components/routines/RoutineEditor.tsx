@@ -55,7 +55,7 @@ const toNullableInt = (value: string): number | null => {
 
 const emptyBlock = (): DraftBlock => ({
   key: newKey(),
-  kind: "legacy",
+  kind: "weight_reps",
   sets: "",
   reps: "",
   durationSec: "",
