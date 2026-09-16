@@ -82,6 +82,51 @@ describe('WorkoutsService.getRecommendation', () => {
   });
 });
 
+describe('WorkoutsService set types', () => {
+  const setup = () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const create = jest.fn().mockResolvedValue({});
+    const service = new WorkoutsService({
+      workout: { findMany, create },
+    } as unknown as PrismaService);
+    return { service, findMany, create };
+  };
+
+  const whereOf = (findMany: jest.Mock) =>
+    (findMany.mock.calls[0][0] as { where: Record<string, unknown> }).where;
+
+  it('la recomendacion usa solo series efectivas por defecto', async () => {
+    const { service, findMany } = setup();
+    await service.getRecommendation('u1', 'e1', false);
+    expect(whereOf(findMany).setType).toBe('WORKING');
+  });
+
+  it('la recomendacion de calentamiento usa solo calentamientos', async () => {
+    const { service, findMany } = setup();
+    await service.getRecommendation(
+      'u1',
+      'e1',
+      false,
+      undefined,
+      undefined,
+      'WARMUP',
+    );
+    expect(whereOf(findMany).setType).toBe('WARMUP');
+  });
+
+  it('un set sin tipo se guarda como efectivo', async () => {
+    const { service, create } = setup();
+    await service.create('u1', {
+      exerciseId: 'e1',
+      reps: 8,
+      weight: 60,
+    } as CreateWorkoutDto);
+    const data = (create.mock.calls[0][0] as { data: { setType: string } })
+      .data;
+    expect(data.setType).toBe('WORKING');
+  });
+});
+
 describe('CreateWorkoutDto', () => {
   const base = { exerciseId: '0d8f6d1e-2f3a-4b5c-8d9e-0a1b2c3d4e5f', reps: 8 };
 
@@ -100,6 +145,14 @@ describe('CreateWorkoutDto', () => {
 
   it('acepta un set con peso', async () => {
     expect(await errorsFor({ ...base, weight: 60 })).toHaveLength(0);
+  });
+
+  it('acepta el tipo de set y rechaza uno desconocido', async () => {
+    expect(
+      await errorsFor({ ...base, weight: 20, setType: 'WARMUP' }),
+    ).toHaveLength(0);
+    const errors = await errorsFor({ ...base, weight: 20, setType: 'RAMP' });
+    expect(errors.map((e) => e.property)).toContain('setType');
   });
 
   it('acepta un set solo con duracion', async () => {

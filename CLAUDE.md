@@ -140,7 +140,7 @@ model Workout {
 | POST | `/workouts` | Create workout |
 | PATCH | `/workouts/:id` | Update workout |
 | DELETE | `/workouts/:id` | Delete workout |
-| GET | `/workouts/recommendation` | Weight suggestion for an exercise (`?exerciseId=&isApproximation=&tz=`) |
+| GET | `/workouts/recommendation` | Weight suggestion for an exercise (`?exerciseId=&isApproximation=&tz=&equipmentId=&setType=`; `setType` is `WORKING` (default) or `WARMUP`) |
 
 ### Frontend (Next.js App Router)
 

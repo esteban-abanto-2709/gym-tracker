@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { SetType } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
@@ -23,6 +24,7 @@ export class WorkoutsService {
         equipmentId: createWorkoutDto.equipmentId ?? null,
         routineId: createWorkoutDto.routineId ?? null,
         isApproximation: createWorkoutDto.isApproximation ?? false,
+        setType: createWorkoutDto.setType ?? SetType.WORKING,
       },
     });
   }
@@ -33,6 +35,7 @@ export class WorkoutsService {
     isApproximation: boolean,
     tz?: string,
     equipmentId?: string,
+    setType: SetType = SetType.WORKING,
   ) {
     // El peso no es comparable entre equipos: la recomendación se hace solo
     // sobre los sets del mismo equipo (equipmentId vacío => "sin especificar").
@@ -42,6 +45,7 @@ export class WorkoutsService {
         exerciseId,
         isApproximation,
         equipmentId: equipmentId || null,
+        setType,
       },
       orderBy: { createdAt: 'desc' },
     });

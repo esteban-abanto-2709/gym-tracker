@@ -70,7 +70,7 @@ pnpm exec prisma studio               # UI visual de la base de datos
 | `POST` | `/workouts` | Registra un workout |
 | `PATCH` | `/workouts/:id` | Edita un workout |
 | `DELETE` | `/workouts/:id` | Elimina un workout |
-| `GET` | `/workouts/recommendation` | Sugerencia de peso (`?exerciseId=&isApproximation=&tz=`) |
+| `GET` | `/workouts/recommendation` | Sugerencia de peso (`?exerciseId=&isApproximation=&tz=&equipmentId=&setType=`; `setType`: `WORKING` por defecto o `WARMUP`) |
 
 ## Arquitectura
 
