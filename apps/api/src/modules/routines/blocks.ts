@@ -1,4 +1,10 @@
-export const BLOCK_KINDS = ['legacy'] as const;
+export const BLOCK_KINDS = [
+  'legacy',
+  'weight_reps',
+  'reps',
+  'time',
+  'warmup',
+] as const;
 export type BlockKind = (typeof BLOCK_KINDS)[number];
 
 export type LegacyBlock = {
@@ -9,19 +15,65 @@ export type LegacyBlock = {
   approx: boolean;
 };
 
-export type RoutineBlock = LegacyBlock;
+export type WeightRepsBlock = {
+  kind: 'weight_reps';
+  sets: number | null;
+  reps: number | null;
+  approx: boolean;
+};
 
-export function legacyBlock(fields: {
+export type RepsBlock = {
+  kind: 'reps';
+  sets: number | null;
+  reps: number | null;
+};
+
+export type TimeBlock = {
+  kind: 'time';
+  sets: number | null;
+  durationSec: number | null;
+};
+
+export type WarmupBlock = {
+  kind: 'warmup';
+  sets: number | null;
+  reps: number | null;
+};
+
+export type RoutineBlock =
+  | LegacyBlock
+  | WeightRepsBlock
+  | RepsBlock
+  | TimeBlock
+  | WarmupBlock;
+
+export type BlockInput = {
+  kind: BlockKind;
   sets?: number | null;
   reps?: number | null;
   durationSec?: number | null;
   approx?: boolean;
-}): LegacyBlock {
-  return {
-    kind: 'legacy',
-    sets: fields.sets ?? null,
-    reps: fields.reps ?? null,
-    durationSec: fields.durationSec ?? null,
-    approx: fields.approx ?? false,
-  };
+};
+
+export function normalizeBlock(block: BlockInput): RoutineBlock {
+  const sets = block.sets ?? null;
+  const reps = block.reps ?? null;
+  switch (block.kind) {
+    case 'legacy':
+      return {
+        kind: 'legacy',
+        sets,
+        reps,
+        durationSec: block.durationSec ?? null,
+        approx: block.approx ?? false,
+      };
+    case 'weight_reps':
+      return { kind: 'weight_reps', sets, reps, approx: block.approx ?? false };
+    case 'reps':
+      return { kind: 'reps', sets, reps };
+    case 'time':
+      return { kind: 'time', sets, durationSec: block.durationSec ?? null };
+    case 'warmup':
+      return { kind: 'warmup', sets, reps };
+  }
 }

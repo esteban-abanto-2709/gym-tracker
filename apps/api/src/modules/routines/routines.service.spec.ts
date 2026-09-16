@@ -6,36 +6,42 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 
 const EXERCISE_ID = '6f1c1a4e-2b5d-4c8e-9a7b-3d2e1f0a9b8c';
 
-const createdItems = async (items: unknown[]) => {
+const storedBlocks = async (blocks: unknown[]) => {
   const create = jest.fn().mockResolvedValue({});
   const service = new RoutinesService({
     routine: { create },
   } as unknown as PrismaService);
   await service.create('u1', {
     name: 'Upper A',
-    items,
+    items: [{ exerciseId: EXERCISE_ID, position: 0, blocks }],
   } as CreateRoutineDto);
   return (
     create.mock.calls[0][0] as {
       data: { items: { create: { blocks: unknown }[] } };
     }
-  ).data.items.create;
+  ).data.items.create[0].blocks;
 };
 
-const dtoErrors = async (items: unknown[]) =>
-  validate(plainToInstance(CreateRoutineDto, { name: 'Upper A', items }));
+const dtoErrors = async (blocks: unknown, strict = false) =>
+  validate(
+    plainToInstance(CreateRoutineDto, {
+      name: 'Upper A',
+      items: [{ exerciseId: EXERCISE_ID, position: 0, blocks }],
+    }),
+    strict ? { whitelist: true, forbidNonWhitelisted: true } : {},
+  );
 
 describe('RoutinesService blocks', () => {
-  it('completa con null los campos que el bloque no trae', async () => {
-    const [item] = await createdItems([
-      {
-        exerciseId: EXERCISE_ID,
-        position: 0,
-        blocks: [{ kind: 'legacy' }],
-      },
-    ]);
-
-    expect(item.blocks).toEqual([
+  it('completa cada tipo con sus campos y null en lo que falta', async () => {
+    expect(
+      await storedBlocks([
+        { kind: 'legacy' },
+        { kind: 'weight_reps', sets: 3, reps: 8 },
+        { kind: 'reps', sets: 2, reps: 15 },
+        { kind: 'time', sets: 3, durationSec: 30 },
+        { kind: 'warmup', sets: 2 },
+      ]),
+    ).toEqual([
       {
         kind: 'legacy',
         sets: null,
@@ -43,76 +49,68 @@ describe('RoutinesService blocks', () => {
         durationSec: null,
         approx: false,
       },
+      { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
+      { kind: 'reps', sets: 2, reps: 15 },
+      { kind: 'time', sets: 3, durationSec: 30 },
+      { kind: 'warmup', sets: 2, reps: null },
     ]);
   });
 
   it('un slot sin bloques queda libre', async () => {
-    const [item] = await createdItems([
-      { exerciseId: EXERCISE_ID, position: 0, blocks: [] },
-    ]);
-
-    expect(item.blocks).toEqual([]);
+    expect(await storedBlocks([])).toEqual([]);
   });
 
-  it('respeta los bloques enviados, en orden', async () => {
-    const [item] = await createdItems([
-      {
-        exerciseId: EXERCISE_ID,
-        position: 0,
-        blocks: [
-          { kind: 'legacy', sets: 3, reps: 8 },
-          { kind: 'legacy', sets: 2, reps: 12, approx: true },
-        ],
-      },
-    ]);
-
-    expect(item.blocks).toEqual([
-      { kind: 'legacy', sets: 3, reps: 8, durationSec: null, approx: false },
-      { kind: 'legacy', sets: 2, reps: 12, durationSec: null, approx: true },
+  it('respeta el orden y la marca de aproximacion', async () => {
+    expect(
+      await storedBlocks([
+        { kind: 'weight_reps', sets: 3, reps: 8 },
+        { kind: 'weight_reps', sets: 2, reps: 12, approx: true },
+      ]),
+    ).toEqual([
+      { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
+      { kind: 'weight_reps', sets: 2, reps: 12, approx: true },
     ]);
   });
 });
 
 describe('CreateRoutineDto blocks', () => {
-  it('acepta bloques legacy', async () => {
-    const errors = await dtoErrors([
-      {
-        exerciseId: EXERCISE_ID,
-        position: 0,
-        blocks: [{ kind: 'legacy', sets: 3, reps: 8, approx: false }],
-      },
-    ]);
+  it('acepta todos los tipos de bloque', async () => {
+    const errors = await dtoErrors(
+      [
+        { kind: 'legacy', sets: 3, reps: 8, durationSec: null, approx: false },
+        { kind: 'weight_reps', sets: 3, reps: 8, approx: true },
+        { kind: 'reps', sets: 2, reps: 15 },
+        { kind: 'time', sets: 3, durationSec: 30 },
+        { kind: 'warmup', sets: 2, reps: 25 },
+      ],
+      true,
+    );
 
     expect(errors).toHaveLength(0);
   });
 
   it('rechaza un slot sin la lista de bloques', async () => {
-    const errors = await dtoErrors([{ exerciseId: EXERCISE_ID, position: 0 }]);
-
-    expect(errors).not.toHaveLength(0);
+    expect(await dtoErrors(undefined)).not.toHaveLength(0);
   });
 
   it('rechaza un tipo de bloque desconocido', async () => {
-    const errors = await dtoErrors([
-      {
-        exerciseId: EXERCISE_ID,
-        position: 0,
-        blocks: [{ kind: 'ramp' }],
-      },
-    ]);
-
-    expect(errors).not.toHaveLength(0);
+    expect(await dtoErrors([{ kind: 'ramp' }])).not.toHaveLength(0);
   });
 
   it('rechaza metas invalidas dentro del bloque', async () => {
-    const errors = await dtoErrors([
-      {
-        exerciseId: EXERCISE_ID,
-        position: 0,
-        blocks: [{ kind: 'legacy', sets: 0 }],
-      },
-    ]);
-
-    expect(errors).not.toHaveLength(0);
+    expect(await dtoErrors([{ kind: 'time', sets: 0 }])).not.toHaveLength(0);
   });
+
+  it.each([
+    ['reps', { durationSec: 30 }],
+    ['time', { reps: 10 }],
+    ['warmup', { approx: true }],
+    ['weight_reps', { durationSec: 30 }],
+  ])(
+    'rechaza en un bloque %s un campo que no le corresponde',
+    async (kind, extra) => {
+      const errors = await dtoErrors([{ kind, sets: 2, ...extra }], true);
+      expect(errors).not.toHaveLength(0);
+    },
+  );
 });

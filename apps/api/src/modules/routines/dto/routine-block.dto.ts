@@ -1,3 +1,4 @@
+import { applyDecorators } from '@nestjs/common';
 import {
   IsBoolean,
   IsIn,
@@ -7,36 +8,52 @@ import {
 } from 'class-validator';
 import { BLOCK_KINDS, type BlockKind } from '../blocks';
 
+const Count = () => applyDecorators(IsOptional(), IsInt(), IsPositive());
+const Flag = () => applyDecorators(IsOptional(), IsBoolean());
+
 export class RoutineBlockDto {
   @IsIn(BLOCK_KINDS)
   kind: BlockKind;
 }
 
 export class LegacyBlockDto extends RoutineBlockDto {
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  sets?: number | null;
+  @Count() sets?: number | null;
+  @Count() reps?: number | null;
+  @Count() durationSec?: number | null;
+  @Flag() approx?: boolean;
+}
 
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  reps?: number | null;
+export class WeightRepsBlockDto extends RoutineBlockDto {
+  @Count() sets?: number | null;
+  @Count() reps?: number | null;
+  @Flag() approx?: boolean;
+}
 
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  durationSec?: number | null;
+export class RepsBlockDto extends RoutineBlockDto {
+  @Count() sets?: number | null;
+  @Count() reps?: number | null;
+}
 
-  @IsOptional()
-  @IsBoolean()
-  approx?: boolean;
+export class TimeBlockDto extends RoutineBlockDto {
+  @Count() sets?: number | null;
+  @Count() durationSec?: number | null;
+}
+
+export class WarmupBlockDto extends RoutineBlockDto {
+  @Count() sets?: number | null;
+  @Count() reps?: number | null;
 }
 
 export const blockDiscriminator = {
   keepDiscriminatorProperty: true,
   discriminator: {
     property: 'kind',
-    subTypes: [{ value: LegacyBlockDto, name: 'legacy' }],
+    subTypes: [
+      { value: LegacyBlockDto, name: 'legacy' },
+      { value: WeightRepsBlockDto, name: 'weight_reps' },
+      { value: RepsBlockDto, name: 'reps' },
+      { value: TimeBlockDto, name: 'time' },
+      { value: WarmupBlockDto, name: 'warmup' },
+    ],
   },
 };

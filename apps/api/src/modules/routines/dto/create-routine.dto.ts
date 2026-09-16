@@ -9,11 +9,8 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import {
-  LegacyBlockDto,
-  RoutineBlockDto,
-  blockDiscriminator,
-} from './routine-block.dto';
+import { RoutineBlockDto, blockDiscriminator } from './routine-block.dto';
+import type { BlockInput } from '../blocks';
 
 export class RoutineItemDto {
   @IsUUID()
@@ -26,7 +23,7 @@ export class RoutineItemDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RoutineBlockDto, blockDiscriminator)
-  blocks: LegacyBlockDto[];
+  blocks: BlockInput[];
 }
 
 export class CreateRoutineDto {
