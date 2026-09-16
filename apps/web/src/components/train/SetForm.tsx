@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Equipment, SetType } from "@/lib/types";
@@ -9,7 +9,8 @@ import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
-import { formatDuration } from "@/lib/setDisplay";
+import { formatDuration, type SetMeasure } from "@/lib/setDisplay";
+import { MeasureSelector } from "@/components/MeasureSelector";
 import { ArrowUp, Check, Loader2 } from "lucide-react";
 
 interface Recommendation {
@@ -17,6 +18,7 @@ interface Recommendation {
   lastReps: number | null;
   lastDurationSec: number | null;
   suggestedWeight: number | null;
+  lastMeasure: SetMeasure | null;
 }
 
 export interface LogSetInput {
@@ -32,6 +34,8 @@ export interface LogSetInput {
 interface SetFormProps {
   exerciseId: string;
   plan: SetPlan;
+  selectable: boolean;
+  preferLastMeasure: boolean;
   equipment: Equipment[];
   logging: boolean;
   onLog: (args: LogSetInput) => Promise<void>;
@@ -43,12 +47,16 @@ const inputClass =
 export function SetForm({
   exerciseId,
   plan,
+  selectable,
+  preferLastMeasure,
   equipment,
   logging,
   onLog,
 }: SetFormProps) {
-  const { measure, setType, showApprox, approx, targetReps, targetDurationSec } =
-    plan;
+  const { setType, approx, targetReps, targetDurationSec } = plan;
+  const [measure, setMeasure] = useState<SetMeasure>(plan.measure);
+  const measureTouched = useRef(false);
+  const isWorkingWeight = measure === "weight_reps" && setType === "WORKING";
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
@@ -84,8 +92,9 @@ export function SetForm({
       .then((rec) => {
         if (!active) return;
         setRecommendation(rec);
-        if (measure === "weight_reps" && rec.lastWeight != null)
-          setWeight(String(rec.lastWeight));
+        if (preferLastMeasure && !measureTouched.current && rec.lastMeasure)
+          setMeasure(rec.lastMeasure);
+        if (rec.lastWeight != null) setWeight(String(rec.lastWeight));
         if (rec.lastReps != null) setReps(String(rec.lastReps));
         if (rec.lastDurationSec != null)
           setSeconds(String(rec.lastDurationSec));
@@ -97,7 +106,7 @@ export function SetForm({
     };
   }, [
     exerciseId,
-    measure,
+    preferLastMeasure,
     setType,
     targetReps,
     targetDurationSec,
@@ -140,7 +149,7 @@ export function SetForm({
       reps: Number(reps),
       opinion: "",
       equipmentId,
-      isApproximation: showApprox && isApproximation,
+      isApproximation: isWorkingWeight && isApproximation,
       setType,
     });
   };
@@ -187,15 +196,23 @@ export function SetForm({
         <p className="kicker text-[0.6rem] text-muted-foreground">
           {setType === "WARMUP" ? `Calentamiento · ${lastLabel}` : lastLabel}
         </p>
-        {measure === "weight_reps" &&
-          setType === "WORKING" &&
-          recommendation?.suggestedWeight != null && (
-            <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
-              <ArrowUp className="w-4 h-4" strokeWidth={3} />
-              Sube a {recommendation.suggestedWeight} kg
-            </div>
-          )}
+        {isWorkingWeight && recommendation?.suggestedWeight != null && (
+          <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
+            <ArrowUp className="w-4 h-4" strokeWidth={3} />
+            Sube a {recommendation.suggestedWeight} kg
+          </div>
+        )}
       </div>
+
+      {selectable && (
+        <MeasureSelector
+          value={measure}
+          onChange={(value) => {
+            measureTouched.current = true;
+            setMeasure(value);
+          }}
+        />
+      )}
 
       {measure === "time" && (
         <div className="space-y-2">
@@ -276,7 +293,7 @@ export function SetForm({
         />
       )}
 
-      {showApprox && (
+      {isWorkingWeight && (
         <ApproximationToggle
           checked={isApproximation}
           onChange={setIsApproximation}

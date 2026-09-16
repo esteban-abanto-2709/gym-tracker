@@ -8,6 +8,17 @@ import { toLocalDateString } from '@/common/timezone.util';
 const REP_MARGIN = 3;
 const WEIGHT_STEP_KG = 2.5;
 
+type SetMeasure = 'weight_reps' | 'reps' | 'time';
+
+function measureOf(set: {
+  weight: number | null;
+  durationSec: number | null;
+}): SetMeasure {
+  if (set.durationSec != null) return 'time';
+  if (set.weight == null) return 'reps';
+  return 'weight_reps';
+}
+
 @Injectable()
 export class WorkoutsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -39,16 +50,24 @@ export class WorkoutsService {
   ) {
     // El peso no es comparable entre equipos: la recomendación se hace solo
     // sobre los sets del mismo equipo (equipmentId vacío => "sin especificar").
-    const sets = await this.prisma.workout.findMany({
-      where: {
-        userId,
-        exerciseId,
-        isApproximation,
-        equipmentId: equipmentId || null,
-        setType,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const [sets, latestAny] = await Promise.all([
+      this.prisma.workout.findMany({
+        where: {
+          userId,
+          exerciseId,
+          isApproximation,
+          equipmentId: equipmentId || null,
+          setType,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.workout.findFirst({
+        where: { userId, exerciseId },
+        orderBy: { createdAt: 'desc' },
+        select: { weight: true, durationSec: true },
+      }),
+    ]);
+    const lastMeasure = latestAny ? measureOf(latestAny) : null;
 
     if (sets.length === 0) {
       return {
@@ -56,6 +75,7 @@ export class WorkoutsService {
         lastReps: null,
         lastDurationSec: null,
         suggestedWeight: null,
+        lastMeasure,
       };
     }
 
@@ -87,6 +107,7 @@ export class WorkoutsService {
       lastReps: last.reps,
       lastDurationSec: last.durationSec,
       suggestedWeight,
+      lastMeasure,
     };
   }
 

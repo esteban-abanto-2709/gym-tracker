@@ -7,7 +7,10 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 
 const serviceWithSets = (sets: unknown[]) =>
   new WorkoutsService({
-    workout: { findMany: jest.fn().mockResolvedValue(sets) },
+    workout: {
+      findMany: jest.fn().mockResolvedValue(sets),
+      findFirst: jest.fn().mockResolvedValue(sets[0] ?? null),
+    },
   } as unknown as PrismaService);
 
 const day = (iso: string) => new Date(iso);
@@ -82,12 +85,35 @@ describe('WorkoutsService.getRecommendation', () => {
   });
 });
 
+describe('WorkoutsService lastMeasure', () => {
+  const recWithLatest = async (latest: unknown) =>
+    new WorkoutsService({
+      workout: {
+        findMany: jest.fn().mockResolvedValue([]),
+        findFirst: jest.fn().mockResolvedValue(latest),
+      },
+    } as unknown as PrismaService).getRecommendation('u1', 'e1', false);
+
+  it.each([
+    [{ weight: 60, durationSec: null }, 'weight_reps'],
+    [{ weight: null, durationSec: null }, 'reps'],
+    [{ weight: null, durationSec: 30 }, 'time'],
+    [null, null],
+  ])(
+    'deduce la medicion del ultimo set aunque no coincidan los filtros (%o)',
+    async (latest, expected) => {
+      expect((await recWithLatest(latest)).lastMeasure).toBe(expected);
+    },
+  );
+});
+
 describe('WorkoutsService set types', () => {
   const setup = () => {
     const findMany = jest.fn().mockResolvedValue([]);
+    const findFirst = jest.fn().mockResolvedValue(null);
     const create = jest.fn().mockResolvedValue({});
     const service = new WorkoutsService({
-      workout: { findMany, create },
+      workout: { findMany, findFirst, create },
     } as unknown as PrismaService);
     return { service, findMany, create };
   };

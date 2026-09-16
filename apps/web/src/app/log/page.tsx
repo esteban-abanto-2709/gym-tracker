@@ -6,6 +6,7 @@ import { useEquipment } from "@/hooks/useEquipment";
 import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
+import { MeasureSelector } from "@/components/MeasureSelector";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
@@ -44,6 +45,8 @@ function LogContent() {
     setSelectedExercise,
     equipmentId,
     setEquipmentId,
+    measure,
+    changeMeasure,
     loading,
     handleSubmit,
   } = useWorkoutForm(exercises, loadingExercises);
@@ -52,7 +55,6 @@ function LogContent() {
 
   // --- Modal state ---
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const isTimed = selectedExercise?.isTimed ?? false;
 
   // Create exercise via hook + select it
   const handleCreate = async (name: string, isTimed: boolean) => {
@@ -109,8 +111,12 @@ function LogContent() {
             onCreateClick={() => setIsDialogOpen(true)}
           />
 
+          {selectedExercise && (
+            <MeasureSelector value={measure} onChange={changeMeasure} />
+          )}
+
           {/* Equipo (aparece al elegir ejercicio; default = tu último uso) */}
-          {selectedExercise && !isTimed && (
+          {selectedExercise && measure !== "time" && (
             <EquipmentSelector
               equipment={equipment}
               value={equipmentId}
@@ -118,7 +124,7 @@ function LogContent() {
             />
           )}
 
-          {isTimed ? (
+          {measure === "time" ? (
             <div className="space-y-2">
               <label
                 htmlFor="seconds"
@@ -140,67 +146,73 @@ function LogContent() {
               />
             </div>
           ) : (
-            /* Peso y Reps en una fila */
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="weight"
-                    className="kicker text-muted-foreground text-[0.65rem]"
-                  >
-                    Peso ({unit}) <span className="text-primary">*</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={toggleUnit}
-                    className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
-                    aria-label="Cambiar unidad de peso"
-                  >
-                    <span
-                      className={`px-2 py-0.5 transition-colors ${
-                        unit === "kg"
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground"
-                      }`}
+            /* Peso (si aplica) y Reps en una fila */
+            <div
+              className={`grid gap-4 ${
+                measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1"
+              }`}
+            >
+              {measure === "weight_reps" && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="weight"
+                      className="kicker text-muted-foreground text-[0.65rem]"
                     >
-                      kg
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 transition-colors ${
-                        unit === "lb"
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground"
-                      }`}
+                      Peso ({unit}) <span className="text-primary">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={toggleUnit}
+                      className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
+                      aria-label="Cambiar unidad de peso"
                     >
-                      lb
-                    </span>
-                  </button>
+                      <span
+                        className={`px-2 py-0.5 transition-colors ${
+                          unit === "kg"
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        kg
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 transition-colors ${
+                          unit === "lb"
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        lb
+                      </span>
+                    </button>
+                  </div>
+                  <input
+                    id="weight"
+                    name="weight"
+                    type="number"
+                    step="0.5"
+                    inputMode="decimal"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
+                    required
+                    autoComplete="off"
+                    data-1p-ignore
+                  />
+                  {weight !== "" && !Number.isNaN(Number(weight)) && (
+                    <p className="text-xs text-muted-foreground text-center font-mono">
+                      ≈{" "}
+                      {convertWeight(
+                        Number(weight),
+                        unit,
+                        unit === "kg" ? "lb" : "kg",
+                      )}{" "}
+                      {unit === "kg" ? "lb" : "kg"}
+                    </p>
+                  )}
                 </div>
-                <input
-                  id="weight"
-                  name="weight"
-                  type="number"
-                  step="0.5"
-                  inputMode="decimal"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
-                  required
-                  autoComplete="off"
-                  data-1p-ignore
-                />
-                {weight !== "" && !Number.isNaN(Number(weight)) && (
-                  <p className="text-xs text-muted-foreground text-center font-mono">
-                    ≈{" "}
-                    {convertWeight(
-                      Number(weight),
-                      unit,
-                      unit === "kg" ? "lb" : "kg",
-                    )}{" "}
-                    {unit === "kg" ? "lb" : "kg"}
-                  </p>
-                )}
-              </div>
+              )}
 
               <div className="space-y-2">
                 <label
@@ -242,7 +254,7 @@ function LogContent() {
             />
           </div>
 
-          {!isTimed && (
+          {measure === "weight_reps" && (
             <ApproximationToggle
               checked={isApproximation}
               onChange={setIsApproximation}

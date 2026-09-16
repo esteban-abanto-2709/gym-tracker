@@ -67,7 +67,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
   - Sets: Dead Bug y similares pasan de `weight = 0` a `null`. Los calentamientos viejos (sets `isApproximation` con 25 reps antes del 07/09) pasan a `setType = WARMUP` con `isApproximation = false`. El resto queda `WORKING`.
   - Tras cambiar el schema, correr `prisma generate` antes del build (ver TD-017).
 - **Hecho cuando:** Lower A se arma como lista de bloques (Bike `time`, Terminal Knee `weight_reps`, Wall Sit `time`, …, Dead Bug `reps`), el modo guiado pide lo correcto en cada uno sin `isTimed`, Dead Bug ya no guarda `0 kg`, y el historial de antes de la migración se sigue viendo igual.
-- **Fecha:** 2026-09-16 · **Estado:** En progreso (2026-09-16) · etapa 1 terminada (2026-09-16) · etapa 2, paso 4
+- **Fecha:** 2026-09-16 · **Estado:** En progreso (2026-09-16) · etapa 1 terminada (2026-09-16) · etapa 2, paso 5
 
 ## [RM-029] Recomendación serie por serie (arregla rampa y calentamiento)
 - **Objetivo:** que el "la última vez" muestre el peso de **esa misma serie** la sesión pasada, no el del último set registrado.

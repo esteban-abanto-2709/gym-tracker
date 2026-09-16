@@ -102,6 +102,7 @@ export function useWorkoutHistory() {
           weight: exercise.weight?.toString() ?? "",
           reps: exercise.reps.toString(),
           durationSec: exercise.durationSec?.toString() ?? "",
+          measure: setMeasure(exercise),
         }),
       );
       router.push("/log?repeat=true");

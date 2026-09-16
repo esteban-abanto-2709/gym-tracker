@@ -26,6 +26,7 @@ export default function TrainPage() {
     phase,
     routine,
     items,
+    currentIndex,
     currentItem,
     nextItem,
     setsDoneForCurrent,
@@ -153,6 +154,7 @@ export default function TrainPage() {
               key={`${currentItem.exerciseId}-${setsDoneForCurrent}`}
               item={currentItem}
               block={currentBlock}
+              replaced={mapItems[currentIndex]?.replacedFrom != null}
               equipment={equipment}
               logging={logging}
               onLog={logSet}

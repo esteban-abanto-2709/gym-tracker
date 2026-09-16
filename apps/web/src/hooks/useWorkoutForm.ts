@@ -6,6 +6,7 @@ import type { Exercise } from "@/lib/types";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment, rememberEquipment } from "@/lib/equipmentMemory";
 import { notifyError } from "@/lib/notify";
+import type { SetMeasure } from "@/lib/setDisplay";
 
 const STORAGE_KEY = "gymtrack-last-set";
 
@@ -15,6 +16,13 @@ interface RepeatData {
   weight: string;
   reps: string;
   durationSec?: string;
+  measure?: SetMeasure;
+}
+
+function repeatMeasure(data: RepeatData): SetMeasure {
+  if (data.measure) return data.measure;
+  if (data.durationSec) return "time";
+  return data.weight ? "weight_reps" : "reps";
 }
 
 export function useWorkoutForm(
@@ -34,7 +42,10 @@ export function useWorkoutForm(
     null,
   );
   const [equipmentId, setEquipmentId] = useState<string | null>(null);
+  const [measure, setMeasure] = useState<SetMeasure>("weight_reps");
   const [loading, setLoading] = useState(false);
+  const measureTouched = useRef(false);
+  const pendingRepeatMeasure = useRef<SetMeasure | null>(null);
 
   // Al cambiar de ejercicio, el equipo por default = el último que usaste en él.
   useEffect(() => {
@@ -42,6 +53,42 @@ export function useWorkoutForm(
       selectedExercise ? getLastEquipment(selectedExercise.id) : null,
     );
   }, [selectedExercise]);
+
+  useEffect(() => {
+    measureTouched.current = false;
+    if (!selectedExercise) return;
+    if (pendingRepeatMeasure.current) {
+      setMeasure(pendingRepeatMeasure.current);
+      pendingRepeatMeasure.current = null;
+      measureTouched.current = true;
+      return;
+    }
+    setMeasure(selectedExercise.isTimed ? "time" : "weight_reps");
+
+    let active = true;
+    api
+      .get<{ lastMeasure: SetMeasure | null }>(
+        routes.api.workouts.recommendation(
+          selectedExercise.id,
+          false,
+          Intl.DateTimeFormat().resolvedOptions().timeZone,
+          null,
+        ),
+      )
+      .then((rec) => {
+        if (active && !measureTouched.current && rec.lastMeasure)
+          setMeasure(rec.lastMeasure);
+      })
+      .catch((e) => console.error("Error fetching last measure:", e));
+    return () => {
+      active = false;
+    };
+  }, [selectedExercise]);
+
+  const changeMeasure = useCallback((value: SetMeasure) => {
+    measureTouched.current = true;
+    setMeasure(value);
+  }, []);
 
   // One-shot repeat processing: runs during render once exercises are loaded
   const repeatProcessed = useRef(false);
@@ -57,6 +104,7 @@ export function useWorkoutForm(
           if (exerciseId) {
             const exToRepeat = exercises.find((ex) => ex.id === exerciseId);
             if (exToRepeat) {
+              pendingRepeatMeasure.current = repeatMeasure(data);
               setSelectedExercise(exToRepeat);
             }
           }
@@ -95,39 +143,42 @@ export function useWorkoutForm(
 
       setLoading(true);
 
-      const isTimed = selectedExercise.isTimed ?? false;
       // Persist always in kg, regardless of the unit shown in the form
-      const weightKg = isTimed ? null : toKg(Number(weight), unit);
+      const weightKg =
+        measure === "weight_reps" ? toKg(Number(weight), unit) : null;
 
-      const data = isTimed
-        ? {
-            exerciseId: selectedExercise.id,
-            reps: 1,
-            durationSec: Number(seconds),
-            opinion,
-          }
-        : {
-            exerciseId: selectedExercise.id,
-            reps: Number(reps),
-            weight: weightKg,
-            opinion,
-            equipmentId,
-            isApproximation,
-          };
+      const data =
+        measure === "time"
+          ? {
+              exerciseId: selectedExercise.id,
+              reps: 1,
+              durationSec: Number(seconds),
+              opinion,
+            }
+          : {
+              exerciseId: selectedExercise.id,
+              reps: Number(reps),
+              weight: weightKg,
+              opinion,
+              equipmentId,
+              isApproximation: measure === "weight_reps" && isApproximation,
+            };
 
       const run = async () => {
         try {
           await api.post(routes.api.workouts.create(), data);
-          if (!isTimed) rememberEquipment(selectedExercise.id, equipmentId);
+          if (measure !== "time")
+            rememberEquipment(selectedExercise.id, equipmentId);
 
           // Save for "Repeat" flow from Success page (always in kg)
           sessionStorage.setItem(
             STORAGE_KEY,
             JSON.stringify({
               exerciseId: selectedExercise.id,
-              weight: isTimed ? "" : String(weightKg),
-              reps: isTimed ? "1" : reps,
-              durationSec: isTimed ? seconds : "",
+              weight: weightKg == null ? "" : String(weightKg),
+              reps: measure === "time" ? "1" : reps,
+              durationSec: measure === "time" ? seconds : "",
+              measure,
             }),
           );
 
@@ -143,6 +194,7 @@ export function useWorkoutForm(
     },
     [
       selectedExercise,
+      measure,
       reps,
       seconds,
       weight,
@@ -171,6 +223,8 @@ export function useWorkoutForm(
     setSelectedExercise,
     equipmentId,
     setEquipmentId,
+    measure,
+    changeMeasure,
     loading,
     handleSubmit,
   };

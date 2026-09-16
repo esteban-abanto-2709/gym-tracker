@@ -63,7 +63,6 @@ export function formatSetGoal(block: RoutineBlock | null): string | null {
 export interface SetPlan {
   measure: SetMeasure;
   setType: SetType;
-  showApprox: boolean;
   approx: boolean;
   targetReps: number | null;
   targetDurationSec: number | null;
@@ -76,7 +75,6 @@ export function setPlan(
   const plan: SetPlan = {
     measure: "weight_reps",
     setType: "WORKING",
-    showApprox: false,
     approx: false,
     targetReps: null,
     targetDurationSec: null,
@@ -85,7 +83,6 @@ export function setPlan(
     return {
       ...plan,
       measure: isTimed ? "time" : "weight_reps",
-      showApprox: !isTimed,
       approx: block?.approx ?? false,
       targetReps: block?.reps ?? null,
       targetDurationSec: block?.durationSec ?? null,
@@ -93,12 +90,7 @@ export function setPlan(
   }
   switch (block.kind) {
     case "weight_reps":
-      return {
-        ...plan,
-        showApprox: true,
-        approx: block.approx,
-        targetReps: block.reps,
-      };
+      return { ...plan, approx: block.approx, targetReps: block.reps };
     case "reps":
       return { ...plan, measure: "reps", targetReps: block.reps };
     case "time":
