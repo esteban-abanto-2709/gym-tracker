@@ -7,8 +7,18 @@ import {
   IsString,
   IsUUID,
   Min,
-  ValidateIf,
+  ValidateBy,
 } from 'class-validator';
+
+export const NotWithDuration = () =>
+  ValidateBy({
+    name: 'notWithDuration',
+    validator: {
+      validate: (_value, args) =>
+        (args?.object as { durationSec?: number | null }).durationSec == null,
+      defaultMessage: () => 'weight and durationSec cannot both be set',
+    },
+  });
 
 export class CreateWorkoutDto {
   @IsUUID()
@@ -18,15 +28,16 @@ export class CreateWorkoutDto {
   @IsPositive()
   reps: number;
 
-  @ValidateIf((o: CreateWorkoutDto) => o.durationSec == null)
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  weight?: number;
+  @NotWithDuration()
+  weight?: number | null;
 
   @IsOptional()
   @IsInt()
   @IsPositive()
-  durationSec?: number;
+  durationSec?: number | null;
 
   @IsOptional()
   @IsString()

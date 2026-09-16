@@ -7,11 +7,12 @@ import {
 } from "@/components/ui/dialog";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
 import { ApproximationToggle } from "@/components/ApproximationToggle";
+import type { SetMeasure } from "@/lib/setDisplay";
 
 interface EditWorkoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  isTimed: boolean;
+  measure: SetMeasure;
   weight: string;
   onWeightChange: (value: string) => void;
   reps: string;
@@ -29,7 +30,7 @@ interface EditWorkoutDialogProps {
 export function EditWorkoutDialog({
   open,
   onOpenChange,
-  isTimed,
+  measure,
   weight,
   onWeightChange,
   reps,
@@ -64,7 +65,7 @@ export function EditWorkoutDialog({
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {isTimed ? (
+          {measure === "time" ? (
             <div className="space-y-2">
               <label
                 htmlFor="edit-duration"
@@ -81,23 +82,29 @@ export function EditWorkoutDialog({
               />
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label
-                  htmlFor="edit-weight"
-                  className="kicker text-muted-foreground text-[0.65rem]"
-                >
-                  Peso (kg)
-                </label>
-                <input
-                  id="edit-weight"
-                  type="number"
-                  step="0.5"
-                  value={weight}
-                  onChange={(e) => onWeightChange(e.target.value)}
-                  className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                />
-              </div>
+            <div
+              className={`grid gap-4 ${
+                measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1"
+              }`}
+            >
+              {measure === "weight_reps" && (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="edit-weight"
+                    className="kicker text-muted-foreground text-[0.65rem]"
+                  >
+                    Peso (kg)
+                  </label>
+                  <input
+                    id="edit-weight"
+                    type="number"
+                    step="0.5"
+                    value={weight}
+                    onChange={(e) => onWeightChange(e.target.value)}
+                    className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  />
+                </div>
+              )}
               <div className="space-y-2">
                 <label
                   htmlFor="edit-reps"
@@ -130,7 +137,7 @@ export function EditWorkoutDialog({
               className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
             />
           </div>
-          {!isTimed && (
+          {measure === "weight_reps" && (
             <ApproximationToggle
               checked={isApproximation}
               onChange={onApproximationChange}

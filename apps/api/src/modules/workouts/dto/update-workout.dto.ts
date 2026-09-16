@@ -8,6 +8,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
+import { NotWithDuration } from './create-workout.dto';
 
 export class UpdateWorkoutDto {
   @IsOptional()
@@ -22,12 +23,13 @@ export class UpdateWorkoutDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  weight?: number;
+  @NotWithDuration()
+  weight?: number | null;
 
   @IsOptional()
   @IsInt()
   @IsPositive()
-  durationSec?: number;
+  durationSec?: number | null;
 
   @IsOptional()
   @IsString()

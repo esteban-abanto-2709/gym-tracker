@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
 import { notifyError } from "@/lib/notify";
+import { setMeasure } from "@/lib/setDisplay";
 
 // Local day (browser tz) as YYYY-MM-DD. en-CA formats ISO-like.
 function localDay(date: string): string {
@@ -124,15 +125,18 @@ export function useWorkoutHistory() {
     setActionLoading(true);
     const run = async () => {
       try {
-        const isTimed = editingWorkout.durationSec != null;
-        const changes = isTimed
-          ? { reps: 1, durationSec: Number(editDuration), opinion: editOpinion }
-          : {
-              reps: Number(editReps),
-              weight: Number(editWeight),
-              opinion: editOpinion,
-              isApproximation: editApproximation,
-            };
+        const measure = setMeasure(editingWorkout);
+        const changes =
+          measure === "time"
+            ? { reps: 1, durationSec: Number(editDuration), opinion: editOpinion }
+            : measure === "reps"
+              ? { reps: Number(editReps), opinion: editOpinion }
+              : {
+                  reps: Number(editReps),
+                  weight: Number(editWeight),
+                  opinion: editOpinion,
+                  isApproximation: editApproximation,
+                };
 
         await api.patch(routes.api.workouts.update(editingWorkout.id), changes);
 

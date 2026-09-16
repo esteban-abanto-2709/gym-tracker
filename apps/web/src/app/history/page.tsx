@@ -8,6 +8,7 @@ import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
 import { WorkoutCard } from "@/components/history/WorkoutCard";
 import { EditWorkoutDialog } from "@/components/history/EditWorkoutDialog";
 import { DeleteWorkoutDialog } from "@/components/history/DeleteWorkoutDialog";
+import { setMeasure } from "@/lib/setDisplay";
 import { Calendar, Plus } from "lucide-react";
 
 export default function HistoryPage() {
@@ -135,7 +136,7 @@ export default function HistoryPage() {
       <EditWorkoutDialog
         open={!!editingWorkout}
         onOpenChange={(open) => !open && setEditingWorkout(null)}
-        isTimed={editingWorkout?.durationSec != null}
+        measure={editingWorkout ? setMeasure(editingWorkout) : "weight_reps"}
         weight={editWeight}
         onWeightChange={setEditWeight}
         reps={editReps}

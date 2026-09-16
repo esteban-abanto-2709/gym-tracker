@@ -9,8 +9,12 @@ interface DisplayableSet {
   durationSec?: number | null;
 }
 
-export function isTimedSet(set: DisplayableSet): boolean {
-  return set.durationSec != null;
+export type SetMeasure = "weight_reps" | "reps" | "time";
+
+export function setMeasure(set: DisplayableSet): SetMeasure {
+  if (set.durationSec != null) return "time";
+  if (set.weight == null) return "reps";
+  return "weight_reps";
 }
 
 export function formatDuration(totalSec: number): SetMetric {
@@ -24,9 +28,13 @@ export function formatDuration(totalSec: number): SetMetric {
 }
 
 export function setMetrics(set: DisplayableSet): SetMetric[] {
-  if (set.durationSec != null) return [formatDuration(set.durationSec)];
-  return [
-    { value: String(set.weight ?? 0), unit: "kg" },
-    { value: String(set.reps ?? 0), unit: "reps" },
-  ];
+  const reps = { value: String(set.reps ?? 0), unit: "reps" };
+  switch (setMeasure(set)) {
+    case "time":
+      return [formatDuration(set.durationSec ?? 0)];
+    case "reps":
+      return [reps];
+    case "weight_reps":
+      return [{ value: String(set.weight), unit: "kg" }, reps];
+  }
 }
