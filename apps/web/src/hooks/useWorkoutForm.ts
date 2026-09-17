@@ -63,7 +63,7 @@ export function useWorkoutForm(
       measureTouched.current = true;
       return;
     }
-    setMeasure(selectedExercise.isTimed ? "time" : "weight_reps");
+    setMeasure("weight_reps");
 
     let active = true;
     api

@@ -8,7 +8,7 @@ WHERE e."id" = w."exerciseId"
 
 UPDATE "Workout" SET "setType" = 'WARMUP', "isApproximation" = false
 WHERE "isApproximation"
-  AND (("createdAt" AT TIME ZONE 'UTC') AT TIME ZONE 'America/Lima')::date < DATE '2026-09-07';
+  AND "createdAt" < TIMESTAMP '2026-09-05 00:00:00';
 
 CREATE TEMP TABLE "warmup_merge" AS
 SELECT w."id" AS "warmupId", n."id" AS "nextId", w."blocks"->0 AS "block"

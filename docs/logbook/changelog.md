@@ -12,6 +12,12 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-031] Slots flexibles: la rutina como lista de bloques tipados (2026-09-16 22:18)
+Cada `RoutineItem` guarda `blocks` (JSON tipado: `weight_reps`, `reps`, `time`, `warmup`) y cada `Workout` un `setType` (`WORKING`/`WARMUP`); modo guiado, día libre (selector de medición) y editor trabajan por bloque. Datos migrados: 8 calentamientos PPL fusionados con su slot, 112 sets de calentamiento marcados y peso corporal sin `0 kg`.
+
+## [TD-018] `Exercise.isTimed` decide la medición del bloque `legacy` (2026-09-16 22:18)
+Resuelto dentro de RM-031: la medición vive en el tipo de bloque (o se elige en el set libre), se borró la columna `isTimed`, la casilla "Se mide en tiempo" y el tipo transitorio `legacy`.
+
 ## [TD-016] README de docker alineado con lo que hacen backup y restore (2026-09-07 09:11)
 El README decía que el dump cubre solo `Exercise`/`Workout` y que el restore trunca esas dos; en realidad ambos operan sobre las cinco tablas (`User`, `Exercise`, `Routine`, `RoutineItem`, `Workout`). Corregidas las tres menciones y anotado que el restore es marcha atrás total, y que un backup viejo carga en un esquema nuevo porque cada `COPY` lleva su lista de columnas explícita — verificado restaurando el backup pre-migración sobre el esquema con las columnas de tiempo.
 

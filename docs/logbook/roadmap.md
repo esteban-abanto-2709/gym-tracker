@@ -27,7 +27,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 
 ## [RM-032] Calentamiento en rampa (un slot, pesos por escalón)
 - **Objetivo:** que la rampa (10 / 5 / 3 reps antes de las series efectivas) sea parte del **mismo slot** que las series de esa máquina y que **cada escalón recuerde su propio peso**. Hoy solo sobrevive el peso del último escalón y hay que recalcular el de 10 y el de 5 en cada sesión.
-- **Depende de:** RM-031 (bloques).
+- **Depende de:** RM-031 (bloques, hecho).
 - **Bloque `ramp`:** `{ kind: "ramp", steps: [{ reps: 10, pct: 50 }, { reps: 5, pct: 70 }, { reps: 3, pct: 85 }] }`. Va antes del bloque `weight_reps` en el mismo slot: Hack Squat = `[ramp 10/5/3] + [weight_reps 3×8]`. Cada escalón es un set planificado con `setType = RAMP` y `step = 1..n`.
 - **Peso de cada escalón:** se precarga **siempre** con el peso que usaste en ese mismo escalón la última vez (mismo ejercicio + equipo, `setType = RAMP`, mismo `step`, último día). El porcentaje es solo una sugerencia visible ("≈ 50 % de tu peso efectivo") y se usa para precargar únicamente si ese escalón no tiene historial. "Peso efectivo" = peso del último bloque `weight_reps` de ese ejercicio (no es un 1RM: hoy no existe).
 - **Recomendación:** `getRecommendation` filtra por `setType` y `step` en vez de `isApproximation`. Así las series efectivas dejan de mezclarse con la rampa y la sugerencia de +2.5 kg se calcula solo sobre las efectivas. **Absorbe RM-029.**
@@ -37,37 +37,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Fuera de alcance:** calcular la rampa en base a un 1RM real. Los porcentajes quedan configurables por escalón, pero hoy se toman del peso efectivo.
 - **Hecho cuando:** en Upper A, Lat Pulldown es un solo slot. Al entrar precarga 31.5 / 45 / 51.8 kg en los tres escalones (lo del 07/09) y 58.5 en las efectivas, con la sugerencia de porcentaje visible al lado. El mapa de la sesión lo muestra como una sola fila.
 - **Fecha:** 2026-09-16 · **Estado:** Abierto
-
-## [RM-031] Slots flexibles: la rutina como lista de bloques tipados
-- **Objetivo:** reemplazar el modelo rígido "un slot = N × reps (+ el parche `isTimed`)" por un slot = **un ejercicio + una secuencia ordenada de bloques**, donde cada bloque tiene su propia forma. Así se pueden combinar tiempo, peso × reps, solo reps, calentamiento y (en RM-032) rampa, y agregar formas nuevas (p. ej. drop set) sin rediseñar.
-- **Etapas (acordadas 2026-09-16):**
-  1. **Estructura.** `RoutineItem.blocks` con un único tipo `legacy` `{ sets, reps, durationSec, approx }`, que envuelve el comportamiento actual tal cual, `isTimed` incluido (ver TD-018). Pasos: API con bloques + relleno → modo guiado lee bloques → editor escribe bloques (agregar/quitar, sin reordenar) → borrar las columnas `target*`/`isApproximation` de `RoutineItem`. Sin cambios visibles.
-  2. **Tipos nuevos + migración de datos.** Sets de solo reps, `Workout.setType`, tipos `weight_reps`/`reps`/`time`/`warmup`, selector de medición en `/log`, migración `legacy` → tipos nuevos (la lista de ejercicios se define ese día) y borrado de `isTimed`. Aquí se decide qué pasa al reemplazar por un ejercicio que se mide distinto.
-  3. **Rampa (RM-032).** Por definir si se fusiona con la etapa 2. `Workout.step` entra aquí, no en RM-031.
-- **Principio:** el ejercicio es solo un nombre. **La forma de medir vive en el bloque, no en el ejercicio.** Se elimina `Exercise.isTimed` y la casilla "Se mide en tiempo" del modal.
-- **Tipos iniciales de bloque** (`kind`):
-  - `weight_reps` `{ sets, reps }`: peso × reps.
-  - `reps` `{ sets, reps }`: solo reps, sin peso (Dead Bug).
-  - `time` `{ sets, durationSec }`: tiempo (Plank, Wall Sit, Bike).
-  - `warmup` `{ sets, reps }`: calentamiento genérico con peso (el viejo 25 × 2).
-  - `ramp`: lo agrega RM-032.
-- **Modelo:**
-  - `RoutineItem.blocks Json` (lista con `kind` como discriminador) reemplaza `targetSets`/`targetReps`/`targetDurationSec`/`isApproximation`.
-  - `Workout` sigue siendo **una fila plana por set** (clave para el análisis con IA) y suma `setType` (`WORKING | WARMUP`; `RAMP` y `step` los agrega RM-032). La medición se deduce de qué campos trae (`weight`, `reps`, `durationSec`).
-  - No se enlaza `Workout` → `RoutineItem`: hoy la API borra y recrea los items en cada edición (`routines.service.ts`, `update`), así que sus ids no son estables.
-- **API:** validación de `blocks` como unión discriminada (validador propio en el DTO); `CreateWorkoutDto` acepta `setType`/`step` y valida los campos según la medición.
-- **Web:**
-  - Los bloques se "aplanan" en una lista de sets planificados (`[time 2×30]` = 2 sets). El contador actual de la sesión (`progress[slot]`) pasa a ser el índice dentro de esa lista, y `SetLogger` pinta el set planificado que toca según su `kind`.
-  - Editor de rutina: cada slot permite agregar y quitar bloques eligiendo su tipo (reordenar queda fuera por ahora).
-  - Día libre (`/log`): se elige la medición; por default, la del último set de ese ejercicio.
-  - `formatTarget`, `SessionMap` y `EditWorkoutDialog` se leen desde los bloques y el set.
-  - Reemplazar un ejercicio en la sesión hereda los bloques del slot.
-- **Migración de datos:**
-  - Cada `RoutineItem` actual pasa a un bloque: `time` si el ejercicio era `isTimed`, `reps` para Dead Bug (y cualquier ejercicio cuyos sets sean todos `weight = 0` con equipo `peso-corporal`), `weight_reps` para el resto, conservando `isApproximation` dentro del bloque hasta RM-032.
-  - Sets: Dead Bug y similares pasan de `weight = 0` a `null`. Los calentamientos viejos (sets `isApproximation` con 25 reps antes del 07/09) pasan a `setType = WARMUP` con `isApproximation = false`. El resto queda `WORKING`.
-  - Tras cambiar el schema, correr `prisma generate` antes del build (ver TD-017).
-- **Hecho cuando:** Lower A se arma como lista de bloques (Bike `time`, Terminal Knee `weight_reps`, Wall Sit `time`, …, Dead Bug `reps`), el modo guiado pide lo correcto en cada uno sin `isTimed`, Dead Bug ya no guarda `0 kg`, y el historial de antes de la migración se sigue viendo igual.
-- **Fecha:** 2026-09-16 · **Estado:** En progreso (2026-09-16) · etapa 1 terminada (2026-09-16) · etapa 2, paso 7
 
 ## [RM-029] Recomendación serie por serie (arregla rampa y calentamiento)
 - **Objetivo:** que el "la última vez" muestre el peso de **esa misma serie** la sesión pasada, no el del último set registrado.

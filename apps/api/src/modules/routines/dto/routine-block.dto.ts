@@ -16,13 +16,6 @@ export class RoutineBlockDto {
   kind: BlockKind;
 }
 
-export class LegacyBlockDto extends RoutineBlockDto {
-  @Count() sets?: number | null;
-  @Count() reps?: number | null;
-  @Count() durationSec?: number | null;
-  @Flag() approx?: boolean;
-}
-
 export class WeightRepsBlockDto extends RoutineBlockDto {
   @Count() sets?: number | null;
   @Count() reps?: number | null;
@@ -49,7 +42,6 @@ export const blockDiscriminator = {
   discriminator: {
     property: 'kind',
     subTypes: [
-      { value: LegacyBlockDto, name: 'legacy' },
       { value: WeightRepsBlockDto, name: 'weight_reps' },
       { value: RepsBlockDto, name: 'reps' },
       { value: TimeBlockDto, name: 'time' },

@@ -27,10 +27,6 @@ function formatBlock(block: RoutineBlock): string | null {
   if (block.sets == null) return null;
   const reps = "reps" in block ? (block.reps ?? "—") : "—";
   switch (block.kind) {
-    case "legacy":
-      return block.durationSec != null
-        ? `${block.sets} × ${formatSeconds(block.durationSec)}`
-        : `${block.sets} × ${reps}`;
     case "time":
       return `${block.sets} × ${
         block.durationSec != null ? formatSeconds(block.durationSec) : "—"
@@ -68,10 +64,7 @@ export interface SetPlan {
   targetDurationSec: number | null;
 }
 
-export function setPlan(
-  block: RoutineBlock | null,
-  isTimed: boolean,
-): SetPlan {
+export function setPlan(block: RoutineBlock | null): SetPlan {
   const plan: SetPlan = {
     measure: "weight_reps",
     setType: "WORKING",
@@ -79,15 +72,7 @@ export function setPlan(
     targetReps: null,
     targetDurationSec: null,
   };
-  if (!block || block.kind === "legacy") {
-    return {
-      ...plan,
-      measure: isTimed ? "time" : "weight_reps",
-      approx: block?.approx ?? false,
-      targetReps: block?.reps ?? null,
-      targetDurationSec: block?.durationSec ?? null,
-    };
-  }
+  if (!block) return plan;
   switch (block.kind) {
     case "weight_reps":
       return { ...plan, approx: block.approx, targetReps: block.reps };

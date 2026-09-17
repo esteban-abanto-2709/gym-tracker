@@ -72,19 +72,11 @@ const toDraftBlock = (block: RoutineBlock): DraftBlock => ({
   approx: "approx" in block ? block.approx : false,
 });
 
-const toBlock = (block: DraftBlock, isTimed: boolean): RoutineBlock => {
+const toBlock = (block: DraftBlock): RoutineBlock => {
   const sets = toNullableInt(block.sets);
   const reps = toNullableInt(block.reps);
   const durationSec = toNullableInt(block.durationSec);
   switch (block.kind) {
-    case "legacy":
-      return {
-        kind: "legacy",
-        sets,
-        reps: isTimed ? null : reps,
-        durationSec: isTimed ? durationSec : null,
-        approx: isTimed ? false : block.approx,
-      };
     case "weight_reps":
       return { kind: "weight_reps", sets, reps, approx: block.approx };
     case "reps":
@@ -134,7 +126,6 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             key: newKey(),
             exerciseId: item.exerciseId,
             exerciseName: item.exercise.name,
-            isTimed: item.exercise.isTimed ?? false,
             blocks: item.blocks.map(toDraftBlock),
           })),
         );
@@ -154,7 +145,6 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         key: newKey(),
         exerciseId: exercise.id,
         exerciseName: exercise.name,
-        isTimed: exercise.isTimed ?? false,
         blocks: [emptyBlock()],
       },
     ]);
@@ -207,12 +197,9 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     });
   };
 
-  const handleCreateExercise = async (
-    exerciseName: string,
-    isTimed: boolean,
-  ) => {
+  const handleCreateExercise = async (exerciseName: string) => {
     try {
-      const created = await createExercise(exerciseName, isTimed);
+      const created = await createExercise(exerciseName);
       addItem(created);
       setIsDialogOpen(false);
     } catch (e) {
@@ -230,7 +217,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
       items: items.map((item, index) => ({
         exerciseId: item.exerciseId,
         position: index,
-        blocks: item.blocks.map((block) => toBlock(block, item.isTimed)),
+        blocks: item.blocks.map(toBlock),
       })),
     };
 

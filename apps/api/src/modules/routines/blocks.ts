@@ -1,19 +1,5 @@
-export const BLOCK_KINDS = [
-  'legacy',
-  'weight_reps',
-  'reps',
-  'time',
-  'warmup',
-] as const;
+export const BLOCK_KINDS = ['weight_reps', 'reps', 'time', 'warmup'] as const;
 export type BlockKind = (typeof BLOCK_KINDS)[number];
-
-export type LegacyBlock = {
-  kind: 'legacy';
-  sets: number | null;
-  reps: number | null;
-  durationSec: number | null;
-  approx: boolean;
-};
 
 export type WeightRepsBlock = {
   kind: 'weight_reps';
@@ -40,12 +26,7 @@ export type WarmupBlock = {
   reps: number | null;
 };
 
-export type RoutineBlock =
-  | LegacyBlock
-  | WeightRepsBlock
-  | RepsBlock
-  | TimeBlock
-  | WarmupBlock;
+export type RoutineBlock = WeightRepsBlock | RepsBlock | TimeBlock | WarmupBlock;
 
 export type BlockInput = {
   kind: BlockKind;
@@ -59,14 +40,6 @@ export function normalizeBlock(block: BlockInput): RoutineBlock {
   const sets = block.sets ?? null;
   const reps = block.reps ?? null;
   switch (block.kind) {
-    case 'legacy':
-      return {
-        kind: 'legacy',
-        sets,
-        reps,
-        durationSec: block.durationSec ?? null,
-        approx: block.approx ?? false,
-      };
     case 'weight_reps':
       return { kind: 'weight_reps', sets, reps, approx: block.approx ?? false };
     case 'reps':

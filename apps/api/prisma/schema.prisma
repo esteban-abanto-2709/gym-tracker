@@ -22,7 +22,6 @@ model Exercise {
   id           String        @id @default(uuid())
   name         String
   slug         String        @unique
-  isTimed      Boolean       @default(false)
   workouts     Workout[]
   routineItems RoutineItem[]
   createdAt    DateTime      @default(now())

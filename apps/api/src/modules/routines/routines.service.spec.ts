@@ -35,20 +35,14 @@ describe('RoutinesService blocks', () => {
   it('completa cada tipo con sus campos y null en lo que falta', async () => {
     expect(
       await storedBlocks([
-        { kind: 'legacy' },
+        { kind: 'weight_reps' },
         { kind: 'weight_reps', sets: 3, reps: 8 },
         { kind: 'reps', sets: 2, reps: 15 },
         { kind: 'time', sets: 3, durationSec: 30 },
         { kind: 'warmup', sets: 2 },
       ]),
     ).toEqual([
-      {
-        kind: 'legacy',
-        sets: null,
-        reps: null,
-        durationSec: null,
-        approx: false,
-      },
+      { kind: 'weight_reps', sets: null, reps: null, approx: false },
       { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
       { kind: 'reps', sets: 2, reps: 15 },
       { kind: 'time', sets: 3, durationSec: 30 },
@@ -77,7 +71,6 @@ describe('CreateRoutineDto blocks', () => {
   it('acepta todos los tipos de bloque', async () => {
     const errors = await dtoErrors(
       [
-        { kind: 'legacy', sets: 3, reps: 8, durationSec: null, approx: false },
         { kind: 'weight_reps', sets: 3, reps: 8, approx: true },
         { kind: 'reps', sets: 2, reps: 15 },
         { kind: 'time', sets: 3, durationSec: 30 },
@@ -93,9 +86,12 @@ describe('CreateRoutineDto blocks', () => {
     expect(await dtoErrors(undefined)).not.toHaveLength(0);
   });
 
-  it('rechaza un tipo de bloque desconocido', async () => {
-    expect(await dtoErrors([{ kind: 'ramp' }])).not.toHaveLength(0);
-  });
+  it.each(['ramp', 'legacy'])(
+    'rechaza el tipo de bloque %s',
+    async (kind) => {
+      expect(await dtoErrors([{ kind }])).not.toHaveLength(0);
+    },
+  );
 
   it('rechaza metas invalidas dentro del bloque', async () => {
     expect(await dtoErrors([{ kind: 'time', sets: 0 }])).not.toHaveLength(0);

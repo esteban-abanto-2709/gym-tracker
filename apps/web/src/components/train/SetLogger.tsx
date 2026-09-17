@@ -25,7 +25,7 @@ export function SetLogger({
   return (
     <SetForm
       exerciseId={item.exerciseId}
-      plan={setPlan(block, item.exercise.isTimed ?? false)}
+      plan={setPlan(block)}
       selectable={free || replaced}
       preferLastMeasure={free}
       equipment={equipment}

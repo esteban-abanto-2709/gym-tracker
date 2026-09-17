@@ -252,7 +252,6 @@ export function useGuidedSession() {
         exercise: {
           id: exercise.id,
           name: exercise.name,
-          isTimed: exercise.isTimed ?? false,
         },
       };
       const nextSkipped = { ...session.skipped };
@@ -285,7 +284,6 @@ export function useGuidedSession() {
             exercise: {
               id: exercise.id,
               name: exercise.name,
-              isTimed: exercise.isTimed ?? false,
             },
           },
         ],

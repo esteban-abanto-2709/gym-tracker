@@ -13,11 +13,9 @@ const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
   { value: "warmup", label: "Calentamiento" },
 ];
 
-const usesSeconds = (block: DraftBlock, isTimed: boolean) =>
-  block.kind === "time" || (block.kind === "legacy" && isTimed);
+const usesSeconds = (block: DraftBlock) => block.kind === "time";
 
-const usesApprox = (block: DraftBlock, isTimed: boolean) =>
-  block.kind === "weight_reps" || (block.kind === "legacy" && !isTimed);
+const usesApprox = (block: DraftBlock) => block.kind === "weight_reps";
 
 export interface DraftBlock {
   key: string;
@@ -32,7 +30,6 @@ export interface DraftItem {
   key: string;
   exerciseId: string;
   exerciseName: string;
-  isTimed: boolean;
   blocks: DraftBlock[];
 }
 
@@ -136,9 +133,6 @@ export function SortableExerciseItem({
                 aria-label="Tipo de bloque"
                 className="min-w-0 flex-1 bg-muted rounded-lg px-2 py-1.5 text-xs font-bold text-foreground outline-none border-2 border-transparent focus:border-primary transition-colors"
               >
-                {block.kind === "legacy" && (
-                  <option value="legacy">Formato anterior</option>
-                )}
                 {KIND_OPTIONS.map(({ value, label }) => (
                   <option key={value} value={value}>
                     {label}
@@ -182,16 +176,12 @@ export function SortableExerciseItem({
                   type="number"
                   inputMode="numeric"
                   min={0}
-                  value={
-                    usesSeconds(block, item.isTimed)
-                      ? block.durationSec
-                      : block.reps
-                  }
+                  value={usesSeconds(block) ? block.durationSec : block.reps}
                   onChange={(e) =>
                     onChangeBlock(
                       item.key,
                       block.key,
-                      usesSeconds(block, item.isTimed)
+                      usesSeconds(block)
                         ? { durationSec: e.target.value }
                         : { reps: e.target.value },
                     )
@@ -199,12 +189,12 @@ export function SortableExerciseItem({
                   className={numberInputClass}
                 />
                 <span className="text-xs font-bold text-muted-foreground">
-                  {usesSeconds(block, item.isTimed) ? "seg" : "reps"}
+                  {usesSeconds(block) ? "seg" : "reps"}
                 </span>
               </div>
             </div>
 
-            {usesApprox(block, item.isTimed) && (
+            {usesApprox(block) && (
               <ApproximationToggle
                 checked={block.approx}
                 onChange={(value) =>

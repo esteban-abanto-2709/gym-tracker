@@ -31,12 +31,12 @@ export function useExercises() {
 
   // Create a new exercise and add it to the local list
   const createExercise = useCallback(
-    async (name: string, isTimed = false): Promise<Exercise> => {
+    async (name: string): Promise<Exercise> => {
       setCreatingExercise(true);
       try {
         const created = await api.post<Exercise>(
           routes.api.exercises.create(),
-          { name: name.trim(), isTimed },
+          { name: name.trim() },
         );
 
         setExercises((prev) =>

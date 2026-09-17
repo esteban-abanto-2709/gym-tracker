@@ -16,7 +16,6 @@ export interface Exercise {
   id: string;
   name: string;
   slug: string;
-  isTimed?: boolean;
   description?: string;
   createdAt?: string;
 }
@@ -37,14 +36,6 @@ export interface Workout {
   isApproximation?: boolean;
   routineId?: string | null;
   createdAt: string;
-}
-
-export interface LegacyBlock {
-  kind: "legacy";
-  sets: number | null;
-  reps: number | null;
-  durationSec: number | null;
-  approx: boolean;
 }
 
 export interface WeightRepsBlock {
@@ -73,7 +64,6 @@ export interface WarmupBlock {
 }
 
 export type RoutineBlock =
-  | LegacyBlock
   | WeightRepsBlock
   | RepsBlock
   | TimeBlock
@@ -87,7 +77,6 @@ export interface RoutineItem {
   exercise: {
     id: string;
     name: string;
-    isTimed?: boolean;
   };
   position: number;
   blocks: RoutineBlock[];
