@@ -25,6 +25,16 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** puedo crear "PPL" y "Upper/Lower", asignar mis rutinas a cada uno, marcar "Upper/Lower" como activo desde el perfil, y al tocar "Iniciar rutina" veo primero Upper A/B y Lower A/B.
 - **Fecha:** 2026-09-16 · **Estado:** Abierto
 
+## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
+- **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.
+- **Problema:** hoy el sustituto hereda los bloques del slot (regla de RM-020). Al reemplazar Incline Press (`[warmup 2×25] + [weight_reps 3×8]`) por Plank, el mapa cuenta "0/5 series" y la meta dice `Cal. 2 × 25 + 3 × 8` para un ejercicio de tiempo. Detectado probando RM-031 el 2026-09-19.
+- **Regla:** al reemplazar, el slot se reconstruye desde el **último día** en que hiciste el sustituto: sus calentamientos pasan a un bloque `warmup` (series y reps de ese día) y sus series efectivas a un bloque con la medición que usaste (`weight_reps`/`reps`/`time`). Sin historial → slot libre y la medición se elige en el formulario. Los pesos siguen saliendo de "la última vez".
+- **API:** endpoint nuevo que devuelve la forma de la última sesión de un ejercicio (cuántos calentamientos, cuántas efectivas y con qué medición). Es el mismo dato por-sesión que necesitará RM-032.
+- **Lápiz (editar slot):** disponible en cualquier slot, no solo tras un reemplazo; permite cambiar series, reps o segundos y agregar/quitar el calentamiento. **Afecta solo la sesión de hoy** (se guarda en `ActiveSession`); la rutina guardada no se toca, igual que saltar/reemplazar/agregar. Ofrecer "guardar en la rutina" queda para después.
+- **Pasos:** (1) endpoint + test; (2) el reemplazo lo usa; (3) el lápiz.
+- **Hecho cuando:** reemplazar Incline Press por Plank deja "3 × 40 s" (lo que sueles hacer) en vez de heredar el calentamiento, y desde el lápiz puedo bajarlo a 2 series solo por hoy.
+- **Fecha:** 2026-09-19 · **Estado:** Abierto
+
 ## [RM-032] Calentamiento en rampa (un slot, pesos por escalón)
 - **Objetivo:** que la rampa (10 / 5 / 3 reps antes de las series efectivas) sea parte del **mismo slot** que las series de esa máquina y que **cada escalón recuerde su propio peso**. Hoy solo sobrevive el peso del último escalón y hay que recalcular el de 10 y el de 5 en cada sesión.
 - **Depende de:** RM-031 (bloques, hecho).
