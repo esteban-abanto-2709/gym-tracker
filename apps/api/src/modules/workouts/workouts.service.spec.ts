@@ -177,8 +177,16 @@ describe('CreateWorkoutDto', () => {
     expect(
       await errorsFor({ ...base, weight: 20, setType: 'WARMUP' }),
     ).toHaveLength(0);
-    const errors = await errorsFor({ ...base, weight: 20, setType: 'RAMP' });
+    const errors = await errorsFor({ ...base, weight: 20, setType: 'COOLDOWN' });
     expect(errors.map((e) => e.property)).toContain('setType');
+  });
+
+  it('acepta un escalon de rampa y rechaza uno no positivo', async () => {
+    expect(
+      await errorsFor({ ...base, weight: 20, setType: 'RAMP', step: 2 }),
+    ).toHaveLength(0);
+    const errors = await errorsFor({ ...base, weight: 20, step: 0 });
+    expect(errors.map((e) => e.property)).toContain('step');
   });
 
   it('acepta un set solo con duracion', async () => {

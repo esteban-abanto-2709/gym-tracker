@@ -36,6 +36,7 @@ export class WorkoutsService {
         routineId: createWorkoutDto.routineId ?? null,
         isApproximation: createWorkoutDto.isApproximation ?? false,
         setType: createWorkoutDto.setType ?? SetType.WORKING,
+        step: createWorkoutDto.step ?? null,
       },
     });
   }

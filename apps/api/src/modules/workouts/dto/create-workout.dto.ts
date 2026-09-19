@@ -60,4 +60,9 @@ export class CreateWorkoutDto {
   @IsOptional()
   @IsEnum(SetType)
   setType?: SetType;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  step?: number;
 }

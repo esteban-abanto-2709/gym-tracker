@@ -214,6 +214,28 @@ describe('Bloques y sets (e2e)', () => {
       expect(warmup.body.setType).toBe('WARMUP');
     });
 
+    it('registra un escalon de rampa con su numero', async () => {
+      const ramp = await agent
+        .post('/workouts')
+        .send({
+          exerciseId,
+          reps: 10,
+          weight: 30,
+          equipmentId: 'barra',
+          setType: 'RAMP',
+          step: 1,
+        })
+        .expect(201);
+      expect(ramp.body).toMatchObject({ setType: 'RAMP', step: 1 });
+    });
+
+    it('rechaza un escalon que no sea positivo', async () => {
+      await agent
+        .post('/workouts')
+        .send({ exerciseId, reps: 10, weight: 30, setType: 'RAMP', step: 0 })
+        .expect(400);
+    });
+
     it('rechaza peso y duracion en el mismo set', async () => {
       await agent
         .post('/workouts')
@@ -314,7 +336,7 @@ describe('Bloques y sets (e2e)', () => {
     });
 
     it('rechaza un setType desconocido', async () => {
-      await rec('&setType=RAMP').expect(400);
+      await rec('&setType=COOLDOWN').expect(400);
     });
   });
 

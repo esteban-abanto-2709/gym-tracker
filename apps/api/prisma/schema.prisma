@@ -49,12 +49,14 @@ model Workout {
   equipment       Equipment? @relation(fields: [equipmentId], references: [id])
   isApproximation Boolean    @default(false)
   setType         SetType    @default(WORKING)
+  step            Int?
   createdAt       DateTime   @default(now())
 }
 
 enum SetType {
   WORKING
   WARMUP
+  RAMP
 }
 
 model Routine {
