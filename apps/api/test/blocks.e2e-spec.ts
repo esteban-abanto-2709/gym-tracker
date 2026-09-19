@@ -81,6 +81,21 @@ describe('Bloques y sets (e2e)', () => {
               blocks: [{ kind: 'time', sets: 2, durationSec: 30 }],
             },
             { exerciseId, position: 3, blocks: [] },
+            {
+              exerciseId,
+              position: 4,
+              blocks: [
+                {
+                  kind: 'ramp',
+                  steps: [
+                    { reps: 10, pct: 50 },
+                    { reps: 5, pct: 70 },
+                    { reps: 3 },
+                  ],
+                },
+                { kind: 'weight_reps', sets: 3, reps: 8 },
+              ],
+            },
           ],
         })
         .expect(201);
@@ -95,6 +110,17 @@ describe('Bloques y sets (e2e)', () => {
           [{ kind: 'reps', sets: 2, reps: null }],
           [{ kind: 'time', sets: 2, durationSec: 30 }],
           [],
+          [
+            {
+              kind: 'ramp',
+              steps: [
+                { reps: 10, pct: 50 },
+                { reps: 5, pct: 70 },
+                { reps: 3, pct: null },
+              ],
+            },
+            { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
+          ],
         ]);
     });
 
@@ -106,6 +132,7 @@ describe('Bloques y sets (e2e)', () => {
         reps: 25,
       });
       expect(read.body.items[3].blocks).toEqual([]);
+      expect(read.body.items[4].blocks[0].steps).toHaveLength(3);
     });
 
     it('actualiza el tipo de un bloque', async () => {
@@ -130,7 +157,9 @@ describe('Bloques y sets (e2e)', () => {
 
     it.each([
       ['tipo legacy', [{ kind: 'legacy', sets: 3, reps: 8 }]],
-      ['tipo desconocido', [{ kind: 'ramp', sets: 3 }]],
+      ['tipo desconocido', [{ kind: 'superset', sets: 3 }]],
+      ['rampa sin escalones', [{ kind: 'ramp', steps: [] }]],
+      ['rampa con series sueltas', [{ kind: 'ramp', sets: 3 }]],
       ['campo ajeno al tipo', [{ kind: 'reps', sets: 2, durationSec: 30 }]],
       ['meta invalida', [{ kind: 'time', sets: 0, durationSec: 30 }]],
       ['sin lista de bloques', undefined],

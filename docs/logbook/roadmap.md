@@ -46,7 +46,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
   - Sets: los sets `isApproximation` de esos ejercicios con reps 10/5/3 dentro de un mismo día se marcan `setType = RAMP` con su `step` por orden. `isApproximation` vuelve a `false` en esos sets y recupera su significado original ("peso impreciso"). El mismo patrón aplica a sets fuera de rutina.
 - **Fuera de alcance:** calcular la rampa en base a un 1RM real. Los porcentajes quedan configurables por escalón, pero hoy se toman del peso efectivo.
 - **Hecho cuando:** en Upper A, Lat Pulldown es un solo slot. Al entrar precarga 31.5 / 45 / 51.8 kg en los tres escalones (lo del 07/09) y 58.5 en las efectivas, con la sugerencia de porcentaje visible al lado. El mapa de la sesión lo muestra como una sola fila.
-- **Fecha:** 2026-09-16 · **Estado:** Abierto
+- **Fecha:** 2026-09-16 · **Estado:** En progreso (2026-09-19)
 
 ## [RM-029] Recomendación serie por serie (arregla rampa y calentamiento)
 - **Objetivo:** que el "la última vez" muestre el peso de **esa misma serie** la sesión pasada, no el del último set registrado.

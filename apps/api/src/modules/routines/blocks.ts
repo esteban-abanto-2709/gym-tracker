@@ -1,4 +1,10 @@
-export const BLOCK_KINDS = ['weight_reps', 'reps', 'time', 'warmup'] as const;
+export const BLOCK_KINDS = [
+  'weight_reps',
+  'reps',
+  'time',
+  'warmup',
+  'ramp',
+] as const;
 export type BlockKind = (typeof BLOCK_KINDS)[number];
 
 export type WeightRepsBlock = {
@@ -26,7 +32,22 @@ export type WarmupBlock = {
   reps: number | null;
 };
 
-export type RoutineBlock = WeightRepsBlock | RepsBlock | TimeBlock | WarmupBlock;
+export type RampStep = {
+  reps: number | null;
+  pct: number | null;
+};
+
+export type RampBlock = {
+  kind: 'ramp';
+  steps: RampStep[];
+};
+
+export type RoutineBlock =
+  | WeightRepsBlock
+  | RepsBlock
+  | TimeBlock
+  | WarmupBlock
+  | RampBlock;
 
 export type BlockInput = {
   kind: BlockKind;
@@ -34,6 +55,7 @@ export type BlockInput = {
   reps?: number | null;
   durationSec?: number | null;
   approx?: boolean;
+  steps?: { reps?: number | null; pct?: number | null }[];
 };
 
 export function normalizeBlock(block: BlockInput): RoutineBlock {
@@ -48,5 +70,13 @@ export function normalizeBlock(block: BlockInput): RoutineBlock {
       return { kind: 'time', sets, durationSec: block.durationSec ?? null };
     case 'warmup':
       return { kind: 'warmup', sets, reps };
+    case 'ramp':
+      return {
+        kind: 'ramp',
+        steps: (block.steps ?? []).map((step) => ({
+          reps: step.reps ?? null,
+          pct: step.pct ?? null,
+        })),
+      };
   }
 }

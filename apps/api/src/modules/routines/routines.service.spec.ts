@@ -40,6 +40,7 @@ describe('RoutinesService blocks', () => {
         { kind: 'reps', sets: 2, reps: 15 },
         { kind: 'time', sets: 3, durationSec: 30 },
         { kind: 'warmup', sets: 2 },
+        { kind: 'ramp', steps: [{ reps: 10, pct: 50 }, { reps: 5 }] },
       ]),
     ).toEqual([
       { kind: 'weight_reps', sets: null, reps: null, approx: false },
@@ -47,6 +48,13 @@ describe('RoutinesService blocks', () => {
       { kind: 'reps', sets: 2, reps: 15 },
       { kind: 'time', sets: 3, durationSec: 30 },
       { kind: 'warmup', sets: 2, reps: null },
+      {
+        kind: 'ramp',
+        steps: [
+          { reps: 10, pct: 50 },
+          { reps: 5, pct: null },
+        ],
+      },
     ]);
   });
 
@@ -75,6 +83,14 @@ describe('CreateRoutineDto blocks', () => {
         { kind: 'reps', sets: 2, reps: 15 },
         { kind: 'time', sets: 3, durationSec: 30 },
         { kind: 'warmup', sets: 2, reps: 25 },
+        {
+          kind: 'ramp',
+          steps: [
+            { reps: 10, pct: 50 },
+            { reps: 5, pct: 70 },
+            { reps: 3, pct: 85 },
+          ],
+        },
       ],
       true,
     );
@@ -86,12 +102,23 @@ describe('CreateRoutineDto blocks', () => {
     expect(await dtoErrors(undefined)).not.toHaveLength(0);
   });
 
-  it.each(['ramp', 'legacy'])(
+  it.each(['superset', 'legacy'])(
     'rechaza el tipo de bloque %s',
     async (kind) => {
       expect(await dtoErrors([{ kind }])).not.toHaveLength(0);
     },
   );
+
+  it.each([
+    ['sin escalones', { steps: [] }],
+    ['sin la lista de escalones', {}],
+    ['con un escalon invalido', { steps: [{ reps: 0 }] }],
+    ['con un campo ajeno en el escalon', { steps: [{ reps: 10, sets: 1 }] }],
+  ])('rechaza una rampa %s', async (_label, extra) => {
+    expect(await dtoErrors([{ kind: 'ramp', ...extra }], true)).not.toHaveLength(
+      0,
+    );
+  });
 
   it('rechaza metas invalidas dentro del bloque', async () => {
     expect(await dtoErrors([{ kind: 'time', sets: 0 }])).not.toHaveLength(0);
@@ -102,6 +129,7 @@ describe('CreateRoutineDto blocks', () => {
     ['time', { reps: 10 }],
     ['warmup', { approx: true }],
     ['weight_reps', { durationSec: 30 }],
+    ['ramp', { steps: [{ reps: 10, pct: 50 }] }],
   ])(
     'rechaza en un bloque %s un campo que no le corresponde',
     async (kind, extra) => {

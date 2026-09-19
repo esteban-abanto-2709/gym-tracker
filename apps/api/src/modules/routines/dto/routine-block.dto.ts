@@ -1,10 +1,14 @@
 import { applyDecorators } from '@nestjs/common';
+import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsBoolean,
   IsIn,
   IsInt,
   IsOptional,
   IsPositive,
+  ValidateNested,
 } from 'class-validator';
 import { BLOCK_KINDS, type BlockKind } from '../blocks';
 
@@ -37,6 +41,19 @@ export class WarmupBlockDto extends RoutineBlockDto {
   @Count() reps?: number | null;
 }
 
+export class RampStepDto {
+  @Count() reps?: number | null;
+  @Count() pct?: number | null;
+}
+
+export class RampBlockDto extends RoutineBlockDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => RampStepDto)
+  steps: RampStepDto[];
+}
+
 export const blockDiscriminator = {
   keepDiscriminatorProperty: true,
   discriminator: {
@@ -46,6 +63,7 @@ export const blockDiscriminator = {
       { value: RepsBlockDto, name: 'reps' },
       { value: TimeBlockDto, name: 'time' },
       { value: WarmupBlockDto, name: 'warmup' },
+      { value: RampBlockDto, name: 'ramp' },
     ],
   },
 };
