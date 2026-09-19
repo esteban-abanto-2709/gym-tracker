@@ -32,7 +32,7 @@ describe('WorkoutsService.getRecommendation', () => {
       },
     ]);
 
-    const rec = await service.getRecommendation('u1', 'e1', false);
+    const rec = await service.getRecommendation('u1', 'e1');
 
     expect(rec.suggestedWeight).toBeNull();
     expect(rec.lastDurationSec).toBe(45);
@@ -55,7 +55,7 @@ describe('WorkoutsService.getRecommendation', () => {
       },
     ]);
 
-    const rec = await service.getRecommendation('u1', 'e1', false);
+    const rec = await service.getRecommendation('u1', 'e1');
 
     expect(rec.lastReps).toBe(15);
     expect(rec.lastWeight).toBeNull();
@@ -78,7 +78,7 @@ describe('WorkoutsService.getRecommendation', () => {
       },
     ]);
 
-    const rec = await service.getRecommendation('u1', 'e1', false);
+    const rec = await service.getRecommendation('u1', 'e1');
 
     expect(rec.suggestedWeight).toBe(62.5);
     expect(rec.lastDurationSec).toBeNull();
@@ -92,7 +92,7 @@ describe('WorkoutsService lastMeasure', () => {
         findMany: jest.fn().mockResolvedValue([]),
         findFirst: jest.fn().mockResolvedValue(latest),
       },
-    } as unknown as PrismaService).getRecommendation('u1', 'e1', false);
+    } as unknown as PrismaService).getRecommendation('u1', 'e1');
 
   it.each([
     [{ weight: 60, durationSec: null }, 'weight_reps'],
@@ -115,7 +115,7 @@ describe('WorkoutsService set types', () => {
     const service = new WorkoutsService({
       workout: { findMany, findFirst, create },
     } as unknown as PrismaService);
-    return { service, findMany, create };
+    return { service, findMany, findFirst, create };
   };
 
   const whereOf = (findMany: jest.Mock) =>
@@ -123,21 +123,49 @@ describe('WorkoutsService set types', () => {
 
   it('la recomendacion usa solo series efectivas por defecto', async () => {
     const { service, findMany } = setup();
-    await service.getRecommendation('u1', 'e1', false);
+    await service.getRecommendation('u1', 'e1');
     expect(whereOf(findMany).setType).toBe('WORKING');
   });
 
   it('la recomendacion de calentamiento usa solo calentamientos', async () => {
     const { service, findMany } = setup();
-    await service.getRecommendation(
+    await service.getRecommendation('u1', 'e1', undefined, undefined, 'WARMUP');
+    expect(whereOf(findMany).setType).toBe('WARMUP');
+  });
+
+  it('la recomendacion de rampa filtra por escalon', async () => {
+    const { service, findMany } = setup();
+    await service.getRecommendation('u1', 'e1', undefined, undefined, 'RAMP', 2);
+    expect(whereOf(findMany)).toMatchObject({ setType: 'RAMP', step: 2 });
+  });
+
+  it('la recomendacion ya no separa por aproximacion', async () => {
+    const { service, findMany } = setup();
+    await service.getRecommendation('u1', 'e1');
+    expect(whereOf(findMany)).not.toHaveProperty('isApproximation');
+    expect(whereOf(findMany)).not.toHaveProperty('step');
+  });
+
+  it('la rampa devuelve el peso efectivo del ejercicio', async () => {
+    const { service, findFirst } = setup();
+    findFirst
+      .mockResolvedValueOnce({ weight: 58.5, durationSec: null })
+      .mockResolvedValueOnce({ weight: 58.5 });
+    const rec = await service.getRecommendation(
       'u1',
       'e1',
-      false,
       undefined,
       undefined,
-      'WARMUP',
+      'RAMP',
+      1,
     );
-    expect(whereOf(findMany).setType).toBe('WARMUP');
+    expect(rec.workingWeight).toBe(58.5);
+  });
+
+  it('fuera de la rampa no se consulta el peso efectivo', async () => {
+    const { service, findFirst } = setup();
+    await service.getRecommendation('u1', 'e1');
+    expect(findFirst).toHaveBeenCalledTimes(1);
   });
 
   it('un set sin tipo se guarda como efectivo', async () => {

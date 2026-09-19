@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseEnumPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { SetType } from '@prisma/client';
 import { WorkoutsService } from './workouts.service';
@@ -34,19 +35,19 @@ export class WorkoutsController {
   async getRecommendation(
     @CurrentUser() user: AuthUser,
     @Query('exerciseId') exerciseId: string,
-    @Query('isApproximation') isApproximation?: string,
     @Query('tz') tz?: string,
     @Query('equipmentId') equipmentId?: string,
     @Query('setType', new ParseEnumPipe(SetType, { optional: true }))
     setType?: SetType,
+    @Query('step', new ParseIntPipe({ optional: true })) step?: number,
   ) {
     return this.workoutsService.getRecommendation(
       user.id,
       exerciseId,
-      isApproximation === 'true',
       tz,
       equipmentId,
       setType,
+      step,
     );
   }
 

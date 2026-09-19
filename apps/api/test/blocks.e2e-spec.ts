@@ -289,6 +289,28 @@ describe('Bloques y sets (e2e)', () => {
           {
             userId,
             exerciseId,
+            reps: 10,
+            weight: 30,
+            opinion: '',
+            equipmentId: 'barra',
+            setType: 'RAMP',
+            step: 1,
+            createdAt: at(1),
+          },
+          {
+            userId,
+            exerciseId,
+            reps: 5,
+            weight: 45,
+            opinion: '',
+            equipmentId: 'barra',
+            setType: 'RAMP',
+            step: 2,
+            createdAt: at(2),
+          },
+          {
+            userId,
+            exerciseId,
             reps: 15,
             weight: null,
             opinion: '',
@@ -303,36 +325,59 @@ describe('Bloques y sets (e2e)', () => {
       agent.get(`/workouts/recommendation?exerciseId=${exerciseId}${query}`);
 
     it('por defecto usa solo series efectivas del mismo equipo', async () => {
-      const res = await rec('&isApproximation=false&equipmentId=barra').expect(
-        200,
-      );
+      const res = await rec('&equipmentId=barra').expect(200);
       expect(res.body).toMatchObject({ lastWeight: 60, lastReps: 8 });
     });
 
     it('con setType=WARMUP usa solo calentamientos', async () => {
-      const res = await rec(
-        '&isApproximation=false&equipmentId=barra&setType=WARMUP',
-      ).expect(200);
+      const res = await rec('&equipmentId=barra&setType=WARMUP').expect(200);
       expect(res.body).toMatchObject({ lastWeight: 20, lastReps: 25 });
     });
 
-    it('lastMeasure sale del ultimo set del ejercicio, sin filtros', async () => {
-      const res = await rec('&isApproximation=false&equipmentId=barra').expect(
+    it.each([
+      [1, 30, 10],
+      [2, 45, 5],
+    ])(
+      'cada escalon de la rampa recuerda su propio peso (%i)',
+      async (step, weight, reps) => {
+        const res = await rec(
+          `&equipmentId=barra&setType=RAMP&step=${step}`,
+        ).expect(200);
+        expect(res.body).toMatchObject({ lastWeight: weight, lastReps: reps });
+      },
+    );
+
+    it('la rampa devuelve el peso efectivo como referencia', async () => {
+      const res = await rec('&equipmentId=barra&setType=RAMP&step=1').expect(
         200,
       );
+      expect(res.body.workingWeight).toBe(60);
+    });
+
+    it('un escalon sin historial no inventa peso', async () => {
+      const res = await rec('&equipmentId=barra&setType=RAMP&step=3').expect(
+        200,
+      );
+      expect(res.body).toMatchObject({ lastWeight: null, workingWeight: 60 });
+    });
+
+    it('lastMeasure sale del ultimo set del ejercicio, sin filtros', async () => {
+      const res = await rec('&equipmentId=barra').expect(200);
       expect(res.body.lastMeasure).toBe('reps');
     });
 
     it('sin historial del filtro devuelve nulos pero conserva lastMeasure', async () => {
-      const res = await rec(
-        '&isApproximation=true&equipmentId=barra',
-      ).expect(200);
+      const res = await rec('&equipmentId=mancuernas').expect(200);
       expect(res.body).toMatchObject({
         lastWeight: null,
         lastReps: null,
         suggestedWeight: null,
         lastMeasure: 'reps',
       });
+    });
+
+    it('rechaza un escalon que no sea numero', async () => {
+      await rec('&setType=RAMP&step=uno').expect(400);
     });
 
     it('rechaza un setType desconocido', async () => {

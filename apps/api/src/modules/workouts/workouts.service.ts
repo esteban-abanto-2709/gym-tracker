@@ -44,21 +44,21 @@ export class WorkoutsService {
   async getRecommendation(
     userId: string,
     exerciseId: string,
-    isApproximation: boolean,
     tz?: string,
     equipmentId?: string,
     setType: SetType = SetType.WORKING,
+    step?: number,
   ) {
     // El peso no es comparable entre equipos: la recomendación se hace solo
     // sobre los sets del mismo equipo (equipmentId vacío => "sin especificar").
-    const [sets, latestAny] = await Promise.all([
+    const [sets, latestAny, working] = await Promise.all([
       this.prisma.workout.findMany({
         where: {
           userId,
           exerciseId,
-          isApproximation,
           equipmentId: equipmentId || null,
           setType,
+          ...(step != null ? { step } : {}),
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -67,8 +67,22 @@ export class WorkoutsService {
         orderBy: { createdAt: 'desc' },
         select: { weight: true, durationSec: true },
       }),
+      setType === SetType.RAMP
+        ? this.prisma.workout.findFirst({
+            where: {
+              userId,
+              exerciseId,
+              equipmentId: equipmentId || null,
+              setType: SetType.WORKING,
+              weight: { not: null },
+            },
+            orderBy: { createdAt: 'desc' },
+            select: { weight: true },
+          })
+        : null,
     ]);
     const lastMeasure = latestAny ? measureOf(latestAny) : null;
+    const workingWeight = working?.weight ?? null;
 
     if (sets.length === 0) {
       return {
@@ -77,16 +91,17 @@ export class WorkoutsService {
         lastDurationSec: null,
         suggestedWeight: null,
         lastMeasure,
+        workingWeight,
       };
     }
 
     const last = sets[0];
-    const workingWeight = last.weight;
+    const trackWeight = last.weight;
 
     // Best reps achieved at the current working weight, per local day.
     const bestRepsByDay = new Map<string, number>();
     for (const s of sets) {
-      if (s.weight !== workingWeight) continue;
+      if (s.weight !== trackWeight) continue;
       const day = toLocalDateString(s.createdAt, tz);
       bestRepsByDay.set(day, Math.max(bestRepsByDay.get(day) ?? 0, s.reps));
     }
@@ -95,11 +110,11 @@ export class WorkoutsService {
     // day at this weight by the margin. Different weight => fresh track.
     const days = [...bestRepsByDay.keys()].sort().reverse();
     let suggestedWeight: number | null = null;
-    if (workingWeight != null && days.length >= 2) {
+    if (trackWeight != null && days.length >= 2) {
       const bestNow = bestRepsByDay.get(days[0]) ?? 0;
       const bestPrev = bestRepsByDay.get(days[1]) ?? 0;
       if (bestNow >= bestPrev + REP_MARGIN) {
-        suggestedWeight = workingWeight + WEIGHT_STEP_KG;
+        suggestedWeight = trackWeight + WEIGHT_STEP_KG;
       }
     }
 
@@ -109,6 +124,7 @@ export class WorkoutsService {
       lastDurationSec: last.durationSec,
       suggestedWeight,
       lastMeasure,
+      workingWeight,
     };
   }
 
