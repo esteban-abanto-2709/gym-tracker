@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [WL-013] Avisar en la rampa cuando sube el peso efectivo (2026-09-19 09:57)
+Un escalón con historial muestra el aviso "Sube a X kg" cuando el porcentaje sobre el peso efectivo actual supera al peso guardado por 2.5 kg o más; el campo sigue precargado con el peso guardado. Promovido de WL-013.
+
 ## [RM-032] Calentamiento en rampa: un solo slot con peso por escalón (2026-09-19 09:34)
 La rampa es un bloque `ramp` dentro del slot del ejercicio y cada escalón recuerda su propio peso (`Workout.setType = RAMP` + `step`, recomendación filtrada por escalón); el porcentaje sobre el peso efectivo queda como sugerencia. Datos migrados: 7 rampas fusionadas (20 slots menos) y 20 sets etiquetados con su escalón.
 

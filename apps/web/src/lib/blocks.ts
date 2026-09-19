@@ -102,6 +102,18 @@ export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
   }
 }
 
+const RAMP_SUGGEST_MARGIN_KG = 2.5;
+
+export function rampSuggestedWeight(
+  pct: number | null,
+  lastWeight: number | null,
+  workingWeight: number | null,
+): number | null {
+  if (pct == null || lastWeight == null || workingWeight == null) return null;
+  const target = Math.round(((workingWeight * pct) / 100) * 2) / 2;
+  return target >= lastWeight + RAMP_SUGGEST_MARGIN_KG ? target : null;
+}
+
 export function formatSetGoal(plan: SetPlan): string | null {
   if (plan.targetDurationSec != null) return `${plan.targetDurationSec} s`;
   if (plan.targetReps == null) return null;

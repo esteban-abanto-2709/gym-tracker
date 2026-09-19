@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Equipment, SetType } from "@/lib/types";
-import type { SetPlan } from "@/lib/blocks";
+import { rampSuggestedWeight, type SetPlan } from "@/lib/blocks";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
@@ -164,6 +164,16 @@ export function SetForm({
     });
   };
 
+  const suggestedWeight = isWorkingWeight
+    ? (recommendation?.suggestedWeight ?? null)
+    : setType === "RAMP"
+      ? rampSuggestedWeight(
+          pct,
+          recommendation?.lastWeight ?? null,
+          recommendation?.workingWeight ?? null,
+        )
+      : null;
+
   const lastLabel = (() => {
     if (!recommendation) return "Sin registro previo";
     const { lastWeight, lastReps, lastDurationSec } = recommendation;
@@ -213,10 +223,10 @@ export function SetForm({
             ≈ {pct} % de {recommendation.workingWeight} kg
           </p>
         )}
-        {isWorkingWeight && recommendation?.suggestedWeight != null && (
+        {suggestedWeight != null && (
           <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
             <ArrowUp className="w-4 h-4" strokeWidth={3} />
-            Sube a {recommendation.suggestedWeight} kg
+            Sube a {suggestedWeight} kg
           </div>
         )}
       </div>
