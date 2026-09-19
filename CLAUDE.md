@@ -123,7 +123,7 @@ model Workout {
 }
 ```
 
-`Routine` also carries `userId` and is unique per `[userId, name]` (so two users can each have a "Push"). Each `RoutineItem` (a slot: one exercise at a `position`) stores its targets in `blocks`, a JSON list of typed blocks discriminated by `kind`: `weight_reps` `{ sets, reps, approx }`, `reps` `{ sets, reps }`, `time` `{ sets, durationSec }`, `warmup` `{ sets, reps }`. How a set is measured lives in its block (free slots and free-day sets pick it with a measure selector); `Exercise` is just a name + slug. Each `Workout` carries `setType` (`WORKING`/`WARMUP`), and a set without `weight` or `durationSec` is reps-only. Block types live in `apps/api/src/modules/routines/blocks.ts` (validated by `dto/routine-block.dto.ts`) and `apps/web/src/lib/types.ts`; the web flattens them into planned sets in `apps/web/src/lib/blocks.ts`. Some fields on `Workout`/`Routine` (e.g. `routineId`, `isApproximation`) are omitted here for brevity — see `apps/api/prisma/schema.prisma`.
+`Routine` also carries `userId` and is unique per `[userId, name]` (so two users can each have a "Push"). Each `RoutineItem` (a slot: one exercise at a `position`) stores its targets in `blocks`, a JSON list of typed blocks discriminated by `kind`: `weight_reps` `{ sets, reps, approx }`, `reps` `{ sets, reps }`, `time` `{ sets, durationSec }`, `warmup` `{ sets, reps }`, `ramp` `{ steps: [{ reps, pct }] }`. A `ramp` block is the warm-up ladder (10/5/3) inside the working slot: it plans one set per step, and `pct` is only a hint over the last working weight. How a set is measured lives in its block (free slots and free-day sets pick it with a measure selector); `Exercise` is just a name + slug. Each `Workout` carries `setType` (`WORKING`/`WARMUP`/`RAMP`) plus `step` (which rung of the ramp), and a set without `weight` or `durationSec` is reps-only. Block types live in `apps/api/src/modules/routines/blocks.ts` (validated by `dto/routine-block.dto.ts`) and `apps/web/src/lib/types.ts`; the web flattens them into planned sets in `apps/web/src/lib/blocks.ts`. Some fields on `Workout`/`Routine` (e.g. `routineId`, `isApproximation`) are omitted here for brevity — see `apps/api/prisma/schema.prisma`.
 
 ### API Endpoints
 
@@ -140,7 +140,7 @@ model Workout {
 | POST | `/workouts` | Create workout |
 | PATCH | `/workouts/:id` | Update workout |
 | DELETE | `/workouts/:id` | Delete workout |
-| GET | `/workouts/recommendation` | Weight suggestion for an exercise (`?exerciseId=&isApproximation=&tz=&equipmentId=&setType=`; `setType` is `WORKING` (default) or `WARMUP`) |
+| GET | `/workouts/recommendation` | Weight suggestion for an exercise (`?exerciseId=&tz=&equipmentId=&setType=&step=`; `setType` is `WORKING` (default), `WARMUP` or `RAMP`, and `step` narrows it to one rung of the ramp; the response adds `workingWeight` for `RAMP`) |
 
 ### Frontend (Next.js App Router)
 

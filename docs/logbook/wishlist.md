@@ -34,5 +34,11 @@ En un bloque `reps` (Dead Bug, plancha abdominal) el equipo siempre es "peso cor
 ## [WL-011] Marcar el calentamiento de forma explícita en el modo guiado
 Hoy un set de calentamiento solo se distingue por la etiqueta chica "Calentamiento · La última vez…", mientras el set efectivo muestra la casilla "Aproximación" bien visible: se siente al revés. Idea: un distintivo claro en la tarjeta del ejercicio (badge o color) cuando la serie es de calentamiento, y acortar el texto de la pantalla de descanso, que hoy se corta ("objetivo 25 reps de calentamien…").
 
+## [WL-012] Quitar la casilla "Aproximación"
+Con el slot flexible, lo que antes se marcaba a mano ya lo dice el propio bloque (`warmup`, `ramp`, `reps`, `time`), así que la casilla podría sobrar. Evaluar quitarla del formulario y decidir qué pasa con la columna `Workout.isApproximation`.
+
+## [WL-013] Avisar en la rampa cuando sube el peso efectivo
+Si subes el peso de las series efectivas, los escalones siguen precargando su peso guardado (correcto) y solo el "≈ 50 % de X kg" refleja el cambio. Idea: un aviso explícito tipo "Sube a 52 kg" en el escalón cuando el peso efectivo creció desde la última rampa — sugerir, nunca cambiar el valor solo.
+
 ## [WL-007] Tags de anotación para análisis con IA
 Vocabulario de tags de lista cerrada más allá de "aproximación" (ej. "fallo técnico", "sobreesfuerzo") que se apilan sobre la serie y enriquecen el texto que se exporta a la IA (ver `RM-021`). Diferido: hoy solo interesa la marca de aproximación (`RM-018`).

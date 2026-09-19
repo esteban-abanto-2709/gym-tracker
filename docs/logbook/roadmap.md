@@ -29,32 +29,11 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.
 - **Problema:** hoy el sustituto hereda los bloques del slot (regla de RM-020). Al reemplazar Incline Press (`[warmup 2×25] + [weight_reps 3×8]`) por Plank, el mapa cuenta "0/5 series" y la meta dice `Cal. 2 × 25 + 3 × 8` para un ejercicio de tiempo. Detectado probando RM-031 el 2026-09-19.
 - **Regla:** al reemplazar, el slot se reconstruye desde el **último día** en que hiciste el sustituto: sus calentamientos pasan a un bloque `warmup` (series y reps de ese día) y sus series efectivas a un bloque con la medición que usaste (`weight_reps`/`reps`/`time`). Sin historial → slot libre y la medición se elige en el formulario. Los pesos siguen saliendo de "la última vez".
-- **API:** endpoint nuevo que devuelve la forma de la última sesión de un ejercicio (cuántos calentamientos, cuántas efectivas y con qué medición). Es el mismo dato por-sesión que necesitará RM-032.
+- **API:** endpoint nuevo que devuelve la forma de la última sesión de un ejercicio (cuántos calentamientos, cuántas efectivas y con qué medición).
 - **Lápiz (editar slot):** disponible en cualquier slot, no solo tras un reemplazo; permite cambiar series, reps o segundos y agregar/quitar el calentamiento. **Afecta solo la sesión de hoy** (se guarda en `ActiveSession`); la rutina guardada no se toca, igual que saltar/reemplazar/agregar. Ofrecer "guardar en la rutina" queda para después.
 - **Pasos:** (1) endpoint + test; (2) el reemplazo lo usa; (3) el lápiz.
 - **Hecho cuando:** reemplazar Incline Press por Plank deja "3 × 40 s" (lo que sueles hacer) en vez de heredar el calentamiento, y desde el lápiz puedo bajarlo a 2 series solo por hoy.
 - **Fecha:** 2026-09-19 · **Estado:** Abierto
-
-## [RM-032] Calentamiento en rampa (un slot, pesos por escalón)
-- **Objetivo:** que la rampa (10 / 5 / 3 reps antes de las series efectivas) sea parte del **mismo slot** que las series de esa máquina y que **cada escalón recuerde su propio peso**. Hoy solo sobrevive el peso del último escalón y hay que recalcular el de 10 y el de 5 en cada sesión.
-- **Depende de:** RM-031 (bloques, hecho).
-- **Bloque `ramp`:** `{ kind: "ramp", steps: [{ reps: 10, pct: 50 }, { reps: 5, pct: 70 }, { reps: 3, pct: 85 }] }`. Va antes del bloque `weight_reps` en el mismo slot: Hack Squat = `[ramp 10/5/3] + [weight_reps 3×8]`. Cada escalón es un set planificado con `setType = RAMP` y `step = 1..n`.
-- **Peso de cada escalón:** se precarga **siempre** con el peso que usaste en ese mismo escalón la última vez (mismo ejercicio + equipo, `setType = RAMP`, mismo `step`, último día). El porcentaje es solo una sugerencia visible ("≈ 50 % de tu peso efectivo") y se usa para precargar únicamente si ese escalón no tiene historial. "Peso efectivo" = peso del último bloque `weight_reps` de ese ejercicio (no es un 1RM: hoy no existe).
-- **Recomendación:** `getRecommendation` filtra por `setType` y `step` en vez de `isApproximation`. Así las series efectivas dejan de mezclarse con la rampa y la sugerencia de +2.5 kg se calcula solo sobre las efectivas. **Absorbe RM-029.**
-- **Migración de datos:**
-  - Rutinas: los slots consecutivos del mismo ejercicio con `isApproximation` y `1×N` (10/5/3, o 10/5 en Leg Press), seguidos del slot efectivo, se fusionan en un slot `[ramp] + [weight_reps]`. Son 7 casos en Upper A/B y Lower A/B.
-  - Sets: los sets `isApproximation` de esos ejercicios con reps 10/5/3 dentro de un mismo día se marcan `setType = RAMP` con su `step` por orden. `isApproximation` vuelve a `false` en esos sets y recupera su significado original ("peso impreciso"). El mismo patrón aplica a sets fuera de rutina.
-- **Fuera de alcance:** calcular la rampa en base a un 1RM real. Los porcentajes quedan configurables por escalón, pero hoy se toman del peso efectivo.
-- **Hecho cuando:** en Upper A, Lat Pulldown es un solo slot. Al entrar precarga 31.5 / 45 / 51.8 kg en los tres escalones (lo del 07/09) y 58.5 en las efectivas, con la sugerencia de porcentaje visible al lado. El mapa de la sesión lo muestra como una sola fila.
-- **Fecha:** 2026-09-16 · **Estado:** En progreso (2026-09-19)
-
-## [RM-029] Recomendación serie por serie (arregla rampa y calentamiento)
-- **Objetivo:** que el "la última vez" muestre el peso de **esa misma serie** la sesión pasada, no el del último set registrado.
-- **Problema:** `getRecommendation` hace `last = sets[0]` (`workouts.service.ts:52`): un solo peso recordado por ejercicio+pista. Con una rampa de 30×10 / 42×5 / 51×3 los tres escalones muestran 51 kg. Con un calentamiento de dos series a distinto peso (real: `Lat Pulldown` 31.5×25 y 38.3×25 el 01/09) la primera muestra el peso de la segunda.
-- **Alcance:** que la recomendación devuelva los sets del **último día** de ese ejercicio y esa pista, en orden, y que el front elija el que toca según en qué serie va (`setsDoneForCurrent` ya lo sabe). Sin migración: el dato ya está en la BD, y el arreglo es **retroactivo** sobre todo el historial. Descartado: emparejar por reps objetivo — arregla la rampa (10/5/3) pero no el calentamiento (las dos series son de 25). Diferido a H3: rampa como % del 1RM, que hoy no se guarda en ninguna parte.
-- **Efecto secundario deseado:** la rampa deja de necesitar `isApproximation` para separarse, y el booleano vuelve a significar solo "el peso es impreciso".
-- **Hecho cuando:** en la rampa de UPPER A cada escalón muestra su propio peso de la sesión anterior, y la primera serie de calentamiento muestra la primera, no la última.
-- **Fecha:** 2026-09-07 · **Estado:** Abierto · absorbido por RM-032 (se cierra junto con él)
 
 ## [RM-027] Default de equipo desde la BD (último Workout real del ejercicio)
 - **Objetivo:** al comenzar un ejercicio, preseleccionar el equipo consultando de la BD **cómo se hizo la última vez** (el equipo del último `Workout` de ese ejercicio), en vez de depender solo de la memoria localStorage por-navegador de RM-026. Robustez cross-device y ante limpieza de storage/incógnito.

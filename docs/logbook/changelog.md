@@ -12,6 +12,12 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-032] Calentamiento en rampa: un solo slot con peso por escalón (2026-09-19 09:34)
+La rampa es un bloque `ramp` dentro del slot del ejercicio y cada escalón recuerda su propio peso (`Workout.setType = RAMP` + `step`, recomendación filtrada por escalón); el porcentaje sobre el peso efectivo queda como sugerencia. Datos migrados: 7 rampas fusionadas (20 slots menos) y 20 sets etiquetados con su escalón.
+
+## [RM-029] Recomendación serie por serie (arregla rampa y calentamiento) (2026-09-19 09:34)
+Cerrado dentro de RM-032: cada escalón de rampa y cada serie de calentamiento consultan su propio historial por `setType` y `step`, y `isApproximation` vuelve a significar solo "el peso es impreciso".
+
 ## [RM-031] Slots flexibles: la rutina como lista de bloques tipados (2026-09-16 22:18)
 Cada `RoutineItem` guarda `blocks` (JSON tipado: `weight_reps`, `reps`, `time`, `warmup`) y cada `Workout` un `setType` (`WORKING`/`WARMUP`); modo guiado, día libre (selector de medición) y editor trabajan por bloque. Datos migrados: 8 calentamientos PPL fusionados con su slot, 112 sets de calentamiento marcados y peso corporal sin `0 kg`.
 
