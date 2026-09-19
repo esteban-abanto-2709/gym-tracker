@@ -11,11 +11,24 @@ const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
   { value: "reps", label: "Solo reps" },
   { value: "time", label: "Tiempo" },
   { value: "warmup", label: "Calentamiento" },
+  { value: "ramp", label: "Rampa" },
 ];
 
 const usesSeconds = (block: DraftBlock) => block.kind === "time";
 
 const usesApprox = (block: DraftBlock) => block.kind === "weight_reps";
+
+const patchStep = (
+  steps: DraftStep[],
+  index: number,
+  patch: Partial<DraftStep>,
+): DraftStep[] =>
+  steps.map((step, i) => (i === index ? { ...step, ...patch } : step));
+
+export interface DraftStep {
+  reps: string;
+  pct: string;
+}
 
 export interface DraftBlock {
   key: string;
@@ -24,6 +37,7 @@ export interface DraftBlock {
   reps: string;
   durationSec: string;
   approx: boolean;
+  steps: DraftStep[];
 }
 
 export interface DraftItem {
@@ -150,49 +164,128 @@ export function SortableExerciseItem({
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  value={block.sets}
-                  onChange={(e) =>
+            {block.kind === "ramp" ? (
+              <div className="space-y-2">
+                {block.steps.map((step, stepIndex) => (
+                  <div key={stepIndex} className="flex items-center gap-2">
+                    <span className="w-6 text-xs font-bold text-muted-foreground tabular-nums">
+                      {stepIndex + 1}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        value={step.reps}
+                        onChange={(e) =>
+                          onChangeBlock(item.key, block.key, {
+                            steps: patchStep(block.steps, stepIndex, {
+                              reps: e.target.value,
+                            }),
+                          })
+                        }
+                        className={numberInputClass}
+                      />
+                      <span className="text-xs font-bold text-muted-foreground">
+                        reps
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        value={step.pct}
+                        onChange={(e) =>
+                          onChangeBlock(item.key, block.key, {
+                            steps: patchStep(block.steps, stepIndex, {
+                              pct: e.target.value,
+                            }),
+                          })
+                        }
+                        className={numberInputClass}
+                      />
+                      <span className="text-xs font-bold text-muted-foreground">
+                        %
+                      </span>
+                    </div>
+                    {block.steps.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onChangeBlock(item.key, block.key, {
+                            steps: block.steps.filter(
+                              (_, i) => i !== stepIndex,
+                            ),
+                          })
+                        }
+                        aria-label="Quitar escalón"
+                        className="shrink-0 p-1.5 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() =>
                     onChangeBlock(item.key, block.key, {
-                      sets: e.target.value,
+                      steps: [...block.steps, { reps: "", pct: "" }],
                     })
                   }
-                  className={numberInputClass}
-                />
-                <span className="text-xs font-bold text-muted-foreground">
-                  series
-                </span>
+                  className="flex items-center gap-1.5 text-xs font-bold text-primary hover:opacity-80 transition-opacity"
+                >
+                  <Plus className="w-3.5 h-3.5" strokeWidth={3} />
+                  Agregar escalón
+                </button>
               </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={block.sets}
+                    onChange={(e) =>
+                      onChangeBlock(item.key, block.key, {
+                        sets: e.target.value,
+                      })
+                    }
+                    className={numberInputClass}
+                  />
+                  <span className="text-xs font-bold text-muted-foreground">
+                    series
+                  </span>
+                </div>
 
-              <span className="text-muted-foreground font-bold">×</span>
+                <span className="text-muted-foreground font-bold">×</span>
 
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  value={usesSeconds(block) ? block.durationSec : block.reps}
-                  onChange={(e) =>
-                    onChangeBlock(
-                      item.key,
-                      block.key,
-                      usesSeconds(block)
-                        ? { durationSec: e.target.value }
-                        : { reps: e.target.value },
-                    )
-                  }
-                  className={numberInputClass}
-                />
-                <span className="text-xs font-bold text-muted-foreground">
-                  {usesSeconds(block) ? "seg" : "reps"}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    value={usesSeconds(block) ? block.durationSec : block.reps}
+                    onChange={(e) =>
+                      onChangeBlock(
+                        item.key,
+                        block.key,
+                        usesSeconds(block)
+                          ? { durationSec: e.target.value }
+                          : { reps: e.target.value },
+                      )
+                    }
+                    className={numberInputClass}
+                  />
+                  <span className="text-xs font-bold text-muted-foreground">
+                    {usesSeconds(block) ? "seg" : "reps"}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             {usesApprox(block) && (
               <ApproximationToggle

@@ -63,13 +63,24 @@ export interface WarmupBlock {
   reps: number | null;
 }
 
+export interface RampStep {
+  reps: number | null;
+  pct: number | null;
+}
+
+export interface RampBlock {
+  kind: "ramp";
+  steps: RampStep[];
+}
+
 export type RoutineBlock =
   | WeightRepsBlock
   | RepsBlock
   | TimeBlock
-  | WarmupBlock;
+  | WarmupBlock
+  | RampBlock;
 
-export type SetType = "WORKING" | "WARMUP";
+export type SetType = "WORKING" | "WARMUP" | "RAMP";
 
 export interface RoutineItem {
   id?: string;

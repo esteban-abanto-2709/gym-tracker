@@ -34,6 +34,7 @@ import {
   SortableExerciseItem,
   type DraftBlock,
   type DraftItem,
+  type DraftStep,
 } from "@/components/routines/SortableExerciseItem";
 import { Loader2, Plus } from "lucide-react";
 
@@ -53,6 +54,12 @@ const toNullableInt = (value: string): number | null => {
   return Number.isFinite(n) ? Math.trunc(n) : null;
 };
 
+const DEFAULT_RAMP: DraftStep[] = [
+  { reps: "10", pct: "50" },
+  { reps: "5", pct: "70" },
+  { reps: "3", pct: "85" },
+];
+
 const emptyBlock = (): DraftBlock => ({
   key: newKey(),
   kind: "weight_reps",
@@ -60,16 +67,24 @@ const emptyBlock = (): DraftBlock => ({
   reps: "",
   durationSec: "",
   approx: false,
+  steps: [],
 });
 
 const toDraftBlock = (block: RoutineBlock): DraftBlock => ({
   key: newKey(),
   kind: block.kind,
-  sets: block.sets?.toString() ?? "",
+  sets: ("sets" in block ? block.sets : null)?.toString() ?? "",
   reps: ("reps" in block ? block.reps : null)?.toString() ?? "",
   durationSec:
     ("durationSec" in block ? block.durationSec : null)?.toString() ?? "",
   approx: "approx" in block ? block.approx : false,
+  steps:
+    block.kind === "ramp"
+      ? block.steps.map((step) => ({
+          reps: step.reps?.toString() ?? "",
+          pct: step.pct?.toString() ?? "",
+        }))
+      : [],
 });
 
 const toBlock = (block: DraftBlock): RoutineBlock => {
@@ -85,6 +100,14 @@ const toBlock = (block: DraftBlock): RoutineBlock => {
       return { kind: "time", sets, durationSec };
     case "warmup":
       return { kind: "warmup", sets, reps };
+    case "ramp":
+      return {
+        kind: "ramp",
+        steps: block.steps.map((step) => ({
+          reps: toNullableInt(step.reps),
+          pct: toNullableInt(step.pct),
+        })),
+      };
   }
 };
 
@@ -169,9 +192,13 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     patch: Partial<DraftBlock>,
   ) =>
     updateBlocks(itemKey, (blocks) =>
-      blocks.map((block) =>
-        block.key === blockKey ? { ...block, ...patch } : block,
-      ),
+      blocks.map((block) => {
+        if (block.key !== blockKey) return block;
+        const next = { ...block, ...patch };
+        return next.kind === "ramp" && next.steps.length === 0
+          ? { ...next, steps: DEFAULT_RAMP }
+          : next;
+      }),
     );
 
   const handleAddBlock = (itemKey: string) =>

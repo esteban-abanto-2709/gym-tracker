@@ -1,8 +1,12 @@
 import type { RoutineBlock, SetType } from "@/lib/types";
 import { formatDuration, type SetMeasure } from "@/lib/setDisplay";
 
+export function blockSetCount(block: RoutineBlock): number {
+  return block.kind === "ramp" ? block.steps.length : (block.sets ?? 0);
+}
+
 export function plannedSetCount(blocks: RoutineBlock[]): number {
-  return blocks.reduce((sum, block) => sum + (block.sets ?? 0), 0);
+  return blocks.reduce((sum, block) => sum + blockSetCount(block), 0);
 }
 
 export function blockForSet(
@@ -11,7 +15,7 @@ export function blockForSet(
 ): RoutineBlock | null {
   let remaining = setIndex;
   for (const block of blocks) {
-    const sets = block.sets ?? 0;
+    const sets = blockSetCount(block);
     if (remaining < sets) return block;
     remaining -= sets;
   }
@@ -24,6 +28,9 @@ function formatSeconds(totalSec: number): string {
 }
 
 function formatBlock(block: RoutineBlock): string | null {
+  if (block.kind === "ramp") {
+    return `Rampa ${block.steps.map((step) => step.reps ?? "—").join("/")}`;
+  }
   if (block.sets == null) return null;
   const reps = "reps" in block ? (block.reps ?? "—") : "—";
   switch (block.kind) {
@@ -82,5 +89,11 @@ export function setPlan(block: RoutineBlock | null): SetPlan {
       return { ...plan, measure: "time", targetDurationSec: block.durationSec };
     case "warmup":
       return { ...plan, setType: "WARMUP", targetReps: block.reps };
+    case "ramp":
+      return {
+        ...plan,
+        setType: "RAMP",
+        targetReps: block.steps[0]?.reps ?? null,
+      };
   }
 }
