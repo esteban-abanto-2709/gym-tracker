@@ -1,12 +1,12 @@
 "use client";
 
-import type { Equipment, RoutineBlock, RoutineItem } from "@/lib/types";
+import type { Equipment, RoutineItem } from "@/lib/types";
 import { plannedSetCount, setPlan } from "@/lib/blocks";
 import { SetForm, type LogSetInput } from "@/components/train/SetForm";
 
 interface SetLoggerProps {
   item: RoutineItem;
-  block: RoutineBlock | null;
+  setIndex: number;
   replaced: boolean;
   equipment: Equipment[];
   logging: boolean;
@@ -15,7 +15,7 @@ interface SetLoggerProps {
 
 export function SetLogger({
   item,
-  block,
+  setIndex,
   replaced,
   equipment,
   logging,
@@ -25,7 +25,7 @@ export function SetLogger({
   return (
     <SetForm
       exerciseId={item.exerciseId}
-      plan={setPlan(block)}
+      plan={setPlan(item.blocks, setIndex)}
       selectable={free || replaced}
       preferLastMeasure={free}
       equipment={equipment}

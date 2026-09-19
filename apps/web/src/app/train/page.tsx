@@ -6,10 +6,10 @@ import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { routes } from "@/lib/routes";
 import {
-  blockForSet,
   formatBlocks,
   formatSetGoal,
   plannedSetCount,
+  setPlan,
 } from "@/lib/blocks";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
@@ -84,9 +84,8 @@ export default function TrainPage() {
 
   const plannedSets = plannedSetCount(currentItem.blocks);
   const hasPendingSets = setsDoneForCurrent < plannedSets;
-  const currentBlock = blockForSet(currentItem.blocks, setsDoneForCurrent);
   const currentTarget = formatBlocks(currentItem.blocks);
-  const nextGoal = formatSetGoal(currentBlock);
+  const nextGoal = formatSetGoal(setPlan(currentItem.blocks, setsDoneForCurrent));
 
   // What the lifter should set up next, shown during rest on the done screen.
   const nextUp = hasPendingSets
@@ -153,7 +152,7 @@ export default function TrainPage() {
             <SetLogger
               key={`${currentItem.exerciseId}-${setsDoneForCurrent}`}
               item={currentItem}
-              block={currentBlock}
+              setIndex={setsDoneForCurrent}
               replaced={mapItems[currentIndex]?.replacedFrom != null}
               equipment={equipment}
               logging={logging}

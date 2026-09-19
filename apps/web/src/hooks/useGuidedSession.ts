@@ -138,6 +138,7 @@ export function useGuidedSession() {
       equipmentId,
       isApproximation,
       setType = "WORKING",
+      step,
     }: LogSetInput) => {
       if (!session || !currentItem) return;
       setLogging(true);
@@ -153,6 +154,7 @@ export function useGuidedSession() {
             routineId: session.routineId,
             isApproximation: isApproximation ?? false,
             setType,
+            step: step ?? null,
           });
           rememberEquipment(currentItem.exerciseId, equipmentId ?? null);
 
@@ -166,7 +168,6 @@ export function useGuidedSession() {
               const rec = await api.get<{ suggestedWeight: number | null }>(
                 routes.api.workouts.recommendation(
                   currentItem.exerciseId,
-                  isApproximation ?? false,
                   Intl.DateTimeFormat().resolvedOptions().timeZone,
                   equipmentId ?? null,
                 ),

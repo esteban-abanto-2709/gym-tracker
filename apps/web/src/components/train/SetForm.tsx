@@ -19,7 +19,10 @@ interface Recommendation {
   lastDurationSec: number | null;
   suggestedWeight: number | null;
   lastMeasure: SetMeasure | null;
+  workingWeight: number | null;
 }
+
+const roundToHalf = (value: number) => Math.round(value * 2) / 2;
 
 export interface LogSetInput {
   weightKg?: number | null;
@@ -29,6 +32,7 @@ export interface LogSetInput {
   equipmentId?: string | null;
   isApproximation?: boolean;
   setType?: SetType;
+  step?: number | null;
 }
 
 interface SetFormProps {
@@ -53,7 +57,7 @@ export function SetForm({
   logging,
   onLog,
 }: SetFormProps) {
-  const { setType, approx, targetReps, targetDurationSec } = plan;
+  const { setType, approx, targetReps, targetDurationSec, step, pct } = plan;
   const [measure, setMeasure] = useState<SetMeasure>(plan.measure);
   const measureTouched = useRef(false);
   const isWorkingWeight = measure === "weight_reps" && setType === "WORKING";
@@ -83,10 +87,10 @@ export function SetForm({
       .get<Recommendation>(
         routes.api.workouts.recommendation(
           exerciseId,
-          approx,
           Intl.DateTimeFormat().resolvedOptions().timeZone,
           equipmentId,
           setType,
+          step,
         ),
       )
       .then((rec) => {
@@ -95,6 +99,8 @@ export function SetForm({
         if (preferLastMeasure && !measureTouched.current && rec.lastMeasure)
           setMeasure(rec.lastMeasure);
         if (rec.lastWeight != null) setWeight(String(rec.lastWeight));
+        else if (pct != null && rec.workingWeight != null)
+          setWeight(String(roundToHalf((rec.workingWeight * pct) / 100)));
         if (rec.lastReps != null) setReps(String(rec.lastReps));
         if (rec.lastDurationSec != null)
           setSeconds(String(rec.lastDurationSec));
@@ -112,6 +118,8 @@ export function SetForm({
     targetDurationSec,
     approx,
     equipmentId,
+    step,
+    pct,
   ]);
 
   const toggleUnit = () => {
@@ -141,6 +149,7 @@ export function SetForm({
         durationSec: Number(seconds),
         opinion: "",
         setType,
+        step,
       });
       return;
     }
@@ -151,6 +160,7 @@ export function SetForm({
       equipmentId,
       isApproximation: isWorkingWeight && isApproximation,
       setType,
+      step,
     });
   };
 
@@ -194,8 +204,15 @@ export function SetForm({
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
       <div className="text-center space-y-2">
         <p className="kicker text-[0.6rem] text-muted-foreground">
-          {setType === "WARMUP" ? `Calentamiento · ${lastLabel}` : lastLabel}
+          {setType === "WARMUP" && `Calentamiento · `}
+          {setType === "RAMP" && `Rampa ${step} · `}
+          {lastLabel}
         </p>
+        {setType === "RAMP" && pct != null && recommendation?.workingWeight != null && (
+          <p className="text-xs text-muted-foreground">
+            ≈ {pct} % de {recommendation.workingWeight} kg
+          </p>
+        )}
         {isWorkingWeight && recommendation?.suggestedWeight != null && (
           <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
             <ArrowUp className="w-4 h-4" strokeWidth={3} />

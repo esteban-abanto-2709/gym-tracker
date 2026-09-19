@@ -9,17 +9,22 @@ export function plannedSetCount(blocks: RoutineBlock[]): number {
   return blocks.reduce((sum, block) => sum + blockSetCount(block), 0);
 }
 
-export function blockForSet(
+function locateSet(
   blocks: RoutineBlock[],
   setIndex: number,
-): RoutineBlock | null {
+): { block: RoutineBlock | null; indexInBlock: number } {
   let remaining = setIndex;
   for (const block of blocks) {
     const sets = blockSetCount(block);
-    if (remaining < sets) return block;
+    if (remaining < sets) return { block, indexInBlock: remaining };
     remaining -= sets;
   }
-  return blocks[blocks.length - 1] ?? null;
+  // Past the plan (extra sets): stay on the last block, last position.
+  const last = blocks[blocks.length - 1] ?? null;
+  return {
+    block: last,
+    indexInBlock: last ? Math.max(0, blockSetCount(last) - 1) : 0,
+  };
 }
 
 function formatSeconds(totalSec: number): string {
@@ -53,32 +58,27 @@ export function formatBlocks(blocks: RoutineBlock[]): string | null {
   return parts.length > 0 ? parts.join(" + ") : null;
 }
 
-export function formatSetGoal(block: RoutineBlock | null): string | null {
-  if (!block) return null;
-  const durationSec = "durationSec" in block ? block.durationSec : null;
-  if (durationSec != null) return `${durationSec} s`;
-  if (!("reps" in block) || block.reps == null) return null;
-  return block.kind === "warmup"
-    ? `${block.reps} reps de calentamiento`
-    : `${block.reps} reps`;
-}
-
 export interface SetPlan {
   measure: SetMeasure;
   setType: SetType;
   approx: boolean;
   targetReps: number | null;
   targetDurationSec: number | null;
+  step: number | null;
+  pct: number | null;
 }
 
-export function setPlan(block: RoutineBlock | null): SetPlan {
+export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
   const plan: SetPlan = {
     measure: "weight_reps",
     setType: "WORKING",
     approx: false,
     targetReps: null,
     targetDurationSec: null,
+    step: null,
+    pct: null,
   };
+  const { block, indexInBlock } = locateSet(blocks, setIndex);
   if (!block) return plan;
   switch (block.kind) {
     case "weight_reps":
@@ -89,11 +89,24 @@ export function setPlan(block: RoutineBlock | null): SetPlan {
       return { ...plan, measure: "time", targetDurationSec: block.durationSec };
     case "warmup":
       return { ...plan, setType: "WARMUP", targetReps: block.reps };
-    case "ramp":
+    case "ramp": {
+      const step = block.steps[indexInBlock];
       return {
         ...plan,
         setType: "RAMP",
-        targetReps: block.steps[0]?.reps ?? null,
+        targetReps: step?.reps ?? null,
+        step: indexInBlock + 1,
+        pct: step?.pct ?? null,
       };
+    }
   }
+}
+
+export function formatSetGoal(plan: SetPlan): string | null {
+  if (plan.targetDurationSec != null) return `${plan.targetDurationSec} s`;
+  if (plan.targetReps == null) return null;
+  if (plan.setType === "WARMUP")
+    return `${plan.targetReps} reps de calentamiento`;
+  if (plan.setType === "RAMP") return `${plan.targetReps} reps de rampa`;
+  return `${plan.targetReps} reps`;
 }

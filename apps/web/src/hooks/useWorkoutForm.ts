@@ -70,7 +70,6 @@ export function useWorkoutForm(
       .get<{ lastMeasure: SetMeasure | null }>(
         routes.api.workouts.recommendation(
           selectedExercise.id,
-          false,
           Intl.DateTimeFormat().resolvedOptions().timeZone,
           null,
         ),
