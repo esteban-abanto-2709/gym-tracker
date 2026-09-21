@@ -108,6 +108,6 @@ El **"entrenador que no te hace pensar"**:
 ## Restricciones
 
 - Stack fijo: NestJS + Next.js + PostgreSQL (Prisma).
-- Web only por ahora (acceso vía Cloudflare Tunnel, URL cambiante). Idea futura
-  sin compromiso: PWA instalable.
+- Web only por ahora; el acceso desde fuera de la red local es opcional, vía
+  Cloudflare Tunnel. Idea futura sin compromiso: PWA instalable.
 - Sin presupuesto de crecimiento: tiers gratis, mejoras en tiempo libre.

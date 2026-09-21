@@ -1,29 +1,79 @@
 # Gym Tracker
 
-Aplicación full-stack para registrar y analizar entrenamientos de gimnasio. Permite llevar un historial de ejercicios, pesos y repeticiones, con una interfaz rápida pensada para usarse en medio del entrenamiento.
+Un registrador de entrenamiento que se usa **entre series, sin pensar**.
 
-## Apps
+Ves lo que levantaste la vez pasada, lo repites o subes el peso, lo anotas en dos
+segundos y sueltas el celular.
 
-| App | Descripción | README |
-|-----|-------------|--------|
-| **API** | REST API construida con NestJS + PostgreSQL (Prisma) | [`apps/api`](./apps/api/README.md) |
-| **Web** | Frontend construido con Next.js 16 + shadcn/ui | [`apps/web`](./apps/web/README.md) |
+---
 
-## Stack
+## El problema
 
-- **Backend:** NestJS · Prisma · PostgreSQL
-- **Frontend:** Next.js 16 · React 19 · Tailwind CSS · shadcn/ui
-- **Infra:** Docker Compose · Cloudflare Tunnel (acceso público del frontend)
+Las apps de gimnasio que existen hacen que registrar cueste más que entrenar.
 
-## Filosofía: self-hosted
+Te piden peso, talla, unidades y objetivos antes de dejarte anotar la primera
+serie. Guardan lo básico —crear tus propias rutinas— detrás de una suscripción.
+Y cuando por fin estás en el gym, entre serie y serie, con el descanso corriendo,
+te obligan a navegar tres pantallas para apuntar un número que ya sabías.
 
-El proyecto es **autohospedado**: todo el stack (PostgreSQL + API + web) corre en Docker en una sola máquina, sin proveedores gestionados (antes Render/Vercel/Supabase, ya retirados). Lo único que sale a internet es el frontend, a través de un Cloudflare Tunnel; la API y la base de datos quedan privadas dentro de la red Docker.
+Gym Tracker nace de lo contrario: **la app no debería estorbar**.
 
-En la práctica esto significa que **cualquiera puede clonar el repo y levantar la app completa en su propia PC** con Docker, sin cuentas en la nube ni claves de servicios externos. El acceso público vía tunnel es opcional y solo hace falta si quieres exponer tu instancia fuera de tu red local.
+## El principio: no pensar
 
-## Levantar el proyecto completo (Docker)
+Ese es el valor entero del proyecto, y todo lo demás se subordina a él.
 
-Para todos los comandos (prod local, base de datos de desarrollo, reset, tunnel) consulta [`apps/docker/README.md`](./apps/docker/README.md). En resumen:
+- Abres la app y ves el peso y las repeticiones de la última vez.
+- Lo repites tal cual, o subes la carga si lo sentiste fácil.
+- Lo registras y guardas el celular.
+
+El progreso no hay que buscarlo en un gráfico: se siente porque **queda anotado**.
+A largo plazo la idea es que la app te diga qué toca, con cuánto peso y cuántas
+repeticiones, y tú solo ejecutes. Un entrenador silencioso, sin avatar y sin
+charla.
+
+## Qué hace hoy
+
+- **Registro en dos segundos.** El último peso y las últimas reps vienen
+  precargados; confirmas y listo.
+- **Rutinas guiadas.** Armas tu sesión una vez (Push, Pull, Pierna) y la app te
+  lleva ejercicio por ejercicio, contando las series que llevas.
+- **Día libre.** ¿No tocaba rutina? Registras suelto, sin estructura.
+- **Kilos o libras.** Eliges la unidad al registrar, porque hay máquinas que solo
+  vienen en libras. Por dentro todo se guarda igual; se acabaron las conversiones
+  en otra pestaña.
+- **Series de todo tipo.** Con peso y reps, solo reps (dominadas, fondos), por
+  tiempo (plancha), calentamientos y rampas de aproximación.
+- **Sugerencia de carga.** Si vienes mejorando las repeticiones a un mismo peso,
+  la app te propone subir.
+- **Historial editable.** Te equivocaste en un número: lo corriges después, por día.
+- **Cuentas propias.** Con correo o con Google. Tus datos son tuyos y nadie más
+  los ve.
+
+## Qué NO es
+
+Tan importante como lo anterior:
+
+- **No es un todo-en-uno.** Nada de nutrición, hábitos ni fisioterapia.
+- **No es una red social.** Sin feed, sin chat, sin fotos.
+- **No tiene cronómetro.** Ya tienes uno en el celular.
+- **No tiene onboarding pesado.** Entras y registras.
+- **No tiene muro de pago.** Lo esencial es lo esencial.
+
+Lo único "social" que sí encaja, más adelante: poder copiarle la rutina a un
+amigo. Comparar cargas es vanidad; copiar una buena rutina sí es útil.
+
+## Autohospedado: la app es tuya
+
+Gym Tracker no depende de ningún servicio en la nube. Todo el stack —base de
+datos, API y frontend— corre en contenedores sobre una sola máquina.
+
+Eso significa que **cualquiera puede clonar este repositorio y levantar la app
+completa en su propia PC**, sin crear cuentas en ningún proveedor ni pagar nada.
+Tus entrenamientos viven en tu máquina, en tu base de datos.
+
+Si además quieres alcanzarla desde fuera de tu casa —desde el gimnasio, por
+ejemplo— el proyecto incluye la pieza para publicarla por un túnel de Cloudflare.
+Es opcional: sin configurarlo, la app funciona igual dentro de tu red local.
 
 ```bash
 cd apps/docker
@@ -31,41 +81,48 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Servicios disponibles:
+Los detalles están en [`apps/docker/README.md`](./apps/docker/README.md).
 
-| Servicio | URL |
-|----------|-----|
-| Frontend | http://localhost:3000 |
-| API | http://localhost:4000 (privado en la red Docker) |
-| PostgreSQL | localhost:5432 (privado en la red Docker) |
+## Cómo está construido
 
-## Estructura del repositorio
+Un monorepo con dos aplicaciones independientes y la orquestación que las une:
 
-```
-gym-tracker/
-├── apps/
-│   ├── api/        # NestJS REST API
-│   ├── web/        # Next.js frontend
-│   └── docker/     # Docker Compose + variables de entorno
-└── docs/
-    ├── product-vision.md    # Definición de producto y horizontes
-    ├── milestones.md        # Hitos (versiones estables) y su orden
-    ├── ux-foundations.md    # Fundamentos de UI/UX
-    └── logbook/             # Roadmap, deuda técnica, wishlist y changelog
-```
+| Carpeta | Qué es |
+|---------|--------|
+| [`apps/api`](./apps/api/README.md) | La API REST y la base de datos. NestJS, PostgreSQL y Prisma. |
+| [`apps/web`](./apps/web/README.md) | La interfaz. Next.js, React y Tailwind. |
+| [`apps/docker`](./apps/docker/README.md) | Docker Compose, backups y restauración. |
 
-Cada app es independiente y tiene su propio `package.json`. Para detalles de comandos, variables de entorno y arquitectura interna, consulta el README de cada app.
+Cada app se gestiona por su cuenta y tiene su propio README **con el detalle
+técnico**: comandos, variables de entorno, arquitectura interna y endpoints. Este
+documento es la vista de producto; esos son los planos.
 
-## Producto y roadmap
+## Sobre el proyecto
 
-El proyecto está en desarrollo activo. La [definición de producto](./docs/product-vision.md) explica qué es la app y a dónde va; los [hitos](./docs/milestones.md) la parten en versiones estables:
+Es una app que uso de verdad, cada semana, en el gimnasio. Nació de una molestia
+propia y se mantiene por la misma razón, así que las decisiones se toman pensando
+en si mejoran el minuto y medio entre series — no en si suman una función más a
+la lista.
 
-- **H1 · Registro afilado** (activo) — el registro de 2 s pulido y con identidad: kg/lb, dificultad 1-5, manejo de errores de red.
-- **H2 · Entrenamientos estructurados** — el "entrenador que no te hace pensar".
-- **H3 · Recomendación de peso** — sugerencia de carga que se afina sola.
+También es una pieza de portafolio, y lo que busca demostrar es **visión de
+producto**: que lo difícil no es hacer un CRUD de ejercicios, sino decidir qué no
+construir.
 
-El roadmap solo lleva las tareas del hito activo; lo demás vive en la [wishlist](./docs/logbook/wishlist.md). El trabajo comprometido y la deuda técnica se siguen en [`docs/logbook/`](./docs/logbook/).
+Está en desarrollo activo. El recorrido se organiza en tres hitos:
+
+- **Registro afilado** — que anotar una serie sea instantáneo y no falle nunca.
+- **Entrenamientos estructurados** — el entrenador que no te hace pensar.
+- **Recomendación de peso** — que la carga sugerida se afine sola con tu historial.
+
+Si te interesa el razonamiento detrás de todo esto:
+
+- [Definición de producto](./docs/product-vision.md) — qué es, para quién y por qué.
+- [Hitos](./docs/milestones.md) — cómo se parte el camino en versiones estables.
+- [Fundamentos de UI/UX](./docs/ux-foundations.md) — los criterios de diseño.
+- [Bitácora](./docs/logbook/) — roadmap, deuda técnica, ideas y registro de cambios.
 
 ## Licencia
 
 MIT © Esteban Abanto
+
+Úsalo, modifícalo y levántalo donde quieras.

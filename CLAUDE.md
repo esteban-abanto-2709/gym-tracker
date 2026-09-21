@@ -176,7 +176,7 @@ State management is handled exclusively via custom hooks — no global state lib
 The whole stack is **self-hosted** via Docker Compose on a single machine; the only thing exposed to the internet is the `web` service, through a Cloudflare Tunnel (`cloudflared` service). `api` and `postgres` stay private inside the `gym-tracker-network`.
 
 - **API + Web + Database** → Docker Compose (`apps/docker/docker-compose.yml`)
-- **Public access** → Cloudflare **named tunnel** on the custom domain `treno.rocks` (bought on name.com, DNS delegated to Cloudflare). Stable HTTPS URL that survives restarts. The tunnel runs via `TUNNEL_TOKEN`; the `cloudflared` service uses `tunnel --no-autoupdate run`.
+- **Public access (optional)** → Cloudflare tunnel. The compose default is a **named tunnel** (`tunnel --no-autoupdate run`), which needs a `TUNNEL_TOKEN` and a domain the operator owns, and gives a stable HTTPS URL that survives restarts. The quick-tunnel alternative (random `trycloudflare.com` URL, no token) is the commented-out line right below it. Each operator supplies their own domain and token via `.env`; none is committed.
 
 There is no managed cloud provider (previously Render/Vercel/Supabase — dropped). `DATABASE_URL` and `DIRECT_URL` both point to the in-network Postgres container; they are kept as two separate vars because Prisma's schema requires both, even though here they resolve to the same instance.
 

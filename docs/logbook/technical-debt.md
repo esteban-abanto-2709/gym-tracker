@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-020] La imagen de la web se construye con Node 20 y la API con Node 22
+- **Ubicación:** `apps/web/Dockerfile:2` y `:28` (`node:20-alpine`); la API usa `node:22-alpine` (`apps/api/Dockerfile:2`, `:26`).
+- **Riesgo:** 3/10
+- **Problema:** El `CLAUDE.md` pide Node 22+ y la API lo cumple, pero la web sigue construyéndose y corriendo sobre Node 20. Next 16 y React 19 funcionan hoy en 20, así que nadie lo ha notado.
+- **Impacto futuro:** Node 20 sale de mantenimiento y deja de recibir parches de seguridad; además, cualquier dependencia que empiece a pedir 22+ romperá solo el build de la web, con un error que no apunta a la causa. Dos runtimes distintos en el mismo stack también complican reproducir bugs.
+- **Sugerencia:** subir ambos stages de `apps/web/Dockerfile` a `node:22-alpine` y verificar con `docker compose build web`.
+- **Fecha:** 2026-09-19 · **Estado:** Abierto
+
 ## [TD-019] Los sets de tiempo guardan `reps = 1` de relleno
 - **Ubicación:** `apps/api/prisma/schema.prisma` (`Workout.reps Int` no nullable); lo envían `apps/web/src/components/train/SetForm.tsx`, `apps/web/src/hooks/useWorkoutForm.ts` y `apps/web/src/hooks/useWorkoutHistory.ts`.
 - **Riesgo:** 3/10
@@ -63,9 +71,9 @@ changelog y se borra de aquí.
 - **Fecha:** 2026-06-10 · **Estado:** Abierto
 
 ## [TD-010] Lint roto: acceso a ref durante el render en useWorkoutForm
-- **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts:36`
+- **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts:94` (antes :36); también `apps/web/src/hooks/useWorkoutHistory.ts:69`.
 - **Riesgo:** 4/10
-- **Problema:** La lógica one-shot de *repeat* lee `repeatProcessed.current` durante el render, lo que viola la regla `react-hooks/refs` y hace que `pnpm lint` falle con 2 errores (preexistentes, ajenos a kg/lb).
+- **Problema:** La lógica one-shot de *repeat* lee `repeatProcessed.current` durante el render, lo que viola la regla `react-hooks/refs`. Verificado el 2026-09-19: `pnpm lint` falla con **15 errores + 1 warning**, no con 2 como decía esta entrada — además de `react-hooks/refs` hay varios `react-hooks/set-state-in-effect`. El alcance real es mayor al registrado.
 - **Impacto futuro:** El lint queda en rojo y enmascara errores nuevos; el patrón puede no re-ejecutarse como se espera en futuras versiones de React.
 - **Sugerencia:** mover la lógica a un `useEffect` o inicializar el ref con el patrón `if (ref.current == null)`.
 - **Fecha:** 2026-06-14 · **Estado:** Abierto

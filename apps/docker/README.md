@@ -45,11 +45,33 @@ Servicios:
 > el Cloudflare Tunnel y `postgres` solo desde dentro de la red. El único puerto
 > `5432` publicado al host es el de **dev** (`docker-compose.dev.yml`).
 
-### Cloudflare Tunnel
+### Cloudflare Tunnel (opcional)
 
-Hoy se usa un **quick tunnel** (`command: tunnel --no-autoupdate --url http://web:3000`): genera una URL aleatoria de `trycloudflare.com` que **cambia en cada reinicio** y no necesita `TUNNEL_TOKEN`. La URL aparece en los logs de `cloudflared`.
+El tunnel **solo hace falta si quieres alcanzar tu instancia desde fuera de tu red
+local** (por ejemplo, desde el gimnasio). Sin él la app funciona igual: levantas el
+stack y la usas desde la misma red. Cada quien expone —o no— su propia instancia;
+el repositorio no trae ningún dominio ni token configurado.
 
-Para una URL/dominio fijo hay que pasar a un *named tunnel*: rellenar `TUNNEL_TOKEN` en `.env` y usar `command: tunnel --no-autoupdate run` (requiere un dominio configurado en Cloudflare). Pendiente.
+Hay dos modos, y el `docker-compose.yml` trae el segundo activo:
+
+| Modo | `command` | `TUNNEL_TOKEN` | URL |
+|------|-----------|----------------|-----|
+| **Quick tunnel** | `tunnel --no-autoupdate --url http://web:3000` | no hace falta | aleatoria de `trycloudflare.com`, **cambia en cada reinicio** |
+| **Named tunnel** | `tunnel --no-autoupdate run` | obligatorio | fija, sobre tu propio dominio |
+
+El **quick tunnel** es el camino de cero configuración: no pide cuenta ni dominio,
+y la URL aparece en los logs (`docker compose logs -f cloudflared`). Sirve para
+probar. Su línea está comentada en el compose, justo debajo de la activa.
+
+El **named tunnel** es el que conviene si vas a usar la app a diario: necesitas una
+cuenta de Cloudflare y un dominio delegado a ella. Creas el tunnel desde el panel
+de Cloudflare (Zero Trust → Networks → Tunnels), lo apuntas al servicio `web` en
+el puerto `3000`, y pegas el token que te da en `TUNNEL_TOKEN` dentro de tu `.env`
+local.
+
+> El `.env` está en `.gitignore`: tu token y tu dominio **nunca** salen de tu
+> máquina. Si no quieres usar tunnel, deja `TUNNEL_TOKEN` vacío y omite el
+> servicio con `docker compose up postgres api web`.
 
 ## Dev (solo la base de datos)
 
