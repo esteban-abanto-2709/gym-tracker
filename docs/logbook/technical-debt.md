@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-020] La imagen de la web se construye con Node 20 y la API con Node 22
-- **Ubicación:** `apps/web/Dockerfile:2` y `:28` (`node:20-alpine`); la API usa `node:22-alpine` (`apps/api/Dockerfile:2`, `:26`).
-- **Riesgo:** 3/10
-- **Problema:** El `CLAUDE.md` pide Node 22+ y la API lo cumple, pero la web sigue construyéndose y corriendo sobre Node 20. Next 16 y React 19 funcionan hoy en 20, así que nadie lo ha notado.
-- **Impacto futuro:** Node 20 sale de mantenimiento y deja de recibir parches de seguridad; además, cualquier dependencia que empiece a pedir 22+ romperá solo el build de la web, con un error que no apunta a la causa. Dos runtimes distintos en el mismo stack también complican reproducir bugs.
-- **Sugerencia:** subir ambos stages de `apps/web/Dockerfile` a `node:22-alpine` y verificar con `docker compose build web`.
-- **Fecha:** 2026-09-19 · **Estado:** Abierto
-
 ## [TD-019] Los sets de tiempo guardan `reps = 1` de relleno
 - **Ubicación:** `apps/api/prisma/schema.prisma` (`Workout.reps Int` no nullable); lo envían `apps/web/src/components/train/SetForm.tsx`, `apps/web/src/hooks/useWorkoutForm.ts` y `apps/web/src/hooks/useWorkoutHistory.ts`.
 - **Riesgo:** 3/10
@@ -54,14 +46,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** guardar un `ref` al input de búsqueda dentro del combobox y enfocar ese ref.
 - **Fecha:** 2026-07-23 · **Estado:** Abierto
 
-## [TD-007] El contenedor de la API descarga el CLI de Prisma al arrancar
-- **Ubicación:** `apps/api/Dockerfile:47`
-- **Riesgo:** 4/10
-- **Problema:** El CMD ejecuta `pnpm dlx prisma@7.8.0 migrate deploy`, pero `prisma` es devDependency y el stage final instala con `pnpm install --prod`: pnpm lo descarga de internet en cada arranque del contenedor.
-- **Impacto futuro:** Arranques lentos y fallo del contenedor si no hay red o npm está caído; además `migrate deploy` y el arranque quedan acoplados.
-- **Sugerencia:** copiar el CLI de prisma desde el stage builder (ya lo tiene instalado) y ejecutar `migrate deploy` con ese binario local en el CMD/entrypoint.
-- **Fecha:** 2026-06-10 · **Estado:** Abierto
-
 ## [TD-010] Lint roto: acceso a ref durante el render en useWorkoutForm
 - **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts:94` (antes :36); también `apps/web/src/hooks/useWorkoutHistory.ts:69`.
 - **Riesgo:** 4/10
@@ -69,11 +53,3 @@ changelog y se borra de aquí.
 - **Impacto futuro:** El lint queda en rojo y enmascara errores nuevos; el patrón puede no re-ejecutarse como se espera en futuras versiones de React.
 - **Sugerencia:** mover la lógica a un `useEffect` o inicializar el ref con el patrón `if (ref.current == null)`.
 - **Fecha:** 2026-06-14 · **Estado:** Abierto
-
-## [TD-009] PrismaService traga el error de conexión a la BD
-- **Ubicación:** `apps/api/src/providers/prisma/prisma.service.ts:21-27`
-- **Riesgo:** 3/10
-- **Problema:** `onModuleInit` captura el error de `$connect` y solo lo loguea: la API arranca "sana" sin base de datos y responde 500 en cada request.
-- **Impacto futuro:** Diagnóstico confuso en Docker (el healthcheck/depends_on parece OK pero nada funciona).
-- **Sugerencia:** quitar el try/catch y dejar que el proceso falle; `restart: unless-stopped` del compose reintenta solo.
-- **Fecha:** 2026-06-10 · **Estado:** Abierto

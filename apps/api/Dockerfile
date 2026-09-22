@@ -40,5 +40,5 @@ COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/clie
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 
-# Start the application with automatic migrations
-CMD ["sh", "-c", "pnpm dlx prisma@7.8.0 migrate deploy && pnpm run start:prod"]
+# Start the application with automatic migrations (local prisma CLI, no network needed)
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/main"]

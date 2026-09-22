@@ -12,6 +12,15 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-020] La web corre sobre Node 22 (2026-09-22 09:44)
+Los dos stages de `apps/web/Dockerfile` pasan de `node:20-alpine` (sin soporte desde abril de 2026) a `node:22-alpine`, igual que la API. Verificado: build de la imagen y `node --version` = v22.22.3 en el contenedor.
+
+## [TD-009] La API muere si no alcanza la base de datos (2026-09-22 09:44)
+`onModuleInit` ya no traga el error y hace un `SELECT 1`: con el adapter de `pg`, `$connect()` no abre conexión, así que quitar el try/catch no alcanzaba. Sin BD el proceso sale con código 1 y el error real, y `restart: unless-stopped` lo reintenta.
+
+## [TD-007] La API arranca sin descargar el CLI de Prisma (2026-09-22 09:44)
+`prisma` pasa a `dependencies`, así `pnpm install --prod` lo deja en la imagen, y el `CMD` corre `node_modules/.bin/prisma migrate deploy && node dist/main`, ya sin `pnpm dlx` ni pnpm en el arranque. Verificado con `--network none`: el CLI funciona sin red.
+
 ## [TD-017] `pnpm run build` regenera el cliente de Prisma (2026-09-22 09:17)
 El script `build` de la API corre `prisma generate && nest build`, así un cambio de schema rompe el build local al instante en vez de dar falso verde. El Dockerfile pasa las URLs dummy a ese `RUN` y se quita el `generate` suelto, que quedaba redundante.
 
