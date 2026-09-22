@@ -19,11 +19,8 @@ export class PrismaService
   }
 
   async onModuleInit() {
-    try {
-      await this.$connect();
-    } catch (error) {
-      console.error('Error connecting to database:', error);
-    }
+    await this.$connect();
+    await this.$executeRawUnsafe('SELECT 1');
   }
 
   async onModuleDestroy() {
