@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-017] `pnpm run build` regenera el cliente de Prisma (2026-09-22 09:17)
+El script `build` de la API corre `prisma generate && nest build`, así un cambio de schema rompe el build local al instante en vez de dar falso verde. El Dockerfile pasa las URLs dummy a ese `RUN` y se quita el `generate` suelto, que quedaba redundante.
+
 ## [WL-013] Avisar en la rampa cuando sube el peso efectivo (2026-09-19 09:57)
 Un escalón con historial muestra el aviso "Sube a X kg" cuando el porcentaje sobre el peso efectivo actual supera al peso guardado por 2.5 kg o más; el campo sigue precargado con el peso guardado. Promovido de WL-013.
 

@@ -15,11 +15,8 @@ RUN pnpm install --frozen-lockfile
 # Copy source code and config files
 COPY . .
 
-# Generate Prisma Client (using dummy URLs for build time)
-RUN DIRECT_URL="postgresql://dummy:5432/dummy" DATABASE_URL="postgresql://dummy:5432/dummy" pnpm exec prisma generate
-
-# Build the application
-RUN pnpm run build
+# Build the application (generates the Prisma Client first; dummy URLs only satisfy prisma.config.ts)
+RUN DIRECT_URL="postgresql://dummy:5432/dummy" DATABASE_URL="postgresql://dummy:5432/dummy" pnpm run build
 
 
 # Production stage
