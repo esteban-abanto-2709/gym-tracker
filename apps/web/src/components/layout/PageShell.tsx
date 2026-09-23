@@ -11,7 +11,7 @@ interface PageShellProps {
  */
 export function PageShell({ children, variant = "default" }: PageShellProps) {
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden font-sans">
+    <div className="min-h-dvh bg-background flex flex-col relative overflow-hidden font-sans">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
         <div

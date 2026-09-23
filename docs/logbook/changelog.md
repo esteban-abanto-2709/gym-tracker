@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-034] Alto de página al viewport visible en iOS (2026-09-22 23:41)
+`PageShell` pasa de `min-h-screen` (100vh) a `min-h-dvh`, que quita el scroll fantasma en Safari y en la app de pantalla de inicio; `overscroll-behavior: none` en `html`/`body` elimina el rebote.
+
 ## [TD-020] La web corre sobre Node 22 (2026-09-22 09:44)
 Los dos stages de `apps/web/Dockerfile` pasan de `node:20-alpine` (sin soporte desde abril de 2026) a `node:22-alpine`, igual que la API. Verificado: build de la imagen y `node --version` = v22.22.3 en el contenedor.
 
