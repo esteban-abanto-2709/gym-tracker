@@ -5,7 +5,7 @@ Orquestación del stack con Docker Compose. Hay dos escenarios:
 - **Prod local** (`docker-compose.yml`) — todo en contenedores: `postgres` + `api` + `web` + `cloudflared` (Cloudflare Tunnel). Es el despliegue real autohospedado.
 - **Dev** (`docker-compose.dev.yml`) — solo un Postgres aislado. La API y la web corren en tu máquina con `npm run start:dev` / `pnpm dev` apuntando a ese Postgres.
 
-> Ejecuta todos los comandos **desde `apps/docker/`** (es donde vive el `.env`).
+> Ejecuta todos los comandos **desde `apps/docker/prod/`** (es donde vive el `.env`).
 
 ## Primer arranque
 
@@ -103,7 +103,7 @@ pnpm dev
 
 Genera un dump de **solo datos** (tablas `User`, `Exercise`, `Routine`,
 `RoutineItem` y `Workout`) de la BD de prod
-en un solo comando. El archivo cae en `apps/docker/backups/` (ignorada por git)
+en un solo comando. El archivo cae en `apps/docker/prod/backups/` (ignorada por git)
 con nombre `gym-prod_YYYY-MM-DD_HHmmss.sql`.
 
 ```cmd
@@ -124,7 +124,7 @@ backup-prod.cmd "D:\mis-backups"
 - **Docker corriendo** y el contenedor `gym-tracker-sql` **levantado** (el `pg_dump`
   se ejecuta dentro de ese contenedor, no en tu máquina). Si no está, el script
   se detiene con un aviso. Levanta prod con `docker compose up -d`.
-- **`.env` presente** en `apps/docker/` con `POSTGRES_USER`, `POSTGRES_PASSWORD`
+- **`.env` presente** en `apps/docker/prod/` con `POSTGRES_USER`, `POSTGRES_PASSWORD`
   y `POSTGRES_DB` (de ahí saca las credenciales).
 - Es un `.cmd` (cmd.exe). No necesitas `pg_dump` en el host: vive dentro del
   contenedor. Tampoco depende de PowerShell.

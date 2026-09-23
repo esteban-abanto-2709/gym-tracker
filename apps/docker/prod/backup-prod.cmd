@@ -5,10 +5,10 @@ rem ===========================================================================
 rem  Backup de PROD: dump de solo datos (User + Exercise + Routine +
 rem  RoutineItem + Workout) de la BD de prod.
 rem  Corre pg_dump DENTRO del contenedor gym-tracker-sql (misma version que el
-rem  servidor) y copia el archivo a apps/docker/backups/.
+rem  servidor) y copia el archivo a apps/docker/prod/backups/.
 rem
 rem  Uso:
-rem    backup-prod.cmd                 -> guarda en apps/docker/backups/
+rem    backup-prod.cmd                 -> guarda en apps/docker/prod/backups/
 rem    backup-prod.cmd "D:\otra\ruta"  -> guarda en otra carpeta
 rem ===========================================================================
 
