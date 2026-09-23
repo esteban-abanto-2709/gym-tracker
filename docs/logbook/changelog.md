@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-035] Sin zoom automático de iOS en el editor de rutinas (2026-09-23 09:12)
+El `select` de tipo de bloque pasa de `text-xs` a `text-base` (16px), el mínimo para que iOS no amplíe la página al enfocarlo; era el único campo por debajo.
+
 ## [RM-034] Alto de página al viewport visible en iOS (2026-09-22 23:41)
 `PageShell` pasa de `min-h-screen` (100vh) a `min-h-dvh`, que quita el scroll fantasma en Safari y en la app de pantalla de inicio; `overscroll-behavior: none` en `html`/`body` elimina el rebote.
 

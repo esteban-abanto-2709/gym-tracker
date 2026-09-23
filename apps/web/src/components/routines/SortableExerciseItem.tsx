@@ -145,7 +145,7 @@ export function SortableExerciseItem({
                   })
                 }
                 aria-label="Tipo de bloque"
-                className="min-w-0 flex-1 bg-muted rounded-lg px-2 py-1.5 text-xs font-bold text-foreground outline-none border-2 border-transparent focus:border-primary transition-colors"
+                className="min-w-0 flex-1 bg-muted rounded-lg px-2 py-1 text-base font-bold text-foreground outline-none border-2 border-transparent focus:border-primary transition-colors"
               >
                 {KIND_OPTIONS.map(({ value, label }) => (
                   <option key={value} value={value}>
