@@ -35,7 +35,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-dvh flex flex-col px-6 pt-16 pb-8 max-w-md mx-auto w-full">
+    <main className="min-h-dvh flex flex-col px-6 pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] max-w-md mx-auto w-full">
       {/* Cinta hazard + hero */}
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>

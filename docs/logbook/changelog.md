@@ -12,6 +12,10 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-036] Abrir como app a pantalla completa desde el inicio (2026-09-23 09:18)
+Promovida desde `WL-006` (PWA instalable).
+Manifest, `appleWebApp` con barra de estado translúcida, `viewportFit: cover`, iconos generados por código (mancuerna de lucide + cinta hazard) y márgenes `safe-area` en header, barra inferior, paneles y toasts; `lang="es"`.
+
 ## [RM-035] Sin zoom automático de iOS en el editor de rutinas (2026-09-23 09:12)
 El `select` de tipo de bloque pasa de `text-xs` a `text-base` (16px), el mínimo para que iOS no amplíe la página al enfocarlo; era el único campo por debajo.
 

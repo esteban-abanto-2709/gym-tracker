@@ -36,7 +36,7 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background/80 backdrop-blur-md animate-fade-in">
-      <div className="shrink-0 px-6 py-4 border-b border-border flex items-center justify-between">
+      <div className="shrink-0 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border flex items-center justify-between">
         <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight">
           Agregar ejercicio
         </h2>
@@ -50,7 +50,7 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
         </button>
       </div>
 
-      <div className="flex-1 px-6 py-6 overflow-y-auto">
+      <div className="flex-1 px-6 pt-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] overflow-y-auto">
         <div className="max-w-md mx-auto">
           <ExerciseCombobox
             exercises={filteredExercises}

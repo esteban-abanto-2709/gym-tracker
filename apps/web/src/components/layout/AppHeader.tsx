@@ -24,7 +24,7 @@ export function AppHeader({
 }: AppHeaderProps) {
   return (
     <header
-      className={`shrink-0 px-6 py-4 border-b border-border z-10 bg-background/50 backdrop-blur-md ${sticky ? "sticky top-0" : "relative"}`}
+      className={`shrink-0 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border z-10 bg-background/50 backdrop-blur-md ${sticky ? "sticky top-0" : "relative"}`}
     >
       <div className="max-w-md mx-auto space-y-4">
         <div className="flex items-center justify-between">

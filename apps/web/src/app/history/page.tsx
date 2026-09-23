@@ -127,7 +127,7 @@ export default function HistoryPage() {
       {/* Floating Action Button */}
       <Link
         href="/log"
-        className="fixed bottom-24 right-6 w-14 h-14 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-full flex items-center justify-center shadow-xl shadow-primary/40 hover:scale-110 active:scale-90 transition-all z-40"
+        className="fixed bottom-[calc(6rem+env(safe-area-inset-bottom))] right-6 w-14 h-14 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-full flex items-center justify-center shadow-xl shadow-primary/40 hover:scale-110 active:scale-90 transition-all z-40"
       >
         <Plus className="w-7 h-7" strokeWidth={3} />
       </Link>

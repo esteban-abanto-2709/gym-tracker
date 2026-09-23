@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Oswald, Space_Grotesk, Space_Mono } from "next/font/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "sonner";
@@ -28,6 +28,19 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Gym Tracker",
   description: "Registra tus entrenamientos sin fricción.",
+  appleWebApp: {
+    capable: true,
+    title: "GymTrack",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#EDEBE4" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090B" },
+  ],
 };
 
 export default function RootLayout({
@@ -36,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
         className={`${oswald.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
       >
@@ -45,7 +58,12 @@ export default function RootLayout({
         >
           <AuthProvider>{children}</AuthProvider>
         </GoogleOAuthProvider>
-        <Toaster theme="system" richColors position="top-center" />
+        <Toaster
+          theme="system"
+          richColors
+          position="top-center"
+          mobileOffset={{ top: "calc(env(safe-area-inset-top) + 16px)" }}
+        />
         <div className="portrait-lock" aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"
