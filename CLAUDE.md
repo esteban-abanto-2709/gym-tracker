@@ -32,15 +32,18 @@ pnpm lint              # eslint check
 pnpm format            # prettier --write
 ```
 
-### Docker (local full-stack)
+### Docker (prod and dev stacks)
+
+Two stacks, each with its own database: `apps/docker/prod/` (daily-use app, no published ports) and `apps/docker/dev/` (same stack, separate DB, ports `3000`/`4000`/`5432` published). They share one Cloudflare tunnel and never run at the same time.
 
 ```bash
-# from apps/docker/
-docker compose up --build   # start postgres + api + web
-docker compose down -v      # stop and remove volumes
+# from apps/docker/prod/ or apps/docker/dev/
+docker compose up -d --build   # start postgres + api + web + cloudflared
+docker compose up -d postgres  # dev: only the DB, for native pnpm dev
+docker compose down            # stop (keeps data; -v would delete the volume)
 ```
 
-Copy `apps/docker/.env.example` → `apps/docker/.env` before first run.
+Copy `apps/docker/.env.example` (one template for both) → `apps/docker/prod/.env` and `apps/docker/dev/.env`, with a different `JWT_SECRET` in each. In prod, only use `--build` to ship a tested change. Backup/restore scripts live in `apps/docker/scripts/`; backups land in `apps/docker/backups/`.
 
 ### Database (Prisma)
 
@@ -175,7 +178,7 @@ State management is handled exclusively via custom hooks — no global state lib
 
 The whole stack is **self-hosted** via Docker Compose on a single machine; the only thing exposed to the internet is the `web` service, through a Cloudflare Tunnel (`cloudflared` service). `api` and `postgres` stay private inside the `gym-tracker-network`.
 
-- **API + Web + Database** → Docker Compose (`apps/docker/docker-compose.yml`)
+- **API + Web + Database** → Docker Compose (`apps/docker/prod/docker-compose.yml`; `apps/docker/dev/` is the dev twin on the same machine)
 - **Public access (optional)** → Cloudflare tunnel. The compose default is a **named tunnel** (`tunnel --no-autoupdate run`), which needs a `TUNNEL_TOKEN` and a domain the operator owns, and gives a stable HTTPS URL that survives restarts. The quick-tunnel alternative (random `trycloudflare.com` URL, no token) is the commented-out line right below it. Each operator supplies their own domain and token via `.env`; none is committed.
 
 There is no managed cloud provider (previously Render/Vercel/Supabase — dropped). `DATABASE_URL` and `DIRECT_URL` both point to the in-network Postgres container; they are kept as two separate vars because Prisma's schema requires both, even though here they resolve to the same instance.

@@ -77,11 +77,30 @@ Es opcional: sin configurarlo, la app funciona igual dentro de tu red local.
 
 ```bash
 cd apps/docker
-cp .env.example .env
-docker compose up --build
+cp .env.example prod/.env
+cd prod
+docker compose up -d --build
 ```
 
-Los detalles están en [`apps/docker/README.md`](./apps/docker/README.md).
+### Por qué el repositorio trae producción y desarrollo
+
+En un proyecto típico, el repositorio es solo desarrollo: producción vive en otro
+lado —un servidor o una máquina virtual donde se despliega una copia— y su
+configuración no está en el código. Aquí no hay "otro lado". **La máquina donde
+se desarrolla es la misma donde corre la app de verdad**, así que el repositorio
+incluye los dos entornos, cada uno en su carpeta y con su propia base de datos:
+
+- **`apps/docker/prod/`** — la app que usas a diario, con tus datos reales.
+  Cerrada: no publica ningún puerto, solo sale por el túnel.
+- **`apps/docker/dev/`** — el mismo stack con una base de datos aparte y los
+  puertos abiertos, para probar cambios (también desde el celular) sin tocar tus
+  datos reales.
+
+Los dos comparten el mismo túnel y nunca corren a la vez: trabajas en dev y,
+cuando toca entrenar, bajas dev y subes prod con la última versión probada.
+
+Los detalles —cómo cambiar de uno a otro, backups y restauración— están en
+[`apps/docker/README.md`](./apps/docker/README.md).
 
 ## Cómo está construido
 
@@ -91,7 +110,7 @@ Un monorepo con dos aplicaciones independientes y la orquestación que las une:
 |---------|--------|
 | [`apps/api`](./apps/api/README.md) | La API REST y la base de datos. NestJS, PostgreSQL y Prisma. |
 | [`apps/web`](./apps/web/README.md) | La interfaz. Next.js, React y Tailwind. |
-| [`apps/docker`](./apps/docker/README.md) | Docker Compose, backups y restauración. |
+| [`apps/docker`](./apps/docker/README.md) | Docker Compose de prod y dev, backups y restauración. |
 
 Cada app se gestiona por su cuenta y tiene su propio README **con el detalle
 técnico**: comandos, variables de entorno, arquitectura interna y endpoints. Este

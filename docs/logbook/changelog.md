@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-037] Entornos prod y dev separados en Docker (2026-09-23 12:54)
+`apps/docker/` pasa a tener `prod/` (cerrado) y `dev/` (el mismo stack con su propia BD y los puertos abiertos), que comparten el tunnel sin correr a la vez; `.env.example`, `.gitignore`, `scripts/` (backup/restore) y `backups/` quedan en la raíz, compartidos por los dos. Verificado con un backup de prod restaurado en dev.
+
 ## [RM-036] Abrir como app a pantalla completa desde el inicio (2026-09-23 09:18)
 Promovida desde `WL-006` (PWA instalable).
 Manifest, `appleWebApp` con barra de estado translúcida, `viewportFit: cover`, iconos generados por código (mancuerna de lucide + cinta hazard) y márgenes `safe-area` en header, barra inferior, paneles y toasts; `lang="es"`.

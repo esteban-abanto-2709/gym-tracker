@@ -13,7 +13,7 @@ REST API del proyecto Gym Tracker. Construida con NestJS sobre Express, usa Pris
 ## Requisitos
 
 - Node.js 22+
-- PostgreSQL corriendo (o usar Docker Compose desde `apps/docker/`)
+- PostgreSQL corriendo (o levantar solo la base de dev: `docker compose up -d postgres` desde `apps/docker/dev/`)
 - pnpm 11 (gestionado vía corepack; la versión está pineada en `package.json`)
 
 ## Instalación
@@ -111,8 +111,8 @@ model Workout {
 
 ## Docker
 
-El `Dockerfile` incluye un build multi-stage. Al iniciar el contenedor ejecuta automáticamente `prisma migrate deploy` antes de levantar el servidor. Para correr junto al resto del stack, usa Docker Compose desde `apps/docker/`.
+El `Dockerfile` incluye un build multi-stage. Al iniciar el contenedor ejecuta automáticamente `prisma migrate deploy` antes de levantar el servidor. Para correr junto al resto del stack, usa Docker Compose desde `apps/docker/prod/` o `apps/docker/dev/`.
 
 ## Despliegue
 
-**Self-hosted** vía Docker Compose (`apps/docker/`) en una sola máquina. La API corre dentro de la red privada `gym-tracker-network` y no se expone a internet: solo la web sale al exterior a través de un Cloudflare Tunnel. `DATABASE_URL` y `DIRECT_URL` apuntan al contenedor de Postgres de la misma red.
+**Self-hosted** vía Docker Compose (`apps/docker/prod/`) en una sola máquina. La API corre dentro de la red privada `gym-tracker-network` y no se expone a internet: solo la web sale al exterior a través de un Cloudflare Tunnel. `DATABASE_URL` y `DIRECT_URL` apuntan al contenedor de Postgres de la misma red.

@@ -80,11 +80,11 @@ Los componentes de `components/ui/` son primitivos de shadcn/ui. Si necesitas mo
 
 ## Docker
 
-El `Dockerfile` usa el output standalone de Next.js para minimizar el tamaño de imagen. Para correr junto al resto del stack, usa Docker Compose desde `apps/docker/`.
+El `Dockerfile` usa el output standalone de Next.js para minimizar el tamaño de imagen. Para correr junto al resto del stack, usa Docker Compose desde `apps/docker/prod/` o `apps/docker/dev/`.
 
 ## Despliegue
 
-El stack es **self-hosted** vía Docker Compose (`apps/docker/`): Postgres, API y web corren en la misma máquina dentro de la red `gym-tracker-network`. La web es el único servicio expuesto a internet, a través de un **Cloudflare Tunnel** (`cloudflared`); la API y la base de datos quedan privadas.
+El stack es **self-hosted** vía Docker Compose (`apps/docker/prod/`): Postgres, API y web corren en la misma máquina dentro de la red `gym-tracker-network`. La web es el único servicio expuesto a internet, a través de un **Cloudflare Tunnel** (`cloudflared`); la API y la base de datos quedan privadas.
 
 Dentro de Compose, `API_INTERNAL_URL` apunta al servicio interno de la API (p. ej. `http://api:4000`); el servidor de Next reenvía ahí las peticiones `/api/*`. El navegador siempre llama al mismo origen de la web, así que no se expone ninguna URL de API al bundle del cliente.
 
