@@ -6,14 +6,15 @@ rem  Restore: llena la BD de dev o prod con un backup generado por backup-prod.
 rem  REEMPLAZA los datos: hace TRUNCATE de User/Exercise/Routine/RoutineItem/
 rem  Workout y carga el backup.
 rem  Las tablas deben existir ya (creadas por las migraciones de Prisma).
+rem  Credenciales desde apps/docker/<dev|prod>/.env.
 rem
 rem  Uso:
-rem    restore.cmd dev                  -> usa el backup mas reciente de backups/
+rem    restore.cmd dev                  -> usa el backup mas reciente de apps/docker/backups/
 rem    restore.cmd prod                 -> idem, sobre prod
 rem    restore.cmd dev "ruta\archivo.sql"
 rem ===========================================================================
 
-set "SCRIPT_DIR=%~dp0"
+for %%I in ("%~dp0..") do set "DOCKER_DIR=%%~fI\"
 
 set "TARGET=%~1"
 if /i "%TARGET%"=="dev"  ( set "CONTAINER=gym-tracker-dev-sql" & goto :targetok )
@@ -25,9 +26,9 @@ exit /b 1
 
 set "BACKUP=%~2"
 
-set "ENVFILE=%SCRIPT_DIR%.env"
+set "ENVFILE=%DOCKER_DIR%%TARGET%\.env"
 if not exist "%ENVFILE%" (
-    echo [ERROR] No se encontro "%ENVFILE%". Copia .env.example a .env primero.
+    echo [ERROR] No se encontro "%ENVFILE%". Copia apps/docker/.env.example a %TARGET%/.env primero.
     exit /b 1
 )
 
@@ -54,7 +55,7 @@ if /i not "%RUNNING%"=="true" (
 rem --- Elegir backup mas reciente si no se paso uno --------------------------
 if "%BACKUP%"=="" call :pick_latest
 if "%BACKUP%"=="" (
-    echo [ERROR] No hay backups en "%SCRIPT_DIR%backups\" y no diste un archivo.
+    echo [ERROR] No hay backups en "%DOCKER_DIR%backups\" y no diste un archivo.
     echo         Genera uno con backup-prod.cmd o pasa la ruta como 2do argumento.
     exit /b 1
 )
@@ -89,8 +90,8 @@ endlocal
 exit /b 0
 
 :pick_latest
-for /f "usebackq delims=" %%f in (`dir /b /o-d "%SCRIPT_DIR%backups\gym-prod_*.sql" 2^>nul`) do (
-    set "BACKUP=%SCRIPT_DIR%backups\%%f"
+for /f "usebackq delims=" %%f in (`dir /b /o-d "%DOCKER_DIR%backups\gym-prod_*.sql" 2^>nul`) do (
+    set "BACKUP=%DOCKER_DIR%backups\%%f"
     goto :eof
 )
 goto :eof

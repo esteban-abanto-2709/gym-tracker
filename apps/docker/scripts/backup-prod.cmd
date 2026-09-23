@@ -5,21 +5,22 @@ rem ===========================================================================
 rem  Backup de PROD: dump de solo datos (User + Exercise + Routine +
 rem  RoutineItem + Workout) de la BD de prod.
 rem  Corre pg_dump DENTRO del contenedor gym-tracker-sql (misma version que el
-rem  servidor) y copia el archivo a apps/docker/prod/backups/.
+rem  servidor) y copia el archivo a apps/docker/backups/.
+rem  Credenciales desde apps/docker/prod/.env.
 rem
 rem  Uso:
-rem    backup-prod.cmd                 -> guarda en apps/docker/prod/backups/
+rem    backup-prod.cmd                 -> guarda en apps/docker/backups/
 rem    backup-prod.cmd "D:\otra\ruta"  -> guarda en otra carpeta
 rem ===========================================================================
 
-set "SCRIPT_DIR=%~dp0"
+for %%I in ("%~dp0..") do set "DOCKER_DIR=%%~fI\"
 set "CONTAINER=gym-tracker-sql"
-set "OUTDIR=%SCRIPT_DIR%backups"
+set "OUTDIR=%DOCKER_DIR%backups"
 if not "%~1"=="" set "OUTDIR=%~1"
 
-set "ENVFILE=%SCRIPT_DIR%.env"
+set "ENVFILE=%DOCKER_DIR%prod\.env"
 if not exist "%ENVFILE%" (
-    echo [ERROR] No se encontro "%ENVFILE%". Copia .env.example a .env primero.
+    echo [ERROR] No se encontro "%ENVFILE%". Copia apps/docker/.env.example a prod/.env primero.
     exit /b 1
 )
 
