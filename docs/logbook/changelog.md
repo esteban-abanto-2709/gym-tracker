@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-045] Navegación en 4 pestañas: Hoy · Rutinas · Historial · Perfil (2026-09-30 13:51)
+Rutinas pasa a pestaña (sin flecha de volver, con accesos a Programas y Explorar), Hoy queda solo con "Hoy toca" y Día libre, y Perfil con la cuenta; Programas vuelve a Rutinas.
+
 ## [RM-044] Historial sin botón flotante (2026-09-30 13:46)
 Se quita el `+` flotante del Historial, que duplicaba la entrada a Día libre desde Hoy; el botón del estado vacío ("Comenzar a entrenar") se mantiene.
 
