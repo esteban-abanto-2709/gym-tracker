@@ -37,5 +37,11 @@ Con el slot flexible, lo que antes se marcaba a mano ya lo dice el propio bloque
 ## [WL-007] Tags de anotación para análisis con IA
 Vocabulario de tags de lista cerrada más allá de "aproximación" (ej. "fallo técnico", "sobreesfuerzo") que se apilan sobre la serie y enriquecen el texto que se exporta a la IA (ver `RM-021`). Diferido: hoy solo interesa la marca de aproximación (`RM-018`).
 
+## [WL-039] Probar una rutina suelta desde Explorar
+Además de programas, que Explorar tenga rutinas sueltas para probar un día (ej. "Espalda de Cbum", o la que armó un amigo para entrenar juntos hoy) y empezarlas sin copiar un programa entero.
+
+## [WL-040] Armar un programa desde lo que ya registraste
+Tercer camino al empezar con la app vacía: registrar libre unos días y que la app proponga convertir esas sesiones en rutinas y un programa.
+
 ## [WL-037] Recargar desde dentro de la app instalada
 En modo pantalla completa no existe el botón de recargar de Safari: si algo se cuelga, hay que cerrar la app. Evaluar un "tira para recargar" o un botón de reintento en los estados de error.

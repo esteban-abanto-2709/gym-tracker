@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-030] Programas de entrenamiento · fase 1: uso diario + "hoy te toca" (2026-09-30 12:26)
+`Program` agrupa rutinas en orden de rotación y `User.activeProgramId` marca el que sigues; `GET /programs/active` propone la siguiente a la última hecha. Web: `/programs` para crear/editar/activar, Perfil solo lo muestra, `/routines` filtrado al programa activo e Inicio con "Hoy toca" de un toque + accesos "Otra rutina" y "Programas". Probado en dev y desplegado en prod.
+
 ## [RM-037] Entornos prod y dev separados en Docker (2026-09-23 12:54)
 `apps/docker/` pasa a tener `prod/` (cerrado) y `dev/` (el mismo stack con su propia BD y los puertos abiertos), que comparten el tunnel sin correr a la vez; `.env.example`, `.gitignore`, `scripts/` (backup/restore) y `backups/` quedan en la raíz, compartidos por los dos. Verificado con un backup de prod restaurado en dev.
 

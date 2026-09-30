@@ -3,7 +3,7 @@ setlocal EnableExtensions
 
 rem ===========================================================================
 rem  Restore: llena la BD de dev o prod con un backup generado por backup-prod.
-rem  REEMPLAZA los datos: hace TRUNCATE de User/Exercise/Routine/RoutineItem/
+rem  REEMPLAZA los datos: hace TRUNCATE de User/Exercise/Program/Routine/RoutineItem/
 rem  Workout y carga el backup.
 rem  Las tablas deben existir ya (creadas por las migraciones de Prisma).
 rem  Credenciales desde apps/docker/<dev|prod>/.env.
