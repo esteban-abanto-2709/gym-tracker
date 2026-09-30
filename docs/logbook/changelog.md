@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-044] Historial sin botón flotante (2026-09-30 13:46)
+Se quita el `+` flotante del Historial, que duplicaba la entrada a Día libre desde Hoy; el botón del estado vacío ("Comenzar a entrenar") se mantiene.
+
 ## [RM-038] Programas de entrenamiento · fase 2: explorar y copiar programas (2026-09-30 13:22)
 `GET /programs/explore` lista los programas de los demás y `POST /programs/:id/copy` hace una copia profunda e independiente (sufijo "(2)" si el nombre choca, `copiedFromId` como origen) que se activa solo si no tenías programa activo. Web: `/explore` + detalle con "Copiar", acceso discreto desde Programas y bienvenida en Inicio para usuarios sin rutinas (Explorar o Armar el mío). Probado en dev con una segunda cuenta.
 
