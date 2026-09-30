@@ -140,6 +140,35 @@ Si te interesa el razonamiento detrás de todo esto:
 - [Fundamentos de UI/UX](./docs/ux-foundations.md) — los criterios de diseño.
 - [Bitácora](./docs/logbook/) — roadmap, deuda técnica, ideas y registro de cambios.
 
+## Créditos
+
+El catálogo de ejercicios no se inventó aquí:
+
+- **Texto y datos** (nombres, músculos, equipo e instrucciones) —
+  [hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset),
+  bajo licencia MIT.
+- **Imágenes** — [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db),
+  de dominio público (Unlicense). *Próximamente: todavía no están integradas.*
+
+## Referencias de diseño
+
+> Nota de trabajo. Está aquí para no perderla, no para publicarla.
+
+[wger](https://github.com/wger-project/wger) (AGPL-3.0) es la referencia cuando
+toque estructurar algo. Se mira, no se copia: leer su código no obliga a nada,
+copiarlo arrastraría la AGPL a un proyecto MIT.
+
+Tres ideas suyas que valen para el catálogo:
+
+- **El ejercicio, separado del idioma.** `Exercise` (categoría, músculos, equipo)
+  por un lado y `Translation` (nombre y descripción, una fila por idioma) por
+  otro. Hoy `Exercise` aquí es solo `name + slug`.
+- **Siembra idempotente por `uuid`.** El import hace upsert contra un uuid
+  estable, no contra el orden de las filas: re-sembrar no duplica ni pisa nada.
+- **Registro de borrados.** Una tabla aparte con lo eliminado río arriba y su
+  reemplazo, para que una instancia autohospedada propague borrados sin perder
+  los `Workout` que apuntaban a ese ejercicio.
+
 ## Licencia
 
 MIT © Esteban Abanto

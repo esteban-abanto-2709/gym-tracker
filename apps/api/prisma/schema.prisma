@@ -7,15 +7,30 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid())
-  email        String    @unique
-  username     String
-  slug         String    @unique
-  passwordHash String?
-  googleId     String?   @unique
-  workouts     Workout[]
-  routines     Routine[]
-  createdAt    DateTime  @default(now())
+  id              String    @id @default(uuid())
+  email           String    @unique
+  username        String
+  slug            String    @unique
+  passwordHash    String?
+  googleId        String?   @unique
+  workouts        Workout[]
+  routines        Routine[]
+  programs        Program[] @relation("UserPrograms")
+  activeProgramId String?
+  activeProgram   Program?  @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+}
+
+model Program {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation("UserPrograms", fields: [userId], references: [id])
+  name      String
+  routines  Routine[]
+  activeFor User[]    @relation("ActiveProgram")
+  createdAt DateTime  @default(now())
+
+  @@unique([userId, name])
 }
 
 model Exercise {
@@ -60,13 +75,16 @@ enum SetType {
 }
 
 model Routine {
-  id        String        @id @default(uuid())
-  userId    String
-  user      User          @relation(fields: [userId], references: [id])
-  name      String
-  items     RoutineItem[]
-  workouts  Workout[]
-  createdAt DateTime      @default(now())
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  name            String
+  programId       String?
+  program         Program?      @relation(fields: [programId], references: [id], onDelete: SetNull)
+  programPosition Int?
+  items           RoutineItem[]
+  workouts        Workout[]
+  createdAt       DateTime      @default(now())
 
   @@unique([userId, name])
 }

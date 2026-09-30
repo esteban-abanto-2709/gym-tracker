@@ -65,7 +65,7 @@ rem --- Confirmacion ----------------------------------------------------------
 echo ============================================================
 echo   RESTORE en %TARGET%  ^(contenedor %CONTAINER%, BD %DB_NAME%^)
 echo   Backup:  %BACKUP%
-echo   Esto BORRA y reemplaza User, Exercise, Routine, RoutineItem y Workout en esa BD.
+echo   Esto BORRA y reemplaza User, Exercise, Program, Routine, RoutineItem y Workout en esa BD.
 echo ============================================================
 set /p "CONFIRM=Escribe 'si' para continuar: "
 if /i not "%CONFIRM%"=="si" ( echo Cancelado. & exit /b 1 )
@@ -74,7 +74,7 @@ rem --- Cargar ----------------------------------------------------------------
 docker cp "%BACKUP%" %CONTAINER%:/tmp/restore.sql
 if errorlevel 1 ( echo [ERROR] docker cp fallo. & exit /b 1 )
 
-docker exec -e "PGPASSWORD=%DB_PASS%" %CONTAINER% psql -U %DB_USER% -d %DB_NAME% --single-transaction -v ON_ERROR_STOP=1 -c "TRUNCATE \"Workout\", \"RoutineItem\", \"Routine\", \"Exercise\", \"User\" CASCADE;" -c "SET session_replication_role = replica;" -f /tmp/restore.sql
+docker exec -e "PGPASSWORD=%DB_PASS%" %CONTAINER% psql -U %DB_USER% -d %DB_NAME% --single-transaction -v ON_ERROR_STOP=1 -c "TRUNCATE \"Workout\", \"RoutineItem\", \"Routine\", \"Program\", \"Exercise\", \"User\" CASCADE;" -c "SET session_replication_role = replica;" -f /tmp/restore.sql
 if errorlevel 1 (
     echo.
     echo [ERROR] Restore fallo. Si la BD de %TARGET% esta vacia, crea las tablas

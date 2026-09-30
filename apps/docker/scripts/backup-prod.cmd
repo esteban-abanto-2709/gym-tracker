@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 
 rem ===========================================================================
-rem  Backup de PROD: dump de solo datos (User + Exercise + Routine +
+rem  Backup de PROD: dump de solo datos (User + Exercise + Program + Routine +
 rem  RoutineItem + Workout) de la BD de prod.
 rem  Corre pg_dump DENTRO del contenedor gym-tracker-sql (misma version que el
 rem  servidor) y copia el archivo a apps/docker/backups/.
@@ -57,7 +57,7 @@ if not exist "%OUTDIR%" mkdir "%OUTDIR%"
 
 echo Generando backup de "%DB_NAME%" desde "%CONTAINER%"...
 
-docker exec -e "PGPASSWORD=%DB_PASS%" %CONTAINER% pg_dump -U %DB_USER% -d %DB_NAME% --data-only --no-owner --no-privileges -t "public.\"User\"" -t "public.\"Exercise\"" -t "public.\"Routine\"" -t "public.\"RoutineItem\"" -t "public.\"Workout\"" -f "%TMP_IN_CONTAINER%"
+docker exec -e "PGPASSWORD=%DB_PASS%" %CONTAINER% pg_dump -U %DB_USER% -d %DB_NAME% --data-only --no-owner --no-privileges -t "public.\"User\"" -t "public.\"Exercise\"" -t "public.\"Program\"" -t "public.\"Routine\"" -t "public.\"RoutineItem\"" -t "public.\"Workout\"" -f "%TMP_IN_CONTAINER%"
 if errorlevel 1 ( echo [ERROR] pg_dump fallo. & exit /b 1 )
 
 docker cp "%CONTAINER%:%TMP_IN_CONTAINER%" "%DEST%"

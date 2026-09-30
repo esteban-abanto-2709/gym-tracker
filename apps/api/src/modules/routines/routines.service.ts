@@ -4,7 +4,7 @@ import { CreateRoutineDto, RoutineItemDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
 import { normalizeBlock } from './blocks';
 
-const itemsInclude = {
+export const itemsInclude = {
   items: {
     include: { exercise: true },
     orderBy: { position: 'asc' as const },
