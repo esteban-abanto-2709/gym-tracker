@@ -3,22 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
-import { Home, History, User } from "lucide-react";
+import { Dumbbell, Home, History, User } from "lucide-react";
 
 const tabs = [
   { href: routes.home(), label: "Hoy", Icon: Home },
+  { href: routes.routines(), label: "Rutinas", Icon: Dumbbell },
   { href: routes.history(), label: "Historial", Icon: History },
   { href: routes.profile(), label: "Perfil", Icon: User },
 ];
 
 // Barra de pestañas top-level. Solo se monta en pantallas raíz (Hoy /
-// Historial / Perfil); las pantallas profundas conservan su header con "atrás".
+// Rutinas / Historial / Perfil); las pantallas profundas conservan su header con "atrás".
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
     <nav className="fixed left-0 right-0 bottom-0 z-40 h-[calc(5rem+env(safe-area-inset-bottom))] bg-background/80 backdrop-blur-md border-t border-border">
-      <div className="max-w-md mx-auto h-full flex items-center px-8 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+      <div className="max-w-md mx-auto h-full flex items-center px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
         {tabs.map(({ href, label, Icon }) => {
           const active =
             href === "/" ? pathname === "/" : pathname.startsWith(href);

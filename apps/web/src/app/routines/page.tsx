@@ -9,10 +9,18 @@ import { routes } from "@/lib/routes";
 import type { Routine } from "@/lib/types";
 import { readActiveSession, startSession } from "@/lib/activeSession";
 import { PageShell } from "@/components/layout/PageShell";
-import { AppHeader, BackAction } from "@/components/layout/AppHeader";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { BottomNav } from "@/components/layout/BottomNav";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { DeleteRoutineDialog } from "@/components/routines/DeleteRoutineDialog";
-import { Loader2, Plus, ClipboardList, ChevronDown } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  ClipboardList,
+  ChevronDown,
+  Compass,
+  Layers,
+} from "lucide-react";
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -79,7 +87,6 @@ export default function RoutinesPage() {
   return (
     <PageShell variant="history">
       <AppHeader
-        leftAction={<BackAction href={routes.home()} />}
         title="Rutinas"
         rightAction={
           <Link
@@ -92,7 +99,7 @@ export default function RoutinesPage() {
         }
       />
 
-      <main className="flex-1 px-6 py-8 relative z-10 animate-fade-in-up">
+      <main className="flex-1 px-6 pt-8 pb-28 relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto space-y-3">
           {loading ? (
             <div className="flex justify-center py-16">
@@ -149,6 +156,41 @@ export default function RoutinesPage() {
                 ))}
             </>
           )}
+
+          {!loading && (
+            <div className="grid grid-cols-2 gap-3 pt-6">
+              <Link
+                href={routes.programs()}
+                className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
+              >
+                <Layers
+                  className="w-6 h-6 text-muted-foreground"
+                  strokeWidth={2.5}
+                />
+                <span className="font-bold text-foreground leading-tight">
+                  Programas
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Tu rotación
+                </span>
+              </Link>
+              <Link
+                href={routes.explore()}
+                className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
+              >
+                <Compass
+                  className="w-6 h-6 text-muted-foreground"
+                  strokeWidth={2.5}
+                />
+                <span className="font-bold text-foreground leading-tight">
+                  Explorar
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Copia uno armado
+                </span>
+              </Link>
+            </div>
+          )}
         </div>
       </main>
 
@@ -159,6 +201,8 @@ export default function RoutinesPage() {
         routineName={deletingRoutine?.name}
         onConfirm={confirmDelete}
       />
+
+      <BottomNav />
     </PageShell>
   );
 }

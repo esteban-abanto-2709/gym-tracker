@@ -13,7 +13,7 @@ export default function ProgramsPage() {
   return (
     <PageShell variant="history">
       <AppHeader
-        leftAction={<BackAction href={routes.home()} />}
+        leftAction={<BackAction href={routes.routines()} />}
         title="Programas"
         rightAction={
           <Link
