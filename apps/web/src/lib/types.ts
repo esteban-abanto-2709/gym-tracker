@@ -96,6 +96,19 @@ export interface RoutineItem {
 export interface Routine {
   id: string;
   name: string;
+  programId: string | null;
   items: RoutineItem[];
   createdAt: string;
+}
+
+export interface Program {
+  id: string;
+  name: string;
+  routines: Routine[];
+  createdAt: string;
+}
+
+export interface ActiveProgram {
+  program: Program | null;
+  nextRoutineId: string | null;
 }

@@ -8,6 +8,8 @@ export const routes = {
   routines: () => "/routines",
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,
+  programNew: () => "/programs/new",
+  programEdit: (id: string) => `/programs/${id}`,
   train: () => "/train",
   log: () => "/log",
   login: () => "/login",
@@ -48,6 +50,14 @@ export const routes = {
       get: (id: string) => `/routines/${id}`,
       update: (id: string) => `/routines/${id}`,
       delete: (id: string) => `/routines/${id}`,
+    },
+    programs: {
+      list: () => "/programs",
+      create: () => "/programs",
+      get: (id: string) => `/programs/${id}`,
+      update: (id: string) => `/programs/${id}`,
+      delete: (id: string) => `/programs/${id}`,
+      active: () => "/programs/active",
     },
   },
 } as const;
