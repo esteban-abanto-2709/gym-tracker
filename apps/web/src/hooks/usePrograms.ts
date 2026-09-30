@@ -7,6 +7,7 @@ import type { ActiveProgram, Program } from "@/lib/types";
 export function usePrograms() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
+  const [nextRoutineId, setNextRoutineId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export function usePrograms() {
         ]);
         setPrograms(list);
         setActiveProgramId(active.program?.id ?? null);
+        setNextRoutineId(active.nextRoutineId);
       } catch (e) {
         console.error("Error fetching programs:", e);
       } finally {
@@ -42,5 +44,5 @@ export function usePrograms() {
     [activeProgramId],
   );
 
-  return { programs, activeProgramId, loading, setActive };
+  return { programs, activeProgramId, nextRoutineId, loading, setActive };
 }

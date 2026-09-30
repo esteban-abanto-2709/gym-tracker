@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRoutines } from "@/hooks/useRoutines";
+import { usePrograms } from "@/hooks/usePrograms";
 import { routes } from "@/lib/routes";
 import type { Routine } from "@/lib/types";
 import { readActiveSession, startSession } from "@/lib/activeSession";
@@ -10,18 +12,54 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { DeleteRoutineDialog } from "@/components/routines/DeleteRoutineDialog";
-import { Loader2, Plus, ClipboardList } from "lucide-react";
+import { Loader2, Plus, ClipboardList, ChevronDown } from "lucide-react";
 
 export default function RoutinesPage() {
   const router = useRouter();
   const {
     routines,
-    loading,
+    loading: loadingRoutines,
     deletingRoutine,
     setDeletingRoutine,
     confirmDelete,
     actionLoading,
   } = useRoutines();
+  const {
+    programs,
+    activeProgramId,
+    nextRoutineId,
+    loading: loadingPrograms,
+  } = usePrograms();
+  const [showOthers, setShowOthers] = useState(false);
+  const loading = loadingRoutines || loadingPrograms;
+
+  const byId = new Map(routines.map((r) => [r.id, r]));
+  const inOrder = (list: { id: string }[]) =>
+    list.flatMap((r) => byId.get(r.id) ?? []);
+  const activeProgram = programs.find((p) => p.id === activeProgramId);
+  const activeRoutines = activeProgram ? inOrder(activeProgram.routines) : [];
+  const otherGroups = [
+    ...programs
+      .filter((p) => p.id !== activeProgramId)
+      .map((p) => ({ key: p.id, title: p.name, routines: inOrder(p.routines) })),
+    {
+      key: "loose",
+      title: "Sin programa",
+      routines: routines.filter((r) => !r.programId),
+    },
+  ].filter((group) => group.routines.length > 0);
+
+  const renderCards = (list: Routine[]) =>
+    list.map((routine, index) => (
+      <RoutineCard
+        key={routine.id}
+        routine={routine}
+        index={index}
+        isNext={routine.id === nextRoutineId}
+        onStart={handleStart}
+        onDelete={setDeletingRoutine}
+      />
+    ));
 
   const handleStart = (routine: Routine) => {
     const active = readActiveSession();
@@ -77,16 +115,39 @@ export default function RoutinesPage() {
                 Nueva Rutina
               </Link>
             </div>
+          ) : activeRoutines.length === 0 ? (
+            renderCards(routines)
           ) : (
-            routines.map((routine, index) => (
-              <RoutineCard
-                key={routine.id}
-                routine={routine}
-                index={index}
-                onStart={handleStart}
-                onDelete={setDeletingRoutine}
-              />
-            ))
+            <>
+              <p className="kicker text-primary text-[0.65rem]">
+                {activeProgram?.name}
+              </p>
+              {renderCards(activeRoutines)}
+
+              {otherGroups.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowOthers((prev) => !prev)}
+                  aria-expanded={showOthers}
+                  className="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Otros programas
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${showOthers ? "rotate-180" : ""}`}
+                  />
+                </button>
+              )}
+
+              {showOthers &&
+                otherGroups.map((group) => (
+                  <div key={group.key} className="space-y-3 pt-2">
+                    <p className="kicker text-muted-foreground text-[0.65rem]">
+                      {group.title}
+                    </p>
+                    {renderCards(group.routines)}
+                  </div>
+                ))}
+            </>
           )}
         </div>
       </main>

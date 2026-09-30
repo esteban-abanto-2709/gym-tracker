@@ -6,6 +6,7 @@ import { ListChecks, Pencil, Trash2, Play } from "lucide-react";
 interface RoutineCardProps {
   routine: Routine;
   index: number;
+  isNext?: boolean;
   onStart: (routine: Routine) => void;
   onDelete: (routine: Routine) => void;
 }
@@ -13,6 +14,7 @@ interface RoutineCardProps {
 export function RoutineCard({
   routine,
   index,
+  isNext = false,
   onStart,
   onDelete,
 }: RoutineCardProps) {
@@ -31,6 +33,11 @@ export function RoutineCard({
           className="min-w-0 flex-1"
           title="Editar rutina"
         >
+          {isNext && (
+            <span className="block kicker text-[0.6rem] text-primary mb-1">
+              Hoy toca
+            </span>
+          )}
           <h3 className="font-bold text-foreground text-lg leading-tight truncate">
             {routine.name}
           </h3>
