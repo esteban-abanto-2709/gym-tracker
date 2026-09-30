@@ -21,7 +21,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Onboarding:** un usuario sin rutinas ve en Inicio dos caminos: **Explorar programas** (copiar uno) o **Armar el mío** (crear su primera rutina y luego agruparla en un programa).
 - **Fuera de alcance:** perfiles de amigos, seguir usuarios, tienda (WL-002 sigue en la wishlist para lo social), probar rutinas sueltas desde Explorar (WL-039), armar un programa desde lo ya registrado (WL-040).
 - **Hecho cuando:** un amigo se registra, entra a Explorar, copia mi "Upper/Lower", queda activo, lo empieza desde Inicio, y si cambia un ejercicio en su copia mi programa no se altera.
-- **Fecha:** 2026-09-30 · **Estado:** Abierto
+- **Fecha:** 2026-09-30 · **Estado:** En progreso (2026-09-30)
 
 ## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.

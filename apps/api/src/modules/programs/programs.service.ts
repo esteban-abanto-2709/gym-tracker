@@ -25,6 +25,14 @@ export function nextInRotation(
   return routineIds[(last + 1) % routineIds.length];
 }
 
+export function uniqueName(base: string, taken: Set<string>) {
+  let name = base;
+  for (let n = 2; taken.has(name); n++) {
+    name = `${base} (${n})`;
+  }
+  return name;
+}
+
 @Injectable()
 export class ProgramsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -52,6 +60,80 @@ export class ProgramsService {
       include: routinesInclude,
       orderBy: { name: 'asc' },
     });
+  }
+
+  async explore(userId: string) {
+    return this.prisma.program.findMany({
+      where: { userId: { not: userId }, routines: { some: {} } },
+      include: { ...routinesInclude, user: { select: { username: true } } },
+      orderBy: [{ user: { username: 'asc' } }, { name: 'asc' }],
+    });
+  }
+
+  async copy(id: string, userId: string) {
+    const source = await this.prisma.program.findUnique({
+      where: { id },
+      include: routinesInclude,
+    });
+
+    if (!source) {
+      throw new NotFoundException(`Program ${id} not found`);
+    }
+
+    const [programs, routines, user] = await Promise.all([
+      this.prisma.program.findMany({ where: { userId }, select: { name: true } }),
+      this.prisma.routine.findMany({ where: { userId }, select: { name: true } }),
+      this.prisma.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { activeProgramId: true },
+      }),
+    ]);
+    const routineNames = new Set(routines.map((r) => r.name));
+    const activated = user.activeProgramId === null;
+
+    const program = await this.prisma.$transaction(async (tx) => {
+      const copy = await tx.program.create({
+        data: {
+          userId,
+          name: uniqueName(source.name, new Set(programs.map((p) => p.name))),
+          copiedFromId: source.id,
+        },
+      });
+
+      for (const [programPosition, routine] of source.routines.entries()) {
+        const name = uniqueName(routine.name, routineNames);
+        routineNames.add(name);
+        await tx.routine.create({
+          data: {
+            userId,
+            name,
+            programId: copy.id,
+            programPosition,
+            items: {
+              create: routine.items.map((item) => ({
+                exerciseId: item.exerciseId,
+                position: item.position,
+                blocks: item.blocks as Prisma.InputJsonValue,
+              })),
+            },
+          },
+        });
+      }
+
+      if (activated) {
+        await tx.user.update({
+          where: { id: userId },
+          data: { activeProgramId: copy.id },
+        });
+      }
+
+      return tx.program.findUniqueOrThrow({
+        where: { id: copy.id },
+        include: routinesInclude,
+      });
+    });
+
+    return { program, activated };
   }
 
   async findOne(id: string, userId: string) {

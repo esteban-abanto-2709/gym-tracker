@@ -22,13 +22,16 @@ model User {
 }
 
 model Program {
-  id        String    @id @default(uuid())
-  userId    String
-  user      User      @relation("UserPrograms", fields: [userId], references: [id])
-  name      String
-  routines  Routine[]
-  activeFor User[]    @relation("ActiveProgram")
-  createdAt DateTime  @default(now())
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation("UserPrograms", fields: [userId], references: [id])
+  name         String
+  copiedFromId String?
+  copiedFrom   Program?  @relation("ProgramCopies", fields: [copiedFromId], references: [id], onDelete: SetNull)
+  copies       Program[] @relation("ProgramCopies")
+  routines     Routine[]
+  activeFor    User[]    @relation("ActiveProgram")
+  createdAt    DateTime  @default(now())
 
   @@unique([userId, name])
 }

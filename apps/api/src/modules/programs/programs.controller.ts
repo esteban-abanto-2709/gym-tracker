@@ -50,6 +50,16 @@ export class ProgramsController {
     return this.programsService.findAll(user.id);
   }
 
+  @Get('explore')
+  async explore(@CurrentUser() user: AuthUser) {
+    return this.programsService.explore(user.id);
+  }
+
+  @Post(':id/copy')
+  async copy(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+    return this.programsService.copy(id, user.id);
+  }
+
   @Get(':id')
   async findOne(@CurrentUser() user: AuthUser, @Param('id') id: string) {
     return this.programsService.findOne(id, user.id);

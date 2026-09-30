@@ -1,7 +1,11 @@
 import { NotFoundException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { ProgramsService, nextInRotation } from './programs.service';
+import {
+  ProgramsService,
+  nextInRotation,
+  uniqueName,
+} from './programs.service';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 
@@ -93,6 +97,111 @@ describe('nextInRotation', () => {
 
   it('un programa sin rutinas no sugiere nada', () => {
     expect(nextInRotation([], 'upper-a')).toBeNull();
+  });
+});
+
+describe('uniqueName', () => {
+  it.each([
+    ['libre queda igual', [], 'Upper A'],
+    ['repetido suma (2)', ['Upper A'], 'Upper A (2)'],
+    ['salta los sufijos ocupados', ['Upper A', 'Upper A (2)'], 'Upper A (3)'],
+  ])('%s', (_label, taken, expected) => {
+    expect(uniqueName('Upper A', new Set(taken))).toBe(expected);
+  });
+});
+
+describe('ProgramsService copia', () => {
+  const source = {
+    id: 'src',
+    name: 'Upper/Lower',
+    routines: [
+      {
+        name: 'Upper A',
+        items: [{ exerciseId: 'ex1', position: 0, blocks: [{ kind: 'reps' }] }],
+      },
+      { name: 'Lower A', items: [] },
+    ],
+  };
+
+  const setupCopy = (activeProgramId: string | null) => {
+    const tx = {
+      program: {
+        create: jest.fn().mockResolvedValue({ id: 'copy' }),
+        findUniqueOrThrow: jest.fn().mockResolvedValue({ id: 'copy' }),
+      },
+      routine: { create: jest.fn().mockResolvedValue({}) },
+      user: { update: jest.fn().mockResolvedValue({}) },
+    };
+    const prisma = {
+      program: {
+        findUnique: jest.fn().mockResolvedValue(source),
+        findMany: jest.fn().mockResolvedValue([{ name: 'Upper/Lower' }]),
+      },
+      routine: {
+        findMany: jest.fn().mockResolvedValue([{ name: 'Upper A' }]),
+      },
+      user: {
+        findUniqueOrThrow: jest.fn().mockResolvedValue({ activeProgramId }),
+      },
+      $transaction: (run: (client: typeof tx) => unknown) => run(tx),
+    };
+    const service = new ProgramsService(prisma as unknown as PrismaService);
+    return { service, tx };
+  };
+
+  it('crea filas propias, con sufijo si el nombre choca', async () => {
+    const { service, tx } = setupCopy('mine');
+
+    await service.copy('src', 'friend');
+
+    expect(tx.program.create).toHaveBeenCalledWith({
+      data: { userId: 'friend', name: 'Upper/Lower (2)', copiedFromId: 'src' },
+    });
+    expect(
+      tx.routine.create.mock.calls.map(
+        ([arg]: [{ data: Record<string, unknown> }]) => arg.data,
+      ),
+    ).toEqual([
+      {
+        userId: 'friend',
+        name: 'Upper A (2)',
+        programId: 'copy',
+        programPosition: 0,
+        items: {
+          create: [
+            { exerciseId: 'ex1', position: 0, blocks: [{ kind: 'reps' }] },
+          ],
+        },
+      },
+      {
+        userId: 'friend',
+        name: 'Lower A',
+        programId: 'copy',
+        programPosition: 1,
+        items: { create: [] },
+      },
+    ]);
+  });
+
+  it('activa la copia si no habia programa activo', async () => {
+    const { service, tx } = setupCopy(null);
+
+    const result = await service.copy('src', 'friend');
+
+    expect(result.activated).toBe(true);
+    expect(tx.user.update).toHaveBeenCalledWith({
+      where: { id: 'friend' },
+      data: { activeProgramId: 'copy' },
+    });
+  });
+
+  it('no toca el programa activo que ya tenias', async () => {
+    const { service, tx } = setupCopy('mine');
+
+    const result = await service.copy('src', 'friend');
+
+    expect(result.activated).toBe(false);
+    expect(tx.user.update).not.toHaveBeenCalled();
   });
 });
 
