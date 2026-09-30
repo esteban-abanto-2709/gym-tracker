@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
@@ -8,7 +9,7 @@ import { notifyError } from "@/lib/notify";
 import type { Program, Routine } from "@/lib/types";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
-import { ClipboardList, Loader2, Trash2 } from "lucide-react";
+import { ClipboardList, Loader2, Plus, Trash2 } from "lucide-react";
 
 interface ProgramEditorProps {
   programId?: string;
@@ -183,9 +184,16 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
             <div className="flex flex-col items-center justify-center text-center py-10 px-6 border-2 border-dashed border-border rounded-2xl text-muted-foreground">
               <ClipboardList className="w-8 h-8 mb-2 opacity-50" />
               <p className="font-medium">Aún no tienes rutinas</p>
-              <p className="text-sm opacity-70">
+              <p className="text-sm opacity-70 mb-4">
                 Crea tus rutinas primero y luego agrúpalas aquí.
               </p>
+              <Link
+                href={routes.routineNew()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border-2 border-input font-bold text-foreground hover:border-border active:scale-95 transition-all"
+              >
+                <Plus className="w-4 h-4" strokeWidth={3} />
+                Crear rutina
+              </Link>
             </div>
           ) : (
             <div className="space-y-2">
