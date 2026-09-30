@@ -11,6 +11,8 @@ export const routes = {
   programs: () => "/programs",
   programNew: () => "/programs/new",
   programEdit: (id: string) => `/programs/${id}`,
+  explore: () => "/explore",
+  exploreProgram: (id: string) => `/explore/${id}`,
   train: () => "/train",
   log: () => "/log",
   login: () => "/login",
@@ -59,6 +61,8 @@ export const routes = {
       update: (id: string) => `/programs/${id}`,
       delete: (id: string) => `/programs/${id}`,
       active: () => "/programs/active",
+      explore: () => "/programs/explore",
+      copy: (id: string) => `/programs/${id}/copy`,
     },
   },
 } as const;

@@ -108,6 +108,15 @@ export interface Program {
   createdAt: string;
 }
 
+export interface ExploreProgram extends Program {
+  user: { username: string };
+}
+
+export interface CopiedProgram {
+  program: Program;
+  activated: boolean;
+}
+
 export interface ActiveProgram {
   program: Program | null;
   nextRoutineId: string | null;

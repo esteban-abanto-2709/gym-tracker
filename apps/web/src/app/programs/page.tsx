@@ -5,7 +5,7 @@ import { routes } from "@/lib/routes";
 import { usePrograms } from "@/hooks/usePrograms";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
-import { Check, Layers, Loader2, Pencil, Plus } from "lucide-react";
+import { Check, Compass, Layers, Loader2, Pencil, Plus } from "lucide-react";
 
 export default function ProgramsPage() {
   const { programs, activeProgramId, loading, setActive } = usePrograms();
@@ -102,6 +102,23 @@ export default function ProgramsPage() {
                   : "Toca un programa para activarlo."}
               </p>
             </>
+          )}
+
+          {!loading && (
+            <Link
+              href={routes.explore()}
+              className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-dashed border-border p-4 text-muted-foreground hover:border-primary/50 hover:text-foreground active:scale-[0.98] transition-all"
+            >
+              <Compass className="shrink-0 w-6 h-6" strokeWidth={2.5} />
+              <span className="min-w-0">
+                <span className="block font-bold text-foreground">
+                  Explorar programas
+                </span>
+                <span className="block text-xs">
+                  Copia uno armado por otra persona.
+                </span>
+              </span>
+            </Link>
           )}
         </div>
       </main>
