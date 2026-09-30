@@ -3,7 +3,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Compass, Layers, ListChecks, Play, Plus, Zap } from "lucide-react";
+import { Compass, Play, Plus, Zap } from "lucide-react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { ActiveProgram, Routine } from "@/lib/types";
@@ -154,47 +154,12 @@ export function HomeActions() {
         </Link>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
-        <Tile
-          href={routes.log()}
-          icon={<Zap className="w-6 h-6 text-primary" strokeWidth={2.5} />}
-          title="Día libre"
-          subtitle="Un set suelto"
-        />
-        <Tile
-          href={routes.routineNew()}
-          icon={
-            <Plus className="w-6 h-6 text-muted-foreground" strokeWidth={2.5} />
-          }
-          title="Crear rutina"
-          subtitle="Arma la tuya"
-        />
-        {today && (
-          <Tile
-            href={routes.routines()}
-            icon={
-              <ListChecks
-                className="w-6 h-6 text-muted-foreground"
-                strokeWidth={2.5}
-              />
-            }
-            title="Otra rutina"
-            subtitle="Elige de la lista"
-          />
-        )}
-        <Tile
-          href={routes.programs()}
-          icon={
-            <Layers
-              className="w-6 h-6 text-muted-foreground"
-              strokeWidth={2.5}
-            />
-          }
-          title="Programas"
-          subtitle={today ? "Tu rotación" : "Arma tu rotación"}
-          className={today ? "" : "col-span-2"}
-        />
-      </div>
+      <Tile
+        href={routes.log()}
+        icon={<Zap className="w-6 h-6 text-primary" strokeWidth={2.5} />}
+        title="Día libre"
+        subtitle="Un set suelto"
+      />
     </>
   );
 }
