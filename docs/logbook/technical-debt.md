@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-041] Nombre de rutina repetido responde 500
+- **Ubicación:** `apps/api/src/modules/routines/routines.service.ts:18` (`create`) y `:50` (`update`).
+- **Riesgo:** 4/10
+- **Problema:** `Routine` es única por `[userId, name]`, pero el servicio no captura el `P2002` de Prisma: crear o renombrar una rutina con un nombre que ya tienes devuelve 500 y el editor solo muestra "No se pudo guardar la rutina", sin decir por qué. `programs` ya lo resuelve con un 409 y un aviso en el editor.
+- **Impacto futuro:** con amigos usando la app (y copias que suman rutinas con sufijo), chocar con un nombre es más probable y el error no explica qué corregir.
+- **Sugerencia:** reutilizar el patrón `withUniqueName` de `programs.service.ts` (409) y avisar en `RoutineEditor` si el nombre ya existe.
+- **Fecha:** 2026-09-30 · **Estado:** Abierto
+
 ## [TD-019] Los sets de tiempo guardan `reps = 1` de relleno
 - **Ubicación:** `apps/api/prisma/schema.prisma` (`Workout.reps Int` no nullable); lo envían `apps/web/src/components/train/SetForm.tsx`, `apps/web/src/hooks/useWorkoutForm.ts` y `apps/web/src/hooks/useWorkoutHistory.ts`.
 - **Riesgo:** 3/10

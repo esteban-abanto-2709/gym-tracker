@@ -43,5 +43,8 @@ Además de programas, que Explorar tenga rutinas sueltas para probar un día (ej
 ## [WL-040] Armar un programa desde lo que ya registraste
 Tercer camino al empezar con la app vacía: registrar libre unos días y que la app proponga convertir esas sesiones en rutinas y un programa.
 
+## [WL-042] Ordenar los nombres del catálogo de ejercicios
+Hoy conviven `single-arm lat pulldown`, `french press` (minúscula) y `Curl Braquial`/`Antebrazos` (español) con el resto en inglés, y la app no permite editar un ejercicio. Con Explorar, los amigos ven esos nombres al copiar: unificar idioma y mayúsculas (migración de datos o edición desde la app).
+
 ## [WL-037] Recargar desde dentro de la app instalada
 En modo pantalla completa no existe el botón de recargar de Safari: si algo se cuelga, hay que cerrar la app. Evaluar un "tira para recargar" o un botón de reintento en los estados de error.

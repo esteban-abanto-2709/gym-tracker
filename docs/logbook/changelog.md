@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-038] Programas de entrenamiento · fase 2: explorar y copiar programas (2026-09-30 13:22)
+`GET /programs/explore` lista los programas de los demás y `POST /programs/:id/copy` hace una copia profunda e independiente (sufijo "(2)" si el nombre choca, `copiedFromId` como origen) que se activa solo si no tenías programa activo. Web: `/explore` + detalle con "Copiar", acceso discreto desde Programas y bienvenida en Inicio para usuarios sin rutinas (Explorar o Armar el mío). Probado en dev con una segunda cuenta.
+
 ## [RM-030] Programas de entrenamiento · fase 1: uso diario + "hoy te toca" (2026-09-30 12:26)
 `Program` agrupa rutinas en orden de rotación y `User.activeProgramId` marca el que sigues; `GET /programs/active` propone la siguiente a la última hecha. Web: `/programs` para crear/editar/activar, Perfil solo lo muestra, `/routines` filtrado al programa activo e Inicio con "Hoy toca" de un toque + accesos "Otra rutina" y "Programas". Probado en dev y desplegado en prod.
 
