@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { ProgramsService } from './programs.service';
+import { ProgramsService, nextInRotation } from './programs.service';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 
@@ -76,6 +76,23 @@ describe('ProgramsService rutinas', () => {
       service.create('u1', { name: 'PPL', routineIds: [UPPER_A, LOWER_A] }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(tx.program.create).not.toHaveBeenCalled();
+  });
+});
+
+describe('nextInRotation', () => {
+  const rotation = ['upper-a', 'lower-a', 'upper-b', 'lower-b'];
+
+  it.each([
+    ['sin historial toca la primera', null, 'upper-a'],
+    ['en medio de la rotacion toca la siguiente', 'lower-a', 'upper-b'],
+    ['tras la ultima vuelve al inicio', 'lower-b', 'upper-a'],
+    ['una rutina que ya no esta en el programa reinicia', 'push', 'upper-a'],
+  ])('%s', (_label, last, expected) => {
+    expect(nextInRotation(rotation, last)).toBe(expected);
+  });
+
+  it('un programa sin rutinas no sugiere nada', () => {
+    expect(nextInRotation([], 'upper-a')).toBeNull();
   });
 });
 

@@ -21,6 +21,11 @@ import {
 export class ProgramsController {
   constructor(private readonly programsService: ProgramsService) {}
 
+  @Get('active')
+  async findActive(@CurrentUser() user: AuthUser) {
+    return this.programsService.findActive(user.id);
+  }
+
   @Put('active')
   async setActive(
     @CurrentUser() user: AuthUser,

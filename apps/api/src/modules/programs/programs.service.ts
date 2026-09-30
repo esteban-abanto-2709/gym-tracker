@@ -16,6 +16,15 @@ const routinesInclude = {
   },
 };
 
+export function nextInRotation(
+  routineIds: string[],
+  lastRoutineId: string | null,
+) {
+  if (routineIds.length === 0) return null;
+  const last = lastRoutineId ? routineIds.indexOf(lastRoutineId) : -1;
+  return routineIds[(last + 1) % routineIds.length];
+}
+
 @Injectable()
 export class ProgramsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -87,6 +96,27 @@ export class ProgramsService {
       await this.releaseRoutines(tx, id);
       return tx.program.delete({ where: { id } });
     });
+  }
+
+  async findActive(userId: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { activeProgram: { include: routinesInclude } },
+    });
+    const program = user.activeProgram;
+    if (!program) return { program: null, nextRoutineId: null };
+
+    const routineIds = program.routines.map((r) => r.id);
+    const last = await this.prisma.workout.findFirst({
+      where: { userId, routineId: { in: routineIds } },
+      orderBy: { createdAt: 'desc' },
+      select: { routineId: true },
+    });
+
+    return {
+      program,
+      nextRoutineId: nextInRotation(routineIds, last?.routineId ?? null),
+    };
   }
 
   async setActive(userId: string, programId: string | null) {
