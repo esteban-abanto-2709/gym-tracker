@@ -1,10 +1,7 @@
-import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
-import { StartRoutineCard } from "@/components/train/StartRoutineCard";
-import { routes } from "@/lib/routes";
-import { Zap, Plus } from "lucide-react";
+import { HomeActions } from "@/components/train/HomeActions";
 
 export default function Home() {
   return (
@@ -25,33 +22,7 @@ export default function Home() {
 
           <ContinueRoutineBanner />
 
-          {/* Primary: iniciar rutina — tarjeta invertida con cinta hazard */}
-          <StartRoutineCard />
-
-          {/* Secundarias */}
-          <div className="grid grid-cols-2 gap-3">
-            <Link
-              href={routes.log()}
-              className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
-            >
-              <Zap className="w-6 h-6 text-primary" strokeWidth={2.5} />
-              <span className="font-bold text-foreground leading-tight">
-                Día libre
-              </span>
-              <span className="text-xs text-muted-foreground">Un set suelto</span>
-            </Link>
-
-            <Link
-              href={routes.routineNew()}
-              className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
-            >
-              <Plus className="w-6 h-6 text-muted-foreground" strokeWidth={2.5} />
-              <span className="font-bold text-foreground leading-tight">
-                Crear rutina
-              </span>
-              <span className="text-xs text-muted-foreground">Arma la tuya</span>
-            </Link>
-          </div>
+          <HomeActions />
         </div>
       </main>
 
