@@ -2,8 +2,9 @@ import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
+import { StartRoutineCard } from "@/components/train/StartRoutineCard";
 import { routes } from "@/lib/routes";
-import { Zap, Plus, Play } from "lucide-react";
+import { Zap, Plus } from "lucide-react";
 
 export default function Home() {
   return (
@@ -25,24 +26,7 @@ export default function Home() {
           <ContinueRoutineBanner />
 
           {/* Primary: iniciar rutina — tarjeta invertida con cinta hazard */}
-          <Link
-            href={routes.routines()}
-            className="relative block overflow-hidden rounded-3xl bg-foreground text-background p-6 shadow-lg active:scale-[0.98] transition-all"
-          >
-            <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-            <p className="kicker text-[0.65rem] opacity-55 relative">
-              Empieza fuerte
-            </p>
-            <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative">
-              Iniciar
-              <br />
-              rutina
-            </p>
-            <p className="text-sm mt-3 opacity-60 relative">
-              Elige tu rutina y ve paso a paso ·{" "}
-              <Play className="inline w-3.5 h-3.5 fill-current align-[-2px]" />
-            </p>
-          </Link>
+          <StartRoutineCard />
 
           {/* Secundarias */}
           <div className="grid grid-cols-2 gap-3">
