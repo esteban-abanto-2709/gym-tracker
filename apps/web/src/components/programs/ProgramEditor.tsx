@@ -75,7 +75,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
         } else {
           await api.post(routes.api.programs.create(), payload);
         }
-        router.push(routes.profile());
+        router.push(routes.programs());
       } catch (e) {
         console.error("Error saving program:", e);
         setSaving(false);
@@ -96,7 +96,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
     setSaving(true);
     try {
       await api.delete(routes.api.programs.delete(programId));
-      router.push(routes.profile());
+      router.push(routes.programs());
     } catch (e) {
       console.error("Error deleting program:", e);
       setSaving(false);
@@ -107,7 +107,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
   if (loading) {
     return (
       <PageShell>
-        <AppHeader leftAction={<BackAction href={routes.profile()} />} />
+        <AppHeader leftAction={<BackAction href={routes.programs()} />} />
         <div className="flex-1 flex items-center justify-center">
           <Loader2 className="w-10 h-10 text-primary animate-spin" />
         </div>
@@ -127,7 +127,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
       )}
 
       <AppHeader
-        leftAction={<BackAction href={routes.profile()} />}
+        leftAction={<BackAction href={routes.programs()} />}
         title={isEdit ? "Editar Programa" : "Nuevo Programa"}
         rightAction={
           isEdit ? (

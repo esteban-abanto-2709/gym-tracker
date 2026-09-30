@@ -1,16 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import { routes } from "@/lib/routes";
 import { usePrograms } from "@/hooks/usePrograms";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
-import { Check, Layers, Loader2, LogOut, Pencil, Plus } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 
 export default function PerfilPage() {
   const { user, logout } = useAuth();
-  const { programs, activeProgramId, loading, setActive } = usePrograms();
+  const { programs, activeProgramId, nextRoutineId, loading } = usePrograms();
+  const activeProgram = programs.find((p) => p.id === activeProgramId);
   const initial = user?.username?.charAt(0)?.toUpperCase() ?? "?";
 
   return (
@@ -37,93 +36,56 @@ export default function PerfilPage() {
           </div>
 
           <section className="mt-8 space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="kicker text-muted-foreground text-[0.65rem]">
-                Programa de entrenamiento
-              </p>
-              <Link
-                href={routes.programNew()}
-                className="text-muted-foreground hover:text-foreground transition-all active:scale-90"
-                title="Nuevo programa"
-                aria-label="Nuevo programa"
-              >
-                <Plus className="w-5 h-5" strokeWidth={2.5} />
-              </Link>
-            </div>
+            <p className="kicker text-muted-foreground text-[0.65rem]">
+              Programa de entrenamiento
+            </p>
 
             {loading ? (
               <div className="flex justify-center py-6">
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
               </div>
-            ) : programs.length === 0 ? (
-              <Link
-                href={routes.programNew()}
-                className="flex flex-col items-center text-center py-8 px-6 border-2 border-dashed border-border rounded-2xl text-muted-foreground"
-              >
-                <Layers className="w-8 h-8 mb-2 opacity-50" />
-                <span className="font-medium text-foreground">
-                  Crea tu programa
-                </span>
-                <span className="text-sm opacity-70">
-                  Agrupa tus rutinas en el orden en que las haces.
-                </span>
-              </Link>
+            ) : !activeProgram ? (
+              <p className="rounded-2xl border-2 border-dashed border-border p-5 text-sm text-muted-foreground">
+                Aún no sigues un programa.
+              </p>
             ) : (
-              <>
-                {programs.map((program) => {
-                  const isActive = program.id === activeProgramId;
-                  return (
-                    <div
-                      key={program.id}
-                      className={`flex items-center gap-2 rounded-2xl border-2 p-2 transition-all ${
-                        isActive
-                          ? "border-primary bg-primary/5"
-                          : "border-input bg-card"
-                      }`}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setActive(isActive ? null : program.id)}
-                        aria-pressed={isActive}
-                        className="min-w-0 flex-1 flex items-center gap-3 p-1 text-left active:scale-[0.98] transition-all"
-                      >
+              <div className="rounded-2xl border-2 border-input bg-card p-5">
+                <p className="font-display font-bold uppercase text-foreground text-3xl leading-none tracking-tight">
+                  {activeProgram.name}
+                </p>
+                <ol className="mt-4 space-y-2">
+                  {activeProgram.routines.map((routine, index) => {
+                    const isNext = routine.id === nextRoutineId;
+                    return (
+                      <li key={routine.id} className="flex items-center gap-3">
                         <span
-                          className={`shrink-0 w-6 h-6 rounded-full border-2 grid place-items-center ${
-                            isActive
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-input"
+                          className={`shrink-0 w-7 h-7 rounded-lg grid place-items-center font-display ${
+                            isNext
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-muted-foreground"
                           }`}
                         >
-                          {isActive && (
-                            <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                          )}
+                          {index + 1}
                         </span>
-                        <span className="min-w-0">
-                          <span className="block font-bold text-foreground truncate">
-                            {program.name}
-                          </span>
-                          <span className="block text-xs text-muted-foreground truncate">
-                            {program.routines.map((r) => r.name).join(" → ")}
-                          </span>
+                        <span
+                          className={`min-w-0 flex-1 truncate ${
+                            isNext
+                              ? "font-bold text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {routine.name}
                         </span>
-                      </button>
-                      <Link
-                        href={routes.programEdit(program.id)}
-                        className="shrink-0 p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
-                        title="Editar programa"
-                        aria-label="Editar programa"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Link>
-                    </div>
-                  );
-                })}
-                <p className="text-xs text-muted-foreground">
-                  {activeProgramId
-                    ? "Toca el programa activo para desactivarlo."
-                    : "Toca un programa para activarlo."}
-                </p>
-              </>
+                        {isNext && (
+                          <span className="shrink-0 kicker text-[0.6rem] text-primary">
+                            Hoy toca
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
             )}
           </section>
 

@@ -8,6 +8,7 @@ export const routes = {
   routines: () => "/routines",
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,
+  programs: () => "/programs",
   programNew: () => "/programs/new",
   programEdit: (id: string) => `/programs/${id}`,
   train: () => "/train",
