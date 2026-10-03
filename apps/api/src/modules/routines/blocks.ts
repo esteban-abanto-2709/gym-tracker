@@ -11,6 +11,7 @@ export type WeightRepsBlock = {
   kind: 'weight_reps';
   sets: number | null;
   reps: number | null;
+  repsMax: number | null;
   approx: boolean;
 };
 
@@ -18,6 +19,7 @@ export type RepsBlock = {
   kind: 'reps';
   sets: number | null;
   reps: number | null;
+  repsMax: number | null;
 };
 
 export type TimeBlock = {
@@ -53,6 +55,7 @@ export type BlockInput = {
   kind: BlockKind;
   sets?: number | null;
   reps?: number | null;
+  repsMax?: number | null;
   durationSec?: number | null;
   approx?: boolean;
   steps?: { reps?: number | null; pct?: number | null }[];
@@ -61,11 +64,18 @@ export type BlockInput = {
 export function normalizeBlock(block: BlockInput): RoutineBlock {
   const sets = block.sets ?? null;
   const reps = block.reps ?? null;
+  const repsMax = block.repsMax ?? null;
   switch (block.kind) {
     case 'weight_reps':
-      return { kind: 'weight_reps', sets, reps, approx: block.approx ?? false };
+      return {
+        kind: 'weight_reps',
+        sets,
+        reps,
+        repsMax,
+        approx: block.approx ?? false,
+      };
     case 'reps':
-      return { kind: 'reps', sets, reps };
+      return { kind: 'reps', sets, reps, repsMax };
     case 'time':
       return { kind: 'time', sets, durationSec: block.durationSec ?? null };
     case 'warmup':

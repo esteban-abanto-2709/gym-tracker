@@ -8,12 +8,30 @@ import {
   IsInt,
   IsOptional,
   IsPositive,
+  Validate,
   ValidateNested,
+  ValidatorConstraint,
+  type ValidationArguments,
+  type ValidatorConstraintInterface,
 } from 'class-validator';
 import { BLOCK_KINDS, type BlockKind } from '../blocks';
 
 const Count = () => applyDecorators(IsOptional(), IsInt(), IsPositive());
 const Flag = () => applyDecorators(IsOptional(), IsBoolean());
+
+@ValidatorConstraint({ name: 'repsMaxAtLeastReps' })
+class RepsMaxAtLeastReps implements ValidatorConstraintInterface {
+  validate(repsMax: number, args: ValidationArguments) {
+    const { reps } = args.object as { reps?: number | null };
+    return reps != null && repsMax >= reps;
+  }
+
+  defaultMessage() {
+    return 'repsMax must be at least reps';
+  }
+}
+
+const RepsMax = () => applyDecorators(Count(), Validate(RepsMaxAtLeastReps));
 
 export class RoutineBlockDto {
   @IsIn(BLOCK_KINDS)
@@ -23,12 +41,14 @@ export class RoutineBlockDto {
 export class WeightRepsBlockDto extends RoutineBlockDto {
   @Count() sets?: number | null;
   @Count() reps?: number | null;
+  @RepsMax() repsMax?: number | null;
   @Flag() approx?: boolean;
 }
 
 export class RepsBlockDto extends RoutineBlockDto {
   @Count() sets?: number | null;
   @Count() reps?: number | null;
+  @RepsMax() repsMax?: number | null;
 }
 
 export class TimeBlockDto extends RoutineBlockDto {

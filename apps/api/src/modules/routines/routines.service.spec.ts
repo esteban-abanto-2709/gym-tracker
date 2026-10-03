@@ -37,15 +37,23 @@ describe('RoutinesService blocks', () => {
       await storedBlocks([
         { kind: 'weight_reps' },
         { kind: 'weight_reps', sets: 3, reps: 8 },
+        { kind: 'weight_reps', sets: 3, reps: 8, repsMax: 10 },
         { kind: 'reps', sets: 2, reps: 15 },
         { kind: 'time', sets: 3, durationSec: 30 },
         { kind: 'warmup', sets: 2 },
         { kind: 'ramp', steps: [{ reps: 10, pct: 50 }, { reps: 5 }] },
       ]),
     ).toEqual([
-      { kind: 'weight_reps', sets: null, reps: null, approx: false },
-      { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
-      { kind: 'reps', sets: 2, reps: 15 },
+      {
+        kind: 'weight_reps',
+        sets: null,
+        reps: null,
+        repsMax: null,
+        approx: false,
+      },
+      { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null, approx: false },
+      { kind: 'weight_reps', sets: 3, reps: 8, repsMax: 10, approx: false },
+      { kind: 'reps', sets: 2, reps: 15, repsMax: null },
       { kind: 'time', sets: 3, durationSec: 30 },
       { kind: 'warmup', sets: 2, reps: null },
       {
@@ -69,8 +77,8 @@ describe('RoutinesService blocks', () => {
         { kind: 'weight_reps', sets: 2, reps: 12, approx: true },
       ]),
     ).toEqual([
-      { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
-      { kind: 'weight_reps', sets: 2, reps: 12, approx: true },
+      { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null, approx: false },
+      { kind: 'weight_reps', sets: 2, reps: 12, repsMax: null, approx: true },
     ]);
   });
 });
@@ -79,8 +87,9 @@ describe('CreateRoutineDto blocks', () => {
   it('acepta todos los tipos de bloque', async () => {
     const errors = await dtoErrors(
       [
-        { kind: 'weight_reps', sets: 3, reps: 8, approx: true },
-        { kind: 'reps', sets: 2, reps: 15 },
+        { kind: 'weight_reps', sets: 3, reps: 8, repsMax: 10, approx: true },
+        { kind: 'reps', sets: 2, reps: 6, repsMax: 8 },
+        { kind: 'weight_reps', sets: 3, reps: 10, repsMax: 10 },
         { kind: 'time', sets: 3, durationSec: 30 },
         { kind: 'warmup', sets: 2, reps: 25 },
         {
@@ -120,6 +129,17 @@ describe('CreateRoutineDto blocks', () => {
     );
   });
 
+  it.each([
+    ['menor que el minimo', { reps: 10, repsMax: 8 }],
+    ['sin minimo', { repsMax: 10 }],
+  ])('rechaza un maximo de reps %s', async (_label, extra) => {
+    for (const kind of ['weight_reps', 'reps']) {
+      expect(await dtoErrors([{ kind, sets: 3, ...extra }])).not.toHaveLength(
+        0,
+      );
+    }
+  });
+
   it('rechaza metas invalidas dentro del bloque', async () => {
     expect(await dtoErrors([{ kind: 'time', sets: 0 }])).not.toHaveLength(0);
   });
@@ -128,6 +148,8 @@ describe('CreateRoutineDto blocks', () => {
     ['reps', { durationSec: 30 }],
     ['time', { reps: 10 }],
     ['warmup', { approx: true }],
+    ['warmup', { reps: 10, repsMax: 12 }],
+    ['time', { repsMax: 12 }],
     ['weight_reps', { durationSec: 30 }],
     ['ramp', { steps: [{ reps: 10, pct: 50 }] }],
   ])(

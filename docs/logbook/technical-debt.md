@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-049] Error de lint en el spec de rutinas
+- **Ubicación:** `apps/api/src/modules/routines/routines.service.spec.ts:19`
+- **Riesgo:** 2/10
+- **Problema:** `create.mock.calls[0][0]` es `any` y dispara `@typescript-eslint/no-unsafe-member-access`; `pnpm run lint` no queda limpio.
+- **Impacto futuro:** el ruido del lint tapa errores reales en ese archivo.
+- **Sugerencia:** tipar el mock (`jest.fn<...>()`) o leer la llamada con `create.mock.lastCall` tipado.
+- **Fecha:** 2026-10-03 · **Estado:** Abierto
+
 ## [TD-041] Nombre de rutina repetido responde 500
 - **Ubicación:** `apps/api/src/modules/routines/routines.service.ts:18` (`create`) y `:50` (`update`).
 - **Riesgo:** 4/10
