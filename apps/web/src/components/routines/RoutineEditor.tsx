@@ -54,6 +54,13 @@ const toNullableInt = (value: string): number | null => {
   return Number.isFinite(n) ? Math.trunc(n) : null;
 };
 
+const toRepRange = (min: string, max: string) => {
+  const [reps = null, repsMax = null] = [toNullableInt(min), toNullableInt(max)]
+    .filter((n): n is number => n !== null)
+    .sort((a, b) => a - b);
+  return { reps, repsMax: repsMax === reps ? null : repsMax };
+};
+
 const DEFAULT_RAMP: DraftStep[] = [
   { reps: "10", pct: "50" },
   { reps: "5", pct: "70" },
@@ -65,6 +72,7 @@ const emptyBlock = (): DraftBlock => ({
   kind: "weight_reps",
   sets: "",
   reps: "",
+  repsMax: "",
   durationSec: "",
   approx: false,
   steps: [],
@@ -75,6 +83,7 @@ const toDraftBlock = (block: RoutineBlock): DraftBlock => ({
   kind: block.kind,
   sets: ("sets" in block ? block.sets : null)?.toString() ?? "",
   reps: ("reps" in block ? block.reps : null)?.toString() ?? "",
+  repsMax: ("repsMax" in block ? block.repsMax : null)?.toString() ?? "",
   durationSec:
     ("durationSec" in block ? block.durationSec : null)?.toString() ?? "",
   approx: "approx" in block ? block.approx : false,
@@ -93,9 +102,14 @@ const toBlock = (block: DraftBlock): RoutineBlock => {
   const durationSec = toNullableInt(block.durationSec);
   switch (block.kind) {
     case "weight_reps":
-      return { kind: "weight_reps", sets, reps, approx: block.approx };
+      return {
+        kind: "weight_reps",
+        sets,
+        ...toRepRange(block.reps, block.repsMax),
+        approx: block.approx,
+      };
     case "reps":
-      return { kind: "reps", sets, reps };
+      return { kind: "reps", sets, ...toRepRange(block.reps, block.repsMax) };
     case "time":
       return { kind: "time", sets, durationSec };
     case "warmup":

@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-048] Rango de reps en la rutina (2026-10-03 10:25)
+Los bloques `weight_reps` y `reps` guardan `repsMax` junto a `reps` (mínimo): el editor pide mínimo y máximo opcional, y el modo guiado y explorar programas muestran `3 × 8–10` y `meta 8–10`. Las rutinas sin rango se ven igual; faltan cargar los rangos reales a mano.
+
 ## [RM-046] Sin "Otro ejercicio" en la pantalla de serie guardada (2026-10-03 10:07)
 Se quita el botón y su camino muerto (`addExercise` en `useGuidedSession` y el selector en `/train`); reemplazar desde el mapa de la sesión sigue igual. Las sesiones en curso con extras ya añadidos se siguen leyendo.
 

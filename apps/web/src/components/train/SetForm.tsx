@@ -4,7 +4,11 @@ import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Equipment, SetType } from "@/lib/types";
-import { rampSuggestedWeight, type SetPlan } from "@/lib/blocks";
+import {
+  formatRepRange,
+  rampSuggestedWeight,
+  type SetPlan,
+} from "@/lib/blocks";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
@@ -57,7 +61,15 @@ export function SetForm({
   logging,
   onLog,
 }: SetFormProps) {
-  const { setType, approx, targetReps, targetDurationSec, step, pct } = plan;
+  const {
+    setType,
+    approx,
+    targetReps,
+    targetRepsMax,
+    targetDurationSec,
+    step,
+    pct,
+  } = plan;
   const [measure, setMeasure] = useState<SetMeasure>(plan.measure);
   const measureTouched = useRef(false);
   const isWorkingWeight = measure === "weight_reps" && setType === "WORKING";
@@ -195,7 +207,8 @@ export function SetForm({
   const repsInput = (
     <div className="space-y-2">
       <label className="kicker text-muted-foreground text-[0.6rem]">
-        Reps{targetReps ? ` · meta ${targetReps}` : ""}
+        Reps
+        {targetReps ? ` · meta ${formatRepRange(targetReps, targetRepsMax)}` : ""}
       </label>
       <input
         type="number"

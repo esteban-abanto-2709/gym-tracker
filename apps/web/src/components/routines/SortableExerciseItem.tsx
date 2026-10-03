@@ -18,6 +18,9 @@ const usesSeconds = (block: DraftBlock) => block.kind === "time";
 
 const usesApprox = (block: DraftBlock) => block.kind === "weight_reps";
 
+const usesRepRange = (block: DraftBlock) =>
+  block.kind === "weight_reps" || block.kind === "reps";
+
 const patchStep = (
   steps: DraftStep[],
   index: number,
@@ -35,6 +38,7 @@ export interface DraftBlock {
   kind: RoutineBlock["kind"];
   sets: string;
   reps: string;
+  repsMax: string;
   durationSec: string;
   approx: boolean;
   steps: DraftStep[];
@@ -242,7 +246,7 @@ export function SortableExerciseItem({
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   <input
                     type="number"
@@ -280,6 +284,25 @@ export function SortableExerciseItem({
                     }
                     className={numberInputClass}
                   />
+                  {usesRepRange(block) && (
+                    <>
+                      <span className="text-muted-foreground font-bold">–</span>
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        value={block.repsMax}
+                        onChange={(e) =>
+                          onChangeBlock(item.key, block.key, {
+                            repsMax: e.target.value,
+                          })
+                        }
+                        placeholder="máx"
+                        aria-label="Máximo de reps"
+                        className={numberInputClass}
+                      />
+                    </>
+                  )}
                   <span className="text-xs font-bold text-muted-foreground">
                     {usesSeconds(block) ? "seg" : "reps"}
                   </span>

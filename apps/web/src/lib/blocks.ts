@@ -27,6 +27,14 @@ function locateSet(
   };
 }
 
+export function formatRepRange(
+  reps: number | null,
+  repsMax: number | null | undefined,
+): string {
+  if (reps == null) return "—";
+  return repsMax != null && repsMax !== reps ? `${reps}–${repsMax}` : `${reps}`;
+}
+
 function formatSeconds(totalSec: number): string {
   const d = formatDuration(totalSec);
   return `${d.value} ${d.unit}`;
@@ -37,7 +45,10 @@ function formatBlock(block: RoutineBlock): string | null {
     return `Rampa ${block.steps.map((step) => step.reps ?? "—").join("/")}`;
   }
   if (block.sets == null) return null;
-  const reps = "reps" in block ? (block.reps ?? "—") : "—";
+  const reps =
+    "reps" in block
+      ? formatRepRange(block.reps, "repsMax" in block ? block.repsMax : null)
+      : "—";
   switch (block.kind) {
     case "time":
       return `${block.sets} × ${
@@ -63,6 +74,7 @@ export interface SetPlan {
   setType: SetType;
   approx: boolean;
   targetReps: number | null;
+  targetRepsMax: number | null;
   targetDurationSec: number | null;
   step: number | null;
   pct: number | null;
@@ -74,6 +86,7 @@ export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
     setType: "WORKING",
     approx: false,
     targetReps: null,
+    targetRepsMax: null,
     targetDurationSec: null,
     step: null,
     pct: null,
@@ -82,9 +95,19 @@ export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
   if (!block) return plan;
   switch (block.kind) {
     case "weight_reps":
-      return { ...plan, approx: block.approx, targetReps: block.reps };
+      return {
+        ...plan,
+        approx: block.approx,
+        targetReps: block.reps,
+        targetRepsMax: block.repsMax ?? null,
+      };
     case "reps":
-      return { ...plan, measure: "reps", targetReps: block.reps };
+      return {
+        ...plan,
+        measure: "reps",
+        targetReps: block.reps,
+        targetRepsMax: block.repsMax ?? null,
+      };
     case "time":
       return { ...plan, measure: "time", targetDurationSec: block.durationSec };
     case "warmup":
@@ -120,5 +143,5 @@ export function formatSetGoal(plan: SetPlan): string | null {
   if (plan.setType === "WARMUP")
     return `${plan.targetReps} reps de calentamiento`;
   if (plan.setType === "RAMP") return `${plan.targetReps} reps de rampa`;
-  return `${plan.targetReps} reps`;
+  return `${formatRepRange(plan.targetReps, plan.targetRepsMax)} reps`;
 }

@@ -42,6 +42,7 @@ export interface WeightRepsBlock {
   kind: "weight_reps";
   sets: number | null;
   reps: number | null;
+  repsMax: number | null;
   approx: boolean;
 }
 
@@ -49,6 +50,7 @@ export interface RepsBlock {
   kind: "reps";
   sets: number | null;
   reps: number | null;
+  repsMax: number | null;
 }
 
 export interface TimeBlock {

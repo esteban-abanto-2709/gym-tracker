@@ -14,13 +14,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > Entrenamientos estructurados** y apertura de **H3 · Recomendación de peso**
 > (ver [`../milestones.md`](../milestones.md)).
 
-## [RM-048] Rango de reps en la rutina (8–10 en vez de 10)
-- **Objetivo:** que un bloque `weight_reps` o `reps` pueda planear un rango (`3 × 8–10`) para distinguir un 8–10 de un 10–12 al entrenar; un solo número sigue siendo válido. Base para importar rutinas generadas por IA.
-- **Modelo:** `repsMax` (nullable) junto a `reps`, que pasa a ser el mínimo; `null` = meta de un solo número, sin migrar datos. La API exige `repsMax >= reps`. Calentamiento y rampa no llevan rango.
-- **Pasos:** (1) API acepta y guarda `repsMax`; (2) la web lo edita y lo muestra (cabecera, objetivo de la siguiente serie, etiqueta "meta", explorar programas); (3) sin commit: cargar los rangos reales en las rutinas actuales.
-- **Hecho cuando:** una rutina con `3 × 8–10` se ve así en el editor y en el modo guiado, y las rutinas sin rango se ven igual que antes.
-- **Fecha:** 2026-10-03 · **Estado:** En progreso (2026-10-03)
-
 ## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.
 - **Problema:** hoy el sustituto hereda los bloques del slot (regla de RM-020). Al reemplazar Incline Press (`[warmup 2×25] + [weight_reps 3×8]`) por Plank, el mapa cuenta "0/5 series" y la meta dice `Cal. 2 × 25 + 3 × 8` para un ejercicio de tiempo. Detectado probando RM-031 el 2026-09-19.
