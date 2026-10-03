@@ -15,7 +15,6 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
-import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
 import { SessionMap } from "@/components/train/SessionMap";
 import { Loader2, ClipboardList, ListChecks } from "lucide-react";
 
@@ -40,12 +39,10 @@ export default function TrainPage() {
     goToIndex,
     skipItem,
     replaceItem,
-    addExercise,
     finish,
   } = useGuidedSession();
 
   const { equipment } = useEquipment();
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
 
   if (loading) {
@@ -132,7 +129,6 @@ export default function TrainPage() {
           nextUp={nextUp}
           onContinueSet={continueSet}
           onNext={goNext}
-          onAddExercise={() => setPickerOpen(true)}
           onFinish={finish}
         />
       ) : (
@@ -160,16 +156,6 @@ export default function TrainPage() {
             />
           </div>
         </main>
-      )}
-
-      {pickerOpen && (
-        <AddExerciseSheet
-          onPick={(exercise) => {
-            setPickerOpen(false);
-            addExercise(exercise);
-          }}
-          onClose={() => setPickerOpen(false)}
-        />
       )}
 
       {mapOpen && (

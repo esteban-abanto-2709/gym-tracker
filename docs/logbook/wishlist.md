@@ -51,3 +51,6 @@ Explorar lista todos los programas de los demás, incluidas las copias (`copiedF
 
 ## [WL-037] Recargar desde dentro de la app instalada
 En modo pantalla completa no existe el botón de recargar de Safari: si algo se cuelga, hay que cerrar la app. Evaluar un "tira para recargar" o un botón de reintento en los estados de error.
+
+## [WL-047] Sistema de analíticas
+Ver la evolución del entrenamiento (progreso de peso por ejercicio, volumen, frecuencia). No construirlo desde cero: buscar primero una herramienta o librería existente que calce con el stack (self-hosted, Next + Postgres) y evaluar si basta antes de programar algo a mano.

@@ -271,30 +271,6 @@ export function useGuidedSession() {
     [session, persist],
   );
 
-  // Append an ad-hoc exercise and jump to it.
-  const addExercise = useCallback(
-    (exercise: Exercise) => {
-      if (!session) return;
-      const newIndex = items.length;
-      persist({
-        ...session,
-        extras: [
-          ...session.extras,
-          {
-            exerciseId: exercise.id,
-            exercise: {
-              id: exercise.id,
-              name: exercise.name,
-            },
-          },
-        ],
-        currentIndex: newIndex,
-      });
-      setPhase("logging");
-    },
-    [session, items.length, persist],
-  );
-
   const finish = useCallback(() => {
     clearActiveSession();
     router.push(routes.home());
@@ -322,7 +298,6 @@ export function useGuidedSession() {
     goToIndex,
     skipItem,
     replaceItem,
-    addExercise,
     finish,
   };
 }

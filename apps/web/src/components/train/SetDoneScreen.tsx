@@ -8,7 +8,6 @@ import {
   Check,
   ArrowRight,
   ArrowUp,
-  Plus,
   Flag,
   Dumbbell,
   PartyPopper,
@@ -27,7 +26,6 @@ interface SetDoneScreenProps {
   nextUp: NextUp | null;
   onContinueSet: () => void;
   onNext: () => void;
-  onAddExercise: () => void;
   onFinish: () => void;
 }
 
@@ -38,7 +36,6 @@ export function SetDoneScreen({
   nextUp,
   onContinueSet,
   onNext,
-  onAddExercise,
   onFinish,
 }: SetDoneScreenProps) {
   // Primary action follows the routine: pending target sets first, then the
@@ -130,15 +127,6 @@ export function SetDoneScreen({
               {primary.label}
             </button>
           )}
-
-          <button
-            type="button"
-            onClick={onAddExercise}
-            className="w-full py-4 bg-card border-2 border-input text-foreground rounded-2xl font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <Plus className="w-5 h-5 text-muted-foreground" strokeWidth={2.5} />
-            Otro ejercicio
-          </button>
 
           <button
             type="button"

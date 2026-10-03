@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-046] Sin "Otro ejercicio" en la pantalla de serie guardada (2026-10-03 10:07)
+Se quita el botón y su camino muerto (`addExercise` en `useGuidedSession` y el selector en `/train`); reemplazar desde el mapa de la sesión sigue igual. Las sesiones en curso con extras ya añadidos se siguen leyendo.
+
 ## [RM-045] Navegación en 4 pestañas: Hoy · Rutinas · Historial · Perfil (2026-09-30 13:51)
 Rutinas pasa a pestaña (sin flecha de volver, con accesos a Programas y Explorar), Hoy queda solo con "Hoy toca" y Día libre, y Perfil con la cuenta; Programas vuelve a Rutinas.
 
