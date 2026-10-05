@@ -1,91 +1,124 @@
 # Gym Tracker — Web
 
-Frontend del proyecto Gym Tracker. Construido con Next.js 16 (App Router), React 19 y shadcn/ui. Diseñado para ser rápido de usar en medio de un entrenamiento.
+Interfaz de Gym Tracker. Next.js (App Router) pensado para el celular en
+vertical y una sola mano. Habla con la [API](../api/README.md) a través de un
+proxy en el propio servidor de Next.
 
 ## Stack
 
-- **Framework:** Next.js 16 + React 19
-- **UI:** shadcn/ui + Radix UI + Tailwind CSS 4
-- **Iconos:** Lucide React
-- **Package manager:** pnpm
+| Pieza | Versión |
+|---|---|
+| Runtime | Node.js 22 |
+| Framework | Next.js 16 (App Router, salida `standalone`) + React 19 |
+| UI | Tailwind CSS 4 · shadcn/ui sobre Radix · iconos `lucide-react` |
+| Interacción | `@dnd-kit` (reordenar ejercicios) · `sonner` (toasts) |
+| Auth con Google | `@react-oauth/google` |
+| Gestor de paquetes | pnpm (pineado en `package.json`, vía corepack) |
 
-## Requisitos
-
-- Node.js 20+
-- pnpm (`npm install -g pnpm`)
-- API corriendo en `http://localhost:4000` (o configurar `API_INTERNAL_URL`)
-
-## Instalación
+## Puesta en marcha
 
 ```bash
+corepack enable
 pnpm install
+cp .env.example .env.local   # opcional si la API está en localhost:4000
+pnpm dev                     # http://localhost:3000
 ```
+
+Necesita la API corriendo (por defecto en `http://localhost:4000`).
 
 ## Variables de entorno
 
-El navegador siempre llama a la API a través del mismo origen (`/api/...`); el servidor de Next reescribe esas peticiones hacia la API. Por defecto apunta a `http://localhost:4000`, así que en desarrollo local no necesitas configurar nada.
+| Variable | Cuándo se lee | Para qué |
+|---|---|---|
+| `API_INTERNAL_URL` | En el build (`next.config.ts`) | Destino del proxy `/api/*`. Por defecto `http://localhost:4000`. No llega al navegador |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | En el build | Se incrusta en el bundle para el botón de Google. Vacía = sin login con Google |
 
-Si la API está en otra dirección, créa un `.env.local` en la raíz de `apps/web/`:
-
-```env
-API_INTERNAL_URL=http://localhost:4000
-```
-
-`API_INTERNAL_URL` la usa el servidor de Next (no se expone al navegador), por lo que se puede cambiar sin reconstruir el bundle del cliente.
+Las dos se fijan al compilar: cambiarlas exige un build nuevo. En Docker llegan
+como build args.
 
 ## Comandos
 
 ```bash
-pnpm dev        # servidor de desarrollo (http://localhost:3000)
-pnpm build      # build de producción
-pnpm start      # inicia el build de producción
-pnpm lint       # ESLint
-pnpm format     # Prettier
+pnpm dev      # desarrollo
+pnpm build    # build de producción (standalone)
+pnpm start    # sirve el build
+pnpm lint     # ESLint
+pnpm format   # Prettier
 ```
 
-## Páginas
+## Cómo habla con la API
 
-| Ruta       | Descripción                                                                 |
-| ---------- | --------------------------------------------------------------------------- |
-| `/`        | Registrar un workout: selecciona ejercicio, ingresa peso, reps y valoración |
-| `/history` | Historial de workouts agrupado por fecha, con edición y borrado             |
-| `/success` | Confirmación tras registrar un workout                                      |
+- El navegador **solo llama a su propio origen**: `lib/api.ts` pide a `/api/...`
+  y `next.config.ts` reescribe esas rutas hacia `API_INTERNAL_URL`. La URL real
+  de la API nunca aparece en el cliente y no hay CORS que configurar.
+- La sesión es la cookie httpOnly `token` que pone la API; viaja sola en cada
+  petición (`credentials: "include"`).
+- Un `401` en una llamada de datos manda a `/login`. `AuthProvider`
+  (`lib/auth-context.tsx`) consulta `/auth/me` al montar y protege todas las
+  rutas salvo `/login` y `/register`.
+- Las escrituras que fallan muestran un toast con "Reintentar"
+  (`lib/notify.ts`).
+
+## Rutas
+
+| Ruta | Pantalla |
+|---|---|
+| `/` | **Hoy**: hub para empezar o continuar la rutina, día libre y programa activo |
+| `/train` | Entrenamiento guiado: serie a serie, mapa de la sesión, saltar, reemplazar, añadir |
+| `/log` | Día libre: registrar una serie suelta |
+| `/success` | Confirmación tras registrar en día libre |
+| `/routines`, `/routines/new`, `/routines/[id]` | Listar, crear y editar rutinas |
+| `/programs`, `/programs/new`, `/programs/[id]` | Listar, crear y editar programas |
+| `/explore`, `/explore/[id]` | Programas de otros usuarios y copiarlos |
+| `/history` | Historial por día: repetir, editar y borrar series |
+| `/perfil` | Cuenta y cierre de sesión |
+| `/login`, `/register` | Acceso con email o Google |
+
+La navegación principal es la barra inferior de cuatro pestañas
+(`components/layout/BottomNav.tsx`): Hoy · Rutinas · Historial · Perfil.
 
 ## Arquitectura
 
 ```
 src/
-├── app/                    # Páginas (Next.js App Router)
-│   ├── page.tsx            # Home — formulario de registro
-│   ├── history/page.tsx    # Historial
-│   └── layout.tsx          # Layout raíz con fuente y metadata
+├── app/            # rutas (App Router), layout raíz, manifest e iconos
 ├── components/
-│   ├── exercises/          # ExerciseCombobox, CreateExerciseModal
-│   ├── history/            # WorkoutCard, EditWorkoutDialog, DeleteWorkoutDialog
-│   ├── layout/             # PageShell, AppHeader
-│   └── ui/                 # Primitivos de shadcn/ui (no modificar directamente)
-├── hooks/
-│   ├── useExercises.ts     # Carga y gestión de la lista de ejercicios
-│   ├── useWorkoutForm.ts   # Estado del formulario de registro
-│   └── useWorkoutHistory.ts # Estado del historial y filtro por fecha
-└── lib/
-    ├── api.ts              # ApiClient singleton (get/post/patch/delete)
-    ├── types.ts            # Tipos compartidos: Exercise, Workout, Equipment
-    └── routes.ts           # Constantes de rutas de la API
+│   ├── ui/         # primitivos de shadcn/ui
+│   ├── layout/     # PageShell, AppHeader, BottomNav
+│   ├── train/      # flujo de entrenar: SetForm, SetDoneScreen, SessionMap…
+│   ├── routines/   # editor de rutinas con drag & drop
+│   ├── programs/   # editor de programas y detalle de explorar
+│   ├── history/    # tarjetas y diálogos del historial
+│   ├── exercises/  # buscador y alta de ejercicios
+│   ├── equipment/  # selector de equipo
+│   └── auth/       # botón de Google, input de contraseña
+├── hooks/          # estado y datos por dominio (useGuidedSession, useWorkoutForm…)
+└── lib/            # cliente HTTP, auth, rutas, tipos y lógica pura
 ```
 
-El estado de la app se maneja con custom hooks — no hay ninguna librería de estado global. Toda comunicación con la API pasa por el `ApiClient` en `lib/api.ts`.
+- **Sin librería de estado global.** Cada dominio tiene su hook en `hooks/`, y
+  `lib/api.ts` es el único punto de contacto con la API.
+- **Rutas centralizadas** en `lib/routes.ts`, tanto las de la app como las de la
+  API.
+- **Lógica pura en `lib/`**: `blocks.ts` aplana los bloques de una rutina en
+  series planificadas, `units.ts` convierte kg/lb (todo se guarda en kg),
+  `setDisplay.ts` formatea series.
+- **Estado local del navegador** (`localStorage`):
+  - `lib/activeSession.ts`: la sesión guiada en curso; caduca al cambiar de día.
+  - `lib/equipmentMemory.ts`: el último equipo usado por ejercicio.
+- **`components/ui/` no se edita a mano**: se ajusta con Tailwind desde el
+  componente padre o envolviendo el primitivo.
 
-Los componentes de `components/ui/` son primitivos de shadcn/ui. Si necesitas modificar su estilo, hazlo con Tailwind desde el componente padre o extendiendo el componente, no editando los archivos de `ui/` directamente.
+## Experiencia de app instalada
+
+`app/manifest.ts` declara `display: standalone` y orientación vertical, así que
+al añadirla a la pantalla de inicio abre a pantalla completa.
+`hooks/useVisualViewport.ts` ajusta el alto al viewport visible de iOS
+(teclado y barras).
 
 ## Docker
 
-El `Dockerfile` usa el output standalone de Next.js para minimizar el tamaño de imagen. Para correr junto al resto del stack, usa Docker Compose desde `apps/docker/prod/` o `apps/docker/dev/`.
-
-## Despliegue
-
-El stack es **self-hosted** vía Docker Compose (`apps/docker/prod/`): Postgres, API y web corren en la misma máquina dentro de la red `gym-tracker-network`. La web es el único servicio expuesto a internet, a través de un **Cloudflare Tunnel** (`cloudflared`); la API y la base de datos quedan privadas.
-
-Dentro de Compose, `API_INTERNAL_URL` apunta al servicio interno de la API (p. ej. `http://api:4000`); el servidor de Next reenvía ahí las peticiones `/api/*`. El navegador siempre llama al mismo origen de la web, así que no se expone ninguna URL de API al bundle del cliente.
-
-> **Nota:** la antigua `NEXT_PUBLIC_API_URL` ya no se usa desde que la web enruta por el proxy `/api/*`. Si `API_INTERNAL_URL` no se define, el proxy cae al default `http://localhost:4000`.
+`Dockerfile` multi-stage sobre `node:22-alpine` que usa la salida `standalone`
+de Next y corre con un usuario sin privilegios. Recibe `API_INTERNAL_URL` y
+`NEXT_PUBLIC_GOOGLE_CLIENT_ID` como build args. La orquestación vive en
+[`apps/docker/`](../docker/README.md).

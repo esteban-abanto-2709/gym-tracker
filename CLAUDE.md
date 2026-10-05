@@ -1,192 +1,122 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository. Read this first; the
+per-app READMEs hold the technical detail.
 
-## Project Overview
+## What this is
 
-Full-stack gym tracking app: a NestJS REST API (`apps/api`) backed by PostgreSQL via Prisma, and a Next.js 16 frontend (`apps/web`). The two apps are **independently managed** — each has its own `package.json` and `node_modules`. Docker Compose (`apps/docker/`) orchestrates them together.
+Gym Tracker: a strength-training logger meant to be used **between sets without
+thinking** — you see what you did last time, repeat it or go up, log it and put
+the phone away. It is in real weekly use by the owner and a few friends, and is
+also a portfolio piece.
 
-## Development Commands
+**Product certainties (judge every change against them):**
 
-All commands must be run from within the respective app directory.
+1. **No thinking.** Zero setup before training; the app tells you when to go up.
+   Long term: a silent coach that says what to do, with what weight and reps.
+2. **Identity: "the gym isn't an aspect of me, it's who I am."** Dark,
+   energetic, premium look with character — not a neutral notebook.
 
-### API (`apps/api`)
+## Current state (2026-10)
 
-Uses **pnpm 11** (pinned via `packageManager` in `package.json`, managed by corepack). Requires Node.js 22+.
+- **Deployment:** self-hosted with Docker Compose on the owner's PC, exposed
+  through a Cloudflare tunnel. Direction: move to a **dedicated hosted
+  deployment** (cloud provider TBD) for friends, keeping self-hosting as an
+  optional extra layer.
+- **Docs under review:** `docs/product-vision.md`, `docs/milestones.md`,
+  `docs/design-brief.md` and the root `README.md` predate that direction and are
+  partly outdated. Don't treat them as current without checking the code.
+- **Reference research:** five reports comparing this app against open-source
+  trackers (Liftosaur, LiftLog, wger, workout-cool) and two exercise datasets
+  live outside the repo in `../references/reports/` (start with `SUMMARY.md`).
+  Liftosaur, LiftLog and wger are AGPL: take ideas, never code.
+- **Lint is red** (`TD-010`, `TD-049`): `pnpm lint` fails in both apps before any
+  change of yours.
+
+## Repository layout
+
+| Path | What | Detail |
+|---|---|---|
+| `apps/api` | NestJS 11 REST API, Prisma 7, PostgreSQL | [`apps/api/README.md`](./apps/api/README.md) |
+| `apps/web` | Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui | [`apps/web/README.md`](./apps/web/README.md) |
+| `apps/docker` | Compose stacks `prod/` and `dev/`, backup/restore scripts | [`apps/docker/README.md`](./apps/docker/README.md) |
+| `docs/` | Product vision, UX foundations, milestones | |
+| `docs/logbook/` | Technical debt, roadmap, wishlist, changelog | |
+
+The two apps are **independent**: no workspace, each has its own `package.json`,
+lockfile and `node_modules`. Run every command from inside its app folder.
+Node 22 and pnpm via corepack in both.
+
+## Commands
 
 ```bash
-pnpm run start:dev     # start with file watching
-pnpm run build         # compile TS → dist/
-pnpm run lint          # eslint --fix
-pnpm run test:unit     # jest unit tests
-pnpm run test:e2e      # jest e2e tests
-pnpm run test:cov      # jest with coverage
+# apps/api
+pnpm run start:dev            # API on :4000
+pnpm run build                # prisma generate + nest build
+pnpm run test:unit            # jest (src/**/*.spec.ts)
+pnpm run test:e2e             # jest + supertest (test/)
+pnpm exec prisma migrate dev  # new migration
+
+# apps/web
+pnpm dev                      # web on :3000
+pnpm build
+
+# apps/docker/dev  (never prod while developing)
+docker compose up -d postgres         # only the DB, for native pnpm dev
+docker compose up -d --build          # full stack, ports 3000/4000/5432
 ```
 
-### Web (`apps/web`)
+To verify a change, prefer commands that finish on their own: `pnpm run build`
+and the test suites.
 
-```bash
-pnpm dev               # next dev
-pnpm build             # next build
-pnpm lint              # eslint check
-pnpm format            # prettier --write
-```
-
-### Docker (prod and dev stacks)
-
-Two stacks, each with its own database: `apps/docker/prod/` (daily-use app, no published ports) and `apps/docker/dev/` (same stack, separate DB, ports `3000`/`4000`/`5432` published). They share one Cloudflare tunnel and never run at the same time.
-
-```bash
-# from apps/docker/prod/ or apps/docker/dev/
-docker compose up -d --build   # start postgres + api + web + cloudflared
-docker compose up -d postgres  # dev: only the DB, for native pnpm dev
-docker compose down            # stop (keeps data; -v would delete the volume)
-```
-
-Copy `apps/docker/.env.example` (one template for both) → `apps/docker/prod/.env` and `apps/docker/dev/.env`, with a different `JWT_SECRET` in each. In prod, only use `--build` to ship a tested change. Backup/restore scripts live in `apps/docker/scripts/`; backups land in `apps/docker/backups/`.
-
-### Database (Prisma)
-
-```bash
-# from apps/api/
-pnpm exec prisma migrate dev       # create and apply a new migration
-pnpm exec prisma migrate deploy    # apply existing migrations (used in prod)
-pnpm exec prisma studio            # open Prisma Studio UI
-pnpm exec prisma generate          # regenerate client after schema changes
-```
-
-## Environment Variables
-
-**API** (`apps/api/.env`):
-- `DATABASE_URL` — pooled Postgres connection string
-- `DIRECT_URL` — direct Postgres connection (used by Prisma for migrations)
-- `FRONTEND_URL` — CORS allowed origin
-- `JWT_SECRET` — secret used to sign auth JWTs (required)
-- `GOOGLE_CLIENT_ID` — Google OAuth Client ID; used to verify Google ID tokens on `POST /auth/google` (public value)
-- `PORT` — defaults to `4000`
-
-**Web** (`apps/web/.env.local`):
-- `API_INTERNAL_URL` — server-side target for the `/api/*` rewrite proxy (defaults to `http://localhost:4000`). The browser only ever calls the web's own origin; the Next server forwards `/api/*` to this URL, so no API URL is exposed to the client bundle.
-- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` — same Google Client ID, inlined into the client bundle at build time for the "Continuar con Google" button (in Docker, passed as a build arg from `GOOGLE_CLIENT_ID`).
-
-## Architecture
-
-### Backend (NestJS)
+## How it fits together
 
 ```
-apps/api/src/
-├── main.ts                 # bootstrap: ValidationPipe, cookie-parser, CORS, port
-├── app.module.ts           # root module — global JwtAuthGuard + feature modules
-├── modules/
-│   ├── auth/               # register/login/google/logout/me — JWT in httpOnly cookie
-│   ├── exercises/          # ExercisesController + ExercisesService (global catalog)
-│   ├── workouts/           # WorkoutsController + WorkoutsService (per-user)
-│   └── routines/           # RoutinesController + RoutinesService (per-user)
-├── common/                 # @Public / @CurrentUser decorators, JwtAuthGuard
-└── providers/prisma/       # PrismaService with pg.Pool connection pooling
+browser ──/api/*──▶ web (Next server, rewrite proxy) ──▶ api (Nest) ──▶ postgres
 ```
 
-The Prisma service uses `@prisma/adapter-pg` with a `pg.Pool` for connection pooling. Both `DATABASE_URL` and `DIRECT_URL` are required in the schema; in this self-hosted setup they point to the same in-network Postgres container.
+- The browser only calls its own origin; `next.config.ts` rewrites `/api/*` to
+  `API_INTERNAL_URL`. No API URL reaches the client bundle.
+- Session = JWT in the httpOnly cookie `token`. A global `JwtAuthGuard`
+  protects every endpoint except those marked `@Public()`; services scope all
+  user data by `userId` from `@CurrentUser()`.
+- Exercises and equipment are a **shared global catalog**; workouts, routines
+  and programs are private per user.
 
-**Auth:** every endpoint requires a valid JWT (global `JwtAuthGuard`) except those marked `@Public()` (register, login, healthz). The token rides in an httpOnly cookie; handlers read the caller via `@CurrentUser()` and scope all `Workout`/`Routine` queries to that `userId`. Exercises are a shared global catalog.
+## Domain essentials
 
-### Database Schema
+Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 
-```prisma
-model User {
-  id           String    @id @default(uuid())
-  email        String    @unique
-  username     String
-  slug         String    @unique
-  passwordHash String?                          // null for Google-only accounts
-  googleId     String?   @unique                // set when linked to a Google account
-  workouts     Workout[]
-  routines     Routine[]
-  createdAt    DateTime  @default(now())
-}
+- **A `Workout` row is one set**, not a session. There is no session entity;
+  grouping by day happens on the client using the user's timezone.
+- **The guided session lives in the browser** (`apps/web/src/lib/activeSession.ts`,
+  localStorage) and expires at the end of the local day. It does not sync
+  across devices.
+- **`RoutineItem.blocks`** is a JSON list of typed blocks (`weight_reps`,
+  `reps`, `time`, `warmup`, `ramp`). Free-form JSON in the DB; its shape is
+  enforced by `apps/api/src/modules/routines/blocks.ts` + `dto/routine-block.dto.ts`
+  and mirrored in `apps/web/src/lib/types.ts` and `apps/web/src/lib/blocks.ts`.
+- **Programs** order routines; the user's active program decides "today's
+  routine" by rotating from the last logged set.
+- **Weight recommendation** (`GET /workouts/recommendation`) compares sets of
+  the same exercise, equipment and set type; +3 reps over the previous day at
+  the same weight suggests +2.5 kg.
+- Weights are stored in **kg**; the UI lets you enter lb and converts.
 
-model Exercise {
-  id        String    @id @default(uuid())   // global shared catalog (no userId)
-  name      String    @unique
-  equipment String
-  workouts  Workout[]
-  createdAt DateTime  @default(now())
-}
+## Conventions
 
-model Workout {
-  id         String   @id @default(uuid())
-  userId     String                          // owner; queries scoped to it
-  user       User     @relation(fields: [userId], references: [id])
-  exerciseId String
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  weight     Float
-  reps       Int
-  opinion    String
-  createdAt  DateTime @default(now())
-}
-```
+- UI copy is **Spanish**, short and direct. Icons come from `lucide-react`;
+  `components/ui/` (shadcn) is not edited by hand.
+- Schema changes go through `prisma migrate dev`; containers run
+  `prisma migrate deploy` on start, so every migration must be safe on real
+  data in `prod`.
+- Backend modules follow controller + service + `dto/`; controllers stay thin.
+- Track debt, roadmap and ideas in `docs/logbook/`, not in code comments.
 
-`Routine` also carries `userId` and is unique per `[userId, name]` (so two users can each have a "Push"). Each `RoutineItem` (a slot: one exercise at a `position`) stores its targets in `blocks`, a JSON list of typed blocks discriminated by `kind`: `weight_reps` `{ sets, reps, approx }`, `reps` `{ sets, reps }`, `time` `{ sets, durationSec }`, `warmup` `{ sets, reps }`, `ramp` `{ steps: [{ reps, pct }] }`. A `ramp` block is the warm-up ladder (10/5/3) inside the working slot: it plans one set per step, and `pct` is only a hint over the last working weight. How a set is measured lives in its block (free slots and free-day sets pick it with a measure selector); `Exercise` is just a name + slug. Each `Workout` carries `setType` (`WORKING`/`WARMUP`/`RAMP`) plus `step` (which rung of the ramp), and a set without `weight` or `durationSec` is reps-only. Block types live in `apps/api/src/modules/routines/blocks.ts` (validated by `dto/routine-block.dto.ts`) and `apps/web/src/lib/types.ts`; the web flattens them into planned sets in `apps/web/src/lib/blocks.ts`. Some fields on `Workout`/`Routine` (e.g. `routineId`, `isApproximation`) are omitted here for brevity — see `apps/api/prisma/schema.prisma`.
+## Environments
 
-### API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/auth/register` | Create account, set auth cookie (public) |
-| POST | `/auth/login` | Log in, set auth cookie (public) |
-| POST | `/auth/google` | Log in/register with a Google ID token, set auth cookie (public); creates or links by email |
-| POST | `/auth/logout` | Clear auth cookie |
-| GET | `/auth/me` | Current user |
-| GET | `/exercises` | All exercises (ordered by name) |
-| POST | `/exercises` | Create exercise |
-| GET | `/workouts` | All workouts for the user (grouping/filtering by local day happens client-side) |
-| POST | `/workouts` | Create workout |
-| PATCH | `/workouts/:id` | Update workout |
-| DELETE | `/workouts/:id` | Delete workout |
-| GET | `/workouts/recommendation` | Weight suggestion for an exercise (`?exerciseId=&tz=&equipmentId=&setType=&step=`; `setType` is `WORKING` (default), `WARMUP` or `RAMP`, and `step` narrows it to one rung of the ramp; the response adds `workingWeight` for `RAMP`) |
-
-### Frontend (Next.js App Router)
-
-```
-apps/web/src/
-├── app/
-│   ├── page.tsx            # Home: hub (start routine / free day / create)
-│   ├── login/, register/   # Auth pages
-│   ├── history/page.tsx    # History: view/edit/delete past workouts by date
-│   ├── success/            # Post-submit confirmation
-│   └── layout.tsx          # wraps the app in <AuthProvider>
-├── components/
-│   ├── auth/               # AccountMenu (username + logout)
-│   ├── exercises/          # ExerciseCombobox, CreateExerciseModal
-│   ├── history/            # WorkoutCard, EditWorkoutDialog, DeleteWorkoutDialog
-│   ├── layout/             # PageShell, AppHeader
-│   └── ui/                 # shadcn/ui primitives (do not modify these directly)
-├── hooks/
-│   ├── useExercises.ts     # fetches and manages exercise list
-│   ├── useWorkoutForm.ts   # form state for creating a workout
-│   └── useWorkoutHistory.ts # workout history state and date filtering
-└── lib/
-    ├── api.ts              # ApiClient singleton (get/post/patch/delete)
-    ├── auth-context.tsx    # AuthProvider + useAuth; route guard, session state
-    ├── types.ts            # shared TS types: AuthUser, Exercise, Workout, Equipment
-    └── routes.ts           # API route constants
-```
-
-State management is handled exclusively via custom hooks — no global state library. The `ApiClient` in `lib/api.ts` is the single point of contact with the backend. Auth lives in `lib/auth-context.tsx`: `AuthProvider` checks `/auth/me` on mount, redirects to `/login` when there's no session, and the httpOnly cookie is sent automatically on every same-origin `/api/*` call.
-
-## Deployment Targets
-
-The whole stack is **self-hosted** via Docker Compose on a single machine; the only thing exposed to the internet is the `web` service, through a Cloudflare Tunnel (`cloudflared` service). `api` and `postgres` stay private inside the `gym-tracker-network`.
-
-- **API + Web + Database** → Docker Compose (`apps/docker/prod/docker-compose.yml`; `apps/docker/dev/` is the dev twin on the same machine)
-- **Public access (optional)** → Cloudflare tunnel. The compose default is a **named tunnel** (`tunnel --no-autoupdate run`), which needs a `TUNNEL_TOKEN` and a domain the operator owns, and gives a stable HTTPS URL that survives restarts. The quick-tunnel alternative (random `trycloudflare.com` URL, no token) is the commented-out line right below it. Each operator supplies their own domain and token via `.env`; none is committed.
-
-There is no managed cloud provider (previously Render/Vercel/Supabase — dropped). `DATABASE_URL` and `DIRECT_URL` both point to the in-network Postgres container; they are kept as two separate vars because Prisma's schema requires both, even though here they resolve to the same instance.
-
-## Roadmap Context
-
-The project is actively evolving:
-- **v1.5** — routine system (log multiple exercises per session)
-- **v2.0** — user accounts + data isolation ✅ (self-hosted JWT auth, **not** Supabase)
-- **v2.5** — analytics dashboards, social features
-- **v3.0** — AI-powered progressive overload suggestions
+`apps/docker/prod/` holds the owner's **real training data** (volume
+`gym-tracker_postgres_data`); `apps/docker/dev/` is the same stack with its own
+database. They share one tunnel and never run at the same time. Never run
+destructive commands (`down -v`, resets, restores) against prod without the
+owner asking.

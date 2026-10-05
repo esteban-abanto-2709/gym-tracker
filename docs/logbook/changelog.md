@@ -12,8 +12,11 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-050] Documentación técnica alineada con el código (2026-10-05 11:09)
+Reescritos los README de `apps/api` y `apps/web` (stack, variables, rutas, endpoints, arquitectura) y `CLAUDE.md` como orientación de raíz, apuntando a `schema.prisma` en vez de copiarlo. Los `.env.example` ahora traen `JWT_SECRET` (API) y `API_INTERNAL_URL` (web).
+
 ## [RM-048] Rango de reps en la rutina (2026-10-03 10:25)
-Los bloques `weight_reps` y `reps` guardan `repsMax` junto a `reps` (mínimo): el editor pide mínimo y máximo opcional, y el modo guiado y explorar programas muestran `3 × 8–10` y `meta 8–10`. Las rutinas sin rango se ven igual; faltan cargar los rangos reales a mano.
+Los bloques `weight_reps` y `reps` guardan `repsMax` junto a `reps` (mínimo): el editor pide mínimo y máximo opcional, y el modo guiado y explorar programas muestran `3 × 8–10` y `meta 8–10`. Las rutinas sin rango se ven igual; los rangos del programa Upper/Lower se cargaron en dev y prod.
 
 ## [RM-046] Sin "Otro ejercicio" en la pantalla de serie guardada (2026-10-03 10:07)
 Se quita el botón y su camino muerto (`addExercise` en `useGuidedSession` y el selector en `/train`); reemplazar desde el mapa de la sesión sigue igual. Las sesiones en curso con extras ya añadidos se siguen leyendo.
