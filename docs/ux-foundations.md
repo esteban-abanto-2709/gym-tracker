@@ -1,60 +1,69 @@
 # Gym Tracker — Fundamentos de UI/UX
 
-> Base para el diseño. Aterriza personalidad, tono y reglas que cualquier
-> pantalla debe respetar. Deriva de la [definición de producto](./product-vision.md).
+> Reglas que toda pantalla debe respetar. Responde a las certezas de la
+> [visión de producto](./product-vision.md): no pensar y tener carácter.
 
 ## Personalidad
 
-Motivador y enérgico, pero **serio**. Un toque **"premium dark gym"**.
-Refleja **identidad**, no es un cuaderno: *"Mi identidad es ir al gym, no es un
-aspecto pequeño de mi vida"*.
-
-## A quién le habla
-
-Hombres jóvenes (~18-26) que entrenan en serio y quieren que su app **se vea
-genial**.
-
-## Emociones objetivo
-
-**Foco · Motivación · Logro.**
-Al abrirla debe dar ganas, no la calma de "entreno por salud y ya".
+- **Con carácter.** Agresiva, enérgica, con presencia. Las apps de gimnasio se
+  ven calmadas y genéricas (Strong, Hevy); esta tiene que notarse.
+- **Seria.** Motivadora sin ser cursi ni de coach payaso.
+- **Al servicio de la promesa "entra, entrena, vete".** La estética da ganas de
+  abrirla; la interfaz te deja ir rápido.
 
 ## Dirección visual
 
-- **Modo oscuro** como base. **Acento rojo** (identidad actual, gusta y se
-  mantiene).
-- **Energía, no tranquilidad.** Contraste alto, presencia. Diferenciarse de la
-  competencia (Strong/Hevy), que se sienten calmadas/neutras.
-- **Poca densidad en el gym:** nada de UI cargada al entrenar. Más datos
-  permitidos en casa (revisar progreso en cel/PC con calma).
-- **Tipografía con carácter**, legible de un vistazo y sudado.
-- Se parte de lo que ya existe (oscuro + rojo gusta), con margen claro de mejora.
+- **Oscuro como base**, con un modo claro igual de cuidado. Más adelante, temas
+  intercambiables (ver la wishlist).
+- **Acento rojo** y tipografía con carácter (Oswald, Space Grotesk, Space Mono).
+  Son la identidad actual, no un dogma: pueden evolucionar.
+- **Contraste alto**, legible de un vistazo.
+- **Vertical.** La app instalada abre a pantalla completa y bloqueada en
+  vertical.
 
-## Tono de voz / copy
+## Contexto de uso
 
-- **Motivacional serio.** Frases cortas y puntuales que se queden grabadas.
-- Pensado para leerse **cansado**, tras una serie pesada (cargando 100 kg).
-- Nada cursi ni de coach payaso.
+- **Entre series:** cansado, con prisa y con poca paciencia para pensar. Ese es
+  el momento que manda la ergonomía.
+- **Fuera del gimnasio:** revisar tu progreso, exportar tus datos o armar un
+  programa con calma, en el celular o en la computadora.
 
-## Contexto de uso real (define la ergonomía)
+Por eso hay **dos densidades**: mínima mientras entrenas, generosa cuando
+revisas.
 
-- Se usa **entre series**: de pie, sudado, con prisa, **una mano**.
-- Flujo real: pongo el cronómetro de descanso (app aparte) → registro en la app →
-  **suelto el celular**.
-- Por eso registrar debe ser el **camino más corto posible**: botones grandes,
-  pocos toques, target táctil generoso.
-- **Pantalla vertical** (ya hay portrait-lock).
+## Reglas para toda pantalla
 
-## Dos modos, dos densidades
+- **Registrar una serie está a uno o dos toques** desde la pantalla principal.
+- **Lo de la vez pasada siempre está visible**, y repetirlo es el valor por
+  defecto.
+- **Nada obligatorio antes de registrar:** ni configuración ni datos
+  personales.
+- **No salir del entrenamiento para consultar.** El historial de ese ejercicio,
+  cómo se hace o cuántos discos poner se ven desde la misma pantalla.
+- **La app sugiere, el usuario decide.** Subir o bajar el peso es una
+  sugerencia visible, nunca un cambio automático.
+- **La estructura ayuda, nunca obliga.** Siempre se puede saltar, reemplazar o
+  añadir un ejercicio.
+- **Feedback inmediato** al registrar, y claro cuando falla la red: nunca perder
+  una serie en silencio.
+- **Targets táctiles grandes** y texto que se lee sin esfuerzo.
 
-- **En el gym:** mínimo, rápido, "no pensar". Lo esencial a un toque.
-- **En casa:** panel para revisar progreso y datos con más calma y detalle.
+## Cómo se registra el peso
 
-## Reglas que toda pantalla debe respetar
+Convención que la interfaz debe respetar y explicar donde haga falta:
 
-- Registrar un set: nunca a más de **1-2 toques** desde la pantalla principal.
-- Mostrar siempre el **"último"** como referencia; repetir es el default.
-- **Cero configuración obligatoria** antes de poder registrar.
-- **Feedback visible inmediato** al registrar (y al fallar la red).
-- **Copy breve y motivador** en los momentos de esfuerzo.
-- La estructura (rutinas) **ayuda, nunca obliga**: siempre se puede desviar.
+| Equipo | Qué se anota |
+|---|---|
+| Barra | El total: barra + discos |
+| Mancuerna | El peso de **una** mancuerna |
+| Máquina | Lo que marca la máquina |
+
+Internamente todo se guarda en kg; el usuario puede registrar en lb.
+
+## Tono de voz
+
+- **Frases cortas** que se lean cansado, tras una serie pesada.
+- **Directo y motivador**, nunca condescendiente. Al sugerir bajar el peso, con
+  respeto: nadie quiere bajarlo.
+- **En español.** Los nombres técnicos de ejercicios en inglés se acompañan de
+  cómo se les conoce en el gimnasio.

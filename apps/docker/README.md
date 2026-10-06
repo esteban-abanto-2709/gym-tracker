@@ -9,9 +9,9 @@ carpeta y con **su propia base de datos**:
 | `dev/` | probar cambios antes de pasarlos a prod | `3000` web · `4000` api · `5432` postgres | `gym-tracker-dev_postgres_data_dev` |
 
 Los dos levantan lo mismo (`postgres` + `api` + `web` + `cloudflared`) desde el
-mismo código (`apps/api` y `apps/web`). Por qué existe un entorno de prod dentro
-del repositorio: ver [Autohospedado](../../README.md#autohospedado-la-app-es-tuya)
-en el README principal.
+mismo código (`apps/api` y `apps/web`). `prod/` vive en el repositorio porque es
+la configuración real con la que corre la app: no hay otro lugar donde se
+despliegue.
 
 ```
 apps/docker/

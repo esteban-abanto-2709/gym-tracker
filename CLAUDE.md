@@ -7,25 +7,28 @@ per-app READMEs hold the technical detail.
 
 Gym Tracker: a strength-training logger meant to be used **between sets without
 thinking** — you see what you did last time, repeat it or go up, log it and put
-the phone away. It is in real weekly use by the owner and a few friends, and is
-also a portfolio piece.
+the phone away. The owner uses it every week; friends are next, by invitation.
 
 **Product certainties (judge every change against them):**
 
-1. **No thinking.** Zero setup before training; the app tells you when to go up.
-   Long term: a silent coach that says what to do, with what weight and reps.
-2. **Identity: "the gym isn't an aspect of me, it's who I am."** Dark,
-   energetic, premium look with character — not a neutral notebook.
+1. **No thinking.** Zero setup before training. The app does the math (last
+   time, streak, suggestion to go up or down); the user decides. Nothing in the
+   middle of a set should require leaving the screen.
+2. **Character.** Aggressive, energetic look with identity — not a neutral
+   notebook. The promise is "get in, train, get out", not that the gym is your
+   life.
+
+The full reasoning, including the progression rules, is in
+`docs/product-vision.md`.
 
 ## Current state (2026-10)
 
-- **Deployment:** self-hosted with Docker Compose on the owner's PC, exposed
-  through a Cloudflare tunnel. Direction: move to a **dedicated hosted
-  deployment** (cloud provider TBD) for friends, keeping self-hosting as an
-  optional extra layer.
-- **Docs under review:** `docs/product-vision.md`, `docs/milestones.md`,
-  `docs/design-brief.md` and the root `README.md` predate that direction and are
-  partly outdated. Don't treat them as current without checking the code.
+- **Deployment:** Docker Compose on the owner's PC, exposed through a
+  Cloudflare tunnel. Next step (`RM-051`): the same compose on an AWS EC2
+  instance with backups to S3, so the app no longer depends on the home PC.
+  Self-hosting stays possible but is not a selling point.
+- **Priorities:** `docs/logbook/roadmap.md` is ordered by priority; the product
+  logic behind it is in `docs/product-vision.md`.
 - **Reference research:** five reports comparing this app against open-source
   trackers (Liftosaur, LiftLog, wger, workout-cool) and two exercise datasets
   live outside the repo in `../references/reports/` (start with `SUMMARY.md`).
@@ -40,7 +43,7 @@ also a portfolio piece.
 | `apps/api` | NestJS 11 REST API, Prisma 7, PostgreSQL | [`apps/api/README.md`](./apps/api/README.md) |
 | `apps/web` | Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui | [`apps/web/README.md`](./apps/web/README.md) |
 | `apps/docker` | Compose stacks `prod/` and `dev/`, backup/restore scripts | [`apps/docker/README.md`](./apps/docker/README.md) |
-| `docs/` | Product vision, UX foundations, milestones | |
+| `docs/` | Product vision, UX foundations | |
 | `docs/logbook/` | Technical debt, roadmap, wishlist, changelog | |
 
 The two apps are **independent**: no workspace, each has its own `package.json`,

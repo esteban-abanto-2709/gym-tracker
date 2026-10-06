@@ -1,176 +1,116 @@
 # Gym Tracker
 
-Un registrador de entrenamiento que se usa **entre series, sin pensar**.
+Un registrador de entrenamiento de fuerza que se usa **entre series, sin
+pensar**.
 
-Ves lo que levantaste la vez pasada, lo repites o subes el peso, lo anotas en dos
-segundos y sueltas el celular.
+Ves lo que levantaste la vez pasada, lo repites o subes el peso, lo anotas en
+dos segundos y sueltas el celular.
 
 ---
 
 ## El problema
 
-Las apps de gimnasio que existen hacen que registrar cueste más que entrenar.
+Las apps de gimnasio hacen que registrar cueste más que entrenar.
 
-Te piden peso, talla, unidades y objetivos antes de dejarte anotar la primera
-serie. Guardan lo básico —crear tus propias rutinas— detrás de una suscripción.
-Y cuando por fin estás en el gym, entre serie y serie, con el descanso corriendo,
-te obligan a navegar tres pantallas para apuntar un número que ya sabías.
+Te piden edad, peso, objetivos y hasta lo que comes antes de dejarte anotar la
+primera serie. Guardan lo básico, como crear tus propias rutinas, detrás de una
+suscripción. Y para saber si te toca subir el peso, tienes que revisar el
+historial día por día, entre serie y serie, con el descanso corriendo.
 
 Gym Tracker nace de lo contrario: **la app no debería estorbar**.
 
-## El principio: no pensar
+## Cómo se siente
 
-Ese es el valor entero del proyecto, y todo lo demás se subordina a él.
-
-- Abres la app y ves el peso y las repeticiones de la última vez.
-- Lo repites tal cual, o subes la carga si lo sentiste fácil.
-- Lo registras y guardas el celular.
-
-El progreso no hay que buscarlo en un gráfico: se siente porque **queda anotado**.
-A largo plazo la idea es que la app te diga qué toca, con cuánto peso y cuántas
-repeticiones, y tú solo ejecutes. Un entrenador silencioso, sin avatar y sin
-charla.
+- **No pensar.** Abres, eliges tu rutina y la app te muestra lo de la última
+  vez. Te sugiere cuándo subir; tú decides.
+- **Carácter.** Oscura, enérgica, con identidad. Nada de libreta neutra.
+- **Entra, entrena, vete.** Sin onboarding, sin encuestas, sin datos personales
+  obligatorios.
 
 ## Qué hace hoy
 
 - **Registro en dos segundos.** El último peso y las últimas reps vienen
   precargados; confirmas y listo.
-- **Rutinas guiadas.** Armas tu sesión una vez (Push, Pull, Pierna) y la app te
-  lleva ejercicio por ejercicio, contando las series que llevas.
-- **Día libre.** ¿No tocaba rutina? Registras suelto, sin estructura.
-- **Kilos o libras.** Eliges la unidad al registrar, porque hay máquinas que solo
-  vienen en libras. Por dentro todo se guarda igual; se acabaron las conversiones
-  en otra pestaña.
-- **Series de todo tipo.** Con peso y reps, solo reps (dominadas, fondos), por
-  tiempo (plancha), calentamientos y rampas de aproximación.
-- **Sugerencia de carga.** Si vienes mejorando las repeticiones a un mismo peso,
-  la app te propone subir.
-- **Historial editable.** Te equivocaste en un número: lo corriges después, por día.
-- **Cuentas propias.** Con correo o con Google. Tus datos son tuyos y nadie más
-  los ve.
+- **Rutinas guiadas.** Armas tu sesión una vez y la app te lleva ejercicio por
+  ejercicio, con la meta de cada serie y un mapa de la sesión. Puedes saltar,
+  reemplazar o añadir ejercicios sobre la marcha: la estructura ayuda, no
+  obliga.
+- **Series de todo tipo.** Peso y reps con rango (3 × 8-10), solo reps
+  (dominadas, fondos), por tiempo (plancha), calentamientos y rampas de
+  aproximación.
+- **Programas.** Agrupa tus rutinas (Push, Pull, Pierna; Upper/Lower) y la app
+  te dice cuál toca hoy.
+- **Explorar y copiar.** Mira los programas de otros y cópialos para hacerlos
+  tuyos.
+- **Día libre.** ¿No toca rutina? Registras suelto.
+- **Sugerencia de carga.** Si vienes mejorando las reps a un mismo peso, la app
+  te propone subir. Compara solo con el mismo equipo, porque una máquina y una
+  mancuerna no pesan igual.
+- **Kilos o libras.** Eliges la unidad al registrar, porque hay máquinas que
+  solo vienen en libras.
+- **Historial editable.** Corriges cualquier serie después, por día.
+- **Cuentas propias** con correo o Google. Tus datos son tuyos.
+- **Se instala en el celular** y abre a pantalla completa.
 
 ## Qué NO es
 
-Tan importante como lo anterior:
-
-- **No es un todo-en-uno.** Nada de nutrición, hábitos ni fisioterapia.
+- **No es todo-en-uno.** Nada de nutrición, hábitos ni fisioterapia.
 - **No es una red social.** Sin feed, sin chat, sin fotos.
 - **No tiene cronómetro.** Ya tienes uno en el celular.
-- **No tiene onboarding pesado.** Entras y registras.
-- **No tiene muro de pago.** Lo esencial es lo esencial.
+- **No tiene muro de pago** para lo esencial.
 
-Lo único "social" que sí encaja, más adelante: poder copiarle la rutina a un
-amigo. Comparar cargas es vanidad; copiar una buena rutina sí es útil.
+## Qué viene
 
-## Autohospedado: la app es tuya
+- **En la nube**, para que esté disponible siempre.
+- **Historial del ejercicio con racha:** ver tus últimas sesiones de ese
+  ejercicio sin salir del entrenamiento, y saber de un vistazo si toca subir.
+- **Ver el ejercicio en video** con un toque.
+- **Calculadora de discos:** cuánto poner a cada lado de la barra.
+- **Exportar tus datos** por rango de fechas para que los analice tu IA.
 
-Gym Tracker no depende de ningún servicio en la nube. Todo el stack —base de
-datos, API y frontend— corre en contenedores sobre una sola máquina.
-
-Eso significa que **cualquiera puede clonar este repositorio y levantar la app
-completa en su propia PC**, sin crear cuentas en ningún proveedor ni pagar nada.
-Tus entrenamientos viven en tu máquina, en tu base de datos.
-
-Si además quieres alcanzarla desde fuera de tu casa —desde el gimnasio, por
-ejemplo— el proyecto incluye la pieza para publicarla por un túnel de Cloudflare.
-Es opcional: sin configurarlo, la app funciona igual dentro de tu red local.
-
-```bash
-cd apps/docker
-cp .env.example prod/.env
-cd prod
-docker compose up -d --build
-```
-
-### Por qué el repositorio trae producción y desarrollo
-
-En un proyecto típico, el repositorio es solo desarrollo: producción vive en otro
-lado —un servidor o una máquina virtual donde se despliega una copia— y su
-configuración no está en el código. Aquí no hay "otro lado". **La máquina donde
-se desarrolla es la misma donde corre la app de verdad**, así que el repositorio
-incluye los dos entornos, cada uno en su carpeta y con su propia base de datos:
-
-- **`apps/docker/prod/`** — la app que usas a diario, con tus datos reales.
-  Cerrada: no publica ningún puerto, solo sale por el túnel.
-- **`apps/docker/dev/`** — el mismo stack con una base de datos aparte y los
-  puertos abiertos, para probar cambios (también desde el celular) sin tocar tus
-  datos reales.
-
-Los dos comparten el mismo túnel y nunca corren a la vez: trabajas en dev y,
-cuando toca entrenar, bajas dev y subes prod con la última versión probada.
-
-Los detalles —cómo cambiar de uno a otro, backups y restauración— están en
-[`apps/docker/README.md`](./apps/docker/README.md).
+El detalle está en el [roadmap](./docs/logbook/roadmap.md).
 
 ## Cómo está construido
 
 Un monorepo con dos aplicaciones independientes y la orquestación que las une:
 
 | Carpeta | Qué es |
-|---------|--------|
-| [`apps/api`](./apps/api/README.md) | La API REST y la base de datos. NestJS, PostgreSQL y Prisma. |
-| [`apps/web`](./apps/web/README.md) | La interfaz. Next.js, React y Tailwind. |
-| [`apps/docker`](./apps/docker/README.md) | Docker Compose de prod y dev, backups y restauración. |
+|---|---|
+| [`apps/api`](./apps/api/README.md) | API REST: NestJS, PostgreSQL y Prisma |
+| [`apps/web`](./apps/web/README.md) | Interfaz: Next.js, React y Tailwind |
+| [`apps/docker`](./apps/docker/README.md) | Docker Compose de producción y desarrollo, backups y restauración |
 
-Cada app se gestiona por su cuenta y tiene su propio README **con el detalle
-técnico**: comandos, variables de entorno, arquitectura interna y endpoints. Este
-documento es la vista de producto; esos son los planos.
+Cada app tiene su propio README con el detalle técnico: comandos, variables de
+entorno, arquitectura y endpoints.
+
+### Levantarla en tu máquina
+
+Todo el stack (base de datos, API, web y un túnel de Cloudflare opcional) corre
+con Docker Compose:
+
+```bash
+cd apps/docker
+cp .env.example prod/.env   # y completa los valores
+cd prod
+docker compose up -d --build
+```
+
+Los detalles están en [`apps/docker/README.md`](./apps/docker/README.md).
 
 ## Sobre el proyecto
 
 Es una app que uso de verdad, cada semana, en el gimnasio. Nació de una molestia
-propia y se mantiene por la misma razón, así que las decisiones se toman pensando
-en si mejoran el minuto y medio entre series — no en si suman una función más a
-la lista.
+propia y se mantiene por la misma razón: las decisiones se toman pensando en si
+mejoran el minuto y medio entre series, no en si suman una función más a la
+lista.
 
-También es una pieza de portafolio, y lo que busca demostrar es **visión de
-producto**: que lo difícil no es hacer un CRUD de ejercicios, sino decidir qué no
-construir.
+Lo difícil no es hacer un CRUD de ejercicios, sino decidir qué no construir.
 
-Está en desarrollo activo. El recorrido se organiza en tres hitos:
-
-- **Registro afilado** — que anotar una serie sea instantáneo y no falle nunca.
-- **Entrenamientos estructurados** — el entrenador que no te hace pensar.
-- **Recomendación de peso** — que la carga sugerida se afine sola con tu historial.
-
-Si te interesa el razonamiento detrás de todo esto:
-
-- [Definición de producto](./docs/product-vision.md) — qué es, para quién y por qué.
-- [Hitos](./docs/milestones.md) — cómo se parte el camino en versiones estables.
-- [Fundamentos de UI/UX](./docs/ux-foundations.md) — los criterios de diseño.
-- [Bitácora](./docs/logbook/) — roadmap, deuda técnica, ideas y registro de cambios.
-
-## Créditos
-
-El catálogo de ejercicios no se inventó aquí:
-
-- **Texto y datos** (nombres, músculos, equipo e instrucciones) —
-  [hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset),
-  bajo licencia MIT.
-- **Imágenes** — [yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db),
-  de dominio público (Unlicense). *Próximamente: todavía no están integradas.*
-
-## Referencias de diseño
-
-> Nota de trabajo. Está aquí para no perderla, no para publicarla.
-
-[wger](https://github.com/wger-project/wger) (AGPL-3.0) es la referencia cuando
-toque estructurar algo. Se mira, no se copia: leer su código no obliga a nada,
-copiarlo arrastraría la AGPL a un proyecto MIT.
-
-Tres ideas suyas que valen para el catálogo:
-
-- **El ejercicio, separado del idioma.** `Exercise` (categoría, músculos, equipo)
-  por un lado y `Translation` (nombre y descripción, una fila por idioma) por
-  otro. Hoy `Exercise` aquí es solo `name + slug`.
-- **Siembra idempotente por `uuid`.** El import hace upsert contra un uuid
-  estable, no contra el orden de las filas: re-sembrar no duplica ni pisa nada.
-- **Registro de borrados.** Una tabla aparte con lo eliminado río arriba y su
-  reemplazo, para que una instancia autohospedada propague borrados sin perder
-  los `Workout` que apuntaban a ese ejercicio.
+- [Visión de producto](./docs/product-vision.md): qué es, para quién y por qué.
+- [Fundamentos de UI/UX](./docs/ux-foundations.md): los criterios de diseño.
+- [Bitácora](./docs/logbook/): roadmap, deuda técnica, ideas y registro de
+  cambios.
 
 ## Licencia
 
 MIT © Esteban Abanto
-
-Úsalo, modifícalo y levántalo donde quieras.

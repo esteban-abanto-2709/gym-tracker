@@ -10,9 +10,59 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 
 ---
 
-> Tareas del cierre de **H1 · Registro afilado**, refinamiento de **H2 ·
-> Entrenamientos estructurados** y apertura de **H3 · Recomendación de peso**
-> (ver [`../milestones.md`](../milestones.md)).
+> Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
+> de cada tarea está en [`../product-vision.md`](../product-vision.md).
+
+## [RM-051] App en la nube: AWS
+- **Objetivo:** que la app esté disponible siempre, sin depender de la PC de casa. Un corte de luz dejó la app caída y hubo que registrar el entrenamiento en WhatsApp.
+- **Alcance:** una instancia EC2 (mínimo 2 GB de RAM) con el mismo `docker compose` de `apps/docker/prod/` y el túnel de Cloudflare, sin abrir puertos. Backups automáticos de Postgres a S3. Migrar los datos actuales desde la base local y apagar la instancia de la PC.
+- **A decidir al empezar:** tipo de instancia, presupuesto mensual y qué pasa cuando se acaben los créditos de la cuenta.
+- **Hecho cuando:** con la PC apagada, la app abre desde el celular con todo el historial, y existe al menos un backup en S3 restaurado con éxito en dev.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
+
+## [RM-052] Historial del ejercicio con racha
+- **Objetivo:** decidir si subir o bajar el peso sin salir del entrenamiento ni revisar el historial día por día.
+- **Racha:** junto al ejercicio, un indicador (fuego + número) con las sesiones seguidas en que **todas** las series llegaron al tope del rango. Una serie bajo el tope la rompe; subir el peso la reinicia. Rota, el indicador sigue visible pero apagado.
+- **Historial del ejercicio:** al tocar el indicador se ven las últimas sesiones de **ese** ejercicio (fecha, peso y reps por serie) sin abandonar la serie en curso.
+- **Sugerencias:** con racha, sugerir subir con el incremento del equipo. Por debajo del piso (por defecto, dos reps menos que el mínimo del rango), sugerir bajar con un mensaje respetuoso. El usuario siempre decide. Reemplaza la regla actual de "+3 reps respecto al día anterior".
+- **Hecho cuando:** en Upper A con un ejercicio 3 × 8-10, tras dos sesiones a 10/10/10 el indicador muestra 2 y sugiere subir; tocándolo veo esas dos sesiones; y una sesión a 5 reps sugiere bajar.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
+
+## [RM-053] Ver el ejercicio en TikTok
+- **Objetivo:** saber cómo se hace un ejercicio de nombre técnico o en inglés sin copiar el nombre y buscarlo a mano.
+- **Alcance:** un botón junto al nombre del ejercicio, en el entrenamiento guiado y en el día libre, que abre la búsqueda de TikTok con ese nombre.
+- **Hecho cuando:** desde una serie en curso, un toque abre TikTok con videos de ese ejercicio.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
+
+## [RM-054] Calculadora de discos
+- **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
+- **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).
+- **Hecho cuando:** con 90 kg en press de banca se ve "barra 20 + 35 por lado" representado con sus discos (20 + 10 + 5).
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
+
+## [RM-021] Exportar el historial para análisis con IA
+- **Objetivo:** pasarle tus datos de entrenamiento a tu IA de confianza para que los analice.
+- **Alcance:** desde el historial, elegir un rango de fechas y descargar las series en JSON o CSV, con ejercicio, equipo, peso, reps, tipo de serie, rutina y fecha. Incluir una breve explicación de las convenciones (barra = total, mancuerna = por unidad).
+- **Hecho cuando:** puedo descargar el último mes y pegárselo a una IA, y la IA entiende cada serie sin preguntar qué significa cada campo.
+- **Fecha:** 2026-06-25 · **Estado:** Abierto
+
+## [RM-055] Registro de un toque (demo)
+- **Objetivo:** validar si registrar tocando es más rápido que el formulario actual.
+- **Alcance:** demo aislada, sin cablear a producción. Cada serie es una ficha precargada con peso y meta: un toque la marca como hecha; tocar otra vez resta una rep; una pulsación larga abre la edición.
+- **Hecho cuando:** la demo se usa en una sesión real y se decide si reemplaza a `SetForm` + `SetDoneScreen`.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
+
+## [RM-056] Catálogo de ejercicios con alias y músculos
+- **Objetivo:** que cada ejercicio tenga un nombre claro en español, se encuentre por sus sinónimos ("tirón" / "lat pulldown") y sepa qué músculos trabaja. Es la base de la búsqueda, del botón de video y de cualquier análisis por músculo. Absorbe WL-042.
+- **Alcance:** el slug no cambia; se agregan nombre en español, alias buscables y músculos primarios y secundarios. Curar a mano los ejercicios de fuerza a partir de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (dominio público) y sembrarlos con una migración que complete los existentes por slug, sin duplicar.
+- **Hecho cuando:** buscar "press de banca" o "bench press" encuentra el mismo ejercicio, todos los ejercicios en uso tienen nombre en español y músculos, y ninguna serie existente pierde su ejercicio.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
+
+## [RM-057] Tiempo de descanso desde la última serie
+- **Objetivo:** saber cuánto llevas descansando sin poner un cronómetro.
+- **Alcance:** mostrar "llevas X descansando" calculado desde la hora de la última serie registrada. No es un temporizador: al volver a la app tras usar otras, el tiempo sigue siendo correcto. Sin alarmas ni sonidos.
+- **Hecho cuando:** tras registrar una serie, salir a otra app y volver, el tiempo mostrado coincide con el real.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
 
 ## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.
@@ -29,8 +79,3 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Alcance:** extender `GET /workouts/recommendation` (u otro endpoint ligero) para devolver `lastEquipmentId` del último set de ese ejercicio; el front lo usa como default del selector, con la memoria localStorage como fallback optimista/offline.
 - **Hecho cuando:** al elegir un ejercicio desde cualquier dispositivo, el equipo por default = el del último `Workout` real de ese ejercicio en la BD.
 - **Fecha:** 2026-07-23 · **Estado:** Abierto
-
-## [RM-021] Exportar rutina como texto para análisis con IA
-- **Objetivo:** poder copiar/descargar un texto legible con la rutina actual (y quizá historial reciente) para pegárselo a una IA y que la analice.
-- **Hecho cuando:** existe una acción que genera/copia un texto de la rutina actual, listo para pegar en un chat de IA.
-- **Fecha:** 2026-06-25 · **Estado:** Abierto

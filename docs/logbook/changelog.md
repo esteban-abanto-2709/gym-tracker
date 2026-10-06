@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-066] Documentación de producto con la nueva dirección (2026-10-06 18:47)
+Reescritos `product-vision.md`, `ux-foundations.md` y el README con la regla de progresión (rango, racha, piso para bajar); se borraron `milestones.md` y `design-brief.md`. Roadmap reordenado por prioridad (AWS primero, RM-051 a RM-057) y wishlist actualizada (WL-002 ya cubierta por RM-038; WL-042 pasa a RM-056).
+
 ## [TD-050] Documentación técnica alineada con el código (2026-10-05 11:09)
 Reescritos los README de `apps/api` y `apps/web` (stack, variables, rutas, endpoints, arquitectura) y `CLAUDE.md` como orientación de raíz, apuntando a `schema.prisma` en vez de copiarlo. Los `.env.example` ahora traen `JWT_SECRET` (API) y `API_INTERNAL_URL` (web).
 
