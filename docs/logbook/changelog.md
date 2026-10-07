@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-067] CI en GitHub Actions (2026-10-06 20:52)
+`.github/workflows/ci.yml` corre lint, tests unitarios y build de la API y la web en cada push y PR a `main`. Antes se dejó el lint de ambas apps en cero y la web estrenó tests (Vitest); el CD queda en `RM-051`.
+
 ## [TD-010] Lint de la web en verde (2026-10-06 20:36)
 Sin `setState` síncrono en efectos ni refs leídos en render: estado inicial perezoso desde `localStorage`, valores derivados, ajuste de estado al cambiar props y `useSyncExternalStore` para el viewport. Los 26 tests de caracterización pasan sin cambios.
 

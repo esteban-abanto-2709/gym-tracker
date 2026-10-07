@@ -33,7 +33,8 @@ The full reasoning, including the progression rules, is in
   trackers (Liftosaur, LiftLog, wger, workout-cool) and two exercise datasets
   live outside the repo in `../references/reports/` (start with `SUMMARY.md`).
   Liftosaur, LiftLog and wger are AGPL: take ideas, never code.
-- **Lint is clean** in both apps (`pnpm run lint`); keep it at zero problems.
+- **CI:** `.github/workflows/ci.yml` runs lint, unit tests and build for both
+  apps on every push and PR to `main`. Lint is at zero problems; keep it there.
 
 ## Repository layout
 
@@ -55,6 +56,7 @@ Node 22 and pnpm via corepack in both.
 # apps/api
 pnpm run start:dev            # API on :4000
 pnpm run build                # prisma generate + nest build
+pnpm run lint                 # check only; lint:fix to autofix
 pnpm run test:unit            # jest (src/**/*.spec.ts)
 pnpm run test:e2e             # jest + supertest (test/)
 pnpm exec prisma migrate dev  # new migration
@@ -62,6 +64,7 @@ pnpm exec prisma migrate dev  # new migration
 # apps/web
 pnpm dev                      # web on :3000
 pnpm build
+pnpm lint
 pnpm test                     # vitest + testing library (src/**/*.test.ts[x])
 
 # apps/docker/dev  (never prod while developing)
