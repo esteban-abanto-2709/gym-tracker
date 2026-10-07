@@ -20,12 +20,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** con la PC apagada, la app abre desde el celular con todo el historial, y existe al menos un backup en S3 restaurado con éxito en dev.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-053] Ver el ejercicio en TikTok
-- **Objetivo:** saber cómo se hace un ejercicio de nombre técnico o en inglés sin copiar el nombre y buscarlo a mano.
-- **Alcance:** un botón junto al nombre del ejercicio, en el entrenamiento guiado y en el día libre, que abre la búsqueda de TikTok con ese nombre.
-- **Hecho cuando:** desde una serie en curso, un toque abre TikTok con videos de ese ejercicio.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
-
 ## [RM-054] Calculadora de discos
 - **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
 - **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).

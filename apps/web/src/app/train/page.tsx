@@ -17,6 +17,7 @@ import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
+import { TikTokButton } from "@/components/exercises/TikTokButton";
 import { Loader2, ClipboardList, ListChecks } from "lucide-react";
 
 export default function TrainPage() {
@@ -153,6 +154,10 @@ export default function TrainPage() {
                   routineId={session.routineId}
                 />
               )}
+              <TikTokButton
+                query={currentItem.exercise.name}
+                className="absolute -bottom-4 right-4"
+              />
             </div>
 
             <SetLogger

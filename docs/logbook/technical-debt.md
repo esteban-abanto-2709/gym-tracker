@@ -14,6 +14,22 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-070] TikTok en Android sin probar
+- **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama Android de `openTikTok`)
+- **Riesgo:** 4/10
+- **Problema:** en Android el botón de TikTok usa un `intent://` con el paquete de TikTok y `browser_fallback_url`, pero no se probó en ningún dispositivo. Faltan dos pruebas: con TikTok instalado debe abrir la app con la búsqueda; sin TikTok debe abrir la búsqueda en el navegador del sistema, no dentro de la PWA.
+- **Impacto futuro:** quien use Android puede tocar el botón y no pasar nada, o terminar en TikTok web dentro de la PWA.
+- **Sugerencia:** probar ambos casos desde la PWA instalada; si la app no acepta la ruta `/search`, buscar el esquema propio de TikTok en Android.
+- **Fecha:** 2026-10-07 · **Estado:** Abierto
+
+## [TD-069] TikTok en iOS sin la app instalada, sin probar
+- **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama iOS de `openTikTok`)
+- **Riesgo:** 3/10
+- **Problema:** en iOS el botón abre directo `snssdk1233://search?keyword=…`, probado solo con TikTok instalado. No se sabe qué pasa en un iPhone sin la app: lo esperable es que no pase nada o salga un aviso de dirección inválida. Se descartó un respaldo con temporizador porque saltaba a Safari aunque TikTok abriera bien.
+- **Impacto futuro:** quien no tenga TikTok toca el botón y no obtiene nada.
+- **Sugerencia:** probar en un iPhone sin TikTok desde la PWA instalada y, si hace falta respaldo, usar `x-safari-https://` sin depender de tiempos.
+- **Fecha:** 2026-10-07 · **Estado:** Abierto
+
 ## [TD-068] El formato de la API no se verifica
 - **Ubicación:** `apps/api/eslint.config.mjs` (`'prettier/prettier': 'off'`)
 - **Riesgo:** 2/10

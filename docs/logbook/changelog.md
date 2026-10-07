@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-053] Ver el ejercicio en TikTok (2026-10-07 07:56)
+Botón tipo sticker en el guiado, el descanso y el día libre que abre la búsqueda del ejercicio en la app de TikTok (`snssdk1233://` en iOS, `intent://` en Android). Quedan sin probar iOS sin la app (`TD-069`) y Android (`TD-070`).
+
 ## [RM-067] CI en GitHub Actions (2026-10-06 20:52)
 `.github/workflows/ci.yml` corre lint, tests unitarios y build de la API y la web en cada push y PR a `main`. Antes se dejó el lint de ambas apps en cero y la web estrenó tests (Vitest); el CD queda en `RM-051`.
 

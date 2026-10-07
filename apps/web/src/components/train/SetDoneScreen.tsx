@@ -4,6 +4,7 @@ import type { RoutineItem } from "@/lib/types";
 import type { LastResult } from "@/hooks/useGuidedSession";
 import { convertWeight } from "@/lib/units";
 import { formatDuration } from "@/lib/setDisplay";
+import { TikTokButton } from "@/components/exercises/TikTokButton";
 import {
   Check,
   ArrowRight,
@@ -95,6 +96,7 @@ export function SetDoneScreen({
                   {nextUp.detail}
                 </p>
               </div>
+              <TikTokButton query={nextUp.name} className="shadow-none" />
             </div>
           ) : (
             <div className="mt-7 flex items-center gap-2 text-primary font-display uppercase text-xl animate-fade-in">
