@@ -34,7 +34,7 @@ export default function LoginPage() {
       {/* Cinta hazard + hero */}
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
-        <p className="kicker text-primary text-[0.7rem]">// directo a entrenar</p>
+        <p className="kicker text-primary text-[0.7rem]">{"// directo a entrenar"}</p>
         <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.88] tracking-tight mt-3">
           Sin vueltas.
           <br />

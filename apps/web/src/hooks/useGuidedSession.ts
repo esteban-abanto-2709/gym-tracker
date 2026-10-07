@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
@@ -86,7 +86,7 @@ export function useGuidedSession() {
 
   const skipped = session?.skipped ?? {};
   const currentIndex = session?.currentIndex ?? 0;
-  const progress = session?.progress ?? {};
+  const progress = useMemo(() => session?.progress ?? {}, [session]);
   const currentItem: RoutineItem | null = items[currentIndex] ?? null;
   const setsDoneForCurrent = progress[currentIndex] ?? 0;
 

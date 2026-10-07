@@ -11,7 +11,7 @@ export default function Home() {
           {/* Hero */}
           <div>
             <p className="kicker text-primary text-[0.7rem]">
-              // listo para entrenar
+              {"// listo para entrenar"}
             </p>
             <h2 className="font-display font-bold uppercase text-foreground text-[2.75rem] leading-[0.9] tracking-tight mt-2">
               Hoy

@@ -29,7 +29,7 @@ export default function SuccessPage() {
             </div>
 
             <div className="space-y-2 animate-fade-in-up [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]">
-              <p className="kicker text-primary text-[0.6rem]">// registrado</p>
+              <p className="kicker text-primary text-[0.6rem]">{"// registrado"}</p>
               <h1 className="font-display font-bold uppercase text-5xl tracking-tight text-foreground">
                 ¡Set guardado!
               </h1>

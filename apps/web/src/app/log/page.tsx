@@ -96,7 +96,7 @@ function LogContent() {
           autoComplete="off"
         >
           <p className="kicker text-primary text-[0.7rem] mb-2">
-            // registra tu set
+            {"// registra tu set"}
           </p>
 
           {/* Exercise Selector */}
