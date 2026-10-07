@@ -6,8 +6,14 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 
 const EXERCISE_ID = '6f1c1a4e-2b5d-4c8e-9a7b-3d2e1f0a9b8c';
 
+type RoutineCreateArgs = {
+  data: { items: { create: { blocks: unknown }[] } };
+};
+
 const storedBlocks = async (blocks: unknown[]) => {
-  const create = jest.fn().mockResolvedValue({});
+  const create = jest
+    .fn<Promise<object>, [RoutineCreateArgs]>()
+    .mockResolvedValue({});
   const service = new RoutinesService({
     routine: { create },
   } as unknown as PrismaService);
@@ -15,11 +21,7 @@ const storedBlocks = async (blocks: unknown[]) => {
     name: 'Upper A',
     items: [{ exerciseId: EXERCISE_ID, position: 0, blocks }],
   } as CreateRoutineDto);
-  return (
-    create.mock.calls[0][0] as {
-      data: { items: { create: { blocks: unknown }[] } };
-    }
-  ).data.items.create[0].blocks;
+  return create.mock.calls[0][0].data.items.create[0].blocks;
 };
 
 const dtoErrors = async (blocks: unknown, strict = false) =>

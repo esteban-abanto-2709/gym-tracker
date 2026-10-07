@@ -13,6 +13,12 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
 > de cada tarea está en [`../product-vision.md`](../product-vision.md).
 
+## [RM-067] CI en GitHub Actions
+- **Objetivo:** que cada push y cada PR pasen solos por lint, tests unitarios y build de la API y la web, para que lo que llegue a `main` (y luego a la nube) esté verificado.
+- **Alcance:** dejar el lint de ambas apps en verde (cierra `TD-049` y `TD-010`) y un workflow en `.github/workflows/`. El despliegue automático (CD) queda fuera: va con `RM-051`.
+- **Hecho cuando:** un push a GitHub muestra el check verde con los jobs de API y web, y un error de lint introducido a propósito lo pone en rojo.
+- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-06)
+
 ## [RM-051] App en la nube: AWS
 - **Objetivo:** que la app esté disponible siempre, sin depender de la PC de casa. Un corte de luz dejó la app caída y hubo que registrar el entrenamiento en WhatsApp.
 - **Alcance:** una instancia EC2 (mínimo 2 GB de RAM) con el mismo `docker compose` de `apps/docker/prod/` y el túnel de Cloudflare, sin abrir puertos. Backups automáticos de Postgres a S3. Migrar los datos actuales desde la base local y apagar la instancia de la PC.

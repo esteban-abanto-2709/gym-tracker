@@ -14,13 +14,13 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-049] Error de lint en el spec de rutinas
-- **Ubicación:** `apps/api/src/modules/routines/routines.service.spec.ts:19`
+## [TD-068] El formato de la API no se verifica
+- **Ubicación:** `apps/api/eslint.config.mjs` (`'prettier/prettier': 'off'`)
 - **Riesgo:** 2/10
-- **Problema:** `create.mock.calls[0][0]` es `any` y dispara `@typescript-eslint/no-unsafe-member-access`; `pnpm run lint` no queda limpio.
-- **Impacto futuro:** el ruido del lint tapa errores reales en ese archivo.
-- **Sugerencia:** tipar el mock (`jest.fn<...>()`) o leer la llamada con `create.mock.lastCall` tipado.
-- **Fecha:** 2026-10-03 · **Estado:** Abierto
+- **Problema:** el plugin de Prettier está cargado pero apagado, así que el formato solo se aplica si alguien corre `pnpm run format`. Activado da 618 errores: 589 son `CRLF` de Windows (`core.autocrlf=true` frente al `endOfLine: lf` de Prettier) y unos 29 son formato real pendiente.
+- **Impacto futuro:** diffs con ruido de formato y estilos mezclados; no se puede sumar al CI tal como está.
+- **Sugerencia:** fijar los finales de línea (`.gitattributes` con `eol=lf` o `endOfLine: "auto"`), correr `pnpm run format` una vez y verificar con `prettier --check` en el CI en vez de por ESLint.
+- **Fecha:** 2026-10-06 · **Estado:** Abierto
 
 ## [TD-041] Nombre de rutina repetido responde 500
 - **Ubicación:** `apps/api/src/modules/routines/routines.service.ts:18` (`create`) y `:50` (`update`).

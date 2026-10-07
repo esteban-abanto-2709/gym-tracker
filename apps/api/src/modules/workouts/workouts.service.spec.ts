@@ -84,18 +84,26 @@ describe('WorkoutsService lastMeasure', () => {
 });
 
 describe('WorkoutsService set types', () => {
+  type FindMany = jest.Mock<
+    Promise<unknown[]>,
+    [{ where: Record<string, unknown> }]
+  >;
+
   const setup = () => {
-    const findMany = jest.fn().mockResolvedValue([]);
+    const findMany: FindMany = jest
+      .fn<Promise<unknown[]>, [{ where: Record<string, unknown> }]>()
+      .mockResolvedValue([]);
     const findFirst = jest.fn().mockResolvedValue(null);
-    const create = jest.fn().mockResolvedValue({});
+    const create = jest
+      .fn<Promise<object>, [{ data: { setType: string } }]>()
+      .mockResolvedValue({});
     const service = new WorkoutsService({
       workout: { findMany, findFirst, create },
     } as unknown as PrismaService);
     return { service, findMany, findFirst, create };
   };
 
-  const whereOf = (findMany: jest.Mock) =>
-    (findMany.mock.calls[0][0] as { where: Record<string, unknown> }).where;
+  const whereOf = (findMany: FindMany) => findMany.mock.calls[0][0].where;
 
   it('la recomendacion usa solo series efectivas por defecto', async () => {
     const { service, findMany } = setup();
@@ -149,10 +157,8 @@ describe('WorkoutsService set types', () => {
       exerciseId: 'e1',
       reps: 8,
       weight: 60,
-    } as CreateWorkoutDto);
-    const data = (create.mock.calls[0][0] as { data: { setType: string } })
-      .data;
-    expect(data.setType).toBe('WORKING');
+    });
+    expect(create.mock.calls[0][0].data.setType).toBe('WORKING');
   });
 });
 

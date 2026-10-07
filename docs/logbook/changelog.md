@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-049] Lint de la API en verde (2026-10-06 20:09)
+Mocks de Jest tipados en los specs, `void bootstrap()` y un `test/tsconfig.json` para que ESLint lea los e2e (en ellos se apagan las reglas `no-unsafe-*` por `res.body`). Se borraron las reglas apagadas o bajadas a warning en `src/` (`no-explicit-any`, `no-floating-promises`, `no-unsafe-argument`, `no-unused-vars`). `lint` ya no corrige solo; `lint:fix` sí.
+
 ## [RM-052] Historial del ejercicio con racha (2026-10-06 19:19)
 En el entrenamiento guiado, un fuego con la racha de sesiones con todas las series al tope (cuenta cualquier rutina; el día libre no suma ni rompe) que abre el historial del ejercicio con su equipo. Sugiere subir o bajar sin proponer peso; se quitó la regla de "+3 reps".
 
