@@ -101,9 +101,12 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
   and mirrored in `apps/web/src/lib/types.ts` and `apps/web/src/lib/blocks.ts`.
 - **Programs** order routines; the user's active program decides "today's
   routine" by rotating from the last logged set.
-- **Weight recommendation** (`GET /workouts/recommendation`) compares sets of
-  the same exercise, equipment and set type; +3 reps over the previous day at
-  the same weight suggests +2.5 kg.
+- **Last set** (`GET /workouts/recommendation`) only prefills the set form; it
+  never suggests a weight.
+- **Streak** (`GET /workouts/progress`): sessions in a row with every planned
+  set at the top of the routine's rep range, same weight and equipment. Counts
+  routine sets from any routine; free-day sets never add or break it. Logic in
+  `apps/api/src/modules/workouts/streak.ts`.
 - Weights are stored in **kg**; the UI lets you enter lb and converts.
 
 ## Conventions

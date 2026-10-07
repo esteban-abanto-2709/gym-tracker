@@ -126,7 +126,8 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/workouts` | Registra una serie |
 | PATCH | `/workouts/:id` | Edita una serie |
 | DELETE | `/workouts/:id` | Borra una serie |
-| GET | `/workouts/recommendation` | Última serie y sugerencia de peso (ver abajo) |
+| GET | `/workouts/recommendation` | Última serie, para precargar el formulario (ver abajo) |
+| GET | `/workouts/progress` | Racha e historial de un ejercicio (ver abajo) |
 | GET | `/routines` | Rutinas del usuario |
 | POST | `/routines` | Crea una rutina |
 | GET | `/routines/:id` | Una rutina con sus ítems |
@@ -160,17 +161,34 @@ no se deduce a simple vista:
 - **`Exercise`** es solo `name` + `slug`; cómo se mide un ejercicio vive en el
   bloque, no en el ejercicio.
 
-## Recomendación de peso
+## Última serie
 
-`GET /workouts/recommendation?exerciseId=&tz=&equipmentId=&setType=&step=`
+`GET /workouts/recommendation?exerciseId=&equipmentId=&setType=&step=`
 
-- Solo compara series del **mismo ejercicio, equipo y `setType`** (el peso no es
-  comparable entre una máquina y una mancuerna).
-- Toma el peso de la última serie y busca la mejor marca de reps por día local
-  (`tz`) a ese peso. Si el último día supera al anterior por 3 reps o más,
-  sugiere +2,5 kg (`REP_MARGIN`, `WEIGHT_STEP_KG` en `workouts.service.ts`).
+- Devuelve la última serie del **mismo ejercicio, equipo y `setType`** (el peso
+  no es comparable entre una máquina y una mancuerna) para precargar el
+  formulario. No sugiere pesos.
 - Con `setType=RAMP` y `step` devuelve además `workingWeight`, sobre el que el
   cliente calcula el peso de cada escalón.
+
+## Racha e historial del ejercicio
+
+`GET /workouts/progress?exerciseId=&routineId=&tz=`
+
+- **Sesión:** las series efectivas (`WORKING`) de un día local (`tz`) con el
+  mismo equipo, separando las hechas en rutina de las del día libre.
+- **Meta:** el primer bloque `weight_reps` del ejercicio en `routineId`. Sin
+  rutina o sin ese bloque, `streak` es `null` (no hay racha).
+- **Racha:** sesiones con rutina seguidas, de la más reciente hacia atrás, con
+  todas las series que pide la meta, todas en el tope (`repsMax`, o `reps` si no
+  hay rango) y con el mismo peso y equipo. Cuenta series de cualquier rutina;
+  el día libre no suma ni rompe. Una sesión de hoy aún incompleta y al tope no
+  rompe la racha.
+- **Sugerencia:** `down` si alguna serie de la última sesión quedó bajo el piso
+  (mínimo del rango menos 2); si no, `up` con racha. El cliente decide cómo
+  mostrarla; nunca propone un peso.
+- `sessions` trae las últimas 10 sesiones, incluidas las del día libre, con su
+  equipo. La lógica vive en `modules/workouts/streak.ts`.
 
 ## Docker
 

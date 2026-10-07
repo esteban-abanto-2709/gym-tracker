@@ -1,4 +1,4 @@
-// ponytail: fallback si el cliente no manda su tz al pedir recomendación.
+// ponytail: fallback si el cliente no manda su tz al pedir el progreso.
 // Hoy todos entrenan en Perú; el frontend es el dueño real de la timezone.
 const FALLBACK_TIMEZONE = 'America/Lima';
 

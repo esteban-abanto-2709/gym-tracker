@@ -49,6 +49,16 @@ export class WorkoutsController {
     );
   }
 
+  @Get('progress')
+  async getProgress(
+    @CurrentUser() user: AuthUser,
+    @Query('exerciseId') exerciseId: string,
+    @Query('routineId') routineId?: string,
+    @Query('tz') tz?: string,
+  ) {
+    return this.workoutsService.getProgress(user.id, exerciseId, routineId, tz);
+  }
+
   @Get()
   async findAll(@CurrentUser() user: AuthUser) {
     return this.workoutsService.findAll(user.id);
