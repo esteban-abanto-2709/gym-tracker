@@ -1,34 +1,41 @@
-import { useState, useEffect } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 
 interface VisualViewportState {
   height: number;
   offsetTop: number;
 }
 
+const readViewport = () => {
+  const vv = window.visualViewport;
+  return vv ? `${vv.height}|${vv.offsetTop}` : null;
+};
+
+const noViewport = () => null;
+
 export function useVisualViewport(active: boolean): VisualViewportState | null {
-  const [state, setState] = useState<VisualViewportState | null>(null);
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const vv = window.visualViewport;
+      if (!active || !vv) return () => {};
+      vv.addEventListener("resize", onChange);
+      vv.addEventListener("scroll", onChange);
+      return () => {
+        vv.removeEventListener("resize", onChange);
+        vv.removeEventListener("scroll", onChange);
+      };
+    },
+    [active],
+  );
 
-  useEffect(() => {
-    if (!active || typeof window === "undefined" || !window.visualViewport) {
-      setState(null);
-      return;
-    }
+  const raw = useSyncExternalStore(
+    subscribe,
+    active ? readViewport : noViewport,
+    noViewport,
+  );
 
-    const vv = window.visualViewport;
-
-    const update = () => {
-      setState({ height: vv.height, offsetTop: vv.offsetTop });
-    };
-
-    update();
-    vv.addEventListener("resize", update);
-    vv.addEventListener("scroll", update);
-
-    return () => {
-      vv.removeEventListener("resize", update);
-      vv.removeEventListener("scroll", update);
-    };
-  }, [active]);
-
-  return state;
+  return useMemo(() => {
+    if (!raw) return null;
+    const [height, offsetTop] = raw.split("|").map(Number);
+    return { height, offsetTop };
+  }, [raw]);
 }

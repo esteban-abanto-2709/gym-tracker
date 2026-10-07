@@ -39,28 +39,26 @@ export interface LastResult {
 
 export function useGuidedSession() {
   const router = useRouter();
-  const [session, setSession] = useState<ActiveSession | null>(null);
+  const [session, setSession] = useState<ActiveSession | null>(
+    readActiveSession,
+  );
   const [routine, setRoutine] = useState<Routine | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(session !== null);
   const [logging, setLogging] = useState(false);
   const [phase, setPhase] = useState<Phase>("logging");
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
 
+  const routineId = session?.routineId;
   useEffect(() => {
-    const active = readActiveSession();
-    if (!active) {
-      setLoading(false);
-      return;
-    }
-    setSession(active);
+    if (!routineId) return;
     api
-      .get<Routine>(routes.api.routines.get(active.routineId))
+      .get<Routine>(routes.api.routines.get(routineId))
       .then((r) => setRoutine(r))
       // Routine gone (deleted / 404): drop the zombie session instead of
       // stranding the user in a loop (see TD-013).
       .catch(() => clearActiveSession())
       .finally(() => setLoading(false));
-  }, []);
+  }, [routineId]);
 
   const persist = useCallback((next: ActiveSession) => {
     setSession(next);

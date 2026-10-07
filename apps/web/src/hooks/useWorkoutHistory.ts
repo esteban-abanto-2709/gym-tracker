@@ -34,7 +34,6 @@ export function useWorkoutHistory() {
       try {
         const all = await api.get<Workout[]>(routes.api.workouts.list());
         setWorkouts(all);
-        if (all.length > 0) setSelectedDate(localDay(all[0].createdAt));
       } catch (error) {
         console.error("Error fetching workouts:", error);
       } finally {
@@ -58,17 +57,14 @@ export function useWorkoutHistory() {
     return out;
   }, [workouts]);
 
-  const currentWorkouts = useMemo(
-    () => workouts.filter((w) => localDay(w.createdAt) === selectedDate),
-    [workouts, selectedDate],
-  );
+  const activeDate = dates.includes(selectedDate)
+    ? selectedDate
+    : (dates[0] ?? "");
 
-  // Keep a valid day selected after deletions empty out the current one.
-  useEffect(() => {
-    if (dates.length > 0 && !dates.includes(selectedDate)) {
-      setSelectedDate(dates[0]);
-    }
-  }, [dates, selectedDate]);
+  const currentWorkouts = useMemo(
+    () => workouts.filter((w) => localDay(w.createdAt) === activeDate),
+    [workouts, activeDate],
+  );
 
   // Format date string to human-readable
   const getDisplayDate = useCallback((dateStr: string) => {
@@ -186,7 +182,7 @@ export function useWorkoutHistory() {
   return {
     // Data
     dates,
-    selectedDate,
+    selectedDate: activeDate,
     setSelectedDate,
     currentWorkouts,
     loading,

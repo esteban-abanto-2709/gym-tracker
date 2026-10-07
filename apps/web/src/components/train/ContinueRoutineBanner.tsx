@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { routes } from "@/lib/routes";
@@ -10,12 +10,7 @@ import {
 } from "@/lib/activeSession";
 
 export function ContinueRoutineBanner() {
-  const [session, setSession] = useState<ActiveSession | null>(null);
-
-  // Read on mount only (localStorage is client-side; avoids hydration mismatch)
-  useEffect(() => {
-    setSession(readActiveSession());
-  }, []);
+  const [session] = useState<ActiveSession | null>(readActiveSession);
 
   if (!session) return null;
 

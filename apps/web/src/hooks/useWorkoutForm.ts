@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
@@ -25,6 +25,17 @@ function repeatMeasure(data: RepeatData): SetMeasure {
   return data.weight ? "weight_reps" : "reps";
 }
 
+function readRepeatData(): RepeatData | null {
+  const savedData = sessionStorage.getItem(STORAGE_KEY);
+  if (!savedData) return null;
+  try {
+    return JSON.parse(savedData) as RepeatData;
+  } catch (e) {
+    console.error("Error loading last set data:", e);
+    return null;
+  }
+}
+
 export function useWorkoutForm(
   exercises: Exercise[],
   loadingExercises: boolean,
@@ -38,32 +49,32 @@ export function useWorkoutForm(
   const [seconds, setSeconds] = useState("");
   const [opinion, setOpinion] = useState("");
   const [isApproximation, setIsApproximation] = useState(false);
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
-    null,
-  );
+  const [selectedExercise, setSelectedExerciseState] =
+    useState<Exercise | null>(null);
   const [equipmentId, setEquipmentId] = useState<string | null>(null);
   const [measure, setMeasure] = useState<SetMeasure>("weight_reps");
+  const [measureLocked, setMeasureLocked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const measureTouched = useRef(false);
-  const pendingRepeatMeasure = useRef<SetMeasure | null>(null);
+  const [repeatChecked, setRepeatChecked] = useState(false);
 
-  // Al cambiar de ejercicio, el equipo por default = el último que usaste en él.
-  useEffect(() => {
-    setEquipmentId(
-      selectedExercise ? getLastEquipment(selectedExercise.id) : null,
-    );
-  }, [selectedExercise]);
+  const selectExercise = useCallback(
+    (exercise: Exercise | null, repeatedMeasure?: SetMeasure) => {
+      if (exercise === selectedExercise) return;
+      setSelectedExerciseState(exercise);
+      setEquipmentId(exercise ? getLastEquipment(exercise.id) : null);
+      setMeasure(repeatedMeasure ?? "weight_reps");
+      setMeasureLocked(repeatedMeasure != null);
+    },
+    [selectedExercise],
+  );
+
+  const setSelectedExercise = useCallback(
+    (exercise: Exercise | null) => selectExercise(exercise),
+    [selectExercise],
+  );
 
   useEffect(() => {
-    measureTouched.current = false;
-    if (!selectedExercise) return;
-    if (pendingRepeatMeasure.current) {
-      setMeasure(pendingRepeatMeasure.current);
-      pendingRepeatMeasure.current = null;
-      measureTouched.current = true;
-      return;
-    }
-    setMeasure("weight_reps");
+    if (!selectedExercise || measureLocked) return;
 
     let active = true;
     api
@@ -74,45 +85,30 @@ export function useWorkoutForm(
         ),
       )
       .then((rec) => {
-        if (active && !measureTouched.current && rec.lastMeasure)
-          setMeasure(rec.lastMeasure);
+        if (active && rec.lastMeasure) setMeasure(rec.lastMeasure);
       })
       .catch((e) => console.error("Error fetching last measure:", e));
     return () => {
       active = false;
     };
-  }, [selectedExercise]);
+  }, [selectedExercise, measureLocked]);
 
   const changeMeasure = useCallback((value: SetMeasure) => {
-    measureTouched.current = true;
+    setMeasureLocked(true);
     setMeasure(value);
   }, []);
 
-  // One-shot repeat processing: runs during render once exercises are loaded
-  const repeatProcessed = useRef(false);
-  if (!loadingExercises && !repeatProcessed.current) {
-    repeatProcessed.current = true;
-    const shouldRepeat = searchParams.get("repeat") === "true";
-    if (shouldRepeat) {
-      const savedData = sessionStorage.getItem(STORAGE_KEY);
-      if (savedData) {
-        try {
-          const data = JSON.parse(savedData) as RepeatData;
-          const exerciseId = data.exercise?.id || data.exerciseId;
-          if (exerciseId) {
-            const exToRepeat = exercises.find((ex) => ex.id === exerciseId);
-            if (exToRepeat) {
-              pendingRepeatMeasure.current = repeatMeasure(data);
-              setSelectedExercise(exToRepeat);
-            }
-          }
-          setWeight(data.weight || "");
-          setReps(data.reps || "");
-          setSeconds(data.durationSec || "");
-        } catch (e) {
-          console.error("Error loading last set data:", e);
-        }
-      }
+  if (!loadingExercises && !repeatChecked) {
+    setRepeatChecked(true);
+    const data =
+      searchParams.get("repeat") === "true" ? readRepeatData() : null;
+    if (data) {
+      const exerciseId = data.exercise?.id || data.exerciseId;
+      const exToRepeat = exercises.find((ex) => ex.id === exerciseId);
+      if (exToRepeat) selectExercise(exToRepeat, repeatMeasure(data));
+      setWeight(data.weight || "");
+      setReps(data.reps || "");
+      setSeconds(data.durationSec || "");
     }
   }
 

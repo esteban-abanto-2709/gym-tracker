@@ -74,8 +74,8 @@ export function SetForm({
   const isWorkingWeight = measure === "weight_reps" && setType === "WORKING";
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
-  const [reps, setReps] = useState("");
-  const [seconds, setSeconds] = useState("");
+  const [reps, setReps] = useState(targetReps?.toString() ?? "");
+  const [seconds, setSeconds] = useState(targetDurationSec?.toString() ?? "");
   const [equipmentId, setEquipmentId] = useState<string | null>(() =>
     getLastEquipment(exerciseId),
   );
@@ -84,16 +84,30 @@ export function SetForm({
     null,
   );
 
-  // Prefill from the last logged set of this segment (or the routine target)
-  useEffect(() => {
-    let active = true;
+  const prefillKey = [
+    exerciseId,
+    preferLastMeasure,
+    setType,
+    targetReps,
+    targetDurationSec,
+    approx,
+    equipmentId,
+    step,
+    pct,
+  ].join("|");
+  const [prevPrefillKey, setPrevPrefillKey] = useState(prefillKey);
+  if (prefillKey !== prevPrefillKey) {
+    setPrevPrefillKey(prefillKey);
     setUnit("kg");
     setWeight("");
     setReps(targetReps?.toString() ?? "");
     setSeconds(targetDurationSec?.toString() ?? "");
     setIsApproximation(approx);
     setRecommendation(null);
+  }
 
+  useEffect(() => {
+    let active = true;
     api
       .get<Recommendation>(
         routes.api.workouts.recommendation(

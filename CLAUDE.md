@@ -33,8 +33,7 @@ The full reasoning, including the progression rules, is in
   trackers (Liftosaur, LiftLog, wger, workout-cool) and two exercise datasets
   live outside the repo in `../references/reports/` (start with `SUMMARY.md`).
   Liftosaur, LiftLog and wger are AGPL: take ideas, never code.
-- **Lint is red** (`TD-010`, `TD-049`): `pnpm lint` fails in both apps before any
-  change of yours.
+- **Lint is clean** in both apps (`pnpm run lint`); keep it at zero problems.
 
 ## Repository layout
 

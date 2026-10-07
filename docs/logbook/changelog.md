@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-010] Lint de la web en verde (2026-10-06 20:36)
+Sin `setState` síncrono en efectos ni refs leídos en render: estado inicial perezoso desde `localStorage`, valores derivados, ajuste de estado al cambiar props y `useSyncExternalStore` para el viewport. Los 26 tests de caracterización pasan sin cambios.
+
 ## [TD-049] Lint de la API en verde (2026-10-06 20:09)
 Mocks de Jest tipados en los specs, `void bootstrap()` y un `test/tsconfig.json` para que ESLint lea los e2e (en ellos se apagan las reglas `no-unsafe-*` por `res.body`). Se borraron las reglas apagadas o bajadas a warning en `src/` (`no-explicit-any`, `no-floating-promises`, `no-unsafe-argument`, `no-unused-vars`). `lint` ya no corrige solo; `lint:fix` sí.
 
