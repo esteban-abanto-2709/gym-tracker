@@ -20,14 +20,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** con la PC apagada, la app abre desde el celular con todo el historial, y existe al menos un backup en S3 restaurado con éxito en dev.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-052] Historial del ejercicio con racha
-- **Objetivo:** decidir si subir o bajar el peso sin salir del entrenamiento ni revisar el historial día por día.
-- **Racha:** junto al ejercicio, un indicador (fuego + número) con las sesiones seguidas en que **todas** las series llegaron al tope del rango. Una serie bajo el tope la rompe; subir el peso la reinicia. Rota, el indicador sigue visible pero apagado.
-- **Historial del ejercicio:** al tocar el indicador se ven las últimas sesiones de **ese** ejercicio (fecha, peso y reps por serie) sin abandonar la serie en curso.
-- **Sugerencias:** con racha, sugerir subir con el incremento del equipo. Por debajo del piso (por defecto, dos reps menos que el mínimo del rango), sugerir bajar con un mensaje respetuoso. El usuario siempre decide. Reemplaza la regla actual de "+3 reps respecto al día anterior".
-- **Hecho cuando:** en Upper A con un ejercicio 3 × 8-10, tras dos sesiones a 10/10/10 el indicador muestra 2 y sugiere subir; tocándolo veo esas dos sesiones; y una sesión a 5 reps sugiere bajar.
-- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-06)
-
 ## [RM-053] Ver el ejercicio en TikTok
 - **Objetivo:** saber cómo se hace un ejercicio de nombre técnico o en inglés sin copiar el nombre y buscarlo a mano.
 - **Alcance:** un botón junto al nombre del ejercicio, en el entrenamiento guiado y en el día libre, que abre la búsqueda de TikTok con ese nombre.

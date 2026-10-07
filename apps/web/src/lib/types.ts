@@ -123,3 +123,18 @@ export interface ActiveProgram {
   program: Program | null;
   nextRoutineId: string | null;
 }
+
+export interface ExerciseSession {
+  date: string;
+  free: boolean;
+  equipmentId: string | null;
+  equipment: string | null;
+  sets: { weight: number | null; reps: number }[];
+}
+
+export interface ExerciseProgress {
+  target: { sets: number; reps: number; repsMax: number | null } | null;
+  streak: number | null;
+  suggestion: "up" | "down" | null;
+  sessions: ExerciseSession[];
+}

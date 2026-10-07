@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-052] Historial del ejercicio con racha (2026-10-06 19:19)
+En el entrenamiento guiado, un fuego con la racha de sesiones con todas las series al tope (cuenta cualquier rutina; el día libre no suma ni rompe) que abre el historial del ejercicio con su equipo. Sugiere subir o bajar sin proponer peso; se quitó la regla de "+3 reps".
+
 ## [TD-066] Documentación de producto con la nueva dirección (2026-10-06 18:47)
 Reescritos `product-vision.md`, `ux-foundations.md` y el README con la regla de progresión (rango, racha, piso para bajar); se borraron `milestones.md` y `design-brief.md`. Roadmap reordenado por prioridad (AWS primero, RM-051 a RM-057) y wishlist actualizada (WL-002 ya cubierta por RM-038; WL-042 pasa a RM-056).
 

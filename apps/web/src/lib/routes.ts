@@ -36,6 +36,8 @@ export const routes = {
         step: number | null = null,
       ) =>
         `/workouts/recommendation?exerciseId=${exerciseId}&equipmentId=${encodeURIComponent(equipmentId ?? "")}&setType=${setType}${step != null ? `&step=${step}` : ""}`,
+      progress: (exerciseId: string, routineId: string, tz: string) =>
+        `/workouts/progress?exerciseId=${exerciseId}&routineId=${routineId}&tz=${encodeURIComponent(tz)}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },

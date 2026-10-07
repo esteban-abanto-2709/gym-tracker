@@ -16,6 +16,7 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { SessionMap } from "@/components/train/SessionMap";
+import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { Loader2, ClipboardList, ListChecks } from "lucide-react";
 
 export default function TrainPage() {
@@ -24,6 +25,7 @@ export default function TrainPage() {
     logging,
     phase,
     routine,
+    session,
     items,
     currentIndex,
     currentItem,
@@ -143,6 +145,15 @@ export default function TrainPage() {
               <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
                 {currentItem.exercise.name}
               </p>
+              {session && (
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-3 empty:hidden">
+                  <ExerciseProgress
+                    key={currentItem.exerciseId}
+                    exerciseId={currentItem.exerciseId}
+                    routineId={session.routineId}
+                  />
+                </div>
+              )}
             </div>
 
             <SetLogger
