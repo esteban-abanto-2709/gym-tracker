@@ -63,6 +63,7 @@ pnpm exec prisma migrate dev  # new migration
 # apps/web
 pnpm dev                      # web on :3000
 pnpm build
+pnpm test                     # vitest + testing library (src/**/*.test.ts[x])
 
 # apps/docker/dev  (never prod while developing)
 docker compose up -d postgres         # only the DB, for native pnpm dev
