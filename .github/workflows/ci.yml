@@ -17,6 +17,9 @@ jobs:
     defaults:
       run:
         working-directory: apps/api
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      DIRECT_URL: postgresql://ci:ci@localhost:5432/ci
     steps:
       - uses: actions/checkout@v7
 
@@ -32,14 +35,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm exec prisma generate
+
       - run: pnpm run lint
 
       - run: pnpm run test:unit
 
       - run: pnpm run build
-        env:
-          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
-          DIRECT_URL: postgresql://ci:ci@localhost:5432/ci
 
   web:
     name: Web
