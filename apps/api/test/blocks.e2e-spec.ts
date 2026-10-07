@@ -371,7 +371,6 @@ describe('Bloques y sets (e2e)', () => {
       expect(res.body).toMatchObject({
         lastWeight: null,
         lastReps: null,
-        suggestedWeight: null,
         lastMeasure: 'reps',
       });
     });

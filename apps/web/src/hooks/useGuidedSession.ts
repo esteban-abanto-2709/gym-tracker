@@ -35,7 +35,6 @@ export interface LastResult {
   reps: number;
   durationSec: number | null;
   setNumber: number;
-  suggestedWeight: number | null;
 }
 
 export function useGuidedSession() {
@@ -162,29 +161,12 @@ export function useGuidedSession() {
           const nextProgress = { ...progress, [currentIndex]: setNumber };
           persist({ ...session, progress: nextProgress });
 
-          let suggestedWeight: number | null = null;
-          if (setType === "WORKING" && weightKg != null) {
-            try {
-              const rec = await api.get<{ suggestedWeight: number | null }>(
-                routes.api.workouts.recommendation(
-                  currentItem.exerciseId,
-                  Intl.DateTimeFormat().resolvedOptions().timeZone,
-                  equipmentId ?? null,
-                ),
-              );
-              suggestedWeight = rec.suggestedWeight;
-            } catch (e) {
-              console.error("Error fetching recommendation:", e);
-            }
-          }
-
           setLastResult({
             exerciseName: currentItem.exercise.name,
             weightKg: weightKg ?? null,
             reps,
             durationSec: durationSec ?? null,
             setNumber,
-            suggestedWeight,
           });
           setPhase("done");
         } catch (e) {

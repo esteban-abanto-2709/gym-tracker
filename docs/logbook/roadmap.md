@@ -26,7 +26,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Historial del ejercicio:** al tocar el indicador se ven las últimas sesiones de **ese** ejercicio (fecha, peso y reps por serie) sin abandonar la serie en curso.
 - **Sugerencias:** con racha, sugerir subir con el incremento del equipo. Por debajo del piso (por defecto, dos reps menos que el mínimo del rango), sugerir bajar con un mensaje respetuoso. El usuario siempre decide. Reemplaza la regla actual de "+3 reps respecto al día anterior".
 - **Hecho cuando:** en Upper A con un ejercicio 3 × 8-10, tras dos sesiones a 10/10/10 el indicador muestra 2 y sugiere subir; tocándolo veo esas dos sesiones; y una sesión a 5 reps sugiere bajar.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
+- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-06)
 
 ## [RM-053] Ver el ejercicio en TikTok
 - **Objetivo:** saber cómo se hace un ejercicio de nombre técnico o en inglés sin copiar el nombre y buscarlo a mano.

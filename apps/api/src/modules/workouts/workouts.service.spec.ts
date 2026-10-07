@@ -16,7 +16,7 @@ const serviceWithSets = (sets: unknown[]) =>
 const day = (iso: string) => new Date(iso);
 
 describe('WorkoutsService.getRecommendation', () => {
-  it('no sugiere peso en un ejercicio de tiempo y devuelve la ultima duracion', async () => {
+  it('en un ejercicio de tiempo devuelve la ultima duracion', async () => {
     const service = serviceWithSets([
       {
         weight: null,
@@ -34,12 +34,11 @@ describe('WorkoutsService.getRecommendation', () => {
 
     const rec = await service.getRecommendation('u1', 'e1');
 
-    expect(rec.suggestedWeight).toBeNull();
     expect(rec.lastDurationSec).toBe(45);
     expect(rec.lastWeight).toBeNull();
   });
 
-  it('en un set solo de reps devuelve las reps sin sugerir peso', async () => {
+  it('en un set solo de reps devuelve las reps', async () => {
     const service = serviceWithSets([
       {
         weight: null,
@@ -59,29 +58,6 @@ describe('WorkoutsService.getRecommendation', () => {
 
     expect(rec.lastReps).toBe(15);
     expect(rec.lastWeight).toBeNull();
-    expect(rec.suggestedWeight).toBeNull();
-  });
-
-  it('sigue sugiriendo peso cuando se baten las reps por el margen', async () => {
-    const service = serviceWithSets([
-      {
-        weight: 60,
-        reps: 12,
-        durationSec: null,
-        createdAt: day('2026-09-02T10:00:00Z'),
-      },
-      {
-        weight: 60,
-        reps: 8,
-        durationSec: null,
-        createdAt: day('2026-09-01T10:00:00Z'),
-      },
-    ]);
-
-    const rec = await service.getRecommendation('u1', 'e1');
-
-    expect(rec.suggestedWeight).toBe(62.5);
-    expect(rec.lastDurationSec).toBeNull();
   });
 });
 
@@ -129,13 +105,13 @@ describe('WorkoutsService set types', () => {
 
   it('la recomendacion de calentamiento usa solo calentamientos', async () => {
     const { service, findMany } = setup();
-    await service.getRecommendation('u1', 'e1', undefined, undefined, 'WARMUP');
+    await service.getRecommendation('u1', 'e1', undefined, 'WARMUP');
     expect(whereOf(findMany).setType).toBe('WARMUP');
   });
 
   it('la recomendacion de rampa filtra por escalon', async () => {
     const { service, findMany } = setup();
-    await service.getRecommendation('u1', 'e1', undefined, undefined, 'RAMP', 2);
+    await service.getRecommendation('u1', 'e1', undefined, 'RAMP', 2);
     expect(whereOf(findMany)).toMatchObject({ setType: 'RAMP', step: 2 });
   });
 
@@ -154,7 +130,6 @@ describe('WorkoutsService set types', () => {
     const rec = await service.getRecommendation(
       'u1',
       'e1',
-      undefined,
       undefined,
       'RAMP',
       1,

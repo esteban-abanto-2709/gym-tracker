@@ -31,12 +31,11 @@ export const routes = {
       list: () => "/workouts",
       recommendation: (
         exerciseId: string,
-        tz: string,
         equipmentId: string | null,
         setType: SetType = "WORKING",
         step: number | null = null,
       ) =>
-        `/workouts/recommendation?exerciseId=${exerciseId}&tz=${encodeURIComponent(tz)}&equipmentId=${encodeURIComponent(equipmentId ?? "")}&setType=${setType}${step != null ? `&step=${step}` : ""}`,
+        `/workouts/recommendation?exerciseId=${exerciseId}&equipmentId=${encodeURIComponent(equipmentId ?? "")}&setType=${setType}${step != null ? `&step=${step}` : ""}`,
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },

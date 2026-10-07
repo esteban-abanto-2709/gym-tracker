@@ -3,10 +3,6 @@ import { SetType } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
-import { toLocalDateString } from '@/common/timezone.util';
-
-const REP_MARGIN = 3;
-const WEIGHT_STEP_KG = 2.5;
 
 type SetMeasure = 'weight_reps' | 'reps' | 'time';
 
@@ -44,7 +40,6 @@ export class WorkoutsService {
   async getRecommendation(
     userId: string,
     exerciseId: string,
-    tz?: string,
     equipmentId?: string,
     setType: SetType = SetType.WORKING,
     step?: number,
@@ -89,40 +84,16 @@ export class WorkoutsService {
         lastWeight: null,
         lastReps: null,
         lastDurationSec: null,
-        suggestedWeight: null,
         lastMeasure,
         workingWeight,
       };
     }
 
     const last = sets[0];
-    const trackWeight = last.weight;
-
-    // Best reps achieved at the current working weight, per local day.
-    const bestRepsByDay = new Map<string, number>();
-    for (const s of sets) {
-      if (s.weight !== trackWeight) continue;
-      const day = toLocalDateString(s.createdAt, tz);
-      bestRepsByDay.set(day, Math.max(bestRepsByDay.get(day) ?? 0, s.reps));
-    }
-
-    // Suggest going up when the latest day at this weight beats the previous
-    // day at this weight by the margin. Different weight => fresh track.
-    const days = [...bestRepsByDay.keys()].sort().reverse();
-    let suggestedWeight: number | null = null;
-    if (trackWeight != null && days.length >= 2) {
-      const bestNow = bestRepsByDay.get(days[0]) ?? 0;
-      const bestPrev = bestRepsByDay.get(days[1]) ?? 0;
-      if (bestNow >= bestPrev + REP_MARGIN) {
-        suggestedWeight = trackWeight + WEIGHT_STEP_KG;
-      }
-    }
-
     return {
       lastWeight: last.weight,
       lastReps: last.reps,
       lastDurationSec: last.durationSec,
-      suggestedWeight,
       lastMeasure,
       workingWeight,
     };

@@ -7,7 +7,6 @@ import { formatDuration } from "@/lib/setDisplay";
 import {
   Check,
   ArrowRight,
-  ArrowUp,
   Flag,
   Dumbbell,
   PartyPopper,
@@ -78,12 +77,6 @@ export function SetDoneScreen({
           <p className="text-sm text-muted-foreground mt-2 font-mono">
             {resultLine}
           </p>
-          {result.suggestedWeight != null && (
-            <div className="mt-3 inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
-              <ArrowUp className="w-4 h-4" strokeWidth={3} />
-              Sube a {result.suggestedWeight} kg
-            </div>
-          )}
 
           {/* What's coming next — set up the next machine at a glance */}
           {nextUp ? (

@@ -35,7 +35,6 @@ export class WorkoutsController {
   async getRecommendation(
     @CurrentUser() user: AuthUser,
     @Query('exerciseId') exerciseId: string,
-    @Query('tz') tz?: string,
     @Query('equipmentId') equipmentId?: string,
     @Query('setType', new ParseEnumPipe(SetType, { optional: true }))
     setType?: SetType,
@@ -44,7 +43,6 @@ export class WorkoutsController {
     return this.workoutsService.getRecommendation(
       user.id,
       exerciseId,
-      tz,
       equipmentId,
       setType,
       step,

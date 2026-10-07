@@ -21,7 +21,6 @@ interface Recommendation {
   lastWeight: number | null;
   lastReps: number | null;
   lastDurationSec: number | null;
-  suggestedWeight: number | null;
   lastMeasure: SetMeasure | null;
   workingWeight: number | null;
 }
@@ -99,7 +98,6 @@ export function SetForm({
       .get<Recommendation>(
         routes.api.workouts.recommendation(
           exerciseId,
-          Intl.DateTimeFormat().resolvedOptions().timeZone,
           equipmentId,
           setType,
           step,
@@ -176,9 +174,8 @@ export function SetForm({
     });
   };
 
-  const suggestedWeight = isWorkingWeight
-    ? (recommendation?.suggestedWeight ?? null)
-    : setType === "RAMP"
+  const suggestedWeight =
+    setType === "RAMP"
       ? rampSuggestedWeight(
           pct,
           recommendation?.lastWeight ?? null,
