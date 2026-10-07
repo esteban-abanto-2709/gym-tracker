@@ -24,7 +24,6 @@ export function useWorkoutHistory() {
   const [editReps, setEditReps] = useState("");
   const [editWeight, setEditWeight] = useState("");
   const [editDuration, setEditDuration] = useState("");
-  const [editOpinion, setEditOpinion] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   // Load all workouts once; grouping/filtering by local day happens client-side.
@@ -111,7 +110,6 @@ export function useWorkoutHistory() {
     setEditReps(workout.reps.toString());
     setEditWeight(workout.weight?.toString() ?? "");
     setEditDuration(workout.durationSec?.toString() ?? "");
-    setEditOpinion(workout.opinion);
   }, []);
 
   // Save edited workout
@@ -123,13 +121,12 @@ export function useWorkoutHistory() {
         const measure = setMeasure(editingWorkout);
         const changes =
           measure === "time"
-            ? { reps: 1, durationSec: Number(editDuration), opinion: editOpinion }
+            ? { reps: 1, durationSec: Number(editDuration) }
             : measure === "reps"
-              ? { reps: Number(editReps), opinion: editOpinion }
+              ? { reps: Number(editReps) }
               : {
                   reps: Number(editReps),
                   weight: Number(editWeight),
-                  opinion: editOpinion,
                 };
 
         await api.patch(routes.api.workouts.update(editingWorkout.id), changes);
@@ -153,7 +150,6 @@ export function useWorkoutHistory() {
     editReps,
     editWeight,
     editDuration,
-    editOpinion,
   ]);
 
   // Confirm and delete a workout
@@ -196,8 +192,6 @@ export function useWorkoutHistory() {
     setEditWeight,
     editDuration,
     setEditDuration,
-    editOpinion,
-    setEditOpinion,
     handleEditClick,
     saveEdit,
 

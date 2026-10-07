@@ -30,7 +30,6 @@ export interface LogSetInput {
   weightKg?: number | null;
   reps: number;
   durationSec?: number | null;
-  opinion?: string;
   equipmentId?: string | null;
   setType?: SetType;
   step?: number | null;
@@ -157,7 +156,6 @@ export function SetForm({
       await onLog({
         reps: 1,
         durationSec: Number(seconds),
-        opinion: "",
         setType,
         step,
       });
@@ -166,7 +164,6 @@ export function SetForm({
     await onLog({
       weightKg: measure === "weight_reps" ? toKg(Number(weight), unit) : null,
       reps: Number(reps),
-      opinion: "",
       equipmentId,
       setType,
       step,

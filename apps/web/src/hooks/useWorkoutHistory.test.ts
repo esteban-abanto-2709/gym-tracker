@@ -19,7 +19,6 @@ const set = (id: string, createdAt: string): Workout =>
     exercise: { id: "ex-squat", name: "Sentadilla" },
     weight: 80,
     reps: 5,
-    opinion: "",
     createdAt,
   }) as Workout;
 

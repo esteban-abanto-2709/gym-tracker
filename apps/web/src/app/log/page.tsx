@@ -36,8 +36,6 @@ function LogContent() {
     setReps,
     seconds,
     setSeconds,
-    opinion,
-    setOpinion,
     selectedExercise,
     setSelectedExercise,
     equipmentId,
@@ -233,23 +231,6 @@ function LogContent() {
               </div>
             </div>
           )}
-
-          <div className="space-y-2">
-            <label
-              htmlFor="opinion"
-              className="kicker text-muted-foreground text-[0.65rem]"
-            >
-              ¿Cómo te sentiste?
-            </label>
-            <textarea
-              id="opinion"
-              name="opinion"
-              value={opinion}
-              onChange={(e) => setOpinion(e.target.value)}
-              rows={3}
-              className="w-full px-4 py-3 text-base bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground resize-none animate-slide-in-right [animation-delay:0.5s]"
-            />
-          </div>
 
           {/* Submit Button */}
           <button

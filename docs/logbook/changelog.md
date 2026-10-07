@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-068] Sin notas en las series (2026-10-07 08:52)
+Fuera el campo "¿Cómo te sentiste?" del día libre, su edición y su muestra en el historial; la columna `opinion` se conserva con las notas viejas para exportarlas. Una migración pasa a `WARMUP` las 59 series que se marcaban con la nota "Aproximaciones".
+
 ## [WL-012] Quitar la casilla "Aproximación" (2026-10-07 08:23)
 Fuera la casilla del día libre, el guiado, el editor de rutina y el historial; el calentamiento lo dicen los bloques (`warmup`, `ramp`). Una migración pasa las series marcadas a `WARMUP`, los bloques `approx` a `warmup` y borra `Workout.isApproximation`.
 

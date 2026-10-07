@@ -18,8 +18,6 @@ interface EditWorkoutDialogProps {
   onRepsChange: (value: string) => void;
   durationSec: string;
   onDurationChange: (value: string) => void;
-  opinion: string;
-  onOpinionChange: (value: string) => void;
   loading: boolean;
   onSave: () => void;
 }
@@ -34,8 +32,6 @@ export function EditWorkoutDialog({
   onRepsChange,
   durationSec,
   onDurationChange,
-  opinion,
-  onOpinionChange,
   loading,
   onSave,
 }: EditWorkoutDialogProps) {
@@ -117,21 +113,6 @@ export function EditWorkoutDialog({
               </div>
             </div>
           )}
-          <div className="space-y-2">
-            <label
-              htmlFor="edit-opinion"
-              className="kicker text-muted-foreground text-[0.65rem]"
-            >
-              Comentario
-            </label>
-            <textarea
-              id="edit-opinion"
-              rows={3}
-              value={opinion}
-              onChange={(e) => onOpinionChange(e.target.value)}
-              className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
-            />
-          </div>
         </div>
         <DialogFooter>
           <button

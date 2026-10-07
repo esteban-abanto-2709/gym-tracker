@@ -28,8 +28,6 @@ export default function HistoryPage() {
     setEditWeight,
     editDuration,
     setEditDuration,
-    editOpinion,
-    setEditOpinion,
     handleEditClick,
     saveEdit,
     deletingWorkout,
@@ -133,8 +131,6 @@ export default function HistoryPage() {
         onRepsChange={setEditReps}
         durationSec={editDuration}
         onDurationChange={setEditDuration}
-        opinion={editOpinion}
-        onOpinionChange={setEditOpinion}
         loading={actionLoading}
         onSave={saveEdit}
       />

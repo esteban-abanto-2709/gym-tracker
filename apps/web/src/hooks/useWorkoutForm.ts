@@ -47,7 +47,6 @@ export function useWorkoutForm(
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
   const [seconds, setSeconds] = useState("");
-  const [opinion, setOpinion] = useState("");
   const [selectedExercise, setSelectedExerciseState] =
     useState<Exercise | null>(null);
   const [equipmentId, setEquipmentId] = useState<string | null>(null);
@@ -146,13 +145,11 @@ export function useWorkoutForm(
               exerciseId: selectedExercise.id,
               reps: 1,
               durationSec: Number(seconds),
-              opinion,
             }
           : {
               exerciseId: selectedExercise.id,
               reps: Number(reps),
               weight: weightKg,
-              opinion,
               equipmentId,
             };
 
@@ -191,7 +188,6 @@ export function useWorkoutForm(
       seconds,
       weight,
       unit,
-      opinion,
       equipmentId,
       router,
     ],
@@ -206,8 +202,6 @@ export function useWorkoutForm(
     setReps,
     seconds,
     setSeconds,
-    opinion,
-    setOpinion,
     selectedExercise,
     setSelectedExercise,
     equipmentId,

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import type { Workout } from "@/lib/types";
 import { setMetrics } from "@/lib/setDisplay";
-import { RotateCcw, MessageSquare, Pencil, Trash2 } from "lucide-react";
+import { RotateCcw, Pencil, Trash2 } from "lucide-react";
 
 interface WorkoutCardProps {
   workout: Workout;
@@ -85,15 +85,6 @@ export function WorkoutCard({
             </button>
           </div>
         </div>
-
-        {workout.opinion && (
-          <div className="flex gap-2 items-start text-sm text-muted-foreground bg-muted/30 p-3 rounded-xl border border-border/50 mt-3">
-            <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-primary/70" />
-            <p className="italic leading-snug">
-              &ldquo;{workout.opinion}&rdquo;
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

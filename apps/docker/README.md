@@ -198,8 +198,8 @@ y para dev.
 
 ## Backups de prod
 
-Genera un dump de **solo datos** (tablas `User`, `Exercise`, `Routine`,
-`RoutineItem` y `Workout`) de la BD de prod
+Genera un dump de **solo datos** (tablas `User`, `Exercise`, `Program`,
+`Routine`, `RoutineItem` y `Workout`) de la BD de prod
 en un solo comando. El archivo cae en `apps/docker/backups/` (ignorada por git)
 con nombre `gym-prod_YYYY-MM-DD_HHmmss.sql`.
 
@@ -229,12 +229,13 @@ scripts\backup-prod.cmd "D:\mis-backups"
 
 ### ¿Y si cambia el schema de la base de datos?
 
-El script dumpea explícitamente cinco tablas: `User`, `Exercise`, `Routine`,
-`RoutineItem` y `Workout` (los `-t` de `backup-prod.cmd`). Según el cambio:
+El script dumpea explícitamente seis tablas: `User`, `Exercise`, `Program`,
+`Routine`, `RoutineItem` y `Workout` (los `-t` de `backup-prod.cmd`). `Equipment`
+queda fuera a propósito: es un catálogo fijo que siembra su migración. Según el cambio:
 
 | Cambio en el schema | ¿Hay que tocar el script? |
 |---------------------|---------------------------|
-| Agregar/quitar columnas en cualquiera de las cinco | **No** — `--data-only` toma las columnas que existan al momento del dump, y cada `COPY` lleva su lista de columnas explícita. Un backup viejo carga en un esquema que **agregó** columnas (las que no menciona toman su valor por defecto), pero **no** en uno que **quitó** columnas que el backup sí trae. |
+| Agregar/quitar columnas en cualquiera de las seis | **No** — `--data-only` toma las columnas que existan al momento del dump, y cada `COPY` lleva su lista de columnas explícita. Un backup viejo carga en un esquema que **agregó** columnas (las que no menciona toman su valor por defecto), pero **no** en uno que **quitó** columnas que el backup sí trae. |
 | Agregar una tabla nueva | **Sí** — añade otra línea `-t 'public."NuevaTabla"'` o quedará fuera del backup. |
 | Renombrar una tabla | **Sí** — actualiza el patrón `-t` correspondiente. |
 
@@ -283,7 +284,7 @@ Un backup anterior a `20261007120000_drop_workout_approximation` trae
 ## Restaurar un backup (llenar dev o prod)
 
 Carga un backup en la BD que elijas. **Reemplaza** los datos: hace `TRUNCATE`
-de `Workout`, `RoutineItem`, `Routine`, `Exercise` y `User` (con `CASCADE`) y
+de `Workout`, `RoutineItem`, `Routine`, `Program`, `Exercise` y `User` (con `CASCADE`) y
 luego carga el backup. Ojo: es marcha atrás **total**, no quirúrgica — también
 se van los usuarios y las rutinas, no solo los sets.
 
