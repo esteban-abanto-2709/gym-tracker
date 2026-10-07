@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [WL-012] Quitar la casilla "Aproximación" (2026-10-07 08:23)
+Fuera la casilla del día libre, el guiado, el editor de rutina y el historial; el calentamiento lo dicen los bloques (`warmup`, `ramp`). Una migración pasa las series marcadas a `WARMUP`, los bloques `approx` a `warmup` y borra `Workout.isApproximation`.
+
 ## [RM-053] Ver el ejercicio en TikTok (2026-10-07 07:56)
 Botón tipo sticker en el guiado, el descanso y el día libre que abre la búsqueda del ejercicio en la app de TikTok (`snssdk1233://` en iOS, `intent://` en Android). Quedan sin probar iOS sin la app (`TD-069`) y Android (`TD-070`).
 

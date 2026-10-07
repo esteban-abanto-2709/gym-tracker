@@ -44,7 +44,6 @@ export class WorkoutsService {
         opinion: createWorkoutDto.opinion || '',
         equipmentId: createWorkoutDto.equipmentId ?? null,
         routineId: createWorkoutDto.routineId ?? null,
-        isApproximation: createWorkoutDto.isApproximation ?? false,
         setType: createWorkoutDto.setType ?? SetType.WORKING,
         step: createWorkoutDto.step ?? null,
       },

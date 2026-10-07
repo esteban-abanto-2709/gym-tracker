@@ -1,6 +1,5 @@
 import { SetType } from '@prisma/client';
 import {
-  IsBoolean,
   IsEnum,
   IsInt,
   IsNumber,
@@ -52,10 +51,6 @@ export class CreateWorkoutDto {
   @IsOptional()
   @IsUUID()
   routineId?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isApproximation?: boolean;
 
   @IsOptional()
   @IsEnum(SetType)

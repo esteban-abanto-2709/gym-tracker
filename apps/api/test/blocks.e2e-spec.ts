@@ -105,9 +105,9 @@ describe('Bloques y sets (e2e)', () => {
         .toEqual([
           [
             { kind: 'warmup', sets: 1, reps: 25 },
-            { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
+            { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null },
           ],
-          [{ kind: 'reps', sets: 2, reps: null }],
+          [{ kind: 'reps', sets: 2, reps: null, repsMax: null }],
           [{ kind: 'time', sets: 2, durationSec: 30 }],
           [],
           [
@@ -119,7 +119,7 @@ describe('Bloques y sets (e2e)', () => {
                 { reps: 3, pct: null },
               ],
             },
-            { kind: 'weight_reps', sets: 3, reps: 8, approx: false },
+            { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null },
           ],
         ]);
     });
@@ -143,7 +143,7 @@ describe('Bloques y sets (e2e)', () => {
             {
               exerciseId,
               position: 0,
-              blocks: [{ kind: 'weight_reps', sets: 4, reps: 6, approx: true }],
+              blocks: [{ kind: 'warmup', sets: 4, reps: 6 }],
             },
           ],
         })
@@ -151,7 +151,7 @@ describe('Bloques y sets (e2e)', () => {
 
       expect(updated.body.items).toHaveLength(1);
       expect(updated.body.items[0].blocks).toEqual([
-        { kind: 'weight_reps', sets: 4, reps: 6, approx: true },
+        { kind: 'warmup', sets: 4, reps: 6 },
       ]);
     });
 

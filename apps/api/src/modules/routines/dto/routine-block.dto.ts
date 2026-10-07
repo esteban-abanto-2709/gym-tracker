@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
-  IsBoolean,
   IsIn,
   IsInt,
   IsOptional,
@@ -17,7 +16,6 @@ import {
 import { BLOCK_KINDS, type BlockKind } from '../blocks';
 
 const Count = () => applyDecorators(IsOptional(), IsInt(), IsPositive());
-const Flag = () => applyDecorators(IsOptional(), IsBoolean());
 
 @ValidatorConstraint({ name: 'repsMaxAtLeastReps' })
 class RepsMaxAtLeastReps implements ValidatorConstraintInterface {
@@ -42,7 +40,6 @@ export class WeightRepsBlockDto extends RoutineBlockDto {
   @Count() sets?: number | null;
   @Count() reps?: number | null;
   @RepsMax() repsMax?: number | null;
-  @Flag() approx?: boolean;
 }
 
 export class RepsBlockDto extends RoutineBlockDto {

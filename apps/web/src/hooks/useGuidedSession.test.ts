@@ -23,13 +23,13 @@ const routine: Routine = {
       exerciseId: "ex-bench",
       exercise: { id: "ex-bench", name: "Press banca" },
       position: 0,
-      blocks: [{ kind: "weight_reps", sets: 3, reps: 8, repsMax: null, approx: false }],
+      blocks: [{ kind: "weight_reps", sets: 3, reps: 8, repsMax: null }],
     },
     {
       exerciseId: "ex-row",
       exercise: { id: "ex-row", name: "Remo" },
       position: 1,
-      blocks: [{ kind: "weight_reps", sets: 3, reps: 10, repsMax: null, approx: false }],
+      blocks: [{ kind: "weight_reps", sets: 3, reps: 10, repsMax: null }],
     },
   ],
 };

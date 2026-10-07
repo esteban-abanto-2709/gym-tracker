@@ -42,7 +42,6 @@ export interface WeightRepsBlock {
   sets: number | null;
   reps: number | null;
   repsMax: number | null;
-  approx: boolean;
 }
 
 export interface RepsBlock {

@@ -123,10 +123,9 @@ describe('WorkoutsService set types', () => {
     expect(whereOf(findMany)).toMatchObject({ setType: 'RAMP', step: 2 });
   });
 
-  it('la recomendacion ya no separa por aproximacion', async () => {
+  it('la recomendacion efectiva no filtra por escalon', async () => {
     const { service, findMany } = setup();
     await service.getRecommendation('u1', 'e1');
-    expect(whereOf(findMany)).not.toHaveProperty('isApproximation');
     expect(whereOf(findMany)).not.toHaveProperty('step');
   });
 

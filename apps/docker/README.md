@@ -267,6 +267,16 @@ están en `apps/api/prisma/migrations/`):
    a los tipos nuevos, peso corporal sin peso y calentamientos viejos).
 5. Ejecuta `20260918120000_drop_exercise_is_timed/migration.sql`.
 
+### Backups anteriores a quitar la aproximación (WL-012)
+
+Un backup anterior a `20261007120000_drop_workout_approximation` trae
+`Workout.isApproximation`. Sobre una BD con todas las migraciones aplicadas:
+
+1. `ALTER TABLE "Workout" ADD COLUMN "isApproximation" BOOLEAN NOT NULL DEFAULT false;`
+2. Corre `restore.cmd` con ese backup.
+3. Ejecuta `20261007120000_drop_workout_approximation/migration.sql` (pasa las
+   series y bloques de aproximación a calentamiento y borra la columna).
+
 > El backup es **solo datos**, no incluye el schema. Por eso al restaurar, la BD
 > destino debe tener las tablas ya creadas por las migraciones de Prisma.
 

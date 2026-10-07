@@ -74,7 +74,6 @@ const emptyBlock = (): DraftBlock => ({
   reps: "",
   repsMax: "",
   durationSec: "",
-  approx: false,
   steps: [],
 });
 
@@ -86,7 +85,6 @@ const toDraftBlock = (block: RoutineBlock): DraftBlock => ({
   repsMax: ("repsMax" in block ? block.repsMax : null)?.toString() ?? "",
   durationSec:
     ("durationSec" in block ? block.durationSec : null)?.toString() ?? "",
-  approx: "approx" in block ? block.approx : false,
   steps:
     block.kind === "ramp"
       ? block.steps.map((step) => ({
@@ -106,7 +104,6 @@ const toBlock = (block: DraftBlock): RoutineBlock => {
         kind: "weight_reps",
         sets,
         ...toRepRange(block.reps, block.repsMax),
-        approx: block.approx,
       };
     case "reps":
       return { kind: "reps", sets, ...toRepRange(block.reps, block.repsMax) };

@@ -38,7 +38,6 @@ export interface DraftBlock {
   reps: string;
   repsMax: string;
   durationSec: string;
-  approx: boolean;
   steps: DraftStep[];
 }
 

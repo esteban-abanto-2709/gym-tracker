@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsInt,
   IsNumber,
   IsOptional,
@@ -38,8 +37,4 @@ export class UpdateWorkoutDto {
   @IsOptional()
   @IsString()
   equipmentId?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isApproximation?: boolean;
 }
