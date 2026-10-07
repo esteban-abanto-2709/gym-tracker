@@ -8,7 +8,6 @@ import { normalizeBlock, type BlockInput } from '../routines/blocks';
 import { computeStreak, groupSessions, type StreakTarget } from './streak';
 
 const PROGRESS_HISTORY_SETS = 300;
-const PROGRESS_SESSIONS = 10;
 
 type SetMeasure = 'weight_reps' | 'reps' | 'time';
 
@@ -59,8 +58,6 @@ export class WorkoutsService {
     setType: SetType = SetType.WORKING,
     step?: number,
   ) {
-    // El peso no es comparable entre equipos: la recomendación se hace solo
-    // sobre los sets del mismo equipo (equipmentId vacío => "sin especificar").
     const [sets, latestAny, working] = await Promise.all([
       this.prisma.workout.findMany({
         where: {
@@ -153,7 +150,7 @@ export class WorkoutsService {
       target,
       streak: streak?.streak ?? null,
       suggestion: streak?.suggestion ?? null,
-      sessions: sessions.slice(0, PROGRESS_SESSIONS),
+      sessions,
     };
   }
 

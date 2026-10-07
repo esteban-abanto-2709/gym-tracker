@@ -21,6 +21,8 @@ interface ExerciseProgressProps {
   routineId: string;
 }
 
+const PAGE = 4;
+
 const dayFormat = new Intl.DateTimeFormat("es-ES", {
   weekday: "short",
   day: "2-digit",
@@ -49,10 +51,19 @@ function setsLabel(sets: ExerciseSession["sets"]) {
     .join(" · ");
 }
 
-function suggestionLabel(progress: Progress) {
-  if (progress.suggestion === "down") return "Quizá convenga bajar el peso";
+function suggestionText(progress: Progress) {
+  if (progress.suggestion === "down")
+    return "Quedaste por debajo del piso: quizá convenga bajar el peso.";
   if (progress.suggestion !== "up") return null;
-  return (progress.streak ?? 0) >= 2 ? "Toca subir" : "Llegaste al tope";
+  return (progress.streak ?? 0) >= 2
+    ? "Varias sesiones al tope: toca subir."
+    : "Llegaste al tope. Si se sintió limpio, sube.";
+}
+
+function badgeArrow(progress: Progress) {
+  if (progress.suggestion === "down") return "down";
+  if (progress.suggestion === "up" && (progress.streak ?? 0) >= 2) return "up";
+  return null;
 }
 
 export function ExerciseProgress({
@@ -61,6 +72,7 @@ export function ExerciseProgress({
 }: ExerciseProgressProps) {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [open, setOpen] = useState(false);
+  const [shown, setShown] = useState(PAGE);
 
   useEffect(() => {
     let active = true;
@@ -89,43 +101,47 @@ export function ExerciseProgress({
     return null;
 
   const lit = progress.streak > 0;
-  const suggestion = suggestionLabel(progress);
-  const { target } = progress;
+  const suggestion = suggestionText(progress);
+  const { target, sessions } = progress;
+  const arrow = badgeArrow(progress);
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setShown(PAGE);
+          setOpen(true);
+        }}
         className={cn(
-          "flex items-center gap-1.5 rounded-full px-3 py-1.5 border-2 transition-all active:scale-95",
+          "absolute -top-4 right-4 flex items-center gap-1.5 rounded-full border-2 bg-card pl-2.5 pr-3 py-1 shadow-lg transition-all active:scale-95 animate-pop",
           lit
-            ? "border-primary bg-primary/10 text-primary"
-            : "border-input text-muted-foreground/60",
+            ? "border-primary text-primary shadow-primary/30"
+            : "border-input text-muted-foreground/70",
         )}
         aria-label="Ver historial del ejercicio"
       >
-        <Flame className={cn("w-5 h-5", lit && "fill-current")} />
+        <Flame className={cn("w-4 h-4", lit && "fill-current")} />
         <span className="font-display font-bold text-lg tabular-nums leading-none">
           {progress.streak}
         </span>
+        {arrow && (
+          <span
+            className={cn(
+              "flex items-center border-l-2 pl-1.5 ml-0.5",
+              arrow === "up"
+                ? "border-primary/40"
+                : "border-input text-muted-foreground",
+            )}
+          >
+            {arrow === "up" ? (
+              <ArrowUp className="w-4 h-4" strokeWidth={3} />
+            ) : (
+              <ArrowDown className="w-4 h-4" strokeWidth={3} />
+            )}
+          </span>
+        )}
       </button>
-
-      {suggestion && (
-        <p
-          className={cn(
-            "basis-full flex items-center gap-1.5 text-sm font-bold",
-            progress.suggestion === "up" ? "text-primary" : "text-muted-foreground",
-          )}
-        >
-          {progress.suggestion === "up" ? (
-            <ArrowUp className="w-4 h-4" strokeWidth={3} />
-          ) : (
-            <ArrowDown className="w-4 h-4" strokeWidth={3} />
-          )}
-          {suggestion}
-        </p>
-      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px] rounded-2xl max-h-[85dvh] overflow-y-auto">
@@ -150,11 +166,20 @@ export function ExerciseProgress({
           </DialogHeader>
 
           {suggestion && (
-            <p className="text-sm font-bold text-foreground">{suggestion}</p>
+            <p
+              className={cn(
+                "text-sm font-bold",
+                progress.suggestion === "up"
+                  ? "text-primary"
+                  : "text-muted-foreground",
+              )}
+            >
+              {suggestion}
+            </p>
           )}
 
           <ul className="space-y-2">
-            {progress.sessions.map((session) => (
+            {sessions.slice(0, shown).map((session) => (
               <li
                 key={`${session.date}-${session.free}-${session.equipmentId}`}
                 className={cn(
@@ -185,6 +210,16 @@ export function ExerciseProgress({
               </li>
             ))}
           </ul>
+
+          {shown < sessions.length && (
+            <button
+              type="button"
+              onClick={() => setShown((n) => n + PAGE)}
+              className="mx-auto text-sm font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground"
+            >
+              Mostrar más
+            </button>
+          )}
         </DialogContent>
       </Dialog>
     </>

@@ -84,7 +84,8 @@ export default function TrainPage() {
   const plannedSets = plannedSetCount(currentItem.blocks);
   const hasPendingSets = setsDoneForCurrent < plannedSets;
   const currentTarget = formatBlocks(currentItem.blocks);
-  const nextGoal = formatSetGoal(setPlan(currentItem.blocks, setsDoneForCurrent));
+  const currentPlan = setPlan(currentItem.blocks, setsDoneForCurrent);
+  const nextGoal = formatSetGoal(currentPlan);
 
   // What the lifter should set up next, shown during rest on the done screen.
   const nextUp = hasPendingSets
@@ -137,7 +138,7 @@ export default function TrainPage() {
         <main className="flex-1 flex flex-col justify-center px-6 py-6 relative z-10 animate-fade-in-up">
           <div className="max-w-md mx-auto w-full space-y-5">
             {/* Current exercise header */}
-            <div className="rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
+            <div className="relative rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
               <p className="kicker text-[0.6rem] text-primary">
                 Serie {setsDoneForCurrent + 1}
                 {currentTarget ? ` · Meta ${currentTarget}` : " · Libre"}
@@ -145,14 +146,12 @@ export default function TrainPage() {
               <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
                 {currentItem.exercise.name}
               </p>
-              {session && (
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-3 empty:hidden">
-                  <ExerciseProgress
-                    key={currentItem.exerciseId}
-                    exerciseId={currentItem.exerciseId}
-                    routineId={session.routineId}
-                  />
-                </div>
+              {session && currentPlan.setType === "WORKING" && (
+                <ExerciseProgress
+                  key={currentItem.exerciseId}
+                  exerciseId={currentItem.exerciseId}
+                  routineId={session.routineId}
+                />
               )}
             </div>
 

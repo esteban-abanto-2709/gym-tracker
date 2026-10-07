@@ -187,8 +187,8 @@ no se deduce a simple vista:
 - **Sugerencia:** `down` si alguna serie de la última sesión quedó bajo el piso
   (mínimo del rango menos 2); si no, `up` con racha. El cliente decide cómo
   mostrarla; nunca propone un peso.
-- `sessions` trae las últimas 10 sesiones, incluidas las del día libre, con su
-  equipo. La lógica vive en `modules/workouts/streak.ts`.
+- `sessions` trae las sesiones de las últimas 300 series efectivas, incluidas
+  las del día libre, con su equipo. El cliente las pagina. La lógica vive en `modules/workouts/streak.ts`.
 
 ## Docker
 
