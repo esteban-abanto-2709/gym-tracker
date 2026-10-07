@@ -3,7 +3,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, X } from "lucide-react";
-import { ApproximationToggle } from "@/components/ApproximationToggle";
 import type { RoutineBlock } from "@/lib/types";
 
 const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
@@ -16,7 +15,6 @@ const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
 
 const usesSeconds = (block: DraftBlock) => block.kind === "time";
 
-const usesApprox = (block: DraftBlock) => block.kind === "weight_reps";
 
 const usesRepRange = (block: DraftBlock) =>
   block.kind === "weight_reps" || block.kind === "reps";
@@ -310,14 +308,6 @@ export function SortableExerciseItem({
               </div>
             )}
 
-            {usesApprox(block) && (
-              <ApproximationToggle
-                checked={block.approx}
-                onChange={(value) =>
-                  onChangeBlock(item.key, block.key, { approx: value })
-                }
-              />
-            )}
           </div>
         ))}
 

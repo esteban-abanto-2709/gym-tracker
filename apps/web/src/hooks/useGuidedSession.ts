@@ -133,7 +133,6 @@ export function useGuidedSession() {
       durationSec,
       opinion,
       equipmentId,
-      isApproximation,
       setType = "WORKING",
       step,
     }: LogSetInput) => {
@@ -149,7 +148,6 @@ export function useGuidedSession() {
             opinion: opinion ?? "",
             equipmentId: equipmentId ?? null,
             routineId: session.routineId,
-            isApproximation: isApproximation ?? false,
             setType,
             step: step ?? null,
           });

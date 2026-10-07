@@ -33,7 +33,6 @@ export interface Workout {
   reps: number;
   durationSec?: number | null;
   opinion: string;
-  isApproximation?: boolean;
   routineId?: string | null;
   createdAt: string;
 }

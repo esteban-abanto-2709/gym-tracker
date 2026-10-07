@@ -6,7 +6,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
-import { ApproximationToggle } from "@/components/ApproximationToggle";
 import type { SetMeasure } from "@/lib/setDisplay";
 
 interface EditWorkoutDialogProps {
@@ -21,8 +20,6 @@ interface EditWorkoutDialogProps {
   onDurationChange: (value: string) => void;
   opinion: string;
   onOpinionChange: (value: string) => void;
-  isApproximation: boolean;
-  onApproximationChange: (value: boolean) => void;
   loading: boolean;
   onSave: () => void;
 }
@@ -39,8 +36,6 @@ export function EditWorkoutDialog({
   onDurationChange,
   opinion,
   onOpinionChange,
-  isApproximation,
-  onApproximationChange,
   loading,
   onSave,
 }: EditWorkoutDialogProps) {
@@ -137,12 +132,6 @@ export function EditWorkoutDialog({
               className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
             />
           </div>
-          {measure === "weight_reps" && (
-            <ApproximationToggle
-              checked={isApproximation}
-              onChange={onApproximationChange}
-            />
-          )}
         </div>
         <DialogFooter>
           <button

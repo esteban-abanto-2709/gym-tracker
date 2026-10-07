@@ -13,7 +13,6 @@ const get = vi.mocked(api.get);
 const plan: SetPlan = {
   measure: "weight_reps",
   setType: "WORKING",
-  approx: false,
   targetReps: 8,
   targetRepsMax: null,
   targetDurationSec: null,

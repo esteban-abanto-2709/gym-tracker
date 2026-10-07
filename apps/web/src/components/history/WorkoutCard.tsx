@@ -38,11 +38,6 @@ export function WorkoutCard({
                 minute: "2-digit",
               })}
             </span>
-            {workout.isApproximation && (
-              <span className="ml-2 kicker text-[0.55rem] text-primary">
-                ≈ Aprox
-              </span>
-            )}
           </div>
 
           <button

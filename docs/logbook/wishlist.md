@@ -56,6 +56,8 @@ En un bloque `reps` (Dead Bug, plancha abdominal) el equipo siempre es "peso cor
 Hoy un set de calentamiento solo se distingue por la etiqueta chica "Calentamiento · La última vez…", mientras el set efectivo muestra la casilla "Aproximación" bien visible: se siente al revés. Idea: un distintivo claro en la tarjeta del ejercicio (badge o color) cuando la serie es de calentamiento, y acortar el texto de la pantalla de descanso, que hoy se corta ("objetivo 25 reps de calentamien…").
 
 ## [WL-012] Quitar la casilla "Aproximación"
+**Estado:** En progreso (2026-10-07)
+
 Con el slot flexible, lo que antes se marcaba a mano ya lo dice el propio bloque (`warmup`, `ramp`, `reps`, `time`), así que la casilla podría sobrar. Evaluar quitarla del formulario y decidir qué pasa con la columna `Workout.isApproximation`.
 
 ## [WL-007] Tags de anotación para análisis con IA

@@ -72,7 +72,6 @@ export function formatBlocks(blocks: RoutineBlock[]): string | null {
 export interface SetPlan {
   measure: SetMeasure;
   setType: SetType;
-  approx: boolean;
   targetReps: number | null;
   targetRepsMax: number | null;
   targetDurationSec: number | null;
@@ -84,7 +83,6 @@ export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
   const plan: SetPlan = {
     measure: "weight_reps",
     setType: "WORKING",
-    approx: false,
     targetReps: null,
     targetRepsMax: null,
     targetDurationSec: null,
@@ -97,7 +95,6 @@ export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
     case "weight_reps":
       return {
         ...plan,
-        approx: block.approx,
         targetReps: block.reps,
         targetRepsMax: block.repsMax ?? null,
       };

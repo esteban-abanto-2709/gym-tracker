@@ -48,7 +48,6 @@ export function useWorkoutForm(
   const [reps, setReps] = useState("");
   const [seconds, setSeconds] = useState("");
   const [opinion, setOpinion] = useState("");
-  const [isApproximation, setIsApproximation] = useState(false);
   const [selectedExercise, setSelectedExerciseState] =
     useState<Exercise | null>(null);
   const [equipmentId, setEquipmentId] = useState<string | null>(null);
@@ -155,7 +154,6 @@ export function useWorkoutForm(
               weight: weightKg,
               opinion,
               equipmentId,
-              isApproximation: measure === "weight_reps" && isApproximation,
             };
 
       const run = async () => {
@@ -195,7 +193,6 @@ export function useWorkoutForm(
       unit,
       opinion,
       equipmentId,
-      isApproximation,
       router,
     ],
   );
@@ -211,8 +208,6 @@ export function useWorkoutForm(
     setSeconds,
     opinion,
     setOpinion,
-    isApproximation,
-    setIsApproximation,
     selectedExercise,
     setSelectedExercise,
     equipmentId,

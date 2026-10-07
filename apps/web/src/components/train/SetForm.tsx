@@ -12,7 +12,6 @@ import {
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
-import { ApproximationToggle } from "@/components/ApproximationToggle";
 import { formatDuration, type SetMeasure } from "@/lib/setDisplay";
 import { MeasureSelector } from "@/components/MeasureSelector";
 import { ArrowUp, Check, Loader2 } from "lucide-react";
@@ -33,7 +32,6 @@ export interface LogSetInput {
   durationSec?: number | null;
   opinion?: string;
   equipmentId?: string | null;
-  isApproximation?: boolean;
   setType?: SetType;
   step?: number | null;
 }
@@ -60,18 +58,10 @@ export function SetForm({
   logging,
   onLog,
 }: SetFormProps) {
-  const {
-    setType,
-    approx,
-    targetReps,
-    targetRepsMax,
-    targetDurationSec,
-    step,
-    pct,
-  } = plan;
+  const { setType, targetReps, targetRepsMax, targetDurationSec, step, pct } =
+    plan;
   const [measure, setMeasure] = useState<SetMeasure>(plan.measure);
   const measureTouched = useRef(false);
-  const isWorkingWeight = measure === "weight_reps" && setType === "WORKING";
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState(targetReps?.toString() ?? "");
@@ -79,7 +69,6 @@ export function SetForm({
   const [equipmentId, setEquipmentId] = useState<string | null>(() =>
     getLastEquipment(exerciseId),
   );
-  const [isApproximation, setIsApproximation] = useState(approx);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(
     null,
   );
@@ -90,7 +79,6 @@ export function SetForm({
     setType,
     targetReps,
     targetDurationSec,
-    approx,
     equipmentId,
     step,
     pct,
@@ -102,7 +90,6 @@ export function SetForm({
     setWeight("");
     setReps(targetReps?.toString() ?? "");
     setSeconds(targetDurationSec?.toString() ?? "");
-    setIsApproximation(approx);
     setRecommendation(null);
   }
 
@@ -140,7 +127,6 @@ export function SetForm({
     setType,
     targetReps,
     targetDurationSec,
-    approx,
     equipmentId,
     step,
     pct,
@@ -182,7 +168,6 @@ export function SetForm({
       reps: Number(reps),
       opinion: "",
       equipmentId,
-      isApproximation: isWorkingWeight && isApproximation,
       setType,
       step,
     });
@@ -341,14 +326,6 @@ export function SetForm({
           equipment={equipment}
           value={equipmentId}
           onChange={setEquipmentId}
-        />
-      )}
-
-      {isWorkingWeight && (
-        <ApproximationToggle
-          checked={isApproximation}
-          onChange={setIsApproximation}
-          className="justify-center"
         />
       )}
 
