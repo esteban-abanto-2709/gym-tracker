@@ -37,6 +37,7 @@ export default function TrainPage() {
     position,
     totalCount,
     logSet,
+    logRamp,
     continueSet,
     goNext,
     goToIndex,
@@ -141,7 +142,9 @@ export default function TrainPage() {
             {/* Current exercise header */}
             <div className="relative rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
               <p className="kicker text-[0.6rem] text-primary">
-                Serie {setsDoneForCurrent + 1}
+                {currentPlan.setType === "RAMP"
+                  ? "Rampa"
+                  : `Serie ${setsDoneForCurrent + 1}`}
                 {currentTarget ? ` · Meta ${currentTarget}` : " · Libre"}
               </p>
               <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
@@ -168,6 +171,7 @@ export default function TrainPage() {
               equipment={equipment}
               logging={logging}
               onLog={logSet}
+              onLogRamp={logRamp}
             />
           </div>
         </main>

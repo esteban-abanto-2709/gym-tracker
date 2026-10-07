@@ -37,6 +37,31 @@ export interface LastResult {
   setNumber: number;
 }
 
+async function postSet(
+  exerciseId: string,
+  routineId: string,
+  {
+    weightKg,
+    reps,
+    durationSec,
+    equipmentId,
+    setType = "WORKING",
+    step,
+  }: LogSetInput,
+) {
+  await api.post(routes.api.workouts.create(), {
+    exerciseId,
+    reps,
+    weight: weightKg ?? null,
+    durationSec: durationSec ?? null,
+    equipmentId: equipmentId ?? null,
+    routineId,
+    setType,
+    step: step ?? null,
+  });
+  rememberEquipment(exerciseId, equipmentId ?? null);
+}
+
 export function useGuidedSession() {
   const router = useRouter();
   const [session, setSession] = useState<ActiveSession | null>(
@@ -127,29 +152,13 @@ export function useGuidedSession() {
   });
 
   const logSet = useCallback(
-    async ({
-      weightKg,
-      reps,
-      durationSec,
-      equipmentId,
-      setType = "WORKING",
-      step,
-    }: LogSetInput) => {
+    async (input: LogSetInput) => {
       if (!session || !currentItem) return;
+      const { weightKg, reps, durationSec } = input;
       setLogging(true);
       const run = async () => {
         try {
-          await api.post(routes.api.workouts.create(), {
-            exerciseId: currentItem.exerciseId,
-            reps,
-            weight: weightKg ?? null,
-            durationSec: durationSec ?? null,
-            equipmentId: equipmentId ?? null,
-            routineId: session.routineId,
-            setType,
-            step: step ?? null,
-          });
-          rememberEquipment(currentItem.exerciseId, equipmentId ?? null);
+          await postSet(currentItem.exerciseId, session.routineId, input);
 
           const setNumber = (progress[currentIndex] ?? 0) + 1;
           const nextProgress = { ...progress, [currentIndex]: setNumber };
@@ -171,6 +180,30 @@ export function useGuidedSession() {
         }
       };
       await run();
+    },
+    [session, currentItem, progress, currentIndex, persist],
+  );
+
+  const logRamp = useCallback(
+    async (sets: LogSetInput[]) => {
+      if (!session || !currentItem) return;
+      setLogging(true);
+      let done = progress[currentIndex] ?? 0;
+      try {
+        for (const set of sets) {
+          await postSet(currentItem.exerciseId, session.routineId, set);
+          done += 1;
+        }
+      } catch (e) {
+        console.error("Error logging ramp:", e);
+        notifyError("No se pudo registrar la rampa");
+      } finally {
+        persist({
+          ...session,
+          progress: { ...progress, [currentIndex]: done },
+        });
+        setLogging(false);
+      }
     },
     [session, currentItem, progress, currentIndex, persist],
   );
@@ -269,6 +302,7 @@ export function useGuidedSession() {
     totalCount,
     allDone,
     logSet,
+    logRamp,
     continueSet,
     goNext,
     goToIndex,

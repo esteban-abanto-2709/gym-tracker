@@ -14,6 +14,7 @@ import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { formatDuration, type SetMeasure } from "@/lib/setDisplay";
 import { MeasureSelector } from "@/components/MeasureSelector";
+import { UnitToggle } from "@/components/UnitToggle";
 import { ArrowUp, Check, Loader2 } from "lucide-react";
 
 interface Recommendation {
@@ -275,31 +276,7 @@ export function SetForm({
               <label className="kicker text-muted-foreground text-[0.6rem]">
                 Peso ({unit})
               </label>
-              <button
-                type="button"
-                onClick={toggleUnit}
-                className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
-                aria-label="Cambiar unidad de peso"
-              >
-                <span
-                  className={`px-2 py-0.5 transition-colors ${
-                    unit === "kg"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  kg
-                </span>
-                <span
-                  className={`px-2 py-0.5 transition-colors ${
-                    unit === "lb"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  lb
-                </span>
-              </button>
+              <UnitToggle unit={unit} onToggle={toggleUnit} />
             </div>
             <input
               type="number"

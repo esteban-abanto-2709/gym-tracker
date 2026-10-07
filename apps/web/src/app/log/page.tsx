@@ -7,6 +7,7 @@ import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { MeasureSelector } from "@/components/MeasureSelector";
+import { UnitToggle } from "@/components/UnitToggle";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
@@ -156,31 +157,7 @@ function LogContent() {
                     >
                       Peso ({unit}) <span className="text-primary">*</span>
                     </label>
-                    <button
-                      type="button"
-                      onClick={toggleUnit}
-                      className="flex items-center text-[10px] font-bold rounded-full border border-input overflow-hidden"
-                      aria-label="Cambiar unidad de peso"
-                    >
-                      <span
-                        className={`px-2 py-0.5 transition-colors ${
-                          unit === "kg"
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        kg
-                      </span>
-                      <span
-                        className={`px-2 py-0.5 transition-colors ${
-                          unit === "lb"
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        lb
-                      </span>
-                    </button>
+                    <UnitToggle unit={unit} onToggle={toggleUnit} />
                   </div>
                   <input
                     id="weight"

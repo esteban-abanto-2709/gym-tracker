@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-069] Rampa en una sola pantalla (2026-10-07 09:37)
+En el guiado, la rampa muestra todos sus escalones con su peso (última vez o % del efectivo) y un solo toque los registra como series `RAMP` y pasa directo a la serie efectiva. El selector kg/lb pasa a ser un componente compartido.
+
 ## [RM-068] Sin notas en las series (2026-10-07 08:52)
 Fuera el campo "¿Cómo te sentiste?" del día libre, su edición y su muestra en el historial; la columna `opinion` se conserva con las notas viejas para exportarlas. Una migración pasa a `WARMUP` las 59 series que se marcaban con la nota "Aproximaciones".
 

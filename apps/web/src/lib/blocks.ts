@@ -122,6 +122,26 @@ export function setPlan(blocks: RoutineBlock[], setIndex: number): SetPlan {
   }
 }
 
+export interface RampStepPlan {
+  step: number;
+  reps: number | null;
+  pct: number | null;
+}
+
+export function pendingRampSteps(
+  blocks: RoutineBlock[],
+  setIndex: number,
+): RampStepPlan[] {
+  if (setIndex >= plannedSetCount(blocks)) return [];
+  const { block, indexInBlock } = locateSet(blocks, setIndex);
+  if (block?.kind !== "ramp") return [];
+  return block.steps.slice(indexInBlock).map((step, i) => ({
+    step: indexInBlock + i + 1,
+    reps: step.reps,
+    pct: step.pct,
+  }));
+}
+
 const RAMP_SUGGEST_MARGIN_KG = 2.5;
 
 export function rampSuggestedWeight(
