@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-051] App en la nube (2026-10-08 11:04)
+Prod corre en un servidor siempre encendido con el mismo compose y su tunnel, con los datos migrados, backup diario fuera de la máquina (restaurado con éxito en dev) y CD: cada push a `main` con el CI en verde construye las imágenes ARM64, las publica en GHCR y actualiza el servidor.
+
 ## [TD-073] Backup y restore en `sh` (2026-10-07 23:49)
 `backup.sh` y `restore.sh` reemplazan a los `.cmd`: corren igual en Linux y en Windows (Git Bash), toman las credenciales del propio contenedor y el restore va en una sola transacción. `.gitattributes` fuerza LF en los `.sh`.
 

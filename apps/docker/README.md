@@ -21,7 +21,8 @@ apps/docker/
 ├── backups/          # dumps de prod (ignorada por git)
 ├── scripts/
 │   ├── backup.sh
-│   └── restore.sh
+│   ├── restore.sh
+│   └── update.sh
 ├── prod/
 │   └── docker-compose.yml
 └── dev/
@@ -82,6 +83,18 @@ docker compose down -v               # detener y BORRAR el volumen de datos
 > publica en GHCR (`ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}`) con las
 > etiquetas `latest` y el SHA del commit. Un servidor de prod solo necesita
 > `pull` + `up -d`: no construye nada.
+>
+> **Actualizar un servidor de prod** (lo que hace el CD en cada push a `main`):
+>
+> ```bash
+> # desde la raíz del repo
+> git pull --ff-only && sh apps/docker/scripts/update.sh
+> ```
+>
+> `update.sh` hace un backup de la base, baja las imágenes nuevas, recrea los
+> contenedores que cambiaron (la API aplica sus migraciones al arrancar) y borra
+> las imágenes viejas. El `git pull` va antes para correr siempre la versión
+> recién bajada del script.
 >
 > **`--build` construye desde tu carpeta de trabajo** (`apps/api`, `apps/web`) y
 > etiqueta el resultado con esos mismos nombres: sirve para un self-host propio o

@@ -23,10 +23,10 @@ The full reasoning, including the progression rules, is in
 
 ## Current state (2026-10)
 
-- **Deployment:** Docker Compose on the owner's PC, exposed through a
-  Cloudflare tunnel. Next step (`RM-051`): the same compose on an AWS EC2
-  instance with backups to S3, so the app no longer depends on the home PC.
-  Self-hosting stays possible but is not a selling point.
+- **Deployment:** the prod compose runs on an always-on server, exposed through
+  a Cloudflare tunnel, with a daily `backup.sh` copied off the machine. Every
+  push to `main` deploys itself (see **CD**). Self-hosting stays possible but is
+  not a selling point.
 - **Priorities:** `docs/logbook/roadmap.md` is ordered by priority; the product
   logic behind it is in `docs/product-vision.md`.
 - **Reference research:** five reports comparing this app against open-source
@@ -34,9 +34,10 @@ The full reasoning, including the progression rules, is in
   live outside the repo in `../references/reports/` (start with `SUMMARY.md`).
   Liftosaur, LiftLog and wger are AGPL: take ideas, never code.
 - **CD:** `.github/workflows/cd.yml` runs on every push to `main`: it calls
-  `ci.yml`, then builds the `api` and `web` images for ARM64 and pushes them to
-  GHCR (`latest` + commit SHA). `apps/docker/prod/docker-compose.yml` points at
-  those images, so a prod host only pulls.
+  `ci.yml`, builds the `api` and `web` images for ARM64, pushes them to GHCR
+  (`latest` + commit SHA) and tells the prod server to `git pull` and run
+  `apps/docker/scripts/update.sh` (backup, pull images, `up -d`). Whatever lands
+  on `main` reaches prod, migrations included.
 - **CI:** `.github/workflows/ci.yml` runs lint, unit tests and build for both
   apps on every PR to `main` and inside `cd.yml`. Lint is at zero problems;
   keep it there.

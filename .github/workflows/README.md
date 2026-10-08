@@ -5,14 +5,16 @@ Dos archivos, uno por responsabilidad: **CI verifica**, **CD publica**.
 | Archivo | Se dispara con | Qué hace |
 |---|---|---|
 | `ci.yml` | cada pull request a `main`, o cuando otro workflow lo llama | lint, tests unitarios y build de `api` y `web` |
-| `cd.yml` | cada push a `main` | llama a `ci.yml` y, si pasa, construye y publica las imágenes |
+| `cd.yml` | cada push a `main` | llama a `ci.yml` y, si pasa, publica las imágenes y despliega |
 
 ```
 push a main ──▶ cd.yml
                  ├─ CI   (ci.yml: api + web)
-                 └─ Images (solo si CI pasa)
-                      ├─ api ─┐
-                      └─ web ─┴─▶ ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}
+                 ├─ Images (solo si CI pasa)
+                 │    ├─ api ─┐
+                 │    └─ web ─┴─▶ ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}
+                 └─ Deploy (solo si las dos imágenes se publicaron)
+                      └─▶ servidor de prod: git pull + scripts/update.sh
 ```
 
 ## Por qué dos archivos
@@ -42,14 +44,37 @@ está en `main`, y un pull request nunca debe publicar nada.
   es el Client ID de Google de la web, que ya es público porque viaja en el
   JavaScript del navegador.
 
+## Deploy
+
+- **Sin claves guardadas:** el job pide credenciales temporales por **OIDC**. El
+  proveedor de nube solo las entrega si el token de GitHub viene de este repo y
+  de la rama `main`; duran una hora y existen solo dentro de esa ejecución.
+- **Sin puertos abiertos:** la orden llega al servidor por un agente que se
+  conecta hacia afuera; SSH sigue cerrado a todo salvo a quien lo administra.
+- **Qué ejecuta:** `git pull --ff-only` y luego
+  [`apps/docker/scripts/update.sh`](../../apps/docker/scripts/update.sh), recién
+  bajado: backup previo de la base, `docker compose pull`, `up -d` (que aplica las
+  migraciones pendientes al arrancar la API) y limpieza de imágenes viejas.
+- **Resultado visible:** el job espera a que el servidor termine (máximo 10 min),
+  imprime su salida y falla si el comando falló.
+- **El backup previo** queda en `apps/docker/backups/` del servidor: si una
+  migración rompe algo, hay una copia de un minuto antes.
+
+> **Lo que llega a `main` llega a prod.** Quien puede hacer push a `main` puede,
+> en la práctica, ejecutar comandos en el servidor. Mientras haya un solo
+> desarrollador basta con no subir nada a medias; con colaboradores, `main` debe
+> protegerse (solo por pull request, con CI y revisión obligatorios).
+
 ## Configuración del repo
 
 | Variable (Settings → Secrets and variables → Actions → Variables) | Para qué |
 |---|---|
 | `GOOGLE_CLIENT_ID` | Client ID de Google OAuth que se hornea en la imagen de `web` |
 
-Las variables (no secrets) son para valores públicos; un secreto real iría en
-*Secrets*.
+El job `deploy` lee además tres variables con el rol a asumir, la región y el
+servidor de destino (sus nombres están en `cd.yml`). Ninguna es una credencial:
+sin el token OIDC de una ejecución en `main` no dan acceso a nada. Por eso son
+variables y no secrets, y por eso no se escriben en el archivo.
 
 ## Concurrencia
 

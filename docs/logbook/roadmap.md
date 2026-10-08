@@ -13,13 +13,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
 > de cada tarea está en [`../product-vision.md`](../product-vision.md).
 
-## [RM-051] App en la nube: AWS
-- **Objetivo:** que la app esté disponible siempre, sin depender de la PC de casa. Un corte de luz dejó la app caída y hubo que registrar el entrenamiento en WhatsApp.
-- **Alcance:** una instancia EC2 (mínimo 2 GB de RAM) con el mismo `docker compose` de `apps/docker/prod/` y el túnel de Cloudflare, sin abrir puertos. Backups automáticos de Postgres a S3. Migrar los datos actuales desde la base local y apagar la instancia de la PC. Incluye el despliegue automático (CD): un job de GitHub Actions que, con el CI en verde en `main`, actualiza la instancia.
-- **A decidir al empezar:** tipo de instancia, presupuesto mensual y qué pasa cuando se acaben los créditos de la cuenta.
-- **Hecho cuando:** con la PC apagada, la app abre desde el celular con todo el historial, y existe al menos un backup en S3 restaurado con éxito en dev.
-- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-07)
-
 ## [RM-054] Calculadora de discos
 - **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
 - **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).
@@ -65,3 +58,9 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Alcance:** extender `GET /workouts/recommendation` (u otro endpoint ligero) para devolver `lastEquipmentId` del último set de ese ejercicio; el front lo usa como default del selector, con la memoria localStorage como fallback optimista/offline.
 - **Hecho cuando:** al elegir un ejercicio desde cualquier dispositivo, el equipo por default = el del último `Workout` real de ese ejercicio en la BD.
 - **Fecha:** 2026-07-23 · **Estado:** Abierto
+
+## [RM-075] Base de datos administrada
+- **Objetivo:** que los datos de prod no dependan de un solo disco ni de backups hechos a mano: backups automáticos, restauración a cualquier minuto reciente y parches a cargo del proveedor.
+- **Alcance:** mover Postgres del compose de prod a un servicio administrado. Migración con `backup.sh`/`restore.sh` y reversible: si no convence, la base vuelve al compose. La API solo cambia de `DATABASE_URL`/`DIRECT_URL`.
+- **Hecho cuando:** prod corre contra la base administrada con todos los datos, el backup automático del servicio existe y se probó restaurar uno en dev.
+- **Fecha:** 2026-10-08 · **Estado:** Abierto
