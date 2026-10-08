@@ -22,6 +22,7 @@ services:
 
   # NestJS API
   api:
+    image: ghcr.io/esteban-abanto-2709/gym-tracker-api:latest
     build:
       context: ../../api
       dockerfile: Dockerfile
@@ -43,6 +44,7 @@ services:
 
   # Next.js Frontend
   web:
+    image: ghcr.io/esteban-abanto-2709/gym-tracker-web:latest
     build:
       context: ../../web
       dockerfile: Dockerfile

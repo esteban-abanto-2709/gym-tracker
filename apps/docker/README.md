@@ -69,18 +69,27 @@ Qué debe diferir entre `prod/.env` y `dev/.env`:
 
 ```bash
 # desde apps/docker/prod/
-docker compose up -d                 # levanta con las imágenes ya construidas
-docker compose up -d --build         # reconstruye con el código actual (ver abajo)
+docker compose pull api web          # baja las imágenes publicadas de main
+docker compose up -d                 # levanta con las imágenes que tengas
+docker compose up -d --build         # construye desde tu carpeta de trabajo (ver abajo)
 docker compose logs -f cloudflared   # ver la URL pública del tunnel
 docker compose down                  # detener (conserva los datos)
 docker compose down -v               # detener y BORRAR el volumen de datos
 ```
 
-> **En prod, `--build` solo cuando decides publicar un cambio.** Prod construye
-> desde tu carpeta de trabajo (`apps/api`, `apps/web`): si reconstruyes con un
-> cambio a medias, eso es lo que queda en prod. Sin `--build`, `up` reutiliza la
-> última imagen construida, la que ya probaste. Las imágenes de dev llevan otro
-> prefijo (`gym-tracker-dev-*`), así que construir dev nunca pisa las de prod.
+> **Las imágenes de prod salen de `main`.** En cada push a `main`, el workflow
+> `cd.yml` corre el CI y, si pasa, construye `api` y `web` para ARM64 y las
+> publica en GHCR (`ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}`) con las
+> etiquetas `latest` y el SHA del commit. Un servidor de prod solo necesita
+> `pull` + `up -d`: no construye nada.
+>
+> **`--build` construye desde tu carpeta de trabajo** (`apps/api`, `apps/web`) y
+> etiqueta el resultado con esos mismos nombres: sirve para un self-host propio o
+> una máquina sin acceso a GHCR. Ojo: si reconstruyes con un cambio a medias, eso
+> es lo que queda en prod, y la imagen de `web` publicada trae el Client ID de
+> Google del proyecto: con tu propio Client ID, construye tú. Las imágenes de dev
+> llevan otro prefijo (`gym-tracker-dev-*`), así que construir dev nunca pisa las
+> de prod.
 
 Servicios:
 

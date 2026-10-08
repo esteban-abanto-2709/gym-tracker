@@ -33,8 +33,13 @@ The full reasoning, including the progression rules, is in
   trackers (Liftosaur, LiftLog, wger, workout-cool) and two exercise datasets
   live outside the repo in `../references/reports/` (start with `SUMMARY.md`).
   Liftosaur, LiftLog and wger are AGPL: take ideas, never code.
+- **CD:** `.github/workflows/cd.yml` runs on every push to `main`: it calls
+  `ci.yml`, then builds the `api` and `web` images for ARM64 and pushes them to
+  GHCR (`latest` + commit SHA). `apps/docker/prod/docker-compose.yml` points at
+  those images, so a prod host only pulls.
 - **CI:** `.github/workflows/ci.yml` runs lint, unit tests and build for both
-  apps on every push and PR to `main`. Lint is at zero problems; keep it there.
+  apps on every PR to `main` and inside `cd.yml`. Lint is at zero problems;
+  keep it there.
 
 ## Repository layout
 

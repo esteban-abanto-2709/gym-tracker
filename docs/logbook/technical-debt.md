@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-074] La imagen de la API pesa 1,4 GB
+- **Ubicación:** `apps/api/Dockerfile` (etapa `runner`)
+- **Riesgo:** 4/10
+- **Problema:** la imagen de la API ocupa ~1,4 GB en disco (313 MB comprimida), contra ~318 MB de la web con Next completo. Sospechas sin confirmar: el `pnpm install --prod` del `runner` deja su store de pnpm dentro de la capa, la CLI de Prisma con sus motores entra como dependencia de producción para el `migrate deploy` del arranque, y el `runner` repite `corepack enable` y una instalación completa en vez de copiar solo lo necesario.
+- **Impacto futuro:** cada despliegue descarga cientos de MB, más lento y con más disco en un servidor chico; el espacio libre se agota antes.
+- **Sugerencia:** medir primero qué ocupa cada capa (`docker history`, `dive`) y recién ahí recortar: limpiar el store en la misma capa del install, o `pnpm deploy --prod` en el `builder` y copiar solo eso.
+- **Fecha:** 2026-10-08 · **Estado:** Abierto
+
 ## [TD-070] TikTok en Android sin probar
 - **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama Android de `openTikTok`)
 - **Riesgo:** 4/10
