@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-072] Dev con su propio túnel (2026-10-07 22:36)
+Dev sale por un tunnel y subdominio propios, con su `container_name` (`gym-tracker-dev-tunnel`): prod y dev corren a la vez sin repartirse el tráfico ni compartir `localStorage`, y Google login funciona en dev desde el celular.
+
 ## [RM-069] Rampa en una sola pantalla (2026-10-07 09:37)
 En el guiado, la rampa muestra todos sus escalones con su peso (última vez o % del efectivo) y un solo toque los registra como series `RAMP` y pasa directo a la serie efectiva. El selector kg/lb pasa a ser un componente compartido.
 

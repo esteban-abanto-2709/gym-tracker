@@ -126,6 +126,7 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 
 `apps/docker/prod/` holds the owner's **real training data** (volume
 `gym-tracker_postgres_data`); `apps/docker/dev/` is the same stack with its own
-database. They share one tunnel and never run at the same time. Never run
+database. Each has its own Cloudflare tunnel and subdomain, so both can run at
+once; never put prod's `TUNNEL_TOKEN` in `dev/.env`. Never run
 destructive commands (`down -v`, resets, restores) against prod without the
 owner asking.

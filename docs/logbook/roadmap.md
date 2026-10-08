@@ -18,7 +18,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Alcance:** una instancia EC2 (mínimo 2 GB de RAM) con el mismo `docker compose` de `apps/docker/prod/` y el túnel de Cloudflare, sin abrir puertos. Backups automáticos de Postgres a S3. Migrar los datos actuales desde la base local y apagar la instancia de la PC. Incluye el despliegue automático (CD): un job de GitHub Actions que, con el CI en verde en `main`, actualiza la instancia.
 - **A decidir al empezar:** tipo de instancia, presupuesto mensual y qué pasa cuando se acaben los créditos de la cuenta.
 - **Hecho cuando:** con la PC apagada, la app abre desde el celular con todo el historial, y existe al menos un backup en S3 restaurado con éxito en dev.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
+- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-07)
 
 ## [RM-054] Calculadora de discos
 - **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.

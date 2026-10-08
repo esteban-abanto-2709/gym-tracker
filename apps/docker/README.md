@@ -61,8 +61,9 @@ Qué debe diferir entre `prod/.env` y `dev/.env`:
 - **`POSTGRES_*`: da igual si coinciden, pero no las cambies después.** Postgres
   solo las aplica la primera vez que crea el volumen; si luego las cambias en el
   `.env`, la API ya no podrá conectarse a esa base.
-- **`TUNNEL_TOKEN`, `FRONTEND_URL` y `GOOGLE_CLIENT_ID`: iguales** si los dos
-  entornos salen por el mismo tunnel (ver [Cambiar entre prod y dev](#cambiar-entre-prod-y-dev)).
+- **`TUNNEL_TOKEN` y `FRONTEND_URL`: distintos.** Cada entorno sale por su
+  propio tunnel y su propio subdominio (ver [Prod y dev a la vez](#prod-y-dev-a-la-vez)).
+- **`GOOGLE_CLIENT_ID`: puede ser el mismo**, con los dos orígenes autorizados.
 
 ## Prod
 
@@ -109,7 +110,7 @@ docker compose down -v         # detener y resetear la BD de dev
 - Todo queda abierto en el host: web en `http://localhost:3000`, API en
   `http://localhost:4000`, Postgres en `localhost:5432`.
 - La API aplica las migraciones pendientes al arrancar, igual que en prod.
-- Sale a internet por el mismo tunnel que prod: ver [Cambiar entre prod y dev](#cambiar-entre-prod-y-dev).
+- Sale a internet por su propio tunnel: ver [Prod y dev a la vez](#prod-y-dev-a-la-vez).
 
 ### Solo la base (desarrollo nativo con hot reload)
 
@@ -137,35 +138,23 @@ pnpm dev
 > `prisma migrate dev` o la API local, la conexión **falla**: la señal de que
 > levantaste el Docker equivocado.
 
-## Cambiar entre prod y dev
+## Prod y dev a la vez
 
-Pensado para una sola máquina: **prod y dev comparten el mismo tunnel** (mismo
-`TUNNEL_TOKEN`, mismo dominio) y **nunca corren a la vez**. Trabajas en dev y,
-cuando toca usar la app de verdad, bajas dev y subes prod:
+Cada entorno tiene **su propio tunnel**: un token y un subdominio para prod
+(`tudominio`) y otros para dev (`dev.tudominio`). Así los dos corren a la vez,
+en la misma máquina o en máquinas distintas, y dev se prueba en el celular sin
+bajar prod.
 
-```bash
-# a trabajar: bajar prod, subir dev
-cd apps/docker/prod && docker compose down
-cd ../dev && docker compose up -d --build
-
-# al gimnasio: bajar dev, subir prod (sin --build)
-cd apps/docker/dev && docker compose down
-cd ../prod && docker compose up -d
-```
-
-- **Por qué nunca a la vez:** con dos conectores usando el mismo token, Cloudflare
-  reparte el tráfico entre ambos al azar; a veces caerías en dev y a veces en prod.
-  Para evitarlo, el servicio `cloudflared` de los dos composes usa el mismo
-  `container_name: gym-tracker-tunnel`. Si olvidas bajar uno, Docker se niega a
-  levantar el otro (`name ... is already in use`).
-- **Las bases sí pueden correr juntas** (`docker compose up -d postgres` en cada
-  carpeta): tienen contenedor y volumen distintos. Así se lleva un backup de prod
-  a dev (ver [Restaurar un backup](#restaurar-un-backup-llenar-dev-o-prod)).
-- Como el dominio es el mismo, Google login funciona en los dos sin tocar la
-  consola de Google.
-- Si prefieres tener los dos arriba a la vez, crea un segundo tunnel (otro token y
-  otro subdominio) para dev, cambia el `container_name` de su `cloudflared` y
-  agrega ese subdominio a los orígenes autorizados de tu Client ID de Google.
+- **Nunca el mismo `TUNNEL_TOKEN` en los dos `.env`.** Con dos conectores en el
+  mismo tunnel, Cloudflare reparte el tráfico al azar entre ambos: series
+  registradas en prod pueden caer en la base de dev sin ningún aviso.
+- **Orígenes separados.** Con dominios distintos, la sesión guiada en curso
+  (`localStorage`) y la cookie de sesión de un entorno no aparecen en el otro.
+- **Google login:** agrega `https://dev.tudominio` a los orígenes autorizados de
+  JavaScript de tu Client ID; el mismo Client ID sirve para los dos.
+- **Todo tiene nombres distintos** (contenedores, volúmenes, redes, imágenes):
+  los dos stacks conviven en la misma máquina sin pisarse. Así se lleva un backup
+  de prod a dev (ver [Restaurar un backup](#restaurar-un-backup-llenar-dev-o-prod)).
 
 ### Cloudflare Tunnel (opcional)
 
@@ -187,10 +176,10 @@ probar. En `prod/docker-compose.yml` su línea está comentada justo debajo de l
 
 El **named tunnel** es el que conviene si vas a usar la app a diario: necesitas una
 cuenta de Cloudflare y un dominio delegado a ella. Creas el tunnel desde el panel
-de Cloudflare (Zero Trust → Networks → Tunnels), lo apuntas al servicio `web` en
-el puerto `3000`, y pegas el token que te da en `TUNNEL_TOKEN` dentro de tu `.env`.
-Como en los dos composes el servicio se llama `web`, el mismo tunnel sirve para prod
-y para dev.
+de Cloudflare (sección Tunnels), le agregas una ruta (*published application*)
+de tu dominio a `http://web:3000`, y pegas el token que te da en `TUNNEL_TOKEN`
+dentro de tu `.env`. Para dev, repite con un segundo tunnel y otro subdominio
+(ver [Prod y dev a la vez](#prod-y-dev-a-la-vez)).
 
 > Los `.env` están en `.gitignore`: tu token y tu dominio **nunca** salen de tu
 > máquina. Si no quieres usar tunnel, deja `TUNNEL_TOKEN` vacío y omite el
