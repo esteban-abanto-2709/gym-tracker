@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-073] Backup y restore en `sh` (2026-10-07 23:49)
+`backup.sh` y `restore.sh` reemplazan a los `.cmd`: corren igual en Linux y en Windows (Git Bash), toman las credenciales del propio contenedor y el restore va en una sola transacción. `.gitattributes` fuerza LF en los `.sh`.
+
 ## [TD-072] Dev con su propio túnel (2026-10-07 22:36)
 Dev sale por un tunnel y subdominio propios, con su `container_name` (`gym-tracker-dev-tunnel`): prod y dev corren a la vez sin repartirse el tráfico ni compartir `localStorage`, y Google login funciona en dev desde el celular.
 

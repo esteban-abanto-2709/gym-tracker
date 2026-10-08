@@ -20,8 +20,8 @@ apps/docker/
 ├── README.md
 ├── backups/          # dumps de prod (ignorada por git)
 ├── scripts/
-│   ├── backup-prod.cmd
-│   └── restore.cmd
+│   ├── backup.sh
+│   └── restore.sh
 ├── prod/
 │   └── docker-compose.yml
 └── dev/
@@ -188,38 +188,41 @@ dentro de tu `.env`. Para dev, repite con un segundo tunnel y otro subdominio
 ## Backups de prod
 
 Genera un dump de **solo datos** (tablas `User`, `Exercise`, `Program`,
-`Routine`, `RoutineItem` y `Workout`) de la BD de prod
-en un solo comando. El archivo cae en `apps/docker/backups/` (ignorada por git)
-con nombre `gym-prod_YYYY-MM-DD_HHmmss.sql`.
+`Routine`, `RoutineItem` y `Workout`) de la BD de prod en un solo comando. El
+archivo cae en `apps/docker/backups/` (ignorada por git) con nombre
+`gym-prod_YYYY-MM-DD_HHmmss.sql` (hora UTC).
 
-```cmd
-scripts\backup-prod.cmd
+```bash
+# desde apps/docker/, en Linux, mac o Git Bash en Windows
+sh scripts/backup.sh
+sh scripts/backup.sh /otra/carpeta   # guardar en otra carpeta
 ```
 
-Es un script batch puro de Windows (`.cmd`, solo cmd.exe — no corre en Linux/mac).
-Lee las credenciales de `prod/.env`, corre `pg_dump` dentro del contenedor
-`gym-tracker-sql` (misma versión que el servidor, sin líos de compatibilidad) y
-copia el archivo al host. Se puede llamar desde cualquier carpeta. Para guardar en
-otra carpeta, pásala como primer argumento:
+Corre `pg_dump` dentro del contenedor `gym-tracker-sql` (misma versión que el
+servidor, sin líos de compatibilidad) con las credenciales de las variables del
+propio contenedor, así que no lee ningún `.env` ni necesita `pg_dump` en el host.
+Escribe primero un `.tmp` y lo renombra al terminar: un dump fallido nunca deja un
+archivo que parezca bueno. En stdout imprime solo la ruta del archivo, para
+encadenarlo con lo que lo copie fuera de la máquina:
 
-```cmd
-scripts\backup-prod.cmd "D:\mis-backups"
+```bash
+f=$(sh scripts/backup.sh) && echo "backup en $f"
 ```
 
-### Requisitos para que el comando funcione
+**Requisito:** Docker corriendo y el contenedor `gym-tracker-sql` levantado. Basta
+con la base: `docker compose up -d postgres` en `prod/`.
 
-- **Docker corriendo** y el contenedor `gym-tracker-sql` **levantado** (el `pg_dump`
-  se ejecuta dentro de ese contenedor, no en tu máquina). Si no está, el script
-  se detiene con un aviso. Basta con la base: `docker compose up -d postgres` en `prod/`.
-- **`prod/.env` presente** con `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_DB`
-  (de ahí saca las credenciales).
-- Es un `.cmd` (cmd.exe). No necesitas `pg_dump` en el host: vive dentro del
-  contenedor. Tampoco depende de PowerShell.
+**En Windows** necesita un `sh`: el de Git Bash sirve. El repo fuerza finales de
+línea LF en los `.sh` (`.gitattributes`); con CRLF, `sh` no puede leerlo.
+
+**Para hacerlo diario** en un servidor, una línea en el `crontab` del usuario que
+corre Docker. `cron` arranca con un `PATH` mínimo: si el comando que sube el
+archivo no vive en `/usr/bin` o `/bin`, decláralo en la cabecera del crontab.
 
 ### ¿Y si cambia el schema de la base de datos?
 
 El script dumpea explícitamente seis tablas: `User`, `Exercise`, `Program`,
-`Routine`, `RoutineItem` y `Workout` (los `-t` de `backup-prod.cmd`). `Equipment`
+`Routine`, `RoutineItem` y `Workout` (los `-t` de `backup.sh`). `Equipment`
 queda fuera a propósito: es un catálogo fijo que siembra su migración. Según el cambio:
 
 | Cambio en el schema | ¿Hay que tocar el script? |
@@ -249,7 +252,7 @@ están en `apps/api/prisma/migrations/`):
      ADD COLUMN "targetReps" INTEGER, ADD COLUMN "targetDurationSec" INTEGER,
      ADD COLUMN "isApproximation" BOOLEAN NOT NULL DEFAULT false;
    ```
-2. Corre `restore.cmd` con ese backup.
+2. Corre `restore.sh` con ese backup.
 3. Solo si es anterior a `20260916180000`: ejecuta el `UPDATE` de
    `20260916120000_add_routine_item_blocks/migration.sql` y luego
    `20260916180000_drop_routine_item_targets/migration.sql`.
@@ -263,7 +266,7 @@ Un backup anterior a `20261007120000_drop_workout_approximation` trae
 `Workout.isApproximation`. Sobre una BD con todas las migraciones aplicadas:
 
 1. `ALTER TABLE "Workout" ADD COLUMN "isApproximation" BOOLEAN NOT NULL DEFAULT false;`
-2. Corre `restore.cmd` con ese backup.
+2. Corre `restore.sh` con ese backup.
 3. Ejecuta `20261007120000_drop_workout_approximation/migration.sql` (pasa las
    series y bloques de aproximación a calentamiento y borra la columna).
 
@@ -277,16 +280,20 @@ de `Workout`, `RoutineItem`, `Routine`, `Program`, `Exercise` y `User` (con `CAS
 luego carga el backup. Ojo: es marcha atrás **total**, no quirúrgica — también
 se van los usuarios y las rutinas, no solo los sets.
 
-```cmd
-scripts\restore.cmd dev          :: llena dev con el backup mas reciente de backups/
-scripts\restore.cmd prod         :: idem, sobre prod
-scripts\restore.cmd dev "D:\mis-backups\gym-prod_2026-06-14_120000.sql"   :: archivo concreto
+```bash
+# desde apps/docker/, en Linux, mac o Git Bash en Windows
+sh scripts/restore.sh dev        # llena dev con el backup más reciente de backups/
+sh scripts/restore.sh prod       # ídem, sobre prod
+sh scripts/restore.sh dev /otra/carpeta/gym-prod_2026-06-14_120000.sql   # archivo concreto
 ```
 
-- Mapea el destino al contenedor y a su `.env`: `dev` → `gym-tracker-dev-sql` con
-  `dev/.env`, `prod` → `gym-tracker-sql` con `prod/.env`.
+- Mapea el destino al contenedor: `dev` → `gym-tracker-dev-sql`, `prod` →
+  `gym-tracker-sql`. Como `backup.sh`, toma las credenciales del propio
+  contenedor, sin leer ningún `.env`.
 - Si no pasas archivo, toma el `gym-prod_*.sql` más reciente de `apps/docker/backups/`.
 - **Pide confirmación** (hay que escribir `si`) porque borra los datos actuales.
+- Va en **una sola transacción**: si cualquier línea del backup falla, se deshace
+  todo, también el `TRUNCATE`, y la base queda como estaba.
 - El contenedor destino debe estar **corriendo** y sus tablas deben **existir ya**
   (creadas por las migraciones de Prisma). Si la BD está vacía, levanta la API de
   ese entorno una vez (aplica `migrate deploy` al arrancar) o corre
@@ -300,12 +307,12 @@ scripts\restore.cmd dev "D:\mis-backups\gym-prod_2026-06-14_120000.sql"   :: arc
 Para probar en dev con tus datos de verdad sin arriesgarlos, las dos bases pueden
 estar arriba a la vez (el tunnel no hace falta):
 
-```cmd
-:: desde apps/docker/
-cd prod && docker compose up -d postgres && cd ..
-cd dev && docker compose up -d postgres && cd ..
-scripts\backup-prod.cmd
-scripts\restore.cmd dev
+```bash
+# desde apps/docker/, en Git Bash
+(cd prod && docker compose up -d postgres)
+(cd dev && docker compose up -d postgres)
+sh scripts/backup.sh
+sh scripts/restore.sh dev
 ```
 
 Antes, confirma que las dos bases tienen las mismas migraciones aplicadas: si dev

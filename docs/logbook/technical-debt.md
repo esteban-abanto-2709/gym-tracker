@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-073] Backup y restore solo funcionan en Windows
-- **Ubicación:** `apps/docker/scripts/backup-prod.cmd`, `apps/docker/scripts/restore.cmd`
-- **Riesgo:** 5/10
-- **Problema:** los dos scripts son batch de cmd.exe, pero prod puede correr en un servidor Linux; ahí un restore solo se hace copiando a mano los comandos de `restore.cmd`.
-- **Impacto futuro:** cada backup o restore en el servidor depende de recordar y teclear el comando correcto (`TRUNCATE`, `session_replication_role`, lista de tablas); un error a mano sobre prod puede dejar la base vacía o a medias.
-- **Sugerencia:** reescribirlos como scripts `sh` que corran igual en Linux y en Windows (Git Bash), y reutilizar el de backup para un `cron` diario.
-- **Fecha:** 2026-10-07 · **Estado:** Abierto
-
 ## [TD-070] TikTok en Android sin probar
 - **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama Android de `openTikTok`)
 - **Riesgo:** 4/10
