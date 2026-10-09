@@ -20,7 +20,15 @@ changelog y se borra de aquí.
 - **Problema:** la imagen de la API ocupa ~1,4 GB en disco (313 MB comprimida), contra ~318 MB de la web con Next completo. Sospechas sin confirmar: el `pnpm install --prod` del `runner` deja su store de pnpm dentro de la capa, la CLI de Prisma con sus motores entra como dependencia de producción para el `migrate deploy` del arranque, y el `runner` repite `corepack enable` y una instalación completa en vez de copiar solo lo necesario.
 - **Impacto futuro:** cada despliegue descarga cientos de MB, más lento y con más disco en un servidor chico; el espacio libre se agota antes.
 - **Sugerencia:** medir primero qué ocupa cada capa (`docker history`, `dive`) y recién ahí recortar: limpiar el store en la misma capa del install, o `pnpm deploy --prod` en el `builder` y copiar solo eso.
-- **Fecha:** 2026-10-08 · **Estado:** Abierto
+- **Fecha:** 2026-10-08 · **Estado:** En progreso (2026-10-09)
+
+## [TD-076] La web usa pnpm 10 y la API pnpm 11
+- **Ubicación:** `apps/web/package.json` (`packageManager`)
+- **Riesgo:** 3/10
+- **Problema:** la web fija `pnpm@10.17.1` mientras la API usa pnpm 11; cada app sigue reglas distintas de configuración, lockfile y comandos.
+- **Impacto futuro:** lo que funciona en una app puede fallar en la otra, y el salto de versión mayor se vuelve más grande cuanto más se posterga.
+- **Sugerencia:** subir la web a la misma versión de pnpm 11 que la API, en su propio commit, y verificar `pnpm install`, build y tests.
+- **Fecha:** 2026-10-09 · **Estado:** Abierto
 
 ## [TD-070] TikTok en Android sin probar
 - **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama Android de `openTikTok`)

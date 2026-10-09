@@ -192,7 +192,9 @@ no se deduce a simple vista:
 
 ## Docker
 
-`Dockerfile` multi-stage sobre `node:22-alpine`. La imagen final solo lleva
-dependencias de producción, `dist/` y el cliente de Prisma, y al arrancar
+`Dockerfile` multi-stage sobre `node:22-alpine`. Las dependencias de producción
+se instalan en su propia etapa con el store de pnpm en un cache mount, y la
+imagen final copia solo ese `node_modules`, `dist/` y el cliente de Prisma: sin
+pnpm ni store dentro. Al arrancar
 ejecuta `prisma migrate deploy` antes de `node dist/main`. La orquestación con
 la web y la base vive en [`apps/docker/`](../docker/README.md).

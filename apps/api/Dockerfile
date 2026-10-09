@@ -1,16 +1,18 @@
-# Build stage
-FROM node:22-alpine AS builder
+# Base: pnpm via corepack (uses version pinned in package.json)
+FROM node:22-alpine AS base
 
 WORKDIR /app
 
-# Enable pnpm via corepack (uses version pinned in package.json)
 RUN corepack enable
 
-# Copy manifest + lockfile + pnpm settings first for better caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+
+# Build stage
+FROM base AS builder
+
+RUN --mount=type=cache,id=pnpm,target=/var/cache/pnpm \
+    pnpm install --frozen-lockfile --store-dir /var/cache/pnpm
 
 # Copy source code and config files
 COPY . .
@@ -19,24 +21,22 @@ COPY . .
 RUN DIRECT_URL="postgresql://dummy:5432/dummy" DATABASE_URL="postgresql://dummy:5432/dummy" pnpm run build
 
 
-# Production stage
+# Production dependencies only (the pnpm store lives in a cache mount, never in a layer)
+FROM base AS prod-deps
+
+RUN --mount=type=cache,id=pnpm,target=/var/cache/pnpm \
+    pnpm install --prod --frozen-lockfile --store-dir /var/cache/pnpm
+
+
+# Production stage: plain node, no pnpm, only what runs
 FROM node:22-alpine AS runner
 
 WORKDIR /app
 
-# Enable pnpm via corepack (uses version pinned in package.json)
-RUN corepack enable
-
-# Copy manifest + lockfile + pnpm settings
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Install only production dependencies
-RUN pnpm install --prod --frozen-lockfile
-
-# Copy built assets and prisma from builder
-COPY --from=builder /app/dist ./dist
+COPY package.json ./
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
+COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 
