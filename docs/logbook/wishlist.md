@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-078] Exportación para IA, segunda versión
+Mejoras al archivo de RM-021 según la revisión en [`docs/feedback/2026-10-09-export-ia.md`](../feedback/2026-10-09-export-ia.md): identificador de sesión, slug del ejercicio, objetivo de entrenamiento y un resumen calculado encima de las series. Se hacen cuando el uso real muestre que faltan.
+
 ## [WL-066] Sugerir bajar tras muchas sesiones sin subir
 Si pasan muchas sesiones sin poder completar el tope con el mismo peso, sugerir bajar para retomar. Falta definir cuántas cuentan como "muchas".
 
@@ -23,7 +26,7 @@ En modo pantalla completa no existe el botón de recargar de Safari: si algo se 
 Columna `unit` en `Workout` para mostrar el peso en la unidad en que se registró (ej. "45 lb" en vez de "20.4 kg"). Conviene evaluarla junto con la exportación (RM-021), para que la IA vea lo que de verdad se cargó. Hoy se convierte todo a kg redondeado a 1 decimal al guardar.
 
 ## [WL-071] Datos personales opcionales en el perfil
-Edad, peso corporal con su fecha y porcentaje de grasa, para enriquecer el análisis y la exportación. Siempre opcionales y desde el perfil ("agrega información para mejorar tu análisis"); nunca antes de entrenar ni durante.
+Edad, peso corporal con su fecha y porcentaje de grasa, para enriquecer el análisis y la exportación. Siempre opcionales y desde el perfil ("agrega información para mejorar tu análisis"); nunca antes de entrenar ni durante. Decidido (2026-10-09): **medidas** con historial (peso, % de grasa y altura, cada uno opcional, al menos uno; fecha editable que arranca en hoy; una por fecha, registrar otra vez esa fecha la actualiza) y **fecha de nacimiento** como valor único editable de la que se calcula la edad. Se ven en Perfil y en la exportación, no en el Historial.
 
 ## [WL-058] Versión de escritorio
 Una experiencia cómoda en la computadora para lo que no se hace entre series: revisar tu progreso, exportar tus datos e importar o armar programas. En escritorio, el video del ejercicio puede abrirse en YouTube en vez de TikTok.
