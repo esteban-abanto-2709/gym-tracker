@@ -23,7 +23,7 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** pasarle tus datos de entrenamiento a tu IA de confianza para que los analice.
 - **Alcance:** desde el historial, elegir un rango de fechas y descargar las series en JSON o CSV, con ejercicio, equipo, peso, reps, tipo de serie, rutina y fecha. Incluir una breve explicación de las convenciones (barra = total, mancuerna = por unidad).
 - **Hecho cuando:** puedo descargar el último mes y pegárselo a una IA, y la IA entiende cada serie sin preguntar qué significa cada campo.
-- **Fecha:** 2026-06-25 · **Estado:** Abierto
+- **Fecha:** 2026-06-25 · **Estado:** En progreso (2026-10-09)
 
 ## [RM-055] Registro de un toque (demo)
 - **Objetivo:** validar si registrar tocando es más rápido que el formulario actual.

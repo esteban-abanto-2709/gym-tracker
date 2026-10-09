@@ -61,6 +61,26 @@ describe('WorkoutsService.getRecommendation', () => {
   });
 });
 
+describe('WorkoutsService.findAll', () => {
+  it('trae el nombre de la rutina de cada serie, solo las del usuario', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const service = new WorkoutsService({
+      workout: { findMany },
+    } as unknown as PrismaService);
+
+    await service.findAll('u1');
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId: 'u1' },
+        include: expect.objectContaining({
+          routine: { select: { name: true } },
+        }) as unknown,
+      }),
+    );
+  });
+});
+
 describe('WorkoutsService lastMeasure', () => {
   const recWithLatest = async (latest: unknown) =>
     new WorkoutsService({

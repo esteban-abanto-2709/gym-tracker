@@ -163,6 +163,7 @@ export class WorkoutsService {
       include: {
         exercise: true,
         equipment: true,
+        routine: { select: { name: true } },
       },
       orderBy: {
         createdAt: 'desc',

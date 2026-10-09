@@ -125,7 +125,7 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | GET | `/exercises` | Catálogo de ejercicios, por nombre |
 | POST | `/exercises` | Crea un ejercicio |
 | GET | `/equipment` | Catálogo de equipos |
-| GET | `/workouts` | Todas las series del usuario (el agrupado por día lo hace el cliente) |
+| GET | `/workouts` | Todas las series del usuario, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente) |
 | POST | `/workouts` | Registra una serie |
 | PATCH | `/workouts/:id` | Edita una serie |
 | DELETE | `/workouts/:id` | Borra una serie |

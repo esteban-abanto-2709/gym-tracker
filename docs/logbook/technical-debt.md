@@ -14,6 +14,22 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-079] La barra inferior se sube por un rato en iOS
+- **Ubicación:** `apps/web/src/components/layout/BottomNav.tsx:21`
+- **Riesgo:** 3/10
+- **Problema:** en la app instalada en el iPhone, la barra de pestañas a veces crece unos 40 pt (de ~113 a ~153 pt, con el borde inferior pegado a la pantalla) y se queda así hasta cambiar de pantalla. Su alto es `5rem + env(safe-area-inset-bottom)`; la hipótesis es que iOS reporta por un rato un inset inferior mayor al abrir o volver a la app. Además, en su estado normal se siente demasiado alta.
+- **Impacto futuro:** la barra tapa contenido justo en las pantallas que ya están al límite del alto (regla de sin scroll) y se ve rota.
+- **Sugerencia:** reproducir en el iPhone (abrir, salir, volver), confirmar el valor de `env()` en ese momento y bajar el alto base de la barra.
+- **Fecha:** 2026-10-09 · **Estado:** Abierto
+
+## [TD-080] La app se siente lenta
+- **Ubicación:** sin localizar (web, API, túnel o servidor)
+- **Riesgo:** 4/10
+- **Problema:** navegar y cargar pantallas se siente algo lento, aunque usable. No hay mediciones: puede venir del túnel, del servidor, de que cada pantalla pide sus datos al cargar sin caché o del tamaño del JavaScript.
+- **Impacto futuro:** entre series cada segundo cuenta; una app lenta empuja a anotar en otro lado.
+- **Sugerencia:** medir primero (tiempos de red por endpoint y de carga por pantalla) y atacar solo el cuello de botella que aparezca.
+- **Fecha:** 2026-10-09 · **Estado:** Abierto
+
 ## [TD-070] TikTok en Android sin probar
 - **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama Android de `openTikTok`)
 - **Riesgo:** 4/10
