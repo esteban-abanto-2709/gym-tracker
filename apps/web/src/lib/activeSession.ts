@@ -16,6 +16,7 @@ export interface ActiveSession {
   extras: ActiveExtra[]; // ad-hoc exercises added mid-session
   skipped: Record<number, boolean>; // combined item index -> skipped for today
   replacedBy: Record<number, ActiveExtra>; // combined item index -> substitute (inherits the slot's targets)
+  lastSetAt?: string;
 }
 
 function isSameLocalDay(iso: string): boolean {

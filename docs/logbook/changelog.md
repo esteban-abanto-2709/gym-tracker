@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-057] Tiempo de descanso desde la última serie (2026-10-09 10:31)
+El modo guiado guarda la hora de la última serie en la sesión y muestra un reloj que sube cada segundo: grande en la pantalla de serie guardada y compacto encima del ejercicio. Se calcula desde esa hora, así que al volver de otra app es el real; se oculta pasados 30 min.
+
 ## [TD-076] La web en pnpm 11, igual que la API (2026-10-09 10:01)
 La web pasa de pnpm 10.17.1 a 11.28.2 (la versión de la API): `onlyBuiltDependencies` migra a `allowBuilds` y el Dockerfile copia `pnpm-workspace.yaml`, que pnpm 11 exige por `strictDepBuilds`. Lockfile intacto; lint, tests, build e imagen de dev verificados.
 

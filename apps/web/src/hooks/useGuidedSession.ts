@@ -162,7 +162,11 @@ export function useGuidedSession() {
 
           const setNumber = (progress[currentIndex] ?? 0) + 1;
           const nextProgress = { ...progress, [currentIndex]: setNumber };
-          persist({ ...session, progress: nextProgress });
+          persist({
+            ...session,
+            progress: nextProgress,
+            lastSetAt: new Date().toISOString(),
+          });
 
           setLastResult({
             exerciseName: currentItem.exercise.name,
@@ -188,7 +192,8 @@ export function useGuidedSession() {
     async (sets: LogSetInput[]) => {
       if (!session || !currentItem) return;
       setLogging(true);
-      let done = progress[currentIndex] ?? 0;
+      const before = progress[currentIndex] ?? 0;
+      let done = before;
       try {
         for (const set of sets) {
           await postSet(currentItem.exerciseId, session.routineId, set);
@@ -201,6 +206,8 @@ export function useGuidedSession() {
         persist({
           ...session,
           progress: { ...progress, [currentIndex]: done },
+          lastSetAt:
+            done > before ? new Date().toISOString() : session.lastSetAt,
         });
         setLogging(false);
       }

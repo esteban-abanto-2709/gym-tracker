@@ -3,7 +3,7 @@
 import type { RoutineItem } from "@/lib/types";
 import type { LastResult } from "@/hooks/useGuidedSession";
 import { convertWeight } from "@/lib/units";
-import { formatDuration } from "@/lib/setDisplay";
+import { formatClock, formatDuration } from "@/lib/setDisplay";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
 import {
   Check,
@@ -11,6 +11,7 @@ import {
   Flag,
   Dumbbell,
   PartyPopper,
+  Timer,
 } from "lucide-react";
 
 export interface NextUp {
@@ -24,6 +25,7 @@ interface SetDoneScreenProps {
   hasPendingSets: boolean;
   nextItem: RoutineItem | null;
   nextUp: NextUp | null;
+  restSec: number | null;
   onContinueSet: () => void;
   onNext: () => void;
   onFinish: () => void;
@@ -34,6 +36,7 @@ export function SetDoneScreen({
   hasPendingSets,
   nextItem,
   nextUp,
+  restSec,
   onContinueSet,
   onNext,
   onFinish,
@@ -57,61 +60,71 @@ export function SetDoneScreen({
   return (
     <main className="flex-1 flex flex-col px-6 py-8 relative z-10 animate-fade-in-up">
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col">
-        {/* Confirmation — vertically centered */}
-        <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="relative w-24 h-24 flex items-center justify-center mb-5">
+        <div className="flex items-center gap-3">
+          <div className="relative w-11 h-11 shrink-0">
             <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
-            <span className="absolute inset-0 rounded-full bg-primary/15" />
-            <div className="relative w-16 h-16 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/30 animate-pop">
+            <div className="relative w-11 h-11 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/30 animate-pop">
               <Check
-                className="w-9 h-9 text-primary-foreground"
+                className="w-6 h-6 text-primary-foreground"
                 strokeWidth={3.5}
               />
             </div>
           </div>
-          <p className="font-display font-bold uppercase text-4xl text-foreground tracking-tight">
-            Serie {result.setNumber} guardada
-          </p>
-          <p className="text-base font-bold text-muted-foreground mt-1">
-            {result.exerciseName}
-          </p>
-          <p className="text-sm text-muted-foreground mt-2 font-mono">
-            {resultLine}
-          </p>
+          <div className="min-w-0">
+            <p className="font-display font-bold uppercase text-2xl text-foreground leading-tight tracking-tight">
+              Serie {result.setNumber} guardada
+            </p>
+            <p className="text-sm text-muted-foreground truncate">
+              {result.exerciseName} ·{" "}
+              <span className="font-mono">{resultLine}</span>
+            </p>
+          </div>
+        </div>
 
-          {/* What's coming next — set up the next machine at a glance */}
-          {nextUp ? (
-            <div className="mt-7 w-full flex items-center gap-4 rounded-2xl border-2 border-input bg-card/60 p-4 text-left animate-fade-in">
-              <div className="shrink-0 p-3 bg-muted rounded-xl text-primary">
-                <Dumbbell className="w-6 h-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="kicker text-[0.6rem] text-primary">
-                  {nextUp.label}
-                </p>
-                <p className="font-display font-bold uppercase text-xl text-foreground leading-tight truncate">
-                  {nextUp.name}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {nextUp.detail}
-                </p>
-              </div>
-              <TikTokButton query={nextUp.name} className="shadow-none" />
-            </div>
-          ) : (
-            <div className="mt-7 flex items-center gap-2 text-primary font-display uppercase text-xl animate-fade-in">
-              <PartyPopper className="w-5 h-5" />
-              ¡Rutina completada!
-            </div>
+        <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+          {restSec != null && (
+            <>
+              <p className="kicker text-xs text-primary flex items-center gap-1.5">
+                <Timer className="w-4 h-4" strokeWidth={2.5} />
+                Llevas descansando
+              </p>
+              <p className="font-display font-bold text-[7rem] leading-none tracking-tight tabular-nums text-foreground mt-3">
+                {formatClock(restSec)}
+              </p>
+            </>
           )}
-
-          <p className="mt-6 text-sm text-muted-foreground">
-            Suelta el celular. Descansa.
+          <p className="mt-4 text-sm text-muted-foreground">
+            {restSec != null ? "Suelta el celular." : "Suelta el celular. Descansa."}
           </p>
         </div>
 
+        {nextUp ? (
+          <div className="w-full flex items-center gap-4 rounded-2xl border-2 border-input bg-card/60 p-4 text-left animate-fade-in">
+            <div className="shrink-0 p-3 bg-muted rounded-xl text-primary">
+              <Dumbbell className="w-6 h-6" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="kicker text-[0.6rem] text-primary">
+                {nextUp.label}
+              </p>
+              <p className="font-display font-bold uppercase text-xl text-foreground leading-tight truncate">
+                {nextUp.name}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {nextUp.detail}
+              </p>
+            </div>
+            <TikTokButton query={nextUp.name} className="shadow-none" />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2 text-primary font-display uppercase text-xl animate-fade-in">
+            <PartyPopper className="w-5 h-5" />
+            ¡Rutina completada!
+          </div>
+        )}
+
         {/* Actions */}
-        <div className="space-y-3 pt-8">
+        <div className="space-y-3 pt-6">
           {primary && (
             <button
               type="button"

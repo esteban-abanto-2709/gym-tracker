@@ -27,6 +27,10 @@ export function formatDuration(totalSec: number): SetMetric {
   };
 }
 
+export function formatClock(totalSec: number): string {
+  return `${Math.floor(totalSec / 60)}:${String(totalSec % 60).padStart(2, "0")}`;
+}
+
 export function setMetrics(set: DisplayableSet): SetMetric[] {
   const reps = { value: String(set.reps ?? 0), unit: "reps" };
   switch (setMeasure(set)) {

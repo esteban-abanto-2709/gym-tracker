@@ -37,12 +37,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** buscar "press de banca" o "bench press" encuentra el mismo ejercicio, todos los ejercicios en uso tienen nombre en español y músculos, y ninguna serie existente pierde su ejercicio.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-057] Tiempo de descanso desde la última serie
-- **Objetivo:** saber cuánto llevas descansando sin poner un cronómetro.
-- **Alcance:** mostrar "llevas X descansando" calculado desde la hora de la última serie registrada. No es un temporizador: al volver a la app tras usar otras, el tiempo sigue siendo correcto. Sin alarmas ni sonidos.
-- **Hecho cuando:** tras registrar una serie, salir a otra app y volver, el tiempo mostrado coincide con el real.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
-
 ## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.
 - **Problema:** hoy el sustituto hereda los bloques del slot (regla de RM-020). Al reemplazar Incline Press (`[warmup 2×25] + [weight_reps 3×8]`) por Plank, el mapa cuenta "0/5 series" y la meta dice `Cal. 2 × 25 + 3 × 8` para un ejercicio de tiempo. Detectado probando RM-031 el 2026-09-19.

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGuidedSession } from "./useGuidedSession";
 import { api } from "@/lib/api";
 import { readActiveSession, type ActiveSession } from "@/lib/activeSession";
@@ -73,6 +73,23 @@ describe("useGuidedSession", () => {
     expect(result.current.mapItems.map((m) => m.status)).toEqual(["done", "partial"]);
     expect(result.current.position).toBe(2);
     expect(result.current.totalCount).toBe(2);
+  });
+
+  it("registrar una serie guarda la hora para contar el descanso", async () => {
+    saveSession();
+    vi.mocked(api.get).mockResolvedValue(routine);
+    vi.mocked(api.post).mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useGuidedSession());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    const before = Date.now();
+    await act(() => result.current.logSet({ weightKg: 60, reps: 10 }));
+
+    const lastSetAt = readActiveSession()?.lastSetAt;
+    expect(lastSetAt).toBeDefined();
+    expect(Date.parse(lastSetAt!)).toBeGreaterThanOrEqual(before);
+    expect(result.current.session?.lastSetAt).toBe(lastSetAt);
   });
 
   it("una sesion de otro dia no se retoma", async () => {

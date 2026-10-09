@@ -60,3 +60,6 @@ Además de claro y oscuro, temas intercambiables (tipo Dracula) para personaliza
 
 ## [WL-005] Registro ampliado: cardio y movilidad
 Registrar cardio post-rutina y ejercicios de movilidad/calentamiento antes, sin ensuciar el flujo principal de pesas.
+
+## [WL-077] Ocultar en los logs los identificadores del deploy
+Las variables del job `deploy` con el rol a asumir y el servidor de destino no son credenciales, pero las variables de GitHub no se enmascaran y quedan legibles en los logs públicos de Actions. Pasarlas a *Secrets* (`cd.yml` lee `secrets.` en vez de `vars.`) y borrar los logs de las ejecuciones anteriores.
