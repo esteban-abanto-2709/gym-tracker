@@ -60,7 +60,7 @@ model Workout {
   routineId       String?
   routine         Routine?   @relation(fields: [routineId], references: [id], onDelete: SetNull)
   weight          Float?
-  reps            Int
+  reps            Int?
   durationSec     Int?
   opinion         String
   equipmentId     String?

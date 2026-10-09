@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-019] Los sets de tiempo ya no guardan `reps = 1` de relleno (2026-10-09 11:09)
+`Workout.reps` pasa a nullable y una migración deja en `NULL` las reps de los sets con duración; la API las descarta si llega `durationSec` y la web deja de mandarlas. De paso, el progreso del ejercicio muestra las duraciones (`45 s · 40 s`) en vez de `1 · 1 reps`.
+
 ## [RM-057] Tiempo de descanso desde la última serie (2026-10-09 10:31)
 El modo guiado guarda la hora de la última serie en la sesión y muestra un reloj que sube cada segundo: grande en la pantalla de serie guardada y compacto encima del ejercicio. Se calcula desde esa hora, así que al volver de otra app es el real; se oculta pasados 30 min.
 

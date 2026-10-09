@@ -32,7 +32,7 @@ export interface SessionMapItem {
 export interface LastResult {
   exerciseName: string;
   weightKg: number | null;
-  reps: number;
+  reps: number | null;
   durationSec: number | null;
   setNumber: number;
 }
@@ -51,7 +51,7 @@ async function postSet(
 ) {
   await api.post(routes.api.workouts.create(), {
     exerciseId,
-    reps,
+    reps: reps ?? null,
     weight: weightKg ?? null,
     durationSec: durationSec ?? null,
     equipmentId: equipmentId ?? null,
@@ -171,7 +171,7 @@ export function useGuidedSession() {
           setLastResult({
             exerciseName: currentItem.exercise.name,
             weightKg: weightKg ?? null,
-            reps,
+            reps: reps ?? null,
             durationSec: durationSec ?? null,
             setNumber,
           });

@@ -20,13 +20,13 @@ describe('WorkoutsService.getRecommendation', () => {
     const service = serviceWithSets([
       {
         weight: null,
-        reps: 1,
+        reps: null,
         durationSec: 45,
         createdAt: day('2026-09-02T10:00:00Z'),
       },
       {
         weight: null,
-        reps: 1,
+        reps: null,
         durationSec: 40,
         createdAt: day('2026-09-01T10:00:00Z'),
       },
@@ -95,7 +95,7 @@ describe('WorkoutsService set types', () => {
       .mockResolvedValue([]);
     const findFirst = jest.fn().mockResolvedValue(null);
     const create = jest
-      .fn<Promise<object>, [{ data: { setType: string } }]>()
+      .fn<Promise<object>, [{ data: Record<string, unknown> }]>()
       .mockResolvedValue({});
     const service = new WorkoutsService({
       workout: { findMany, findFirst, create },
@@ -159,6 +159,15 @@ describe('WorkoutsService set types', () => {
     });
     expect(create.mock.calls[0][0].data.setType).toBe('WORKING');
   });
+
+  it('un set de tiempo se guarda sin reps aunque lleguen', async () => {
+    const { service, create } = setup();
+    await service.create('u1', { exerciseId: 'e1', reps: 1, durationSec: 45 });
+    expect(create.mock.calls[0][0].data).toMatchObject({
+      reps: null,
+      durationSec: 45,
+    });
+  });
 });
 
 describe('CreateWorkoutDto', () => {
@@ -197,10 +206,14 @@ describe('CreateWorkoutDto', () => {
     expect(errors.map((e) => e.property)).toContain('step');
   });
 
-  it('acepta un set solo con duracion', async () => {
-    expect(await errorsFor({ ...base, reps: 1, durationSec: 45 })).toHaveLength(
-      0,
-    );
+  it('acepta un set solo con duracion, sin reps', async () => {
+    const { exerciseId } = base;
+    expect(await errorsFor({ exerciseId, durationSec: 45 })).toHaveLength(0);
+  });
+
+  it('rechaza un set sin reps ni duracion', async () => {
+    const errors = await errorsFor({ exerciseId: base.exerciseId });
+    expect(errors.map((e) => e.property)).toContain('reps');
   });
 });
 

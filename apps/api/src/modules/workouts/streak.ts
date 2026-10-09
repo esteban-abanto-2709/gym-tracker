@@ -2,7 +2,8 @@ import { toLocalDateString } from '@/common/timezone.util';
 
 export type StreakSet = {
   weight: number | null;
-  reps: number;
+  reps: number | null;
+  durationSec?: number | null;
   routineId: string | null;
   equipmentId: string | null;
   equipment: { name: string } | null;
@@ -20,7 +21,11 @@ export type ExerciseSession = {
   free: boolean;
   equipmentId: string | null;
   equipment: string | null;
-  sets: { weight: number | null; reps: number }[];
+  sets: {
+    weight: number | null;
+    reps: number | null;
+    durationSec: number | null;
+  }[];
 };
 
 export type Suggestion = 'up' | 'down' | null;
@@ -50,7 +55,11 @@ export function groupSessions(
       };
       byKey.set(key, session);
     }
-    session.sets.unshift({ weight: set.weight, reps: set.reps });
+    session.sets.unshift({
+      weight: set.weight,
+      reps: set.reps,
+      durationSec: set.durationSec ?? null,
+    });
   }
   return [...byKey.values()];
 }
@@ -60,7 +69,7 @@ const sameLoad = (a: ExerciseSession, b: ExerciseSession) =>
 
 const atTop = (session: ExerciseSession, top: number) =>
   session.sets.every(
-    (s) => s.reps >= top && s.weight === session.sets[0].weight,
+    (s) => (s.reps ?? 0) >= top && s.weight === session.sets[0].weight,
   );
 
 export function computeStreak(
@@ -95,7 +104,7 @@ export function computeStreak(
     streak++;
   }
 
-  const belowFloor = reference.sets.some((s) => s.reps < floor);
+  const belowFloor = reference.sets.some((s) => (s.reps ?? 0) < floor);
   const suggestion: Suggestion = belowFloor
     ? 'down'
     : streak > 0

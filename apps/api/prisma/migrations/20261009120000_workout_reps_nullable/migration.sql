@@ -1,0 +1,7 @@
+BEGIN;
+
+ALTER TABLE "Workout" ALTER COLUMN "reps" DROP NOT NULL;
+
+UPDATE "Workout" SET "reps" = NULL WHERE "durationSec" IS NOT NULL;
+
+COMMIT;

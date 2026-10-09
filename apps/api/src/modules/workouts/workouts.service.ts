@@ -38,7 +38,10 @@ export class WorkoutsService {
       data: {
         userId,
         exerciseId: createWorkoutDto.exerciseId,
-        reps: createWorkoutDto.reps,
+        reps:
+          createWorkoutDto.durationSec != null
+            ? null
+            : (createWorkoutDto.reps ?? null),
         weight: createWorkoutDto.weight ?? null,
         durationSec: createWorkoutDto.durationSec ?? null,
         opinion: createWorkoutDto.opinion || '',
@@ -124,6 +127,7 @@ export class WorkoutsService {
         select: {
           weight: true,
           reps: true,
+          durationSec: true,
           routineId: true,
           equipmentId: true,
           equipment: { select: { name: true } },
@@ -170,7 +174,10 @@ export class WorkoutsService {
     await this.ensureOwned(id, userId);
     return this.prisma.workout.update({
       where: { id },
-      data: updateWorkoutDto,
+      data:
+        updateWorkoutDto.durationSec != null
+          ? { ...updateWorkoutDto, reps: null }
+          : updateWorkoutDto,
     });
   }
 

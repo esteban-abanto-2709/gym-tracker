@@ -30,7 +30,7 @@ export interface Workout {
   equipmentId?: string | null;
   equipment?: Equipment | null;
   weight: number | null;
-  reps: number;
+  reps: number | null;
   durationSec?: number | null;
   routineId?: string | null;
   createdAt: string;
@@ -126,7 +126,11 @@ export interface ExerciseSession {
   free: boolean;
   equipmentId: string | null;
   equipment: string | null;
-  sets: { weight: number | null; reps: number }[];
+  sets: {
+    weight: number | null;
+    reps: number | null;
+    durationSec: number | null;
+  }[];
 }
 
 export interface ExerciseProgress {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { formatDuration } from "@/lib/setDisplay";
 import { routes } from "@/lib/routes";
 import type {
   ExerciseProgress as Progress,
@@ -41,6 +42,14 @@ function dayLabel(date: string) {
 }
 
 function setsLabel(sets: ExerciseSession["sets"]) {
+  if (sets[0]?.durationSec != null) {
+    return sets
+      .map((s) => {
+        const d = formatDuration(s.durationSec ?? 0);
+        return `${d.value} ${d.unit}`;
+      })
+      .join(" · ");
+  }
   const weight = sets[0]?.weight;
   if (sets.every((s) => s.weight === weight)) {
     const reps = sets.map((s) => s.reps).join(" · ");

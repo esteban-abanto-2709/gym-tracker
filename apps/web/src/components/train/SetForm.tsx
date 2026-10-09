@@ -29,7 +29,7 @@ const roundToHalf = (value: number) => Math.round(value * 2) / 2;
 
 export interface LogSetInput {
   weightKg?: number | null;
-  reps: number;
+  reps?: number | null;
   durationSec?: number | null;
   equipmentId?: string | null;
   setType?: SetType;
@@ -155,7 +155,6 @@ export function SetForm({
     if (incomplete) return;
     if (measure === "time") {
       await onLog({
-        reps: 1,
         durationSec: Number(seconds),
         setType,
         step,

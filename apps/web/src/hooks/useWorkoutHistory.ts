@@ -94,7 +94,7 @@ export function useWorkoutHistory() {
         JSON.stringify({
           exerciseId: exercise.exercise.id,
           weight: exercise.weight?.toString() ?? "",
-          reps: exercise.reps.toString(),
+          reps: exercise.reps?.toString() ?? "",
           durationSec: exercise.durationSec?.toString() ?? "",
           measure: setMeasure(exercise),
         }),
@@ -107,7 +107,7 @@ export function useWorkoutHistory() {
   // Open edit modal with pre-filled values
   const handleEditClick = useCallback((workout: Workout) => {
     setEditingWorkout(workout);
-    setEditReps(workout.reps.toString());
+    setEditReps(workout.reps?.toString() ?? "");
     setEditWeight(workout.weight?.toString() ?? "");
     setEditDuration(workout.durationSec?.toString() ?? "");
   }, []);
@@ -121,7 +121,7 @@ export function useWorkoutHistory() {
         const measure = setMeasure(editingWorkout);
         const changes =
           measure === "time"
-            ? { reps: 1, durationSec: Number(editDuration) }
+            ? { durationSec: Number(editDuration) }
             : measure === "reps"
               ? { reps: Number(editReps) }
               : {

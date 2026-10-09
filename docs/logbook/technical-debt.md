@@ -46,14 +46,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** reutilizar el patrón `withUniqueName` de `programs.service.ts` (409) y avisar en `RoutineEditor` si el nombre ya existe.
 - **Fecha:** 2026-09-30 · **Estado:** Abierto
 
-## [TD-019] Los sets de tiempo guardan `reps = 1` de relleno
-- **Ubicación:** `apps/api/prisma/schema.prisma` (`Workout.reps Int` no nullable); lo envían `apps/web/src/components/train/SetForm.tsx`, `apps/web/src/hooks/useWorkoutForm.ts` y `apps/web/src/hooks/useWorkoutHistory.ts`.
-- **Riesgo:** 3/10
-- **Problema:** Un set medido en tiempo no tiene repeticiones, pero `reps` es obligatorio, así que el front manda `reps: 1`. Es el mismo tipo de parche que `isTimed`: el dato miente sobre lo que pasó.
-- **Impacto futuro:** Cualquier suma o promedio de reps (analítica, exportación para IA) cuenta un "1" falso por cada set de tiempo, y la recomendación agrupa reps de sets que no las tienen.
-- **Sugerencia:** hacer `reps` nullable, dejar de enviarlo en sets de tiempo y migrar los existentes (`durationSec IS NOT NULL` → `reps = NULL`); revisar la recomendación y el historial para que no asuman reps.
-- **Fecha:** 2026-09-16 · **Estado:** Abierto
-
 ## [TD-015] GoogleLogin re-inicializa GSI varias veces (warning en consola)
 - **Ubicación:** `apps/web/src/components/auth/GoogleButton.tsx` (usa `GoogleLogin`), montado en `/login` y `/register`; provider en `apps/web/src/app/layout.tsx`.
 - **Riesgo:** 2/10

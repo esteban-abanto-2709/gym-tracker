@@ -9,6 +9,7 @@ import {
   IsUUID,
   Min,
   ValidateBy,
+  ValidateIf,
 } from 'class-validator';
 
 export const NotWithDuration = () =>
@@ -25,9 +26,10 @@ export class CreateWorkoutDto {
   @IsUUID()
   exerciseId: string;
 
+  @ValidateIf((o: { durationSec?: number | null }) => o.durationSec == null)
   @IsInt()
   @IsPositive()
-  reps: number;
+  reps?: number | null;
 
   @IsOptional()
   @IsNumber()

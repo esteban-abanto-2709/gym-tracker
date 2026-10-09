@@ -98,4 +98,23 @@ describe("SetForm", () => {
 
     expect(values()).toEqual(["12"]);
   });
+
+  it("una serie de tiempo se registra sin reps", async () => {
+    get.mockResolvedValue(rec({ lastDurationSec: 45 }));
+    const onLog = vi.fn();
+
+    const { container } = render(
+      <SetForm
+        {...props}
+        onLog={onLog}
+        plan={{ ...plan, measure: "time", targetReps: null, targetDurationSec: 45 }}
+      />,
+    );
+    await waitFor(() => expect(values()).toEqual(["45"]));
+    fireEvent.submit(container.querySelector("form")!);
+
+    await waitFor(() => expect(onLog).toHaveBeenCalled());
+    expect(onLog.mock.calls[0][0]).toMatchObject({ durationSec: 45 });
+    expect(onLog.mock.calls[0][0]).not.toHaveProperty("reps");
+  });
 });

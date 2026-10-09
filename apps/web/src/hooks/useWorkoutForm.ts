@@ -143,7 +143,6 @@ export function useWorkoutForm(
         measure === "time"
           ? {
               exerciseId: selectedExercise.id,
-              reps: 1,
               durationSec: Number(seconds),
             }
           : {
