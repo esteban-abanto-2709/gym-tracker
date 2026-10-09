@@ -7,18 +7,34 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  email           String    @unique
+  id              String            @id @default(uuid())
+  email           String            @unique
   username        String
-  slug            String    @unique
+  slug            String            @unique
   passwordHash    String?
-  googleId        String?   @unique
+  googleId        String?           @unique
   workouts        Workout[]
   routines        Routine[]
-  programs        Program[] @relation("UserPrograms")
+  programs        Program[]         @relation("UserPrograms")
   activeProgramId String?
-  activeProgram   Program?  @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
-  createdAt       DateTime  @default(now())
+  activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
+  birthDate       DateTime?         @db.Date
+  measurements    BodyMeasurement[]
+  createdAt       DateTime          @default(now())
+}
+
+model BodyMeasurement {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       DateTime @db.Date
+  weightKg   Float?
+  bodyFatPct Float?
+  heightCm   Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, date])
 }
 
 model Program {
@@ -52,22 +68,22 @@ model Equipment {
 }
 
 model Workout {
-  id              String     @id @default(uuid())
-  userId          String
-  user            User       @relation(fields: [userId], references: [id])
-  exerciseId      String
-  exercise        Exercise   @relation(fields: [exerciseId], references: [id])
-  routineId       String?
-  routine         Routine?   @relation(fields: [routineId], references: [id], onDelete: SetNull)
-  weight          Float?
-  reps            Int?
-  durationSec     Int?
-  opinion         String
-  equipmentId     String?
-  equipment       Equipment? @relation(fields: [equipmentId], references: [id])
-  setType         SetType    @default(WORKING)
-  step            Int?
-  createdAt       DateTime   @default(now())
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  exerciseId  String
+  exercise    Exercise   @relation(fields: [exerciseId], references: [id])
+  routineId   String?
+  routine     Routine?   @relation(fields: [routineId], references: [id], onDelete: SetNull)
+  weight      Float?
+  reps        Int?
+  durationSec Int?
+  opinion     String
+  equipmentId String?
+  equipment   Equipment? @relation(fields: [equipmentId], references: [id])
+  setType     SetType    @default(WORKING)
+  step        Int?
+  createdAt   DateTime   @default(now())
 }
 
 enum SetType {

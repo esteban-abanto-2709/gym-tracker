@@ -74,6 +74,7 @@ src/
 ├── common/
 │   ├── decorators/       # @Public() y @CurrentUser()
 │   ├── guards/           # JwtAuthGuard: lee la cookie `token`
+│   ├── date-only.ts      # fechas sin hora (YYYY-MM-DD) y su validador
 │   ├── slugify.ts        # slugs de ejercicios y usuarios
 │   └── timezone.util.ts  # agrupar por día local según la tz del cliente
 ├── modules/
@@ -82,7 +83,8 @@ src/
 │   ├── equipment/        # catálogo global de equipos
 │   ├── workouts/         # series registradas + recomendación de peso
 │   ├── routines/         # rutinas y sus bloques tipados
-│   └── programs/         # programas, programa activo, explorar y copiar
+│   ├── programs/         # programas, programa activo, explorar y copiar
+│   └── measurements/     # medidas corporales opcionales con fecha
 └── providers/prisma/     # PrismaService sobre un pg.Pool
 ```
 
@@ -119,6 +121,7 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/auth/google` | Login o registro con ID token de Google (público) |
 | POST | `/auth/logout` | Cierra sesión |
 | GET | `/auth/me` | Usuario actual |
+| PATCH | `/auth/me` | Cambia o borra (`null`) la fecha de nacimiento |
 | GET | `/exercises` | Catálogo de ejercicios, por nombre |
 | POST | `/exercises` | Crea un ejercicio |
 | GET | `/equipment` | Catálogo de equipos |
@@ -142,6 +145,9 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | GET | `/programs/:id` | Un programa |
 | PATCH | `/programs/:id` | Edita un programa |
 | DELETE | `/programs/:id` | Borra un programa |
+| GET | `/measurements` | Medidas corporales del usuario, la más nueva primero |
+| PUT | `/measurements` | Crea o reemplaza la medida de una fecha |
+| DELETE | `/measurements/:date` | Borra la medida de una fecha |
 
 ## Modelo de datos
 
@@ -158,6 +164,9 @@ no se deduce a simple vista:
 - **`Program`** agrupa rutinas en orden (`programPosition`). El usuario tiene un
   `activeProgram`; la rutina que toca se deriva de la última serie registrada.
   `copiedFromId` guarda de qué programa salió una copia.
+- **`BodyMeasurement`** es una medida corporal opcional: una por usuario y
+  fecha, con peso, % de grasa y altura opcionales. Un `CHECK` en la base exige
+  al menos uno. `User.birthDate` es un valor único; la edad se calcula.
 - **`Exercise`** es solo `name` + `slug`; cómo se mide un ejercicio vive en el
   bloque, no en el ejercicio.
 

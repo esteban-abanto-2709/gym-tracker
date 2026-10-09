@@ -10,6 +10,7 @@ import { ExercisesModule } from './modules/exercises/exercises.module';
 import { EquipmentModule } from './modules/equipment/equipment.module';
 import { RoutinesModule } from './modules/routines/routines.module';
 import { ProgramsModule } from './modules/programs/programs.module';
+import { MeasurementsModule } from './modules/measurements/measurements.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ProgramsModule } from './modules/programs/programs.module';
     WorkoutsModule,
     RoutinesModule,
     ProgramsModule,
+    MeasurementsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

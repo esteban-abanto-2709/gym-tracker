@@ -9,6 +9,8 @@ import { User } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
+import { fromDbDate, toDbDate } from '@/common/date-only';
 
 const DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
 
@@ -87,12 +89,21 @@ export class AuthService {
     return this.publicUser(user);
   }
 
+  async updateMe(id: string, dto: UpdateMeDto) {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null },
+    });
+    return this.publicUser(user);
+  }
+
   private publicUser(user: User) {
     return {
       id: user.id,
       email: user.email,
       username: user.username,
       slug: user.slug,
+      birthDate: user.birthDate ? fromDbDate(user.birthDate) : null,
     };
   }
 

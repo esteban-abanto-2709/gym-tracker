@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Res } from '@nestjs/common';
 import type { Response, CookieOptions } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { GoogleLoginDto } from './dto/google-login.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 import { Public } from '@/common/decorators/public.decorator';
 import {
   CurrentUser,
@@ -63,6 +64,11 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: AuthUser) {
     return this.authService.findById(user.id);
+  }
+
+  @Patch('me')
+  updateMe(@CurrentUser() user: AuthUser, @Body() dto: UpdateMeDto) {
+    return this.authService.updateMe(user.id, dto);
   }
 
   private setAuthCookie(res: Response, userId: string) {
