@@ -70,7 +70,7 @@ pnpm format   # Prettier
 | `/routines`, `/routines/new`, `/routines/[id]` | Listar, crear y editar rutinas |
 | `/programs`, `/programs/new`, `/programs/[id]` | Listar, crear y editar programas |
 | `/explore`, `/explore/[id]` | Programas de otros usuarios y copiarlos |
-| `/history` | Historial por día: repetir, editar y borrar series |
+| `/history` | Historial por día: repetir, editar y borrar series; exportar un rango para tu IA (`.md`) |
 | `/perfil` | Cuenta, fecha de nacimiento, medidas corporales y cierre de sesión |
 | `/login`, `/register` | Acceso con email o Google |
 

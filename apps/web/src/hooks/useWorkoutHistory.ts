@@ -173,6 +173,7 @@ export function useWorkoutHistory() {
 
   return {
     // Data
+    workouts,
     dates,
     selectedDate: activeDate,
     setSelectedDate,

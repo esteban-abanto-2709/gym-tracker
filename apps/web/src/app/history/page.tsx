@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -8,11 +9,14 @@ import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
 import { WorkoutCard } from "@/components/history/WorkoutCard";
 import { EditWorkoutDialog } from "@/components/history/EditWorkoutDialog";
 import { DeleteWorkoutDialog } from "@/components/history/DeleteWorkoutDialog";
+import { ExportSheet } from "@/components/history/ExportSheet";
 import { setMeasure } from "@/lib/setDisplay";
-import { Calendar } from "lucide-react";
+import { Calendar, Share } from "lucide-react";
 
 export default function HistoryPage() {
+  const [exportOpen, setExportOpen] = useState(false);
   const {
+    workouts,
     dates,
     selectedDate,
     setSelectedDate,
@@ -38,7 +42,22 @@ export default function HistoryPage() {
 
   return (
     <PageShell variant="history">
-      <AppHeader title="Historial" sticky>
+      <AppHeader
+        title="Historial"
+        sticky
+        rightAction={
+          <button
+            type="button"
+            onClick={() => setExportOpen(true)}
+            disabled={loading || workouts.length === 0}
+            aria-label="Exportar para tu IA"
+            title="Exportar para tu IA"
+            className="text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
+          >
+            <Share className="w-6 h-6" />
+          </button>
+        }
+      >
         {/* Date Selector Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
           <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -142,6 +161,10 @@ export default function HistoryPage() {
         loading={actionLoading}
         onConfirm={confirmDelete}
       />
+
+      {exportOpen && (
+        <ExportSheet workouts={workouts} onClose={() => setExportOpen(false)} />
+      )}
 
       <BottomNav />
     </PageShell>

@@ -41,6 +41,10 @@ export interface Workout {
   reps: number | null;
   durationSec?: number | null;
   routineId?: string | null;
+  routine?: { name: string } | null;
+  setType?: SetType;
+  step?: number | null;
+  opinion?: string;
   createdAt: string;
 }
 

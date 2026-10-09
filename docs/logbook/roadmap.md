@@ -19,12 +19,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** con 90 kg en press de banca se ve "barra 20 + 35 por lado" representado con sus discos (20 + 10 + 5).
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-021] Exportar el historial para análisis con IA
-- **Objetivo:** pasarle tus datos de entrenamiento a tu IA de confianza para que los analice.
-- **Alcance:** desde el historial, elegir un rango de fechas y descargar las series en JSON o CSV, con ejercicio, equipo, peso, reps, tipo de serie, rutina y fecha. Incluir una breve explicación de las convenciones (barra = total, mancuerna = por unidad).
-- **Hecho cuando:** puedo descargar el último mes y pegárselo a una IA, y la IA entiende cada serie sin preguntar qué significa cada campo.
-- **Fecha:** 2026-06-25 · **Estado:** En progreso (2026-10-09)
-
 ## [RM-055] Registro de un toque (demo)
 - **Objetivo:** validar si registrar tocando es más rápido que el formulario actual.
 - **Alcance:** demo aislada, sin cablear a producción. Cada serie es una ficha precargada con peso y meta: un toque la marca como hecha; tocar otra vez resta una rep; una pulsación larga abre la edición.

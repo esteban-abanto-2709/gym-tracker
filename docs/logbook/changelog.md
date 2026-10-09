@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-021] Exportar el historial para tu IA (2026-10-09 17:39)
+Desde el Historial se elige un rango (7, 30, 90 días, todo o fechas) y se comparte, descarga o copia un `.md` armado en el navegador: edad, medidas con punto de partida, convenciones y una fila por serie en CSV con rutina y nota. Suma cobertura del período, versión del formato y reglas de vacíos (ver `docs/feedback/2026-10-09-export-ia.md`).
+
 ## [WL-071] Medidas corporales y fecha de nacimiento en el perfil (2026-10-09 16:44)
 Perfil suma la fecha de nacimiento (calcula la edad) y medidas con fecha: altura, peso y % de grasa (en el orden en que las entrega el gimnasio), todos opcionales, una por día y editables. Tabla `BodyMeasurement` con `CHECK` de al menos un dato, endpoints `/measurements` y `PATCH /auth/me`.
 
