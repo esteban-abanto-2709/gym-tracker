@@ -12,6 +12,12 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-076] La web en pnpm 11, igual que la API (2026-10-09 10:01)
+La web pasa de pnpm 10.17.1 a 11.28.2 (la versión de la API): `onlyBuiltDependencies` migra a `allowBuilds` y el Dockerfile copia `pnpm-workspace.yaml`, que pnpm 11 exige por `strictDepBuilds`. Lockfile intacto; lint, tests, build e imagen de dev verificados.
+
+## [TD-074] La imagen de la API de 1,4 GB a 719 MB (2026-10-09 10:01)
+Las deps de producción se instalan en su propia etapa con el store de pnpm en un cache mount y el `runner` copia solo `node_modules`: 1,39 GB → 719 MB (comprimida 310 → 156 MB). Lo que queda es la CLI de Prisma del `migrate deploy`; sacarla va con RM-075.
+
 ## [RM-051] App en la nube (2026-10-08 11:04)
 Prod corre en un servidor siempre encendido con el mismo compose y su tunnel, con los datos migrados, backup diario fuera de la máquina (restaurado con éxito en dev) y CD: cada push a `main` con el CI en verde construye las imágenes ARM64, las publica en GHCR y actualiza el servidor.
 

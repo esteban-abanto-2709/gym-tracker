@@ -61,6 +61,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 
 ## [RM-075] Base de datos administrada
 - **Objetivo:** que los datos de prod no dependan de un solo disco ni de backups hechos a mano: backups automáticos, restauración a cualquier minuto reciente y parches a cargo del proveedor.
-- **Alcance:** mover Postgres del compose de prod a un servicio administrado. Migración con `backup.sh`/`restore.sh` y reversible: si no convence, la base vuelve al compose. La API solo cambia de `DATABASE_URL`/`DIRECT_URL`.
+- **Alcance:** mover Postgres del compose de prod a un servicio administrado. Migración con `backup.sh`/`restore.sh` y reversible: si no convence, la base vuelve al compose. La API solo cambia de `DATABASE_URL`/`DIRECT_URL`. Si las migraciones dejan de correr en el arranque de la API, `prisma` vuelve a devDependencies y la imagen se ahorra la CLI (`node_modules` 371 → 136 MB medido); la CLI carga Studio al arrancar, así que no se puede recortar por dentro.
 - **Hecho cuando:** prod corre contra la base administrada con todos los datos, el backup automático del servicio existe y se probó restaurar uno en dev.
 - **Fecha:** 2026-10-08 · **Estado:** Abierto
