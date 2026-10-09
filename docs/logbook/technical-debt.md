@@ -25,9 +25,9 @@ changelog y se borra de aquí.
 ## [TD-076] La web usa pnpm 10 y la API pnpm 11
 - **Ubicación:** `apps/web/package.json` (`packageManager`)
 - **Riesgo:** 3/10
-- **Problema:** la web fija `pnpm@10.17.1` mientras la API usa pnpm 11; cada app sigue reglas distintas de configuración, lockfile y comandos.
+- **Problema:** la web fija `pnpm@10.17.1` mientras la API usa `pnpm@11.28.2`; cada app sigue reglas distintas de configuración, lockfile y comandos.
 - **Impacto futuro:** lo que funciona en una app puede fallar en la otra, y el salto de versión mayor se vuelve más grande cuanto más se posterga.
-- **Sugerencia:** subir la web a la misma versión de pnpm 11 que la API, en su propio commit, y verificar `pnpm install`, build y tests.
+- **Sugerencia:** subir la web a la misma versión de pnpm 11 que la API, en su propio commit, y verificar `pnpm install`, build y tests. pnpm 12 ya salió: el salto a 12, si se hace, es de las dos apps juntas y después de igualarlas.
 - **Fecha:** 2026-10-09 · **Estado:** Abierto
 
 ## [TD-070] TikTok en Android sin probar
