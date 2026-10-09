@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [WL-071] Medidas corporales y fecha de nacimiento en el perfil (2026-10-09 16:44)
+Perfil suma la fecha de nacimiento (calcula la edad) y medidas con fecha: altura, peso y % de grasa (en el orden en que las entrega el gimnasio), todos opcionales, una por día y editables. Tabla `BodyMeasurement` con `CHECK` de al menos un dato, endpoints `/measurements` y `PATCH /auth/me`.
+
 ## [TD-019] Los sets de tiempo ya no guardan `reps = 1` de relleno (2026-10-09 11:09)
 `Workout.reps` pasa a nullable y una migración deja en `NULL` las reps de los sets con duración; la API las descarta si llega `durationSec` y la web deja de mandarlas. De paso, el progreso del ejercicio muestra las duraciones (`45 s · 40 s`) en vez de `1 · 1 reps`.
 

@@ -48,6 +48,11 @@ export const routes = {
     equipment: {
       list: () => "/equipment",
     },
+    measurements: {
+      list: () => "/measurements",
+      upsert: () => "/measurements",
+      delete: (date: string) => `/measurements/${date}`,
+    },
     routines: {
       list: () => "/routines",
       create: () => "/routines",

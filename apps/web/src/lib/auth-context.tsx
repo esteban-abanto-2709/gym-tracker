@@ -9,6 +9,7 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { routes } from "@/lib/routes";
+import { api } from "@/lib/api";
 import type { AuthUser } from "@/lib/types";
 
 const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
@@ -23,6 +24,7 @@ interface AuthContextValue {
   ) => Promise<void>;
   loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateMe: (changes: { birthDate: string | null }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -95,6 +97,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace(routes.login());
   }, [router]);
 
+  const updateMe = useCallback(
+    async (changes: { birthDate: string | null }) => {
+      setUser(await api.patch<AuthUser>(routes.api.auth.me(), changes));
+    },
+    [],
+  );
+
   const isPublic = PUBLIC_PATHS.has(pathname);
 
   useEffect(() => {
@@ -112,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, loginWithGoogle, logout }}
+      value={{ user, login, register, loginWithGoogle, logout, updateMe }}
     >
       {children}
     </AuthContext.Provider>

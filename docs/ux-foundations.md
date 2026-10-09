@@ -47,6 +47,9 @@ revisas.
 - **Feedback inmediato** al registrar, y claro cuando falla la red: nunca perder
   una serie en silencio.
 - **Targets táctiles grandes** y texto que se lee sin esfuerzo.
+- **Sin scroll.** Cada pantalla y cada panel caben en un celular (referencia:
+  390×844 contando las zonas seguras de iOS). Si no cabe, se compacta, se
+  muestra lo reciente o se divide; un historial largo vive en su propia vista.
 
 ## Cómo se registra el peso
 

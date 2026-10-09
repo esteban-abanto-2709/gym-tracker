@@ -5,6 +5,14 @@ export interface AuthUser {
   email: string;
   username: string;
   slug: string;
+  birthDate: string | null;
+}
+
+export interface BodyMeasurement {
+  date: string;
+  weightKg: number | null;
+  bodyFatPct: number | null;
+  heightCm: number | null;
 }
 
 export interface Equipment {

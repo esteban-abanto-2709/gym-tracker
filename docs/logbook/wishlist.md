@@ -25,9 +25,6 @@ En modo pantalla completa no existe el botón de recargar de Safari: si algo se 
 ## [WL-009] Guardar la unidad original del registro
 Columna `unit` en `Workout` para mostrar el peso en la unidad en que se registró (ej. "45 lb" en vez de "20.4 kg"). Conviene evaluarla junto con la exportación (RM-021), para que la IA vea lo que de verdad se cargó. Hoy se convierte todo a kg redondeado a 1 decimal al guardar.
 
-## [WL-071] Datos personales opcionales en el perfil
-Edad, peso corporal con su fecha y porcentaje de grasa, para enriquecer el análisis y la exportación. Siempre opcionales y desde el perfil ("agrega información para mejorar tu análisis"); nunca antes de entrenar ni durante. Decidido (2026-10-09): **medidas** con historial (peso, % de grasa y altura, cada uno opcional, al menos uno; fecha editable que arranca en hoy; una por fecha, registrar otra vez esa fecha la actualiza) y **fecha de nacimiento** como valor único editable de la que se calcula la edad. Se ven en Perfil y en la exportación, no en el Historial. **En progreso (2026-10-09).**
-
 ## [WL-058] Versión de escritorio
 Una experiencia cómoda en la computadora para lo que no se hace entre series: revisar tu progreso, exportar tus datos e importar o armar programas. En escritorio, el video del ejercicio puede abrirse en YouTube en vez de TikTok.
 

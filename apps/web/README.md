@@ -71,7 +71,7 @@ pnpm format   # Prettier
 | `/programs`, `/programs/new`, `/programs/[id]` | Listar, crear y editar programas |
 | `/explore`, `/explore/[id]` | Programas de otros usuarios y copiarlos |
 | `/history` | Historial por día: repetir, editar y borrar series |
-| `/perfil` | Cuenta y cierre de sesión |
+| `/perfil` | Cuenta, fecha de nacimiento, medidas corporales y cierre de sesión |
 | `/login`, `/register` | Acceso con email o Google |
 
 La navegación principal es la barra inferior de cuatro pestañas
