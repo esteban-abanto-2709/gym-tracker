@@ -11,12 +11,12 @@ import { EditWorkoutDialog } from "@/components/history/EditWorkoutDialog";
 import { DeleteWorkoutDialog } from "@/components/history/DeleteWorkoutDialog";
 import { ExportSheet } from "@/components/history/ExportSheet";
 import { setMeasure } from "@/lib/setDisplay";
+import { todayLocal } from "@/lib/measurements";
 import { Calendar, Share } from "lucide-react";
 
 export default function HistoryPage() {
   const [exportOpen, setExportOpen] = useState(false);
   const {
-    workouts,
     dates,
     selectedDate,
     setSelectedDate,
@@ -49,7 +49,7 @@ export default function HistoryPage() {
           <button
             type="button"
             onClick={() => setExportOpen(true)}
-            disabled={loading || workouts.length === 0}
+            disabled={dates.length === 0}
             aria-label="Exportar para tu IA"
             title="Exportar para tu IA"
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
@@ -163,7 +163,10 @@ export default function HistoryPage() {
       />
 
       {exportOpen && (
-        <ExportSheet workouts={workouts} onClose={() => setExportOpen(false)} />
+        <ExportSheet
+          firstDay={dates.at(-1) ?? todayLocal()}
+          onClose={() => setExportOpen(false)}
+        />
       )}
 
       <BottomNav />

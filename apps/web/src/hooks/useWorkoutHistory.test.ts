@@ -25,8 +25,20 @@ const set = (id: string, createdAt: string): Workout =>
 const newest = set("w-newest", "2026-10-05T15:00:00");
 const older = set("w-older", "2026-10-03T15:00:00");
 
+const mockApi = (days: string[], byDay: Record<string, Workout[]>) =>
+  vi.mocked(api.get).mockImplementation(async (url: string) => {
+    if (url.startsWith("/workouts/days")) {
+      return { days, sets: days[0] ? byDay[days[0]] : [] };
+    }
+    const from = new URL(url, "http://x").searchParams.get("from")!;
+    return byDay[new Date(from).toLocaleDateString("en-CA")] ?? [];
+  });
+
 const loadHistory = async () => {
-  vi.mocked(api.get).mockResolvedValue([newest, older]);
+  mockApi(["2026-10-05", "2026-10-03"], {
+    "2026-10-05": [newest],
+    "2026-10-03": [older],
+  });
   vi.mocked(api.delete).mockResolvedValue(undefined);
   const hook = renderHook(() => useWorkoutHistory());
   await waitFor(() => expect(hook.result.current.loading).toBe(false));
@@ -50,7 +62,22 @@ describe("useWorkoutHistory", () => {
 
     expect(result.current.dates).toEqual(["2026-10-03"]);
     expect(result.current.selectedDate).toBe("2026-10-03");
-    expect(result.current.currentWorkouts).toEqual([older]);
+    await waitFor(() =>
+      expect(result.current.currentWorkouts).toEqual([older]),
+    );
+  });
+
+  it("al tocar otro dia pide solo ese dia", async () => {
+    const { result } = await loadHistory();
+
+    act(() => result.current.setSelectedDate("2026-10-03"));
+
+    await waitFor(() =>
+      expect(result.current.currentWorkouts).toEqual([older]),
+    );
+    expect(vi.mocked(api.get).mock.lastCall?.[0]).toMatch(
+      /^\/workouts\?from=/,
+    );
   });
 
   it("al borrar un set de otro dia mantiene el dia elegido", async () => {
@@ -63,7 +90,7 @@ describe("useWorkoutHistory", () => {
   });
 
   it("sin historial no elige dia", async () => {
-    vi.mocked(api.get).mockResolvedValue([]);
+    mockApi([], {});
     const { result } = renderHook(() => useWorkoutHistory());
     await waitFor(() => expect(result.current.loading).toBe(false));
 

@@ -1,11 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ExportSheet } from "./ExportSheet";
+import { api } from "@/lib/api";
 import type { Workout } from "@/lib/types";
 
 vi.mock("@/lib/auth-context", () => ({
   useAuth: () => ({ user: { birthDate: null } }),
 }));
+
+vi.mock("@/lib/api", () => ({ api: { get: vi.fn() } }));
 
 vi.mock("@/hooks/useMeasurements", () => ({
   useMeasurements: () => ({ measurements: [], loading: false }),
@@ -27,36 +30,43 @@ const set = (createdAt: string): Workout => ({
   createdAt,
 });
 
+const serveSets = (sets: Workout[]) =>
+  vi.mocked(api.get).mockImplementation(async (url: string) => {
+    const params = new URL(url, "http://x").searchParams;
+    const from = params.get("from")!;
+    const to = params.get("to")!;
+    return sets.filter((s) => s.createdAt >= from && s.createdAt < to);
+  });
+
+const dayOf = (iso: string) => new Date(iso).toLocaleDateString("en-CA");
+
 const pressed = () =>
   screen
     .getAllByRole("button", { pressed: true })
     .map((b) => b.textContent);
 
 describe("ExportSheet", () => {
-  it("arranca en 30 dias y el resumen sigue al rango elegido", () => {
-    render(
-      <ExportSheet
-        workouts={[set(daysAgo(1)), set(daysAgo(10)), set(daysAgo(60))]}
-        onClose={vi.fn()}
-      />,
-    );
+  it("arranca en 30 dias y el resumen sigue al rango elegido", async () => {
+    serveSets([set(daysAgo(1)), set(daysAgo(10)), set(daysAgo(60))]);
+    render(<ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />);
 
     expect(pressed()).toEqual(["30 días"]);
-    expect(screen.getByText("2 series")).toBeTruthy();
+    expect(await screen.findByText("2 series")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "7 días" }));
-    expect(screen.getByText("1 serie")).toBeTruthy();
+    expect(await screen.findByText("1 serie")).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "Todo" }));
-    expect(screen.getByText("3 series")).toBeTruthy();
+    expect(await screen.findByText("3 series")).toBeTruthy();
   });
 
-  it("sin series en el rango no deja exportar", () => {
-    render(<ExportSheet workouts={[set(daysAgo(60))]} onClose={vi.fn()} />);
+  it("sin series en el rango no deja exportar", async () => {
+    serveSets([set(daysAgo(60))]);
+    render(<ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />);
 
     fireEvent.click(screen.getByRole("button", { name: "7 días" }));
 
-    expect(screen.getByText("Sin series en este rango.")).toBeTruthy();
+    expect(await screen.findByText("Sin series en este rango.")).toBeTruthy();
     expect(
       screen.getByRole("button", { name: /copiar texto/i }),
     ).toHaveProperty("disabled", true);

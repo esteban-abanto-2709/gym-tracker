@@ -1,5 +1,10 @@
 import type { SetType } from "@/lib/types";
 
+const dayStart = (day: string, offset = 0) => {
+  const [y, m, d] = day.split("-").map(Number);
+  return new Date(y, m - 1, d + offset).toISOString();
+};
+
 export const routes = {
   home: () => "/",
   success: () => "/success",
@@ -28,7 +33,9 @@ export const routes = {
     },
     workouts: {
       create: () => "/workouts",
-      list: () => "/workouts",
+      days: (tz: string) => `/workouts/days?tz=${encodeURIComponent(tz)}`,
+      range: (fromDay: string, toDay: string) =>
+        `/workouts?from=${encodeURIComponent(dayStart(fromDay))}&to=${encodeURIComponent(dayStart(toDay, 1))}`,
       recommendation: (
         exerciseId: string,
         equipmentId: string | null,

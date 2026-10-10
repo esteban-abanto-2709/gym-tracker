@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
@@ -8,6 +8,8 @@ import { useMeasurements } from "@/hooks/useMeasurements";
 import { todayLocal } from "@/lib/measurements";
 import { buildExport, exportFilename, plural } from "@/lib/exportForAi";
 import { notifyError } from "@/lib/notify";
+import { api } from "@/lib/api";
+import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
 import { Copy, Download, Share, X } from "lucide-react";
 
@@ -16,24 +18,18 @@ const shiftDays = (date: string, days: number) => {
   return new Date(y, m - 1, d + days).toLocaleDateString("en-CA");
 };
 
-const localDay = (iso: string) => new Date(iso).toLocaleDateString("en-CA");
-
 const dateInput =
   "mt-1.5 block w-full min-w-0 appearance-none px-3 py-2.5 bg-muted border-2 border-transparent rounded-xl font-bold text-sm text-foreground text-left focus:outline-none focus:border-primary transition-all [&::-webkit-date-and-time-value]:text-left";
 
 interface ExportSheetProps {
-  workouts: Workout[];
+  firstDay: string;
   onClose: () => void;
 }
 
-export function ExportSheet({ workouts, onClose }: ExportSheetProps) {
+export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
   const { user } = useAuth();
   const { measurements, loading } = useMeasurements();
   const today = todayLocal();
-  const firstDay = workouts.reduce(
-    (min, w) => (localDay(w.createdAt) < min ? localDay(w.createdAt) : min),
-    today,
-  );
   const presets = [
     { label: "7 días", from: shiftDays(today, -6) },
     { label: "30 días", from: shiftDays(today, -29) },
@@ -42,11 +38,24 @@ export function ExportSheet({ workouts, onClose }: ExportSheetProps) {
   ];
   const [from, setFrom] = useState(presets[1].from);
   const [to, setTo] = useState(today);
+  const [fetched, setFetched] = useState<{
+    key: string;
+    workouts: Workout[];
+  } | null>(null);
+  const rangeKey = `${from}_${to}`;
+  const workouts = fetched?.key === rangeKey ? fetched.workouts : null;
+
+  useEffect(() => {
+    api
+      .get<Workout[]>(routes.api.workouts.range(from, to))
+      .then((sets) => setFetched({ key: `${from}_${to}`, workouts: sets }))
+      .catch(() => notifyError("No se pudo cargar el historial"));
+  }, [from, to]);
 
   const { markdown, stats } = useMemo(
     () =>
       buildExport({
-        workouts,
+        workouts: workouts ?? [],
         measurements,
         birthDate: user?.birthDate ?? null,
         from,
@@ -65,7 +74,7 @@ export function ExportSheet({ workouts, onClose }: ExportSheetProps) {
   const shareable =
     typeof navigator !== "undefined" &&
     !!navigator.canShare?.({ files: [file] });
-  const ready = !loading && stats.sets > 0;
+  const ready = !loading && workouts !== null && stats.sets > 0;
 
   const share = async () => {
     if (!shareable) {
@@ -182,7 +191,9 @@ export function ExportSheet({ workouts, onClose }: ExportSheetProps) {
           </div>
 
           <div className="mt-4 rounded-2xl bg-muted/60 px-4 py-3">
-            {stats.sets > 0 ? (
+            {workouts === null ? (
+              <p className="py-2 text-sm text-muted-foreground">Cargando…</p>
+            ) : stats.sets > 0 ? (
               <>
                 <p className="font-display font-bold uppercase text-3xl leading-none text-foreground tabular-nums">
                   {plural(stats.sets, "serie", "series")}

@@ -14,7 +14,8 @@ function localDay(date: string): string {
 export function useWorkoutHistory() {
   const router = useRouter();
 
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [dates, setDates] = useState<string[]>([]);
+  const [byDay, setByDay] = useState<Record<string, Workout[]>>({});
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
@@ -26,42 +27,37 @@ export function useWorkoutHistory() {
   const [editDuration, setEditDuration] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Load all workouts once; grouping/filtering by local day happens client-side.
   useEffect(() => {
-    const run = async () => {
-      try {
-        const all = await api.get<Workout[]>(routes.api.workouts.list());
-        setWorkouts(all);
-      } catch (error) {
-        console.error("Error fetching workouts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    run();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    api
+      .get<{ days: string[]; sets: Workout[] }>(routes.api.workouts.days(tz))
+      .then(({ days, sets }) => {
+        setDates(days);
+        if (days[0]) setByDay({ [days[0]]: sets });
+      })
+      .catch((error) => console.error("Error fetching workouts:", error))
+      .finally(() => setLoading(false));
   }, []);
-
-  // Distinct local days, newest first (list already comes ordered desc).
-  const dates = useMemo(() => {
-    const seen = new Set<string>();
-    const out: string[] = [];
-    for (const w of workouts) {
-      const d = localDay(w.createdAt);
-      if (!seen.has(d)) {
-        seen.add(d);
-        out.push(d);
-      }
-    }
-    return out;
-  }, [workouts]);
 
   const activeDate = dates.includes(selectedDate)
     ? selectedDate
     : (dates[0] ?? "");
+  const dayLoaded = !activeDate || activeDate in byDay;
+
+  useEffect(() => {
+    if (dayLoaded) return;
+    api
+      .get<Workout[]>(routes.api.workouts.range(activeDate, activeDate))
+      .then((sets) => setByDay((prev) => ({ ...prev, [activeDate]: sets })))
+      .catch((error) => {
+        console.error("Error fetching day:", error);
+        notifyError("No se pudo cargar el día");
+      });
+  }, [activeDate, dayLoaded]);
 
   const currentWorkouts = useMemo(
-    () => workouts.filter((w) => localDay(w.createdAt) === activeDate),
-    [workouts, activeDate],
+    () => byDay[activeDate] ?? [],
+    [byDay, activeDate],
   );
 
   // Format date string to human-readable
@@ -131,11 +127,13 @@ export function useWorkoutHistory() {
 
         await api.patch(routes.api.workouts.update(editingWorkout.id), changes);
 
-        setWorkouts((prev) =>
-          prev.map((w) =>
+        const day = localDay(editingWorkout.createdAt);
+        setByDay((prev) => ({
+          ...prev,
+          [day]: (prev[day] ?? []).map((w) =>
             w.id === editingWorkout.id ? { ...w, ...changes } : w,
           ),
-        );
+        }));
         setEditingWorkout(null);
       } catch (e) {
         console.error(e);
@@ -159,7 +157,14 @@ export function useWorkoutHistory() {
     const run = async () => {
       try {
         await api.delete(routes.api.workouts.delete(deletingWorkout.id));
-        setWorkouts((prev) => prev.filter((w) => w.id !== deletingWorkout.id));
+        const day = localDay(deletingWorkout.createdAt);
+        const left = (byDay[day] ?? []).filter(
+          (w) => w.id !== deletingWorkout.id,
+        );
+        setByDay((prev) => ({ ...prev, [day]: left }));
+        if (left.length === 0) {
+          setDates((prev) => prev.filter((d) => d !== day));
+        }
         setDeletingWorkout(null);
       } catch (e) {
         console.error(e);
@@ -169,16 +174,15 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [deletingWorkout]);
+  }, [deletingWorkout, byDay]);
 
   return {
     // Data
-    workouts,
     dates,
     selectedDate: activeDate,
     setSelectedDate,
     currentWorkouts,
-    loading,
+    loading: loading || !dayLoaded,
 
     // Helpers
     getDisplayDate,
