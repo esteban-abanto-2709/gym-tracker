@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-085] Los backups locales del servidor no se borran nunca
+- **Ubicación:** `apps/docker/scripts/update.sh:6`
+- **Riesgo:** 2/10
+- **Problema:** cada deploy y cada backup diario dejan un `gym-prod_*.sql` en `apps/docker/backups/` del servidor y nada los borra. La copia fuera de la máquina ya tiene su propia retención; en el disco solo hacen falta los recientes. Hoy: 9 archivos, 3,3 MB.
+- **Impacto futuro:** crecimiento sin límite (~200 MB/año al ritmo actual, más a medida que crecen los datos) hasta llenar el disco del servidor.
+- **Sugerencia:** al final de `update.sh`, `find backups -name 'gym-prod_*.sql' -mtime +14 -delete`; cubre también los del backup diario porque comparten carpeta.
+- **Fecha:** 2026-10-10 · **Estado:** Abierto
+
 ## [TD-081] Rutinas hace scroll con varias rutinas
 - **Ubicación:** `apps/web/src/app/routines/page.tsx`
 - **Riesgo:** 3/10

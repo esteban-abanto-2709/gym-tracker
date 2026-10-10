@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-084] El backup copia la base entera (2026-10-10 13:43)
+`backup.sh` dejó de listar tablas (`BodyMeasurement` quedaba fuera): dumpea schema, datos y `_prisma_migrations`. `restore.sh` borra el schema, carga el dump y reinicia la API, que aplica las migraciones que falten; rechaza los backups viejos de solo datos (README explica cómo usarlos).
+
 ## [TD-083] El historial ya no descarga todas las series (2026-10-09 21:55)
 `GET /workouts/days` trae la lista de días y el último día (2 KB en vez de 1 MB); cada día y la exportación para IA piden su rango con `GET /workouts?from&to`, ahora obligatorio. El `.md` se sigue armando en el navegador; `toLocalDateString` reutiliza su formateador (de ~170 a ~11 ms).
 

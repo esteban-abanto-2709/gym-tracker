@@ -209,15 +209,17 @@ dentro de tu `.env`. Para dev, repite con un segundo tunnel y otro subdominio
 
 ## Backups de prod
 
-Genera un dump de **solo datos** (tablas `User`, `Exercise`, `Program`,
-`Routine`, `RoutineItem` y `Workout`) de la BD de prod en un solo comando. El
-archivo cae en `apps/docker/backups/` (ignorada por git) con nombre
+Genera un dump **completo** de la BD de prod en un solo comando: schema, datos y
+la tabla `_prisma_migrations`, sin lista de tablas. Lo que exista en la base
+entra solo, así que una migración nunca obliga a tocar el script. El archivo cae
+en `apps/docker/backups/` (ignorada por git) con nombre
 `gym-prod_YYYY-MM-DD_HHmmss.sql` (hora UTC).
 
 ```bash
 # desde apps/docker/, en Linux, mac o Git Bash en Windows
 sh scripts/backup.sh
 sh scripts/backup.sh /otra/carpeta   # guardar en otra carpeta
+CONTAINER=gym-tracker-dev-sql sh scripts/backup.sh   # dumpear dev (pruebas)
 ```
 
 Corre `pg_dump` dentro del contenedor `gym-tracker-sql` (misma versión que el
@@ -241,66 +243,11 @@ línea LF en los `.sh` (`.gitattributes`); con CRLF, `sh` no puede leerlo.
 corre Docker. `cron` arranca con un `PATH` mínimo: si el comando que sube el
 archivo no vive en `/usr/bin` o `/bin`, decláralo en la cabecera del crontab.
 
-### ¿Y si cambia el schema de la base de datos?
-
-El script dumpea explícitamente seis tablas: `User`, `Exercise`, `Program`,
-`Routine`, `RoutineItem` y `Workout` (los `-t` de `backup.sh`). `Equipment`
-queda fuera a propósito: es un catálogo fijo que siembra su migración. Según el cambio:
-
-| Cambio en el schema | ¿Hay que tocar el script? |
-|---------------------|---------------------------|
-| Agregar/quitar columnas en cualquiera de las seis | **No** — `--data-only` toma las columnas que existan al momento del dump, y cada `COPY` lleva su lista de columnas explícita. Un backup viejo carga en un esquema que **agregó** columnas (las que no menciona toman su valor por defecto), pero **no** en uno que **quitó** columnas que el backup sí trae. |
-| Agregar una tabla nueva | **Sí** — añade otra línea `-t 'public."NuevaTabla"'` o quedará fuera del backup. |
-| Renombrar una tabla | **Sí** — actualiza el patrón `-t` correspondiente. |
-
-### Backups anteriores a los bloques de rutina (RM-031)
-
-RM-031 quitó columnas en dos momentos, así que un backup de antes no carga
-directo en el esquema actual:
-
-| Backup | Trae columnas que ya no existen |
-|--------|---------------------------------|
-| Anterior a `20260916180000_drop_routine_item_targets` (p. ej. `gym-prod_2026-09-16_161847.sql`) | `RoutineItem.targetSets`/`targetReps`/`targetDurationSec`/`isApproximation` y `Exercise.isTimed` |
-| Anterior a `20260918120000_drop_exercise_is_timed` (p. ej. `gym-prod_2026-09-16_165959.sql`) | `Exercise.isTimed` (sus rutinas tienen bloques `legacy`) |
-
-Para usarlo, sobre una BD con todas las migraciones aplicadas (los archivos
-están en `apps/api/prisma/migrations/`):
-
-1. Vuelve a crear temporalmente las columnas que trae el backup:
-   ```sql
-   ALTER TABLE "Exercise" ADD COLUMN "isTimed" BOOLEAN NOT NULL DEFAULT false;
-   -- solo si el backup es anterior a 20260916180000:
-   ALTER TABLE "RoutineItem" ADD COLUMN "targetSets" INTEGER,
-     ADD COLUMN "targetReps" INTEGER, ADD COLUMN "targetDurationSec" INTEGER,
-     ADD COLUMN "isApproximation" BOOLEAN NOT NULL DEFAULT false;
-   ```
-2. Corre `restore.sh` con ese backup.
-3. Solo si es anterior a `20260916180000`: ejecuta el `UPDATE` de
-   `20260916120000_add_routine_item_blocks/migration.sql` y luego
-   `20260916180000_drop_routine_item_targets/migration.sql`.
-4. Ejecuta `20260917180000_migrate_legacy_blocks/migration.sql` (bloques `legacy`
-   a los tipos nuevos, peso corporal sin peso y calentamientos viejos).
-5. Ejecuta `20260918120000_drop_exercise_is_timed/migration.sql`.
-
-### Backups anteriores a quitar la aproximación (WL-012)
-
-Un backup anterior a `20261007120000_drop_workout_approximation` trae
-`Workout.isApproximation`. Sobre una BD con todas las migraciones aplicadas:
-
-1. `ALTER TABLE "Workout" ADD COLUMN "isApproximation" BOOLEAN NOT NULL DEFAULT false;`
-2. Corre `restore.sh` con ese backup.
-3. Ejecuta `20261007120000_drop_workout_approximation/migration.sql` (pasa las
-   series y bloques de aproximación a calentamiento y borra la columna).
-
-> El backup es **solo datos**, no incluye el schema. Por eso al restaurar, la BD
-> destino debe tener las tablas ya creadas por las migraciones de Prisma.
-
 ## Restaurar un backup (llenar dev o prod)
 
-Carga un backup en la BD que elijas. **Reemplaza** los datos: hace `TRUNCATE`
-de `Workout`, `RoutineItem`, `Routine`, `Program`, `Exercise` y `User` (con `CASCADE`) y
-luego carga el backup. Ojo: es marcha atrás **total**, no quirúrgica — también
-se van los usuarios y las rutinas, no solo los sets.
+Deja la BD que elijas **exactamente** como estaba al hacer el backup: borra el
+schema `public` entero (tablas, datos, tipos y cualquier tabla que el backup no
+traiga) y carga el dump. Es marcha atrás **total**, no quirúrgica.
 
 ```bash
 # desde apps/docker/, en Linux, mac o Git Bash en Windows
@@ -309,20 +256,36 @@ sh scripts/restore.sh prod       # ídem, sobre prod
 sh scripts/restore.sh dev /otra/carpeta/gym-prod_2026-06-14_120000.sql   # archivo concreto
 ```
 
-- Mapea el destino al contenedor: `dev` → `gym-tracker-dev-sql`, `prod` →
-  `gym-tracker-sql`. Como `backup.sh`, toma las credenciales del propio
-  contenedor, sin leer ningún `.env`.
+- Mapea el destino a sus contenedores: `dev` → `gym-tracker-dev-sql` y
+  `gym-tracker-dev-api`, `prod` → `gym-tracker-sql` y `gym-tracker-api`. Como
+  `backup.sh`, toma las credenciales del propio contenedor, sin leer ningún `.env`.
 - Si no pasas archivo, toma el `gym-prod_*.sql` más reciente de `apps/docker/backups/`.
-- **Pide confirmación** (hay que escribir `si`) porque borra los datos actuales.
+- **Pide confirmación** (hay que escribir `si`) porque borra la base actual.
+- **Detiene la API** mientras restaura y la vuelve a arrancar al terminar (también
+  si falla). Al arrancar, la API corre `prisma migrate deploy`: si el backup es de
+  antes de alguna migración, se aplica sola sobre los datos restaurados. Si la API
+  estaba apagada, queda apagada y las migraciones se aplican cuando la levantes.
 - Va en **una sola transacción**: si cualquier línea del backup falla, se deshace
-  todo, también el `TRUNCATE`, y la base queda como estaba.
-- El contenedor destino debe estar **corriendo** y sus tablas deben **existir ya**
-  (creadas por las migraciones de Prisma). Si la BD está vacía, levanta la API de
-  ese entorno una vez (aplica `migrate deploy` al arrancar) o corre
-  `prisma migrate dev` contra dev, y reintenta.
+  todo, también el borrado, y la base queda como estaba.
+- Solo va **hacia adelante**: un backup hecho con migraciones que el código actual
+  no tiene no se puede usar con ese código.
 
 > El restore corre por `docker exec` (no depende de puertos publicados), así que
 > funciona sobre el contenedor que tengas levantado, sea dev o prod.
+
+### Backups de solo datos (anteriores a TD-084)
+
+Hasta TD-084 el backup era de **solo datos** de una lista fija de tablas. Esos
+archivos no traen `CREATE TABLE` y `restore.sh` los rechaza. Para usar uno, sobre
+una BD con todas las migraciones aplicadas, corre la versión anterior del script:
+
+```bash
+git show 5a2be58:apps/docker/scripts/restore.sh > /tmp/restore-datos.sh
+sh /tmp/restore-datos.sh dev backups/gym-prod_2026-10-07_230155.sql
+```
+
+Los backups anteriores a quitar columnas (RM-031, WL-012) necesitan además los
+pasos manuales que documenta `git show 5a2be58:apps/docker/README.md`.
 
 ### Llevar los datos reales de prod a dev
 
@@ -337,8 +300,9 @@ sh scripts/backup.sh
 sh scripts/restore.sh dev
 ```
 
-Antes, confirma que las dos bases tienen las mismas migraciones aplicadas: si dev
-va atrasada o adelantada respecto a prod, el restore puede fallar.
+Si dev va atrasada respecto a prod no importa: el restore la deja igual que prod.
+Si va adelantada (migraciones nuevas aún sin desplegar), la API de dev las aplica
+al arrancar sobre los datos de prod.
 
 ## Resetear la base de datos
 
