@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-082] Caché de datos en el navegador
+Cada pantalla pide sus datos al montarse y cada viaje por el túnel cuesta ~250 ms (ver TD-080 en el changelog). Con una librería de caché (TanStack Query o SWR), volver a una pantalla mostraría al instante lo último cargado y refrescaría por detrás.
+
 ## [WL-078] Exportación para IA, segunda versión
 Mejoras al archivo de RM-021 según la revisión en [`docs/feedback/2026-10-09-export-ia.md`](../feedback/2026-10-09-export-ia.md): identificador de sesión, slug del ejercicio, objetivo de entrenamiento y un resumen calculado encima de las series. Se hacen cuando el uso real muestre que faltan.
 

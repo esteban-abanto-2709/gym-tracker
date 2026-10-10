@@ -14,20 +14,20 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-083] El historial descarga todas las series cada vez
+- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:160` · `apps/web/src/hooks/useWorkoutHistory.ts:33`
+- **Riesgo:** 3/10
+- **Problema:** `GET /workouts` devuelve todas las series del usuario con el ejercicio y el equipo completos en cada una. Con ~1900 series son 1 MB de JSON (91 KB comprimido, 32 ms en el servidor).
+- **Impacto futuro:** crece con cada entrenamiento; con años de datos el historial tardará en abrir y gastará datos móviles.
+- **Sugerencia:** paginar por día (o rango) y mandar solo los campos que la tarjeta usa.
+- **Fecha:** 2026-10-09 · **Estado:** Abierto
+
 ## [TD-081] Rutinas hace scroll con varias rutinas
 - **Ubicación:** `apps/web/src/app/routines/page.tsx`
 - **Riesgo:** 3/10
 - **Problema:** con 7 rutinas la pantalla mide ~933 px en un iPhone de 844 y hace scroll; los accesos a Programas y Explorar quedan bajo la barra. Choca con la regla de sin scroll de `docs/ux-foundations.md`.
 - **Impacto futuro:** cada rutina nueva empuja más contenido fuera de la pantalla.
 - **Sugerencia:** compactar las tarjetas o agrupar por programa, dejando los accesos arriba.
-- **Fecha:** 2026-10-09 · **Estado:** Abierto
-
-## [TD-080] La app se siente lenta
-- **Ubicación:** sin localizar (web, API, túnel o servidor)
-- **Riesgo:** 4/10
-- **Problema:** navegar y cargar pantallas se siente algo lento, aunque usable. No hay mediciones: puede venir del túnel, del servidor, de que cada pantalla pide sus datos al cargar sin caché o del tamaño del JavaScript.
-- **Impacto futuro:** entre series cada segundo cuenta; una app lenta empuja a anotar en otro lado.
-- **Sugerencia:** medir primero (tiempos de red por endpoint y de carga por pantalla) y atacar solo el cuello de botella que aparezca.
 - **Fecha:** 2026-10-09 · **Estado:** Abierto
 
 ## [TD-070] TikTok en Android sin probar

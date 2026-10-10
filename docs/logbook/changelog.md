@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-080] La app se siente lenta (2026-10-09 21:36)
+Medido en dev con datos reales: API y Postgres responden en 4–32 ms y el proxy de Next suma ~2 ms; cada petición por el túnel de Cloudflare cuesta ~250 ms. La lentitud es de red, no del código; quedan WL-082 (caché) y TD-083 (historial completo).
+
 ## [TD-079] La barra inferior ya no flota en iOS (2026-10-09 21:13)
 Al abrir la app instalada, iOS entrega un viewport 39 pt más bajo que la pantalla y lo fijo abajo flotaba. `.anchor-bottom` corrige el borde con `100dvh - 100lvh` en modo instalado (barra y paneles inferiores). El alto de la barra vive en `--nav-h` y las pantallas reservan su espacio con `.pb-nav`. En observación: cuando iOS corrige el viewport se nota un salto breve; revisar en otros iPhones y revertir si se ve mal.
 
