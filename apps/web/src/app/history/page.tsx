@@ -81,7 +81,7 @@ export default function HistoryPage() {
       </AppHeader>
 
       {/* Main Content */}
-      <main className="flex-1 px-6 py-6 pb-24 overflow-y-auto relative z-10 max-w-md mx-auto w-full">
+      <main className="flex-1 px-6 pt-6 pb-nav overflow-y-auto relative z-10 max-w-md mx-auto w-full">
         {loading ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />

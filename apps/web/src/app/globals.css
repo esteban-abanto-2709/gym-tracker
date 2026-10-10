@@ -112,6 +112,20 @@ body {
   overscroll-behavior: none;
 }
 
+:root {
+  --nav-h: 5rem;
+}
+
+.pb-nav {
+  padding-bottom: calc(var(--nav-h) + 1rem);
+}
+
+@media (display-mode: standalone) {
+  .anchor-bottom {
+    bottom: calc(100dvh - 100lvh);
+  }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

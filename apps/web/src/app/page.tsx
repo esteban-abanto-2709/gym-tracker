@@ -6,7 +6,7 @@ import { HomeActions } from "@/components/train/HomeActions";
 export default function Home() {
   return (
     <PageShell>
-      <main className="flex-1 px-6 pt-[calc(3.5rem+env(safe-area-inset-top))] pb-28 relative z-10 animate-fade-in-up">
+      <main className="flex-1 px-6 pt-[calc(3.5rem+env(safe-area-inset-top))] pb-nav relative z-10 animate-fade-in-up">
         <div className="max-w-md w-full mx-auto space-y-5">
           {/* Hero */}
           <div>

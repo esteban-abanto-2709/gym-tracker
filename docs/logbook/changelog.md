@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-079] La barra inferior ya no flota en iOS (2026-10-09 21:13)
+Al abrir la app instalada, iOS entrega un viewport 39 pt más bajo que la pantalla y lo fijo abajo flotaba. `.anchor-bottom` corrige el borde con `100dvh - 100lvh` en modo instalado (barra y paneles inferiores). El alto de la barra vive en `--nav-h` y las pantallas reservan su espacio con `.pb-nav`. En observación: cuando iOS corrige el viewport se nota un salto breve; revisar en otros iPhones y revertir si se ve mal.
+
 ## [RM-021] Exportar el historial para tu IA (2026-10-09 17:39)
 Desde el Historial se elige un rango (7, 30, 90 días, todo o fechas) y se comparte, descarga o copia un `.md` armado en el navegador: edad, medidas con punto de partida, convenciones y una fila por serie en CSV con rutina y nota. Suma cobertura del período, versión del formato y reglas de vacíos (ver `docs/feedback/2026-10-09-export-ia.md`).
 

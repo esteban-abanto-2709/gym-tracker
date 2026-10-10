@@ -96,12 +96,13 @@ export function MeasureSheet({
     }
   };
 
-  const viewportStyle = viewport
-    ? {
-        bottom: `${Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)}px`,
-        maxHeight: `${viewport.height - 16}px`,
-      }
-    : undefined;
+  const keyboard = viewport
+    ? window.innerHeight - viewport.height - viewport.offsetTop
+    : 0;
+  const viewportStyle =
+    viewport && keyboard > 0
+      ? { bottom: `${keyboard}px`, maxHeight: `${viewport.height - 16}px` }
+      : undefined;
 
   return createPortal(
     <>
@@ -114,7 +115,7 @@ export function MeasureSheet({
         role="dialog"
         aria-label={existing ? "Editar medida" : "Registrar medida"}
         style={viewportStyle}
-        className="fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[90dvh] overflow-y-auto animate-sheet-up px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
+        className="anchor-bottom fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[90dvh] overflow-y-auto animate-sheet-up px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
       >
         <div className="max-w-md mx-auto">
           <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-3" />

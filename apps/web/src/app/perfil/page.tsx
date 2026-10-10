@@ -13,7 +13,7 @@ export default function PerfilPage() {
 
   return (
     <PageShell variant="history">
-      <main className="flex-1 px-6 pt-[calc(2.5rem+env(safe-area-inset-top))] pb-22 relative z-10 animate-fade-in-up">
+      <main className="flex-1 px-6 pt-[calc(2.5rem+env(safe-area-inset-top))] pb-nav relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto">
           <p className="kicker text-primary text-[0.7rem]">{"// tu cuenta"}</p>
           <div className="mt-2 flex items-end justify-between gap-4">

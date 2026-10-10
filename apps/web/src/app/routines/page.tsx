@@ -99,7 +99,7 @@ export default function RoutinesPage() {
         }
       />
 
-      <main className="flex-1 px-6 pt-8 pb-28 relative z-10 animate-fade-in-up">
+      <main className="flex-1 px-6 pt-8 pb-nav relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto space-y-3">
           {loading ? (
             <div className="flex justify-center py-16">
