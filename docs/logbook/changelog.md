@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-083] El historial ya no descarga todas las series (2026-10-09 21:55)
+`GET /workouts/days` trae la lista de días y el último día (2 KB en vez de 1 MB); cada día y la exportación para IA piden su rango con `GET /workouts?from&to`, ahora obligatorio. El `.md` se sigue armando en el navegador; `toLocalDateString` reutiliza su formateador (de ~170 a ~11 ms).
+
 ## [TD-080] La app se siente lenta (2026-10-09 21:36)
 Medido en dev con datos reales: API y Postgres responden en 4–32 ms y el proxy de Next suma ~2 ms; cada petición por el túnel de Cloudflare cuesta ~250 ms. La lentitud es de red, no del código; quedan WL-082 (caché) y TD-083 (historial completo).
 

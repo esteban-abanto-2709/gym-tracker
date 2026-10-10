@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-083] El historial descarga todas las series cada vez
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:160` · `apps/web/src/hooks/useWorkoutHistory.ts:33`
-- **Riesgo:** 3/10
-- **Problema:** `GET /workouts` devuelve todas las series del usuario con el ejercicio y el equipo completos en cada una. Con ~1900 series son 1 MB de JSON (91 KB comprimido, 32 ms en el servidor).
-- **Impacto futuro:** crece con cada entrenamiento; con años de datos el historial tardará en abrir y gastará datos móviles.
-- **Sugerencia:** paginar por día (o rango) y mandar solo los campos que la tarjeta usa. La exportación para IA pide su rango aparte (`?from&to`) y sigue armando el `.md` en el navegador.
-- **Fecha:** 2026-10-09 · **Estado:** En progreso (2026-10-09)
-
 ## [TD-081] Rutinas hace scroll con varias rutinas
 - **Ubicación:** `apps/web/src/app/routines/page.tsx`
 - **Riesgo:** 3/10

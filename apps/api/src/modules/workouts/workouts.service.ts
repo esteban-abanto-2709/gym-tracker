@@ -163,18 +163,11 @@ export class WorkoutsService {
     };
   }
 
-  async findAll(userId: string, from?: string, to?: string) {
+  async findAll(userId: string, from: string, to: string) {
     return this.prisma.workout.findMany({
       where: {
         userId,
-        ...(from || to
-          ? {
-              createdAt: {
-                ...(from ? { gte: new Date(from) } : {}),
-                ...(to ? { lt: new Date(to) } : {}),
-              },
-            }
-          : {}),
+        createdAt: { gte: new Date(from), lt: new Date(to) },
       },
       include: WORKOUT_INCLUDE,
       orderBy: {

@@ -68,11 +68,15 @@ describe('WorkoutsService.findAll', () => {
       workout: { findMany },
     } as unknown as PrismaService);
 
-    await service.findAll('u1');
+    await service.findAll(
+      'u1',
+      '2026-10-01T05:00:00.000Z',
+      '2026-10-02T05:00:00.000Z',
+    );
 
     expect(findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { userId: 'u1' },
+        where: expect.objectContaining({ userId: 'u1' }) as unknown,
         include: expect.objectContaining({
           routine: { select: { name: true } },
         }) as unknown,
