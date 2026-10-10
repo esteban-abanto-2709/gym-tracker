@@ -102,10 +102,7 @@ describe('computeStreak', () => {
   it('hoy con una serie bajo el tope ya rompe la racha', () => {
     expect(
       streakOf(
-        [
-          ...session('2026-10-04', [10, 10, 10]),
-          ...session('2026-10-20', [9]),
-        ],
+        [...session('2026-10-04', [10, 10, 10]), ...session('2026-10-20', [9])],
         '2026-10-20',
       ).streak,
     ).toBe(0);
@@ -129,9 +126,9 @@ describe('computeStreak', () => {
   });
 
   it('sin sesiones con rutina no hay racha ni sugerencia', () => {
-    expect(streakOf(session('2026-10-04', [10, 10, 10], { free: true }))).toEqual(
-      { streak: 0, suggestion: null },
-    );
+    expect(
+      streakOf(session('2026-10-04', [10, 10, 10], { free: true })),
+    ).toEqual({ streak: 0, suggestion: null });
   });
 });
 

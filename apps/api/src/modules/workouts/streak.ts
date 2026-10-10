@@ -105,10 +105,6 @@ export function computeStreak(
   }
 
   const belowFloor = reference.sets.some((s) => (s.reps ?? 0) < floor);
-  const suggestion: Suggestion = belowFloor
-    ? 'down'
-    : streak > 0
-      ? 'up'
-      : null;
+  const suggestion: Suggestion = belowFloor ? 'down' : streak > 0 ? 'up' : null;
   return { streak, suggestion };
 }

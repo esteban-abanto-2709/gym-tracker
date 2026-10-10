@@ -79,6 +79,73 @@ describe('WorkoutsService.findAll', () => {
       }),
     );
   });
+
+  it('filtra por rango: desde inclusive, hasta exclusivo', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const service = new WorkoutsService({
+      workout: { findMany },
+    } as unknown as PrismaService);
+
+    await service.findAll(
+      'u1',
+      '2026-10-01T05:00:00.000Z',
+      '2026-10-02T05:00:00.000Z',
+    );
+
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          userId: 'u1',
+          createdAt: {
+            gte: new Date('2026-10-01T05:00:00.000Z'),
+            lt: new Date('2026-10-02T05:00:00.000Z'),
+          },
+        },
+      }),
+    );
+  });
+});
+
+describe('WorkoutsService.getDays', () => {
+  it('devuelve los dias locales y las series desde el inicio del ultimo dia', async () => {
+    const findMany = jest
+      .fn()
+      .mockResolvedValueOnce([
+        { createdAt: day('2026-10-09T02:00:00Z') },
+        { createdAt: day('2026-10-08T14:00:00Z') },
+        { createdAt: day('2026-10-08T13:00:00Z') },
+        { createdAt: day('2026-10-06T15:00:00Z') },
+      ])
+      .mockResolvedValueOnce([{ id: 's1' }]);
+    const service = new WorkoutsService({
+      workout: { findMany },
+    } as unknown as PrismaService);
+
+    const result = await service.getDays('u1', 'America/Lima');
+
+    expect(result).toEqual({
+      days: ['2026-10-08', '2026-10-06'],
+      sets: [{ id: 's1' }],
+    });
+    expect(findMany).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: {
+          userId: 'u1',
+          createdAt: { gte: day('2026-10-08T13:00:00Z') },
+        },
+      }),
+    );
+  });
+
+  it('sin series no pide nada mas', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const service = new WorkoutsService({
+      workout: { findMany },
+    } as unknown as PrismaService);
+
+    expect(await service.getDays('u1')).toEqual({ days: [], sets: [] });
+    expect(findMany).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('WorkoutsService lastMeasure', () => {
@@ -214,7 +281,11 @@ describe('CreateWorkoutDto', () => {
     expect(
       await errorsFor({ ...base, weight: 20, setType: 'WARMUP' }),
     ).toHaveLength(0);
-    const errors = await errorsFor({ ...base, weight: 20, setType: 'COOLDOWN' });
+    const errors = await errorsFor({
+      ...base,
+      weight: 20,
+      setType: 'COOLDOWN',
+    });
     expect(errors.map((e) => e.property)).toContain('setType');
   });
 

@@ -9,6 +9,12 @@ import { computeStreak, groupSessions, type StreakTarget } from './streak';
 
 const PROGRESS_HISTORY_SETS = 300;
 
+const WORKOUT_INCLUDE = {
+  exercise: true,
+  equipment: true,
+  routine: { select: { name: true } },
+} as const;
+
 type SetMeasure = 'weight_reps' | 'reps' | 'time';
 
 function measureOf(set: {
@@ -157,18 +163,45 @@ export class WorkoutsService {
     };
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string, from?: string, to?: string) {
     return this.prisma.workout.findMany({
-      where: { userId },
-      include: {
-        exercise: true,
-        equipment: true,
-        routine: { select: { name: true } },
+      where: {
+        userId,
+        ...(from || to
+          ? {
+              createdAt: {
+                ...(from ? { gte: new Date(from) } : {}),
+                ...(to ? { lt: new Date(to) } : {}),
+              },
+            }
+          : {}),
       },
+      include: WORKOUT_INCLUDE,
       orderBy: {
         createdAt: 'desc',
       },
     });
+  }
+
+  async getDays(userId: string, tz?: string) {
+    const all = await this.prisma.workout.findMany({
+      where: { userId },
+      select: { createdAt: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    const local = all.map((w) => toLocalDateString(w.createdAt, tz));
+    const days = [...new Set(local)];
+    if (days.length === 0) return { days, sets: [] };
+
+    const latestCount = local.findIndex((d) => d !== days[0]);
+    const latestStart =
+      all[(latestCount === -1 ? all.length : latestCount) - 1].createdAt;
+    const sets = await this.prisma.workout.findMany({
+      where: { userId, createdAt: { gte: latestStart } },
+      include: WORKOUT_INCLUDE,
+      orderBy: { createdAt: 'desc' },
+    });
+    return { days, sets };
   }
 
   async update(id: string, userId: string, updateWorkoutDto: UpdateWorkoutDto) {

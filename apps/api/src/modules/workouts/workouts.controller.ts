@@ -14,6 +14,7 @@ import { SetType } from '@prisma/client';
 import { WorkoutsService } from './workouts.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
+import { WorkoutRangeDto } from './dto/workout-range.dto';
 import {
   CurrentUser,
   type AuthUser,
@@ -59,9 +60,17 @@ export class WorkoutsController {
     return this.workoutsService.getProgress(user.id, exerciseId, routineId, tz);
   }
 
+  @Get('days')
+  async getDays(@CurrentUser() user: AuthUser, @Query('tz') tz?: string) {
+    return this.workoutsService.getDays(user.id, tz);
+  }
+
   @Get()
-  async findAll(@CurrentUser() user: AuthUser) {
-    return this.workoutsService.findAll(user.id);
+  async findAll(
+    @CurrentUser() user: AuthUser,
+    @Query() range: WorkoutRangeDto,
+  ) {
+    return this.workoutsService.findAll(user.id, range.from, range.to);
   }
 
   @Patch(':id')
