@@ -18,7 +18,6 @@ const sameList = (a: string[], b: string[]) =>
   a.length === b.length && a.every((v, i) => v === b[i]);
 
 interface StoredExercise {
-  name: string;
   mechanic: string | null;
   primaryMuscles: string[];
   secondaryMuscles: string[];
@@ -27,7 +26,6 @@ interface StoredExercise {
 
 function isUnchanged(stored: StoredExercise, exercise: OfficialExercise) {
   return (
-    stored.name === exercise.names.en &&
     stored.mechanic === exercise.mechanic &&
     sameList(stored.primaryMuscles, exercise.primaryMuscles) &&
     sameList(stored.secondaryMuscles, exercise.secondaryMuscles) &&
@@ -68,8 +66,8 @@ export async function seedOfficialExercises(
 
     const saved = await prisma.exercise.upsert({
       where: { slug },
-      create: { slug, name: names.en, ...fields },
-      update: { name: names.en, ...fields },
+      create: { slug, ...fields },
+      update: fields,
     });
     for (const locale of LOCALES) {
       const name = names[locale];

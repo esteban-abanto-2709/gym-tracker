@@ -104,7 +104,6 @@ describe('ExercisesController (e2e)', () => {
   it('/exercises (POST) returns the official exercise when the name matches', async () => {
     const official = await prisma.exercise.create({
       data: {
-        name: `Official E2E ${stamp}`,
         slug: `e2e-official-${stamp}`,
         names: {
           create: {
@@ -196,7 +195,6 @@ describe('ExercisesController (e2e)', () => {
       officialId = (
         await prisma.exercise.create({
           data: {
-            name: en,
             slug: `e2e-bench-${stamp}`,
             names: {
               create: [

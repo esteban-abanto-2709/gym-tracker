@@ -56,7 +56,6 @@ model Program {
 
 model Exercise {
   id               String         @id @default(uuid())
-  name             String
   slug             String         @unique
   primaryMuscles   Muscle[]       @default([])
   secondaryMuscles Muscle[]       @default([])

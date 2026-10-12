@@ -30,7 +30,6 @@ export class ExercisesService {
 
     return this.prisma.exercise.create({
       data: {
-        name,
         slug,
         primaryMuscles,
         secondaryMuscles,

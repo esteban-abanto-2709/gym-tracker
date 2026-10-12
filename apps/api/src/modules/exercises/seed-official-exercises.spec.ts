@@ -15,7 +15,6 @@ interface NameRow {
 interface Row {
   id: string;
   slug: string;
-  name: string;
   primaryMuscles: string[];
   secondaryMuscles: string[];
   mechanic: string | null;
@@ -166,7 +165,6 @@ describe('seedOfficialExercises', () => {
       {
         id: 'mine',
         slug: 'bench-press',
-        name: 'Bench Press',
         primaryMuscles: [],
         secondaryMuscles: [],
         mechanic: 'ISOLATION',
