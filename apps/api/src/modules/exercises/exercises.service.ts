@@ -7,7 +7,8 @@ import { slugify } from '../../common/slugify';
 export class ExercisesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createExerciseDto: CreateExerciseDto) {
+  async create(userId: string, createExerciseDto: CreateExerciseDto) {
+    const { primaryMuscles, secondaryMuscles, mechanic } = createExerciseDto;
     const name = createExerciseDto.name.trim();
     const slug = slugify(name);
 
@@ -17,15 +18,23 @@ export class ExercisesService {
     }
 
     return this.prisma.exercise.create({
-      data: { name, slug },
+      data: {
+        name,
+        slug,
+        primaryMuscles,
+        secondaryMuscles,
+        mechanic,
+        createdById: userId,
+      },
     });
   }
 
   async findAll() {
     return this.prisma.exercise.findMany({
-      orderBy: {
-        name: 'asc',
-      },
+      orderBy: [
+        { createdById: { sort: 'asc', nulls: 'first' } },
+        { name: 'asc' },
+      ],
     });
   }
 }

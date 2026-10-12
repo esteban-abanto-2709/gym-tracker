@@ -25,11 +25,26 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** la demo se usa en una sesión real y se decide si reemplaza a `SetForm` + `SetDoneScreen`.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-056] Catálogo de ejercicios con alias y músculos
-- **Objetivo:** que cada ejercicio tenga un nombre claro en español, se encuentre por sus sinónimos ("tirón" / "lat pulldown") y sepa qué músculos trabaja. Es la base de la búsqueda, del botón de video y de cualquier análisis por músculo. Absorbe WL-042.
-- **Alcance:** el slug no cambia; se agregan nombre en español, alias buscables y músculos primarios y secundarios. Curar a mano los ejercicios de fuerza a partir de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (dominio público) y sembrarlos con una migración que complete los existentes por slug, sin duplicar.
-- **Hecho cuando:** buscar "press de banca" o "bench press" encuentra el mismo ejercicio, todos los ejercicios en uso tienen nombre en español y músculos, y ninguna serie existente pierde su ejercicio.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
+## [RM-056] Diccionario de ejercicios: el núcleo
+- **Objetivo:** un diccionario oficial de ejercicios con nombre en español bien escrito y los músculos que trabaja cada uno. Es la base de compartir programas, del análisis por músculo, del botón de video y de importar programas armados con IA. Absorbe WL-042. Los alias y los idiomas van en RM-086; la personalización por usuario, en WL-063.
+- **Capas:** este RM hace solo el **núcleo** (qué es el ejercicio). El nombre sigue en `Exercise.name`, en español, hasta RM-086.
+- **Músculos en dos niveles:** cada ejercicio guarda **músculos** primarios y secundarios de una lista cerrada de 19 (los 17 de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) con "hombros" separado en deltoide anterior, lateral y posterior). Cada músculo pertenece a un **grupo** (unos 12: Pecho, Espalda, Hombros, Bíceps…), que es lo que mostrará el radar. La equivalencia músculo → grupo vive en el código, no en la base. Además, el **tipo** del ejercicio: compuesto o aislamiento.
+- **Oficial o de usuario:** `Exercise` guarda quién lo creó. Sin creador = oficial. Cualquier usuario puede crear un ejercicio en pleno entrenamiento pidiendo **solo el nombre** (músculos y tipo opcionales); es visible para todos, se marca como no oficial y la búsqueda muestra primero los oficiales.
+- **Cómo entra cada cosa:**
+  - **Estructura** (músculos, tipo, creador) → migración.
+  - **Diccionario oficial** (~100-150 ejercicios de fuerza comunes, con nombre en español curado a mano y músculos tomados de free-exercise-db) → **semilla** idempotente: un archivo de datos en el repo y un script que crea o actualiza por `slug`. Corre en cada despliegue y nunca borra ni modifica ejercicios de usuarios.
+  - **Ejercicios existentes:** pasan a ser del usuario que los creó (no oficiales). Un **script de una sola vez** los fusiona con su equivalente oficial: mueve sus series y rutinas al oficial y borra el duplicado. Los que no tengan equivalente quedan como del usuario.
+- **Hecho cuando:** el diccionario oficial está sembrado con músculos y tipo; crear un ejercicio desde el entrenamiento pide solo el nombre y queda como no oficial; tras la fusión, el total de series y de ítems de rutina es idéntico al de antes, y los ejercicios en uso apuntan al oficial cuando existe. Verificado primero en dev con una copia de los datos reales.
+- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-11)
+
+## [RM-086] Diccionario de ejercicios: idioma y alias
+- **Objetivo:** que un ejercicio se encuentre por cualquiera de sus nombres ("press de banca", "press plano", "bench press") y se muestre en el idioma del usuario. Depende de RM-056.
+- **Alcance:** los nombres salen de `Exercise.name` a una tabla de nombres por idioma, donde cada fila es un nombre principal o un alias. La búsqueda ignora tildes y mayúsculas y encuentra por palabras sueltas. En el frontend, una librería de i18n para mostrar el nombre del ejercicio en el idioma elegido.
+- **A decidir al empezar:**
+  - Si los usuarios pueden agregar alias y quién los ve. Propuesta: alias oficiales curados para todos y alias personales que solo ve quien los crea, para que nadie ensucie la búsqueda de los demás.
+  - Si la librería de i18n traduce también la interfaz o solo los nombres de ejercicios.
+- **Hecho cuando:** buscar "press plano" o "bench press" encuentra el mismo ejercicio oficial, y cambiar el idioma muestra su nombre en ese idioma.
+- **Fecha:** 2026-10-10 · **Estado:** Abierto
 
 ## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.

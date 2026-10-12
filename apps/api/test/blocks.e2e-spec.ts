@@ -54,8 +54,8 @@ describe('Bloques y sets (e2e)', () => {
     await prisma.workout.deleteMany({ where: { userId } });
     await prisma.routineItem.deleteMany({ where: { routine: { userId } } });
     await prisma.routine.deleteMany({ where: { userId } });
-    await prisma.user.delete({ where: { id: userId } });
     await prisma.exercise.delete({ where: { id: exerciseId } });
+    await prisma.user.delete({ where: { id: userId } });
     await app.close();
   });
 

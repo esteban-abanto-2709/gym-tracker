@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-087] Fusionar y promover ejercicios
+Con ejercicios creados por usuarios aparecen duplicados ("press raro" creado varias veces). Una herramienta para fusionar un ejercicio en otro (mover sus series y rutinas) y para promover uno de usuario a oficial, completándole músculos y tipo. Depende de RM-056.
+
 ## [WL-082] Caché de datos en el navegador
 Cada pantalla pide sus datos al montarse y cada viaje por el túnel cuesta ~250 ms (ver TD-080 en el changelog). Con una librería de caché (TanStack Query o SWR), volver a una pantalla mostraría al instante lo último cargado y refrescaría por detrás.
 

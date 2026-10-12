@@ -20,6 +20,7 @@ model User {
   activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
   birthDate       DateTime?         @db.Date
   measurements    BodyMeasurement[]
+  exercises       Exercise[]
   createdAt       DateTime          @default(now())
 }
 
@@ -53,12 +54,44 @@ model Program {
 }
 
 model Exercise {
-  id           String        @id @default(uuid())
-  name         String
-  slug         String        @unique
-  workouts     Workout[]
-  routineItems RoutineItem[]
-  createdAt    DateTime      @default(now())
+  id               String        @id @default(uuid())
+  name             String
+  slug             String        @unique
+  primaryMuscles   Muscle[]      @default([])
+  secondaryMuscles Muscle[]      @default([])
+  mechanic         Mechanic?
+  createdById      String?
+  createdBy        User?         @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  workouts         Workout[]
+  routineItems     RoutineItem[]
+  createdAt        DateTime      @default(now())
+}
+
+enum Muscle {
+  ABDOMINALS
+  ABDUCTORS
+  ADDUCTORS
+  BICEPS
+  CALVES
+  CHEST
+  FOREARMS
+  GLUTES
+  HAMSTRINGS
+  LATS
+  LOWER_BACK
+  MIDDLE_BACK
+  NECK
+  QUADRICEPS
+  TRAPS
+  TRICEPS
+  FRONT_DELTS
+  SIDE_DELTS
+  REAR_DELTS
+}
+
+enum Mechanic {
+  COMPOUND
+  ISOLATION
 }
 
 model Equipment {

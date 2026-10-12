@@ -45,7 +45,7 @@ describe('ExercisesController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.exercise.deleteMany({ where: { name: EXERCISE } });
+    await prisma.exercise.deleteMany({ where: { createdById: userId } });
     await prisma.user.delete({ where: { id: userId } });
     await app.close();
   });
@@ -71,6 +71,41 @@ describe('ExercisesController (e2e)', () => {
       .expect((res) => {
         expect(res.body.name).toEqual(EXERCISE);
         expect(res.body.slug).toBeTruthy();
+        expect(res.body.createdById).toEqual(userId);
+        expect(res.body.primaryMuscles).toEqual([]);
+        expect(res.body.mechanic).toBeNull();
       });
+  });
+
+  it('/exercises (POST) con musculos y tipo', () => {
+    return agent
+      .post('/exercises')
+      .send({
+        name: `${EXERCISE} completo`,
+        primaryMuscles: ['CHEST'],
+        secondaryMuscles: ['TRICEPS', 'FRONT_DELTS'],
+        mechanic: 'COMPOUND',
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body.primaryMuscles).toEqual(['CHEST']);
+        expect(res.body.secondaryMuscles).toEqual(['TRICEPS', 'FRONT_DELTS']);
+        expect(res.body.mechanic).toEqual('COMPOUND');
+      });
+  });
+
+  it('/exercises (POST) rechaza un musculo fuera de la lista', () => {
+    return agent
+      .post('/exercises')
+      .send({ name: `${EXERCISE} malo`, primaryMuscles: ['SHOULDERS'] })
+      .expect(400);
+  });
+
+  it('/exercises (GET) lista primero los oficiales', async () => {
+    const res = await agent.get('/exercises').expect(200);
+    const official = res.body.map((e: { createdById: string | null }) =>
+      e.createdById === null,
+    );
+    expect(official).toEqual([...official].sort((a, b) => +b - +a));
   });
 });
