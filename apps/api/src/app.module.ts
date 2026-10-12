@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ExerciseNamesInterceptor } from './common/interceptors/exercise-names.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './providers/prisma/prisma.module';
@@ -24,6 +25,10 @@ import { MeasurementsModule } from './modules/measurements/measurements.module';
     MeasurementsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_INTERCEPTOR, useClass: ExerciseNamesInterceptor },
+  ],
 })
 export class AppModule {}

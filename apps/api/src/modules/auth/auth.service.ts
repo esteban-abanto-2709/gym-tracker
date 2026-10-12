@@ -92,7 +92,12 @@ export class AuthService {
   async updateMe(id: string, dto: UpdateMeDto) {
     const user = await this.prisma.user.update({
       where: { id },
-      data: { birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null },
+      data: {
+        ...(dto.birthDate !== undefined && {
+          birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null,
+        }),
+        ...(dto.locale !== undefined && { locale: dto.locale }),
+      },
     });
     return this.publicUser(user);
   }
@@ -104,6 +109,7 @@ export class AuthService {
       username: user.username,
       slug: user.slug,
       birthDate: user.birthDate ? fromDbDate(user.birthDate) : null,
+      locale: user.locale,
     };
   }
 

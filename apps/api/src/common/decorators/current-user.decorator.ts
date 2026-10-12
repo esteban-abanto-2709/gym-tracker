@@ -1,8 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+import type { Locale } from '@prisma/client';
 
 export interface AuthUser {
   id: string;
+  locale: Locale;
 }
 
 export const CurrentUser = createParamDecorator(

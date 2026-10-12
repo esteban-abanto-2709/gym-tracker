@@ -103,7 +103,17 @@ describe('ExercisesController (e2e)', () => {
 
   it('/exercises (POST) returns the official exercise when the name matches', async () => {
     const official = await prisma.exercise.create({
-      data: { name: `Official E2E ${stamp}`, slug: `e2e-official-${stamp}` },
+      data: {
+        name: `Official E2E ${stamp}`,
+        slug: `e2e-official-${stamp}`,
+        names: {
+          create: {
+            locale: 'en',
+            name: `Official E2E ${stamp}`,
+            searchName: `official e2e ${stamp}`,
+          },
+        },
+      },
     });
     try {
       const res = await agent
@@ -173,5 +183,128 @@ describe('ExercisesController (e2e)', () => {
       (e: { createdById: string | null }) => e.createdById === null,
     );
     expect(official).toEqual([...official].sort((a, b) => +b - +a));
+  });
+
+  describe('names in the user language', () => {
+    let officialId: string;
+    const en = `Bench E2E ${stamp}`;
+    const es = `Press Banca E2E ${stamp}`;
+    const nameOf = (list: { id: string; name: string }[]) =>
+      list.find((e) => e.id === officialId)?.name;
+
+    beforeAll(async () => {
+      officialId = (
+        await prisma.exercise.create({
+          data: {
+            name: en,
+            slug: `e2e-bench-${stamp}`,
+            names: {
+              create: [
+                { locale: 'en', name: en, searchName: en.toLowerCase() },
+                {
+                  locale: 'es',
+                  name: es,
+                  searchName: es.toLowerCase(),
+                },
+              ],
+            },
+          },
+        })
+      ).id;
+    });
+
+    afterAll(async () => {
+      await prisma.workout.deleteMany({ where: { userId } });
+      await prisma.routine.deleteMany({ where: { userId } });
+      await prisma.user.update({
+        where: { id: userId },
+        data: { locale: null },
+      });
+      await prisma.exercise.delete({ where: { id: officialId } });
+    });
+
+    it('lists the name in the device language and both names for search', async () => {
+      const res = await agent
+        .get('/exercises')
+        .set('Accept-Language', 'es-PE')
+        .expect(200);
+      const official = (
+        res.body as { id: string; name: string; searchNames: string[] }[]
+      ).find((e) => e.id === officialId);
+      expect(official?.name).toBe(es);
+      expect(official?.searchNames.sort()).toEqual(
+        [en.toLowerCase(), es.toLowerCase()].sort(),
+      );
+      expect(official).not.toHaveProperty('names');
+    });
+
+    it('creating with the name in another language returns the official', async () => {
+      const res = await agent
+        .post('/exercises')
+        .set('Accept-Language', 'en-US')
+        .send({ name: es.toUpperCase() })
+        .expect(201);
+      expect((res.body as { id: string; name: string }).id).toBe(officialId);
+      expect((res.body as { name: string }).name).toBe(en);
+    });
+
+    it('localizes names inside routines and sets', async () => {
+      await agent
+        .post('/routines')
+        .send({
+          name: `E2E names ${stamp}`,
+          items: [{ exerciseId: officialId, position: 0, blocks: [] }],
+        })
+        .expect(201);
+      await agent
+        .post('/workouts')
+        .send({ exerciseId: officialId, reps: 5 })
+        .expect(201);
+
+      const routines = await agent
+        .get('/routines')
+        .set('Accept-Language', 'es-PE')
+        .expect(200);
+      const items = (
+        routines.body as {
+          items: { exercise: { id: string; name: string } }[];
+        }[]
+      ).flatMap((r) => r.items.map((i) => i.exercise));
+      expect(nameOf(items)).toBe(es);
+
+      const day = (offset: number) =>
+        new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+      const sets = await agent
+        .get(`/workouts?from=${day(-1)}&to=${day(1)}`)
+        .set('Accept-Language', 'en-US')
+        .expect(200);
+      expect(
+        nameOf(
+          (sets.body as { exercise: { id: string; name: string } }[]).map(
+            (w) => w.exercise,
+          ),
+        ),
+      ).toBe(en);
+    });
+
+    it('the saved preference wins over the device language', async () => {
+      const me = await agent
+        .patch('/auth/me')
+        .send({ locale: 'en' })
+        .expect(200);
+      expect((me.body as { locale: string }).locale).toBe('en');
+
+      const res = await agent
+        .get('/exercises')
+        .set('Accept-Language', 'es-PE')
+        .expect(200);
+      expect(nameOf(res.body as { id: string; name: string }[])).toBe(en);
+
+      await agent.patch('/auth/me').send({ locale: null }).expect(200);
+    });
+
+    it('rejects an unsupported language', () => {
+      return agent.patch('/auth/me').send({ locale: 'fr' }).expect(400);
+    });
   });
 });

@@ -10,7 +10,7 @@ import { computeStreak, groupSessions, type StreakTarget } from './streak';
 const PROGRESS_HISTORY_SETS = 300;
 
 const WORKOUT_INCLUDE = {
-  exercise: true,
+  exercise: { include: { names: true } },
   equipment: true,
   routine: { select: { name: true } },
 } as const;

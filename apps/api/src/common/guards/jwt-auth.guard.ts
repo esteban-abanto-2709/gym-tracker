@@ -8,12 +8,15 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
+import { resolveLocale } from '@/common/locale';
+import { PrismaService } from '@/providers/prisma/prisma.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly jwt: JwtService,
     private readonly reflector: Reflector,
+    private readonly prisma: PrismaService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,12 +30,21 @@ export class JwtAuthGuard implements CanActivate {
     const token = req.cookies?.token as string | undefined;
     if (!token) throw new UnauthorizedException();
 
+    let userId: string;
     try {
-      const payload = await this.jwt.verifyAsync<{ sub: string }>(token);
-      req.user = { id: payload.sub };
+      userId = (await this.jwt.verifyAsync<{ sub: string }>(token)).sub;
     } catch {
       throw new UnauthorizedException();
     }
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { locale: true },
+    });
+    if (!user) throw new UnauthorizedException();
+    req.user = {
+      id: userId,
+      locale: resolveLocale(user.locale, req.headers['accept-language']),
+    };
     return true;
   }
 }

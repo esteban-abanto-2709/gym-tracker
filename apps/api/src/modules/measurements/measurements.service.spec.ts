@@ -113,8 +113,15 @@ describe('UpdateMeDto', () => {
     expect(await errorsFor({ birthDate: null })).toHaveLength(0);
   });
 
-  it('exige el campo y rechaza fechas futuras', async () => {
-    expect(await errorsFor({})).toHaveLength(1);
+  it('accepts updating only some fields and rejects future dates', async () => {
+    expect(await errorsFor({})).toHaveLength(0);
     expect(await errorsFor({ birthDate: '2999-01-01' })).toHaveLength(1);
+  });
+
+  it('accepts es, en or null as the language and rejects anything else', async () => {
+    expect(await errorsFor({ locale: 'es' })).toHaveLength(0);
+    expect(await errorsFor({ locale: 'en' })).toHaveLength(0);
+    expect(await errorsFor({ locale: null })).toHaveLength(0);
+    expect(await errorsFor({ locale: 'fr' })).toHaveLength(1);
   });
 });

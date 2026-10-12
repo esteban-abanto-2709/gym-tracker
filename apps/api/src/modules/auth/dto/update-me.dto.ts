@@ -1,8 +1,13 @@
-import { ValidateIf } from 'class-validator';
+import { Locale } from '@prisma/client';
+import { IsEnum, IsOptional } from 'class-validator';
 import { IsPastDate } from '@/common/date-only';
 
 export class UpdateMeDto {
-  @ValidateIf((o: UpdateMeDto) => o.birthDate !== null)
+  @IsOptional()
   @IsPastDate()
-  birthDate: string | null;
+  birthDate?: string | null;
+
+  @IsOptional()
+  @IsEnum(Locale)
+  locale?: Locale | null;
 }

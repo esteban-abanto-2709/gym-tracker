@@ -6,7 +6,7 @@ import { normalizeBlock } from './blocks';
 
 export const itemsInclude = {
   items: {
-    include: { exercise: true },
+    include: { exercise: { include: { names: true } } },
     orderBy: { position: 'asc' as const },
   },
 };
