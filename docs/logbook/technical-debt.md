@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-088] Código con partes en español
+- **Ubicación:** `apps/api` y `apps/web` (identificadores, mensajes de log, nombres de tests, migraciones de datos)
+- **Riesgo:** 3/10
+- **Problema:** la regla es que todo el código va en inglés y solo lo que ve el usuario va en español, pero hay partes en español (por ejemplo, nombres de tests como `sin sesion responde 401` y la migración `saneo_catalogo_ejercicios`).
+- **Impacto futuro:** mezcla de idiomas que confunde a quien lea el código y choca con la capa de idioma de los ejercicios (RM-086).
+- **Sugerencia:** revisar ambas apps y pasar a inglés todo lo que no sea texto de UI; las migraciones ya aplicadas no se renombran.
+- **Fecha:** 2026-10-11 · **Estado:** Abierto
+
 ## [TD-085] Los backups locales del servidor no se borran nunca
 - **Ubicación:** `apps/docker/scripts/update.sh:6`
 - **Riesgo:** 2/10

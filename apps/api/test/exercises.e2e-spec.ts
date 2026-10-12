@@ -77,7 +77,7 @@ describe('ExercisesController (e2e)', () => {
       });
   });
 
-  it('/exercises (POST) con musculos y tipo', () => {
+  it('/exercises (POST) with muscles and mechanic', () => {
     return agent
       .post('/exercises')
       .send({
@@ -94,17 +94,32 @@ describe('ExercisesController (e2e)', () => {
       });
   });
 
-  it('/exercises (POST) rechaza un musculo fuera de la lista', () => {
+  it('/exercises (POST) rejects a muscle outside the list', () => {
     return agent
       .post('/exercises')
       .send({ name: `${EXERCISE} malo`, primaryMuscles: ['SHOULDERS'] })
       .expect(400);
   });
 
-  it('/exercises (GET) lista primero los oficiales', async () => {
+  it('/exercises (POST) returns the official exercise when the name matches', async () => {
+    const official = await prisma.exercise.create({
+      data: { name: `Official E2E ${stamp}`, slug: `e2e-official-${stamp}` },
+    });
+    try {
+      const res = await agent
+        .post('/exercises')
+        .send({ name: `official e2e ${stamp}` })
+        .expect(201);
+      expect(res.body.id).toEqual(official.id);
+    } finally {
+      await prisma.exercise.delete({ where: { id: official.id } });
+    }
+  });
+
+  it('/exercises (GET) lists official exercises first', async () => {
     const res = await agent.get('/exercises').expect(200);
-    const official = res.body.map((e: { createdById: string | null }) =>
-      e.createdById === null,
+    const official = res.body.map(
+      (e: { createdById: string | null }) => e.createdById === null,
     );
     expect(official).toEqual([...official].sort((a, b) => +b - +a));
   });

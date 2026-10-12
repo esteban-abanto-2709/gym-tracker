@@ -120,6 +120,10 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 
 ## Conventions
 
+- **All code is English**: identifiers, enums, slugs, seed data, log
+  messages, test names. Only what the user sees is Spanish; reference data
+  shown to users (like exercise names) is translated in a language layer, not
+  stored in Spanish in seeds.
 - UI copy is **Spanish**, short and direct. Icons come from `lucide-react`;
   `components/ui/` (shadcn) is not edited by hand.
 - Schema changes go through `prisma migrate dev`; containers run

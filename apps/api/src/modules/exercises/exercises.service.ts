@@ -12,7 +12,12 @@ export class ExercisesService {
     const name = createExerciseDto.name.trim();
     const slug = slugify(name);
 
-    const existing = await this.prisma.exercise.findUnique({ where: { slug } });
+    const existing = await this.prisma.exercise.findFirst({
+      where: {
+        OR: [{ slug }, { name: { equals: name, mode: 'insensitive' } }],
+      },
+      orderBy: { createdById: { sort: 'asc', nulls: 'first' } },
+    });
     if (existing) {
       return existing;
     }

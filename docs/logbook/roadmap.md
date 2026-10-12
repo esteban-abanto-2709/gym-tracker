@@ -26,13 +26,13 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
 ## [RM-056] Diccionario de ejercicios: el núcleo
-- **Objetivo:** un diccionario oficial de ejercicios con nombre en español bien escrito y los músculos que trabaja cada uno. Es la base de compartir programas, del análisis por músculo, del botón de video y de importar programas armados con IA. Absorbe WL-042. Los alias y los idiomas van en RM-086; la personalización por usuario, en WL-063.
-- **Capas:** este RM hace solo el **núcleo** (qué es el ejercicio). El nombre sigue en `Exercise.name`, en español, hasta RM-086.
-- **Músculos en dos niveles:** cada ejercicio guarda **músculos** primarios y secundarios de una lista cerrada de 19 (los 17 de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) con "hombros" separado en deltoide anterior, lateral y posterior). Cada músculo pertenece a un **grupo** (unos 12: Pecho, Espalda, Hombros, Bíceps…), que es lo que mostrará el radar. La equivalencia músculo → grupo vive en el código, no en la base. Además, el **tipo** del ejercicio: compuesto o aislamiento.
+- **Objetivo:** un diccionario oficial de ejercicios con slug y nombre en inglés y los músculos que trabaja cada uno. Es la base de compartir programas, del análisis por músculo, del botón de video y de importar programas armados con IA. Absorbe WL-042. Los alias y los idiomas van en RM-086; la personalización por usuario, en WL-063.
+- **Capas:** este RM hace solo el **núcleo** (qué es el ejercicio). El código va en inglés: el nombre oficial vive en `Exercise.name` en inglés (la app lo muestra así) hasta que RM-086 agregue la capa de idioma. El slug en inglés es la identidad del ejercicio en todos los idiomas.
+- **Músculos en dos niveles:** cada ejercicio guarda **músculos** primarios y secundarios de una lista cerrada de 19 (los 17 de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) con "hombros" separado en deltoide anterior, lateral y posterior). Cada músculo pertenecerá a un **grupo** (unos 12: Pecho, Espalda, Hombros, Bíceps…), que es lo que mostrará el radar; esa equivalencia vive en el código y se agrega con el radar, no en este RM. Además, el **tipo** del ejercicio: compuesto o aislamiento.
 - **Oficial o de usuario:** `Exercise` guarda quién lo creó. Sin creador = oficial. Cualquier usuario puede crear un ejercicio en pleno entrenamiento pidiendo **solo el nombre** (músculos y tipo opcionales); es visible para todos, se marca como no oficial y la búsqueda muestra primero los oficiales.
 - **Cómo entra cada cosa:**
   - **Estructura** (músculos, tipo, creador) → migración.
-  - **Diccionario oficial** (~100-150 ejercicios de fuerza comunes, con nombre en español curado a mano y músculos tomados de free-exercise-db) → **semilla** idempotente: un archivo de datos en el repo y un script que crea o actualiza por `slug`. Corre en cada despliegue y nunca borra ni modifica ejercicios de usuarios.
+  - **Diccionario oficial** (~100-150 ejercicios de fuerza comunes, con slug y nombre en inglés, músculos tomados de free-exercise-db y deltoides asignados a mano) → **semilla** idempotente: un archivo de datos en el repo y un script que crea o actualiza por `slug`. Corre en cada arranque de la API, después de las migraciones; editar el archivo agrega o actualiza oficiales, y nunca borra ni modifica ejercicios de usuarios.
   - **Ejercicios existentes:** pasan a ser del usuario que los creó (no oficiales). Un **script de una sola vez** los fusiona con su equivalente oficial: mueve sus series y rutinas al oficial y borra el duplicado. Los que no tengan equivalente quedan como del usuario.
 - **Hecho cuando:** el diccionario oficial está sembrado con músculos y tipo; crear un ejercicio desde el entrenamiento pide solo el nombre y queda como no oficial; tras la fusión, el total de series y de ítems de rutina es idéntico al de antes, y los ejercicios en uso apuntan al oficial cuando existe. Verificado primero en dev con una copia de los datos reales.
 - **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-11)
@@ -43,6 +43,106 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **A decidir al empezar:**
   - Si los usuarios pueden agregar alias y quién los ve. Propuesta: alias oficiales curados para todos y alias personales que solo ve quien los crea, para que nadie ensucie la búsqueda de los demás.
   - Si la librería de i18n traduce también la interfaz o solo los nombres de ejercicios.
+- **Nombres en español ya curados** para los oficiales de RM-056 (cargar como nombre principal en español):
+
+  | Slug | Español |
+  |---|---|
+  | `bench-press` | Press de banca |
+  | `incline-bench-press` | Press inclinado |
+  | `decline-bench-press` | Press declinado |
+  | `chest-fly` | Aperturas |
+  | `incline-chest-fly` | Aperturas inclinadas |
+  | `cable-crossover` | Cruce de poleas |
+  | `pec-deck` | Pec deck |
+  | `push-up` | Flexiones |
+  | `dip` | Fondos |
+  | `pullover` | Pullover |
+  | `pull-up` | Dominadas |
+  | `chin-up` | Dominadas supinas |
+  | `lat-pulldown` | Jalón al pecho |
+  | `close-grip-lat-pulldown` | Jalón con agarre cerrado |
+  | `single-arm-lat-pulldown` | Jalón unilateral |
+  | `straight-arm-pulldown` | Pullover en polea |
+  | `bent-over-row` | Remo con barra |
+  | `single-arm-row` | Remo unilateral |
+  | `seated-row` | Remo sentado |
+  | `t-bar-row` | Remo en T |
+  | `chest-supported-row` | Remo con apoyo en el pecho |
+  | `inverted-row` | Remo invertido |
+  | `deadlift` | Peso muerto |
+  | `romanian-deadlift` | Peso muerto rumano |
+  | `sumo-deadlift` | Peso muerto sumo |
+  | `rack-pull` | Rack pull |
+  | `good-morning` | Buenos días |
+  | `back-extension` | Hiperextensiones |
+  | `shrug` | Encogimientos |
+  | `face-pull` | Face pull |
+  | `military-press` | Press militar |
+  | `shoulder-press` | Press de hombros |
+  | `arnold-press` | Press Arnold |
+  | `lateral-raise` | Elevaciones laterales |
+  | `front-raise` | Elevaciones frontales |
+  | `rear-delt-fly` | Aperturas posteriores |
+  | `upright-row` | Remo al mentón |
+  | `external-rotation` | Rotación externa |
+  | `biceps-curl` | Curl de bíceps |
+  | `hammer-curl` | Curl martillo |
+  | `preacher-curl` | Curl predicador |
+  | `incline-curl` | Curl inclinado |
+  | `concentration-curl` | Curl concentrado |
+  | `bayesian-curl` | Curl bayesiano |
+  | `spider-curl` | Curl araña |
+  | `reverse-curl` | Curl invertido |
+  | `triceps-pushdown` | Extensión de tríceps |
+  | `overhead-triceps-extension` | Extensión de tríceps sobre la cabeza |
+  | `skull-crusher` | Press francés |
+  | `close-grip-bench-press` | Press de banca agarre cerrado |
+  | `triceps-kickback` | Patada de tríceps |
+  | `bench-dip` | Fondos en banco |
+  | `wrist-curl` | Curl de muñeca |
+  | `reverse-wrist-curl` | Curl de muñeca invertido |
+  | `crunch` | Crunch |
+  | `cable-crunch` | Crunch en polea |
+  | `reverse-crunch` | Crunch invertido |
+  | `oblique-crunch` | Crunch oblicuo |
+  | `bicycle-crunch` | Crunch bicicleta |
+  | `sit-up` | Abdominales completos |
+  | `hanging-leg-raise` | Elevación de piernas colgado |
+  | `lying-leg-raise` | Elevación de piernas acostado |
+  | `plank` | Plancha |
+  | `side-plank` | Plancha lateral |
+  | `dead-bug` | Dead bug |
+  | `ab-rollout` | Rueda abdominal |
+  | `russian-twist` | Giros rusos |
+  | `pallof-press` | Press Pallof |
+  | `cable-wood-chop` | Leñador en polea |
+  | `side-bend` | Flexión lateral |
+  | `hip-thrust` | Hip thrust |
+  | `glute-bridge` | Puente de glúteos |
+  | `glute-kickback` | Patada de glúteo |
+  | `hip-abduction` | Abducción de cadera |
+  | `pull-through` | Pull through |
+  | `squat` | Sentadilla |
+  | `front-squat` | Sentadilla frontal |
+  | `hack-squat` | Sentadilla hack |
+  | `goblet-squat` | Sentadilla goblet |
+  | `bulgarian-split-squat` | Sentadilla búlgara |
+  | `sissy-squat` | Sentadilla sissy |
+  | `lunge` | Zancadas |
+  | `walking-lunge` | Zancadas caminando |
+  | `reverse-lunge` | Zancada inversa |
+  | `step-up` | Subidas al cajón |
+  | `leg-press` | Prensa |
+  | `leg-extension` | Extensión de cuádriceps |
+  | `lying-leg-curl` | Curl femoral acostado |
+  | `seated-leg-curl` | Curl femoral sentado |
+  | `standing-leg-curl` | Curl femoral de pie |
+  | `nordic-curl` | Curl nórdico |
+  | `hip-adduction` | Aducción de cadera |
+  | `standing-calf-raise` | Elevación de talones de pie |
+  | `seated-calf-raise` | Elevación de talones sentado |
+  | `leg-press-calf-raise` | Elevación de talones en prensa |
+
 - **Hecho cuando:** buscar "press plano" o "bench press" encuentra el mismo ejercicio oficial, y cambiar el idioma muestra su nombre en ese idioma.
 - **Fecha:** 2026-10-10 · **Estado:** Abierto
 
