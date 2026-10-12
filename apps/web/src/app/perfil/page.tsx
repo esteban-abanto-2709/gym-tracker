@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { BirthDateRow } from "@/components/profile/BirthDateRow";
+import { LanguageRow } from "@/components/profile/LanguageRow";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
 import { LogOut } from "lucide-react";
 
@@ -45,6 +46,7 @@ export default function PerfilPage() {
               </div>
             </div>
             <BirthDateRow />
+            <LanguageRow />
           </div>
 
           <MeasurementsSection />

@@ -24,7 +24,9 @@ interface AuthContextValue {
   ) => Promise<void>;
   loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => Promise<void>;
-  updateMe: (changes: { birthDate: string | null }) => Promise<void>;
+  updateMe: (
+    changes: Partial<Pick<AuthUser, "birthDate" | "locale">>,
+  ) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -98,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [router]);
 
   const updateMe = useCallback(
-    async (changes: { birthDate: string | null }) => {
+    async (changes: Partial<Pick<AuthUser, "birthDate" | "locale">>) => {
       setUser(await api.patch<AuthUser>(routes.api.auth.me(), changes));
     },
     [],

@@ -25,19 +25,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** la demo se usa en una sesión real y se decide si reemplaza a `SetForm` + `SetDoneScreen`.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-086] Diccionario de ejercicios: idioma
-- **Objetivo:** que cada ejercicio oficial tenga su nombre en español y en inglés, y que la app muestre el del idioma del usuario. Hoy los oficiales solo tienen el nombre en inglés de la semilla de RM-056. Los alias van aparte, en RM-090.
-- **Alcance:**
-  - Los nombres salen de `Exercise.name` a una tabla de nombres por idioma (`es`, `en`), un nombre principal por idioma. El `slug` no cambia.
-  - Los oficiales reciben los dos nombres desde la semilla (el inglés actual y el español curado). Los creados por usuarios conservan su único nombre, en el idioma de quien lo creó.
-  - El usuario tiene un idioma preferido, elegible desde el perfil (sin elegir, el del dispositivo; ver "Decidido"). Si un ejercicio no tiene nombre en ese idioma, se muestra el que tenga.
-  - La API resuelve el nombre en el idioma del usuario, así el frontend sigue recibiendo un solo nombre por ejercicio.
-  - La búsqueda encuentra por el nombre en cualquier idioma ("bench press" también encuentra "Press de banca") e ignora tildes y mayúsculas.
-- **Decidido:** sin preferencia guardada se usa el idioma del dispositivo si es `es` o `en`; cualquier otro, `en`. La interfaz no se traduce aquí (RM-093).
-- **Nombres en español:** ya cargados en `apps/api/src/modules/exercises/official-exercises.ts` (`names.es`).
-- **Hecho cuando:** con el idioma en español la app muestra "Press de banca" en el guiado, el historial, las rutinas y Explorar; al cambiarlo a inglés muestra "Bench Press"; buscar "bench press" o "press de banca" encuentra el mismo ejercicio en ambos idiomas; y ningún ejercicio de usuario pierde su nombre.
-- **Fecha:** 2026-10-10 · **Estado:** En progreso (2026-10-12)
-
 ## [RM-093] Traducir la interfaz
 - **Objetivo:** que la interfaz (botones, títulos, mensajes) se muestre en el idioma del usuario, usando la misma preferencia de idioma que los ejercicios (RM-086).
 - **Alcance:** instalar una librería de i18n para Next.js (candidata: `next-intl`, verificar su API al empezar) y sacar los textos de cada pantalla a archivos de traducción `es`/`en`. Incluye los nombres de equipo (lista fija), el formato de fechas (hoy fijo en español) y los textos explicativos de la exportación para la IA.

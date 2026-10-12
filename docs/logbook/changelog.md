@@ -12,6 +12,10 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-086] Diccionario de ejercicios: idioma (2026-10-12 15:05)
+Los nombres de ejercicio pasan a una tabla por idioma (`es`, `en`); los oficiales tienen ambos y la API sirve el del idioma del usuario (perfil → celular → inglés).
+El perfil permite elegir el idioma y el buscador encuentra en cualquier idioma, sin importar tildes ni mayúsculas.
+
 ## [TD-092] Sin reloj de descanso encima del ejercicio (2026-10-12 11:24)
 El modo guiado ya no muestra el reloj compacto "Descansando" sobre el ejercicio a registrar; el descanso solo se ve, grande, en la pantalla de serie guardada.
 

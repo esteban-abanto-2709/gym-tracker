@@ -1,11 +1,14 @@
 // Tipos centralizados del dominio Gym Tracker
 
+export type Locale = "es" | "en";
+
 export interface AuthUser {
   id: string;
   email: string;
   username: string;
   slug: string;
   birthDate: string | null;
+  locale: Locale | null;
 }
 
 export interface BodyMeasurement {
@@ -25,6 +28,7 @@ export interface Exercise {
   name: string;
   slug: string;
   createdById?: string | null;
+  searchNames?: string[];
   description?: string;
   createdAt?: string;
 }

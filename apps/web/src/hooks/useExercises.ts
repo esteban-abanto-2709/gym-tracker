@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
-import { addExercise } from "@/lib/exercises";
+import { addExercise, matchesSearch } from "@/lib/exercises";
 
 export function useExercises() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -27,7 +27,7 @@ export function useExercises() {
 
   // Derived: filtered exercises based on search term
   const filteredExercises = exercises.filter((ex) =>
-    ex.name.toLowerCase().includes(search.toLowerCase()),
+    matchesSearch(ex, search),
   );
 
   // Create a new exercise and add it to the local list
