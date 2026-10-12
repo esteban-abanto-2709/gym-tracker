@@ -116,6 +116,57 @@ describe('ExercisesController (e2e)', () => {
     }
   });
 
+  describe('stores the new name in the creator language', () => {
+    const localeOf = async (exerciseId: string) =>
+      (await prisma.exerciseName.findMany({ where: { exerciseId } })).map(
+        (n) => [n.locale, n.searchName],
+      );
+
+    it('uses the device language when it is Spanish', async () => {
+      const res = await agent
+        .post('/exercises')
+        .set('Accept-Language', 'es-PE,es;q=0.9')
+        .send({ name: `Remo Ráro ${stamp}` })
+        .expect(201);
+      expect(await localeOf((res.body as { id: string }).id)).toEqual([
+        ['es', `remo raro ${stamp}`],
+      ]);
+    });
+
+    it('uses English for any other device language', async () => {
+      const res = await agent
+        .post('/exercises')
+        .set('Accept-Language', 'fr-FR,fr;q=0.9')
+        .send({ name: `Rowing ${stamp}` })
+        .expect(201);
+      expect(await localeOf((res.body as { id: string }).id)).toEqual([
+        ['en', `rowing ${stamp}`],
+      ]);
+    });
+
+    it('prefers the saved user language over the device', async () => {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { locale: 'en' },
+      });
+      try {
+        const res = await agent
+          .post('/exercises')
+          .set('Accept-Language', 'es-PE')
+          .send({ name: `Pref ${stamp}` })
+          .expect(201);
+        expect((await localeOf((res.body as { id: string }).id))[0][0]).toBe(
+          'en',
+        );
+      } finally {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { locale: null },
+        });
+      }
+    });
+  });
+
   it('/exercises (GET) lists official exercises first', async () => {
     const res = await agent.get('/exercises').expect(200);
     const official = res.body.map(

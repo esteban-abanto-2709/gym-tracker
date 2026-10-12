@@ -19,6 +19,7 @@ model User {
   activeProgramId String?
   activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
   birthDate       DateTime?         @db.Date
+  locale          Locale?
   measurements    BodyMeasurement[]
   exercises       Exercise[]
   createdAt       DateTime          @default(now())
@@ -54,17 +55,35 @@ model Program {
 }
 
 model Exercise {
-  id               String        @id @default(uuid())
+  id               String         @id @default(uuid())
   name             String
-  slug             String        @unique
-  primaryMuscles   Muscle[]      @default([])
-  secondaryMuscles Muscle[]      @default([])
+  slug             String         @unique
+  primaryMuscles   Muscle[]       @default([])
+  secondaryMuscles Muscle[]       @default([])
   mechanic         Mechanic?
   createdById      String?
-  createdBy        User?         @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdBy        User?          @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  names            ExerciseName[]
   workouts         Workout[]
   routineItems     RoutineItem[]
-  createdAt        DateTime      @default(now())
+  createdAt        DateTime       @default(now())
+}
+
+model ExerciseName {
+  id         String   @id @default(uuid())
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  locale     Locale
+  name       String
+  searchName String
+
+  @@unique([exerciseId, locale])
+  @@index([searchName])
+}
+
+enum Locale {
+  es
+  en
 }
 
 enum Muscle {

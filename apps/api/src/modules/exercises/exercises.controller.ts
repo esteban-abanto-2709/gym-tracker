@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Headers } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import {
@@ -14,8 +14,13 @@ export class ExercisesController {
   async create(
     @CurrentUser() user: AuthUser,
     @Body() createExerciseDto: CreateExerciseDto,
+    @Headers('accept-language') acceptLanguage?: string,
   ) {
-    return this.exercisesService.create(user.id, createExerciseDto);
+    return this.exercisesService.create(
+      user.id,
+      createExerciseDto,
+      acceptLanguage,
+    );
   }
 
   @Get()

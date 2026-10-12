@@ -6,45 +6,89 @@ import {
 } from './official-exercises';
 import { seedOfficialExercises } from './seed-official-exercises';
 
-type Row = OfficialExercise & { createdById: string | null };
+interface NameRow {
+  exerciseId: string;
+  locale: string;
+  name: string;
+  searchName: string;
+}
+interface Row {
+  id: string;
+  slug: string;
+  name: string;
+  primaryMuscles: string[];
+  secondaryMuscles: string[];
+  mechanic: string | null;
+  createdById: string | null;
+}
 
-function fakePrisma(rows: Row[]) {
+function fakePrisma(rows: Row[], nameRows: NameRow[] = []) {
   const exercise = {
-    findUnique: jest.fn(({ where }: { where: { slug: string } }) =>
-      Promise.resolve(rows.find((r) => r.slug === where.slug) ?? null),
-    ),
-    create: jest.fn(({ data }: { data: OfficialExercise }) => {
-      rows.push({ ...data, createdById: null });
-      return Promise.resolve(data);
+    findUnique: jest.fn(({ where }: { where: { slug: string } }) => {
+      const row = rows.find((r) => r.slug === where.slug);
+      return Promise.resolve(
+        row
+          ? { ...row, names: nameRows.filter((n) => n.exerciseId === row.id) }
+          : null,
+      );
     }),
-    update: jest.fn(
+    upsert: jest.fn(
       ({
         where,
-        data,
+        create,
+        update,
       }: {
         where: { slug: string };
-        data: OfficialExercise;
+        create: Omit<Row, 'id' | 'createdById'>;
+        update: Partial<Row>;
       }) => {
-        Object.assign(rows.find((r) => r.slug === where.slug)!, data);
-        return Promise.resolve(data);
+        let row = rows.find((r) => r.slug === where.slug);
+        if (row) Object.assign(row, update);
+        else {
+          row = { ...create, id: create.slug, createdById: null };
+          rows.push(row);
+        }
+        return Promise.resolve(row);
       },
     ),
   };
-  return { exercise } as unknown as PrismaClient & {
+  const exerciseName = {
+    upsert: jest.fn(
+      ({
+        where,
+        create,
+        update,
+      }: {
+        where: { exerciseId_locale: { exerciseId: string; locale: string } };
+        create: NameRow;
+        update: Partial<NameRow>;
+      }) => {
+        const { exerciseId, locale } = where.exerciseId_locale;
+        const row = nameRows.find(
+          (n) => n.exerciseId === exerciseId && n.locale === locale,
+        );
+        if (row) Object.assign(row, update);
+        else nameRows.push(create);
+        return Promise.resolve(row ?? create);
+      },
+    ),
+  };
+  return { exercise, exerciseName } as unknown as PrismaClient & {
     exercise: typeof exercise;
+    exerciseName: typeof exerciseName;
   };
 }
 
 const bench: OfficialExercise = {
   slug: 'bench-press',
-  name: 'Bench Press',
+  names: { en: 'Bench Press', es: 'Press de banca' },
   primaryMuscles: ['CHEST'],
   secondaryMuscles: ['FRONT_DELTS', 'TRICEPS'],
   mechanic: 'COMPOUND',
 };
 const squat: OfficialExercise = {
   slug: 'squat',
-  name: 'Squat',
+  names: { en: 'Squat', es: 'Sentadilla' },
   primaryMuscles: ['QUADRICEPS'],
   secondaryMuscles: ['GLUTES'],
   mechanic: 'COMPOUND',
@@ -57,9 +101,13 @@ describe('OFFICIAL_EXERCISES', () => {
     for (const slug of slugs) expect(slugify(slug)).toBe(slug);
   });
 
-  it('has unique names', () => {
-    const names = OFFICIAL_EXERCISES.map((e) => e.name.toLowerCase());
-    expect(new Set(names).size).toBe(names.length);
+  it('has unique names in each language', () => {
+    for (const locale of ['en', 'es'] as const) {
+      const names = OFFICIAL_EXERCISES.map((e) =>
+        e.names[locale].toLowerCase(),
+      );
+      expect(new Set(names).size).toBe(names.length);
+    }
   });
 
   it('gives every exercise a primary muscle not repeated as secondary', () => {
@@ -73,8 +121,9 @@ describe('OFFICIAL_EXERCISES', () => {
 });
 
 describe('seedOfficialExercises', () => {
-  it('creates missing exercises and changes nothing on a second run', async () => {
-    const prisma = fakePrisma([]);
+  it('creates missing exercises with both names and changes nothing on a second run', async () => {
+    const nameRows: NameRow[] = [];
+    const prisma = fakePrisma([], nameRows);
 
     const first = await seedOfficialExercises(prisma, [bench, squat]);
     expect(first).toEqual({
@@ -83,6 +132,13 @@ describe('seedOfficialExercises', () => {
       unchanged: 0,
       skipped: [],
     });
+    expect(nameRows).toContainEqual({
+      exerciseId: 'bench-press',
+      locale: 'es',
+      name: 'Press de banca',
+      searchName: 'press de banca',
+    });
+    expect(nameRows).toHaveLength(4);
 
     const second = await seedOfficialExercises(prisma, [bench, squat]);
     expect(second).toEqual({
@@ -93,23 +149,22 @@ describe('seedOfficialExercises', () => {
     });
   });
 
-  it('updates an official exercise whose data changed', async () => {
-    const prisma = fakePrisma([
-      { ...bench, mechanic: 'ISOLATION', createdById: null },
-    ]);
+  it('updates an official exercise when its Spanish name changes', async () => {
+    const nameRows: NameRow[] = [];
+    const prisma = fakePrisma([], nameRows);
+    await seedOfficialExercises(prisma, [bench]);
 
-    const result = await seedOfficialExercises(prisma, [bench]);
+    const renamed = { ...bench, names: { ...bench.names, es: 'Press banca' } };
+    const result = await seedOfficialExercises(prisma, [renamed]);
 
     expect(result.updated).toBe(1);
-    expect(prisma.exercise.update).toHaveBeenCalledWith({
-      where: { slug: 'bench-press' },
-      data: bench,
-    });
+    expect(nameRows.find((n) => n.locale === 'es')?.name).toBe('Press banca');
   });
 
   it('skips and never touches a user exercise with the same slug', async () => {
     const prisma = fakePrisma([
       {
+        id: 'mine',
         slug: 'bench-press',
         name: 'Bench Press',
         primaryMuscles: [],
@@ -122,7 +177,7 @@ describe('seedOfficialExercises', () => {
     const result = await seedOfficialExercises(prisma, [bench]);
 
     expect(result.skipped).toEqual(['bench-press']);
-    expect(prisma.exercise.update).not.toHaveBeenCalled();
-    expect(prisma.exercise.create).not.toHaveBeenCalled();
+    expect(prisma.exercise.upsert).not.toHaveBeenCalled();
+    expect(prisma.exerciseName.upsert).not.toHaveBeenCalled();
   });
 });

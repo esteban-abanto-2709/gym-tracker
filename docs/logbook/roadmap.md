@@ -29,113 +29,20 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Objetivo:** que cada ejercicio oficial tenga su nombre en español y en inglés, y que la app muestre el del idioma del usuario. Hoy los oficiales solo tienen el nombre en inglés de la semilla de RM-056. Los alias van aparte, en RM-090.
 - **Alcance:**
   - Los nombres salen de `Exercise.name` a una tabla de nombres por idioma (`es`, `en`), un nombre principal por idioma. El `slug` no cambia.
-  - Los oficiales reciben los dos nombres desde la semilla (el inglés actual y el español de la tabla de abajo). Los creados por usuarios conservan su único nombre, en el idioma de quien lo creó.
-  - El usuario tiene un idioma preferido (por defecto `es`), elegible desde el perfil. Si un ejercicio no tiene nombre en ese idioma, se muestra el que tenga.
+  - Los oficiales reciben los dos nombres desde la semilla (el inglés actual y el español curado). Los creados por usuarios conservan su único nombre, en el idioma de quien lo creó.
+  - El usuario tiene un idioma preferido, elegible desde el perfil (sin elegir, el del dispositivo; ver "Decidido"). Si un ejercicio no tiene nombre en ese idioma, se muestra el que tenga.
   - La API resuelve el nombre en el idioma del usuario, así el frontend sigue recibiendo un solo nombre por ejercicio.
   - La búsqueda encuentra por el nombre en cualquier idioma ("bench press" también encuentra "Press de banca") e ignora tildes y mayúsculas.
-- **A decidir al empezar:** si este RM también instala una librería de i18n para traducir la interfaz. Propuesta: no; los nombres de ejercicios son datos y no la necesitan. Traducir la interfaz queda para cuando haga falta.
-- **Nombres en español ya curados** para los oficiales de RM-056 (cargar como nombre principal en español):
-
-  | Slug | Español |
-  |---|---|
-  | `bench-press` | Press de banca |
-  | `incline-bench-press` | Press inclinado |
-  | `decline-bench-press` | Press declinado |
-  | `chest-fly` | Aperturas |
-  | `incline-chest-fly` | Aperturas inclinadas |
-  | `cable-crossover` | Cruce de poleas |
-  | `pec-deck` | Pec deck |
-  | `push-up` | Flexiones |
-  | `dip` | Fondos |
-  | `pullover` | Pullover |
-  | `pull-up` | Dominadas |
-  | `chin-up` | Dominadas supinas |
-  | `lat-pulldown` | Jalón al pecho |
-  | `close-grip-lat-pulldown` | Jalón con agarre cerrado |
-  | `single-arm-lat-pulldown` | Jalón unilateral |
-  | `straight-arm-pulldown` | Pullover en polea |
-  | `bent-over-row` | Remo con barra |
-  | `single-arm-row` | Remo unilateral |
-  | `seated-row` | Remo sentado |
-  | `t-bar-row` | Remo en T |
-  | `chest-supported-row` | Remo con apoyo en el pecho |
-  | `inverted-row` | Remo invertido |
-  | `deadlift` | Peso muerto |
-  | `romanian-deadlift` | Peso muerto rumano |
-  | `sumo-deadlift` | Peso muerto sumo |
-  | `rack-pull` | Rack pull |
-  | `good-morning` | Buenos días |
-  | `back-extension` | Hiperextensiones |
-  | `shrug` | Encogimientos |
-  | `face-pull` | Face pull |
-  | `military-press` | Press militar |
-  | `shoulder-press` | Press de hombros |
-  | `arnold-press` | Press Arnold |
-  | `lateral-raise` | Elevaciones laterales |
-  | `front-raise` | Elevaciones frontales |
-  | `rear-delt-fly` | Aperturas posteriores |
-  | `upright-row` | Remo al mentón |
-  | `external-rotation` | Rotación externa |
-  | `biceps-curl` | Curl de bíceps |
-  | `hammer-curl` | Curl martillo |
-  | `preacher-curl` | Curl predicador |
-  | `incline-curl` | Curl inclinado |
-  | `concentration-curl` | Curl concentrado |
-  | `bayesian-curl` | Curl bayesiano |
-  | `spider-curl` | Curl araña |
-  | `reverse-curl` | Curl invertido |
-  | `triceps-pushdown` | Extensión de tríceps |
-  | `overhead-triceps-extension` | Extensión de tríceps sobre la cabeza |
-  | `skull-crusher` | Press francés |
-  | `close-grip-bench-press` | Press de banca agarre cerrado |
-  | `triceps-kickback` | Patada de tríceps |
-  | `bench-dip` | Fondos en banco |
-  | `wrist-curl` | Curl de muñeca |
-  | `reverse-wrist-curl` | Curl de muñeca invertido |
-  | `crunch` | Crunch |
-  | `cable-crunch` | Crunch en polea |
-  | `reverse-crunch` | Crunch invertido |
-  | `oblique-crunch` | Crunch oblicuo |
-  | `bicycle-crunch` | Crunch bicicleta |
-  | `sit-up` | Abdominales completos |
-  | `hanging-leg-raise` | Elevación de piernas colgado |
-  | `lying-leg-raise` | Elevación de piernas acostado |
-  | `plank` | Plancha |
-  | `side-plank` | Plancha lateral |
-  | `dead-bug` | Dead bug |
-  | `ab-rollout` | Rueda abdominal |
-  | `russian-twist` | Giros rusos |
-  | `pallof-press` | Press Pallof |
-  | `cable-wood-chop` | Leñador en polea |
-  | `side-bend` | Flexión lateral |
-  | `hip-thrust` | Hip thrust |
-  | `glute-bridge` | Puente de glúteos |
-  | `glute-kickback` | Patada de glúteo |
-  | `hip-abduction` | Abducción de cadera |
-  | `pull-through` | Pull through |
-  | `squat` | Sentadilla |
-  | `front-squat` | Sentadilla frontal |
-  | `hack-squat` | Sentadilla hack |
-  | `goblet-squat` | Sentadilla goblet |
-  | `bulgarian-split-squat` | Sentadilla búlgara |
-  | `sissy-squat` | Sentadilla sissy |
-  | `lunge` | Zancadas |
-  | `walking-lunge` | Zancadas caminando |
-  | `reverse-lunge` | Zancada inversa |
-  | `step-up` | Subidas al cajón |
-  | `leg-press` | Prensa |
-  | `leg-extension` | Extensión de cuádriceps |
-  | `lying-leg-curl` | Curl femoral acostado |
-  | `seated-leg-curl` | Curl femoral sentado |
-  | `standing-leg-curl` | Curl femoral de pie |
-  | `nordic-curl` | Curl nórdico |
-  | `hip-adduction` | Aducción de cadera |
-  | `standing-calf-raise` | Elevación de talones de pie |
-  | `seated-calf-raise` | Elevación de talones sentado |
-  | `leg-press-calf-raise` | Elevación de talones en prensa |
-
+- **Decidido:** sin preferencia guardada se usa el idioma del dispositivo si es `es` o `en`; cualquier otro, `en`. La interfaz no se traduce aquí (RM-093).
+- **Nombres en español:** ya cargados en `apps/api/src/modules/exercises/official-exercises.ts` (`names.es`).
 - **Hecho cuando:** con el idioma en español la app muestra "Press de banca" en el guiado, el historial, las rutinas y Explorar; al cambiarlo a inglés muestra "Bench Press"; buscar "bench press" o "press de banca" encuentra el mismo ejercicio en ambos idiomas; y ningún ejercicio de usuario pierde su nombre.
-- **Fecha:** 2026-10-10 · **Estado:** Abierto
+- **Fecha:** 2026-10-10 · **Estado:** En progreso (2026-10-12)
+
+## [RM-093] Traducir la interfaz
+- **Objetivo:** que la interfaz (botones, títulos, mensajes) se muestre en el idioma del usuario, usando la misma preferencia de idioma que los ejercicios (RM-086).
+- **Alcance:** instalar una librería de i18n para Next.js (candidata: `next-intl`, verificar su API al empezar) y sacar los textos de cada pantalla a archivos de traducción `es`/`en`. Incluye los nombres de equipo (lista fija), el formato de fechas (hoy fijo en español) y los textos explicativos de la exportación para la IA.
+- **Hecho cuando:** con el idioma en inglés, la interfaz, los equipos, las fechas y la exportación salen en inglés.
+- **Fecha:** 2026-10-12 · **Estado:** Abierto
 
 ## [RM-090] Diccionario de ejercicios: alias y variantes
 - **Objetivo:** encontrar un ejercicio por cualquier nombre con el que se le conozca, incluidos los que llevan el equipo en el nombre. Depende de RM-086.
