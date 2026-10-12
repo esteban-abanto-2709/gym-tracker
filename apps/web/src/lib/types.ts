@@ -24,6 +24,7 @@ export interface Exercise {
   id: string;
   name: string;
   slug: string;
+  createdById?: string | null;
   description?: string;
   createdAt?: string;
 }

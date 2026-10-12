@@ -12,6 +12,10 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-056] Diccionario de ejercicios: el núcleo (2026-10-12 09:49)
+95 ejercicios oficiales con slug y nombre en inglés, músculos (19, deltoide separado en tres) y tipo, sembrados en cada arranque de la API; crear pide solo el nombre y queda no oficial.
+Los ejercicios existentes se fusionaron con su oficial (series e ítems de rutina idénticos); la web marca los no oficiales y los lista al final.
+
 ## [TD-084] El backup copia la base entera (2026-10-10 13:43)
 `backup.sh` dejó de listar tablas (`BodyMeasurement` quedaba fuera): dumpea schema, datos y `_prisma_migrations`. `restore.sh` borra el schema, carga el dump y reinicia la API, que aplica las migraciones que falten; rechaza los backups viejos de solo datos (README explica cómo usarlos).
 

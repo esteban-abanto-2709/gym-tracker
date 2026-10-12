@@ -144,6 +144,11 @@ export function ExerciseCombobox({
                     }}
                   >
                     <span className="truncate pr-2">{ex.name}</span>
+                    {ex.createdById && (
+                      <span className="kicker shrink-0 text-[0.6rem] text-muted-foreground">
+                        No oficial
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>

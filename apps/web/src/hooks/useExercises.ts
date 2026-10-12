@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
+import { addExercise } from "@/lib/exercises";
 
 export function useExercises() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -39,9 +40,7 @@ export function useExercises() {
           { name: name.trim() },
         );
 
-        setExercises((prev) =>
-          [...prev, created].sort((a, b) => a.name.localeCompare(b.name)),
-        );
+        setExercises((prev) => addExercise(prev, created));
 
         return created;
       } finally {

@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-089] Un ejercicio no distingue si se hace a una mano
+- **Ubicación:** `apps/api/prisma/schema.prisma` (`Exercise`, `Workout`)
+- **Riesgo:** 4/10
+- **Problema:** el diccionario de ejercicios no sabe si una serie fue unilateral (una mano o una pierna a la vez). Al fusionar los ejercicios existentes con los oficiales, variantes como "curl biceps unilateral" quedaron dentro del ejercicio bilateral y su historial se mezcla.
+- **Impacto futuro:** la última vez, la racha y las sugerencias comparan pesos de series a una mano con series a dos manos.
+- **Sugerencia:** marcar lo unilateral en la serie (como el equipo), no como ejercicio aparte.
+- **Fecha:** 2026-10-12 · **Estado:** Abierto
+
 ## [TD-088] Código con partes en español
 - **Ubicación:** `apps/api` y `apps/web` (identificadores, mensajes de log, nombres de tests, migraciones de datos)
 - **Riesgo:** 3/10

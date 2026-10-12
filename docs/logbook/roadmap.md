@@ -25,18 +25,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** la demo se usa en una sesión real y se decide si reemplaza a `SetForm` + `SetDoneScreen`.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-056] Diccionario de ejercicios: el núcleo
-- **Objetivo:** un diccionario oficial de ejercicios con slug y nombre en inglés y los músculos que trabaja cada uno. Es la base de compartir programas, del análisis por músculo, del botón de video y de importar programas armados con IA. Absorbe WL-042. Los alias y los idiomas van en RM-086; la personalización por usuario, en WL-063.
-- **Capas:** este RM hace solo el **núcleo** (qué es el ejercicio). El código va en inglés: el nombre oficial vive en `Exercise.name` en inglés (la app lo muestra así) hasta que RM-086 agregue la capa de idioma. El slug en inglés es la identidad del ejercicio en todos los idiomas.
-- **Músculos en dos niveles:** cada ejercicio guarda **músculos** primarios y secundarios de una lista cerrada de 19 (los 17 de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) con "hombros" separado en deltoide anterior, lateral y posterior). Cada músculo pertenecerá a un **grupo** (unos 12: Pecho, Espalda, Hombros, Bíceps…), que es lo que mostrará el radar; esa equivalencia vive en el código y se agrega con el radar, no en este RM. Además, el **tipo** del ejercicio: compuesto o aislamiento.
-- **Oficial o de usuario:** `Exercise` guarda quién lo creó. Sin creador = oficial. Cualquier usuario puede crear un ejercicio en pleno entrenamiento pidiendo **solo el nombre** (músculos y tipo opcionales); es visible para todos, se marca como no oficial y la búsqueda muestra primero los oficiales.
-- **Cómo entra cada cosa:**
-  - **Estructura** (músculos, tipo, creador) → migración.
-  - **Diccionario oficial** (~100-150 ejercicios de fuerza comunes, con slug y nombre en inglés, músculos tomados de free-exercise-db y deltoides asignados a mano) → **semilla** idempotente: un archivo de datos en el repo y un script que crea o actualiza por `slug`. Corre en cada arranque de la API, después de las migraciones; editar el archivo agrega o actualiza oficiales, y nunca borra ni modifica ejercicios de usuarios.
-  - **Ejercicios existentes:** pasan a ser del usuario que los creó (no oficiales). Un **script de una sola vez** los fusiona con su equivalente oficial: mueve sus series y rutinas al oficial y borra el duplicado. Los que no tengan equivalente quedan como del usuario.
-- **Hecho cuando:** el diccionario oficial está sembrado con músculos y tipo; crear un ejercicio desde el entrenamiento pide solo el nombre y queda como no oficial; tras la fusión, el total de series y de ítems de rutina es idéntico al de antes, y los ejercicios en uso apuntan al oficial cuando existe. Verificado primero en dev con una copia de los datos reales.
-- **Fecha:** 2026-10-06 · **Estado:** En progreso (2026-10-11)
-
 ## [RM-086] Diccionario de ejercicios: idioma y alias
 - **Objetivo:** que un ejercicio se encuentre por cualquiera de sus nombres ("press de banca", "press plano", "bench press") y se muestre en el idioma del usuario. Depende de RM-056.
 - **Alcance:** los nombres salen de `Exercise.name` a una tabla de nombres por idioma, donde cada fila es un nombre principal o un alias. La búsqueda ignora tildes y mayúsculas y encuentra por palabras sueltas. En el frontend, una librería de i18n para mostrar el nombre del ejercicio en el idioma elegido.
