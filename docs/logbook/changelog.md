@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-092] Sin reloj de descanso encima del ejercicio (2026-10-12 11:24)
+El modo guiado ya no muestra el reloj compacto "Descansando" sobre el ejercicio a registrar; el descanso solo se ve, grande, en la pantalla de serie guardada.
+
 ## [RM-056] Diccionario de ejercicios: el núcleo (2026-10-12 09:49)
 95 ejercicios oficiales con slug y nombre en inglés, músculos (19, deltoide separado en tres) y tipo, sembrados en cada arranque de la API; crear pide solo el nombre y queda no oficial.
 Los ejercicios existentes se fusionaron con su oficial (series e ítems de rutina idénticos); la web marca los no oficiales y los lista al final.

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { useRestSeconds } from "@/hooks/useRestSeconds";
-import { formatClock } from "@/lib/setDisplay";
 import { routes } from "@/lib/routes";
 import {
   formatBlocks,
@@ -20,7 +19,7 @@ import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
-import { Loader2, ClipboardList, ListChecks, Timer } from "lucide-react";
+import { Loader2, ClipboardList, ListChecks } from "lucide-react";
 
 export default function TrainPage() {
   const {
@@ -143,17 +142,6 @@ export default function TrainPage() {
       ) : (
         <main className="flex-1 flex flex-col justify-center px-6 py-6 relative z-10 animate-fade-in-up">
           <div className="max-w-md mx-auto w-full space-y-5">
-            {restSec != null && (
-              <div className="flex items-center gap-2 animate-fade-in">
-                <Timer className="w-4 h-4 text-primary" strokeWidth={2.5} />
-                <span className="kicker text-[0.6rem] text-muted-foreground">
-                  Descansando
-                </span>
-                <span className="font-display font-bold text-xl leading-none tabular-nums text-foreground">
-                  {formatClock(restSec)}
-                </span>
-              </div>
-            )}
             {/* Current exercise header */}
             <div className="relative rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
               <p className="kicker text-[0.6rem] text-primary">

@@ -25,12 +25,15 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Hecho cuando:** la demo se usa en una sesión real y se decide si reemplaza a `SetForm` + `SetDoneScreen`.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [RM-086] Diccionario de ejercicios: idioma y alias
-- **Objetivo:** que un ejercicio se encuentre por cualquiera de sus nombres ("press de banca", "press plano", "bench press") y se muestre en el idioma del usuario. Depende de RM-056.
-- **Alcance:** los nombres salen de `Exercise.name` a una tabla de nombres por idioma, donde cada fila es un nombre principal o un alias. La búsqueda ignora tildes y mayúsculas y encuentra por palabras sueltas. En el frontend, una librería de i18n para mostrar el nombre del ejercicio en el idioma elegido.
-- **A decidir al empezar:**
-  - Si los usuarios pueden agregar alias y quién los ve. Propuesta: alias oficiales curados para todos y alias personales que solo ve quien los crea, para que nadie ensucie la búsqueda de los demás.
-  - Si la librería de i18n traduce también la interfaz o solo los nombres de ejercicios.
+## [RM-086] Diccionario de ejercicios: idioma
+- **Objetivo:** que cada ejercicio oficial tenga su nombre en español y en inglés, y que la app muestre el del idioma del usuario. Hoy los oficiales solo tienen el nombre en inglés de la semilla de RM-056. Los alias van aparte, en RM-090.
+- **Alcance:**
+  - Los nombres salen de `Exercise.name` a una tabla de nombres por idioma (`es`, `en`), un nombre principal por idioma. El `slug` no cambia.
+  - Los oficiales reciben los dos nombres desde la semilla (el inglés actual y el español de la tabla de abajo). Los creados por usuarios conservan su único nombre, en el idioma de quien lo creó.
+  - El usuario tiene un idioma preferido (por defecto `es`), elegible desde el perfil. Si un ejercicio no tiene nombre en ese idioma, se muestra el que tenga.
+  - La API resuelve el nombre en el idioma del usuario, así el frontend sigue recibiendo un solo nombre por ejercicio.
+  - La búsqueda encuentra por el nombre en cualquier idioma ("bench press" también encuentra "Press de banca") e ignora tildes y mayúsculas.
+- **A decidir al empezar:** si este RM también instala una librería de i18n para traducir la interfaz. Propuesta: no; los nombres de ejercicios son datos y no la necesitan. Traducir la interfaz queda para cuando haga falta.
 - **Nombres en español ya curados** para los oficiales de RM-056 (cargar como nombre principal en español):
 
   | Slug | Español |
@@ -131,8 +134,18 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
   | `seated-calf-raise` | Elevación de talones sentado |
   | `leg-press-calf-raise` | Elevación de talones en prensa |
 
-- **Hecho cuando:** buscar "press plano" o "bench press" encuentra el mismo ejercicio oficial, y cambiar el idioma muestra su nombre en ese idioma.
+- **Hecho cuando:** con el idioma en español la app muestra "Press de banca" en el guiado, el historial, las rutinas y Explorar; al cambiarlo a inglés muestra "Bench Press"; buscar "bench press" o "press de banca" encuentra el mismo ejercicio en ambos idiomas; y ningún ejercicio de usuario pierde su nombre.
 - **Fecha:** 2026-10-10 · **Estado:** Abierto
+
+## [RM-090] Diccionario de ejercicios: alias y variantes
+- **Objetivo:** encontrar un ejercicio por cualquier nombre con el que se le conozca, incluidos los que llevan el equipo en el nombre. Depende de RM-086.
+- **Alcance:**
+  - **Alias:** otros nombres del mismo ejercicio, cada uno en un idioma ("press plano" → Press de banca).
+  - **Variantes:** un alias puede llevar un equipo. "Smith squat" o "sentadilla en Smith" no es otro ejercicio: es Squat + equipo Smith, y al elegirlo quedan seleccionados los dos. Regla: si cambia el movimiento o los músculos, es otro ejercicio; si solo cambia el equipo, es el mismo ejercicio con otro equipo. Requiere TD-091.
+  - El nombre de una variante se arma solo ("Sentadilla · Smith"), no se guarda a mano; el botón de TikTok busca con ese nombre completo.
+- **A decidir al empezar:** si los usuarios pueden agregar alias y quién los ve. Propuesta: alias oficiales curados para todos y alias personales que solo ve quien los crea, para que nadie ensucie la búsqueda de los demás.
+- **Hecho cuando:** buscar "press plano" encuentra Press de banca, y buscar "smith squat" deja seleccionados Squat y el equipo Smith.
+- **Fecha:** 2026-10-12 · **Estado:** Abierto
 
 ## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
 - **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.

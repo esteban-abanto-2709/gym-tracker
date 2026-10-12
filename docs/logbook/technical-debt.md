@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-091] La lista de equipos no tiene la máquina Smith
+- **Ubicación:** tabla `Equipment` (sembrada en la migración `equipo_tabla_y_slug`)
+- **Riesgo:** 3/10
+- **Problema:** los equipos son genéricos (Barra, Polea, Mancuerna, Máquina, Peso Corporal, Otro). Una sentadilla en Smith queda como "Máquina", mezclada con cualquier otra máquina, y su historial y su racha se comparan con los de otras máquinas.
+- **Impacto futuro:** sin Smith no se pueden armar variantes como "Squat + Smith" (RM-090), y otros equipos comunes (barra Z, kettlebell, banda) tienen el mismo problema.
+- **Sugerencia:** revisar qué equipos faltan, agregarlos con una migración de datos y reasignar las series que correspondan.
+- **Fecha:** 2026-10-12 · **Estado:** Abierto
+
 ## [TD-089] Un ejercicio no distingue si se hace a una mano
 - **Ubicación:** `apps/api/prisma/schema.prisma` (`Exercise`, `Workout`)
 - **Riesgo:** 4/10
