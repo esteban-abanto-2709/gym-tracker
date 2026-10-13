@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { useRestSeconds } from "@/hooks/useRestSeconds";
+import { formatClock } from "@/lib/setDisplay";
 import { routes } from "@/lib/routes";
 import {
   formatBlocks,
@@ -19,7 +20,7 @@ import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
-import { Loader2, ClipboardList, ListChecks } from "lucide-react";
+import { Loader2, ClipboardList, ListChecks, Timer } from "lucide-react";
 
 export default function TrainPage() {
   const {
@@ -135,7 +136,6 @@ export default function TrainPage() {
           hasPendingSets={hasPendingSets}
           nextItem={nextItem}
           nextUp={nextUp}
-          restSec={restSec}
           onContinueSet={continueSet}
           onNext={goNext}
           onFinish={finish}
@@ -145,6 +145,17 @@ export default function TrainPage() {
           <div className="max-w-md mx-auto w-full space-y-5">
             {/* Current exercise header */}
             <div className="relative rounded-2xl border-2 border-primary bg-card p-5 shadow-lg shadow-primary/5">
+              {restSec != null && (
+                <div
+                  className="absolute -top-4 left-4 flex items-center gap-1.5 rounded-full border-2 border-input bg-card pl-2.5 pr-3 py-1 shadow-lg text-foreground animate-pop"
+                  aria-label="Tiempo de descanso"
+                >
+                  <Timer className="w-4 h-4 text-primary" strokeWidth={2.5} />
+                  <span className="font-display font-bold text-lg tabular-nums leading-none">
+                    {formatClock(restSec)}
+                  </span>
+                </div>
+              )}
               <p className="kicker text-[0.6rem] text-primary">
                 {currentPlan.setType === "RAMP"
                   ? "Rampa"

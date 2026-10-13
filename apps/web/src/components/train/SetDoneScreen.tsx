@@ -3,7 +3,7 @@
 import type { RoutineItem } from "@/lib/types";
 import type { LastResult } from "@/hooks/useGuidedSession";
 import { convertWeight } from "@/lib/units";
-import { formatClock, formatDuration } from "@/lib/setDisplay";
+import { formatDuration } from "@/lib/setDisplay";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
 import {
   Check,
@@ -11,7 +11,7 @@ import {
   Flag,
   Dumbbell,
   PartyPopper,
-  Timer,
+  Plus,
 } from "lucide-react";
 
 export interface NextUp {
@@ -25,7 +25,6 @@ interface SetDoneScreenProps {
   hasPendingSets: boolean;
   nextItem: RoutineItem | null;
   nextUp: NextUp | null;
-  restSec: number | null;
   onContinueSet: () => void;
   onNext: () => void;
   onFinish: () => void;
@@ -36,13 +35,12 @@ export function SetDoneScreen({
   hasPendingSets,
   nextItem,
   nextUp,
-  restSec,
   onContinueSet,
   onNext,
   onFinish,
 }: SetDoneScreenProps) {
   // Primary action follows the routine: pending target sets first, then the
-  // next exercise. When the routine is finished there is no primary button.
+  // next exercise. When the routine is finished, ending the session is.
   const duration =
     result.durationSec != null ? formatDuration(result.durationSec) : null;
   const resultLine = duration
@@ -56,6 +54,9 @@ export function SetDoneScreen({
     : nextItem
       ? { label: `Siguiente: ${nextItem.exercise.name}`, onClick: onNext }
       : null;
+
+  const primaryClass =
+    "w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2";
 
   return (
     <main className="flex-1 flex flex-col px-6 py-8 relative z-10 animate-fade-in-up">
@@ -82,23 +83,21 @@ export function SetDoneScreen({
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-          {restSec != null && (
+          {nextUp ? (
+            <p className="text-sm text-muted-foreground">
+              Suelta el celular. Descansa.
+            </p>
+          ) : (
             <>
-              <p className="kicker text-xs text-primary flex items-center gap-1.5">
-                <Timer className="w-4 h-4" strokeWidth={2.5} />
-                Llevas descansando
-              </p>
-              <p className="font-display font-bold text-[7rem] leading-none tracking-tight tabular-nums text-foreground mt-3">
-                {formatClock(restSec)}
+              <PartyPopper className="w-12 h-12 text-primary" />
+              <p className="mt-3 font-display font-bold uppercase text-4xl text-foreground tracking-tight">
+                ¡Rutina completada!
               </p>
             </>
           )}
-          <p className="mt-4 text-sm text-muted-foreground">
-            {restSec != null ? "Suelta el celular." : "Suelta el celular. Descansa."}
-          </p>
         </div>
 
-        {nextUp ? (
+        {nextUp && (
           <div className="w-full flex items-center gap-4 rounded-2xl border-2 border-input bg-card/60 p-4 text-left animate-fade-in">
             <div className="shrink-0 p-3 bg-muted rounded-xl text-primary">
               <Dumbbell className="w-6 h-6" />
@@ -116,34 +115,45 @@ export function SetDoneScreen({
             </div>
             <TikTokButton query={nextUp.name} className="shadow-none" />
           </div>
-        ) : (
-          <div className="flex items-center justify-center gap-2 text-primary font-display uppercase text-xl animate-fade-in">
-            <PartyPopper className="w-5 h-5" />
-            ¡Rutina completada!
-          </div>
         )}
 
         {/* Actions */}
         <div className="space-y-3 pt-6">
-          {primary && (
-            <button
-              type="button"
-              onClick={primary.onClick}
-              className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
-            >
-              <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
-              {primary.label}
-            </button>
+          {primary ? (
+            <>
+              <button
+                type="button"
+                onClick={primary.onClick}
+                className={primaryClass}
+              >
+                <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                {primary.label}
+              </button>
+              <button
+                type="button"
+                onClick={onFinish}
+                className="w-full py-4 text-muted-foreground hover:text-destructive font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <Flag className="w-5 h-5" strokeWidth={2.5} />
+                Terminar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" onClick={onFinish} className={primaryClass}>
+                <Flag className="w-5 h-5" strokeWidth={2.5} />
+                Terminar sesión
+              </button>
+              <button
+                type="button"
+                onClick={onContinueSet}
+                className="w-full py-4 rounded-2xl bg-secondary text-foreground font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <Plus className="w-5 h-5" strokeWidth={2.5} />
+                Una serie extra
+              </button>
+            </>
           )}
-
-          <button
-            type="button"
-            onClick={onFinish}
-            className="w-full py-4 text-muted-foreground hover:text-destructive font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <Flag className="w-5 h-5" strokeWidth={2.5} />
-            Terminar sesión
-          </button>
         </div>
       </div>
     </main>

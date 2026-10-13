@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-101] El reloj de descanso vuelve al ejercicio (2026-10-13 16:36)
+Revierte TD-092 con otro diseño: el descanso es una píldora (reloj y número) en la esquina de la tarjeta del ejercicio, espejo del fuego; la pantalla de serie guardada ya no lo muestra. Al completar la rutina, "Terminar sesión" es el botón principal y "Una serie extra" permite seguir en el mismo ejercicio.
+
 ## [TD-100] Terminar la sesión desde el mapa (sin registrar nada) (2026-10-13 16:21)
 El mapa de la sesión tiene "Terminar sesión" al pie; un modal confirma y muestra en grande cuántos ejercicios quedan sin hacer. De paso, el tema define `destructive`: los rojos de borrar y de error nunca se pintaban.
 
