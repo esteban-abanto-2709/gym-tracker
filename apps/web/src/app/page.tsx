@@ -2,6 +2,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { HomeActions } from "@/components/train/HomeActions";
+import { NewsButton } from "@/components/news/NewsButton";
 
 export default function Home() {
   return (
@@ -10,9 +11,12 @@ export default function Home() {
         <div className="max-w-md w-full mx-auto space-y-5">
           {/* Hero */}
           <div>
-            <p className="kicker text-primary text-[0.7rem]">
-              {"// listo para entrenar"}
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="kicker text-primary text-[0.7rem]">
+                {"// listo para entrenar"}
+              </p>
+              <NewsButton />
+            </div>
             <h2 className="font-display font-bold uppercase text-foreground text-[2.75rem] leading-[0.9] tracking-tight mt-2">
               Hoy
               <br />

@@ -21,7 +21,7 @@ export function MeasurementsSection() {
   const openNew = () => setSheetDate(todayLocal());
 
   return (
-    <section className="mt-6">
+    <section id="medidas" className="mt-6 scroll-mt-6">
       <div className="flex items-center justify-between mb-2 min-h-9">
         <p className="kicker text-primary text-[0.7rem]">{"// medidas"}</p>
         {measurements.length > 0 && (

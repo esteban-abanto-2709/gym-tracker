@@ -9,6 +9,8 @@ export interface AuthUser {
   slug: string;
   birthDate: string | null;
   exerciseLocale: Locale;
+  newsOpened: string[];
+  newsSeen: string[];
 }
 
 export interface BodyMeasurement {

@@ -49,7 +49,7 @@ The full reasoning, including the progression rules, is in
 | `apps/api` | NestJS 11 REST API, Prisma 7, PostgreSQL | [`apps/api/README.md`](./apps/api/README.md) |
 | `apps/web` | Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui | [`apps/web/README.md`](./apps/web/README.md) |
 | `apps/docker` | Compose stacks `prod/` and `dev/`, backup/restore scripts | [`apps/docker/README.md`](./apps/docker/README.md) |
-| `docs/` | Product vision, UX foundations | |
+| `docs/` | Product vision, UX foundations, in-app news | |
 | `docs/logbook/` | Technical debt, roadmap, wishlist, changelog | |
 
 The two apps are **independent**: no workspace, each has its own `package.json`,
@@ -131,6 +131,8 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
   data in `prod`.
 - Backend modules follow controller + service + `dto/`; controllers stay thin.
 - Track debt, roadmap and ideas in `docs/logbook/`, not in code comments.
+- When the owner asks to register something as a novedad (in-app news), read
+  `docs/news.md` first. Never add one unasked.
 
 ## Environments
 

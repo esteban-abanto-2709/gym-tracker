@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -10,6 +11,7 @@ import { WorkoutCard } from "@/components/history/WorkoutCard";
 import { EditWorkoutDialog } from "@/components/history/EditWorkoutDialog";
 import { DeleteWorkoutDialog } from "@/components/history/DeleteWorkoutDialog";
 import { ExportSheet } from "@/components/history/ExportSheet";
+import { routes } from "@/lib/routes";
 import { setMeasure } from "@/lib/setDisplay";
 import { todayLocal } from "@/lib/measurements";
 import { Calendar, Share } from "lucide-react";
@@ -169,7 +171,26 @@ export default function HistoryPage() {
         />
       )}
 
+      <Suspense>
+        <QueryExportSheet firstDay={dates.at(-1) ?? todayLocal()} />
+      </Suspense>
+
       <BottomNav />
     </PageShell>
+  );
+}
+
+function QueryExportSheet({ firstDay }: { firstDay: string }) {
+  const params = useSearchParams();
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed || !params.has("export")) return null;
+  return (
+    <ExportSheet
+      firstDay={firstDay}
+      onClose={() => {
+        setDismissed(true);
+        window.history.replaceState(null, "", routes.history());
+      }}
+    />
   );
 }

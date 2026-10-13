@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [RM-096] Novedades (2026-10-13 14:40)
+Icono con punto en Hoy que abre un panel de tarjetas desplegables con "Ir" a su pantalla; las no vistas primero y lo abierto/visto guardado por usuario (`User.newsOpened`/`newsSeen`). 7 novedades iniciales en `apps/web/src/lib/news.ts`; cómo registrarlas en `docs/news.md`.
+
 ## [RM-086] Diccionario de ejercicios: idioma (2026-10-12 15:05)
 Los nombres de ejercicio pasan a una tabla por idioma (`es`, `en`); los oficiales tienen ambos y la API sirve el del idioma de ejercicios del usuario, en inglés por defecto.
 Se elige desde el botón de idioma del perfil (panel con English/Español) y el buscador encuentra en cualquier idioma, sin importar tildes ni mayúsculas.

@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-097] Deslizar para cerrar los paneles
+Bajar con el dedo para cerrar los paneles que suben desde abajo (Novedades, Exportar, Idioma, Medidas, mapa de la sesión), los cinco a la vez para que se comporten igual. Primero elegir librería: `vaul` (la del Drawer de shadcn) parece sin mantenimiento, verificarlo y comparar con alternativas como el drag de `motion`.
+
 ## [WL-087] Fusionar y promover ejercicios
 Con ejercicios creados por usuarios aparecen duplicados ("press raro" creado varias veces). Una herramienta para fusionar un ejercicio en otro (mover sus series y rutinas) y para promover uno de usuario a oficial, completándole músculos y tipo. Depende de RM-056.
 
