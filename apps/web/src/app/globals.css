@@ -296,6 +296,21 @@ body {
   animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.25s ease forwards;
+}
+
 .animate-rise-in {
   animation: riseIn 0.4s ease;
 }

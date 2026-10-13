@@ -153,12 +153,3 @@ export function rampSuggestedWeight(
   const target = Math.round(((workingWeight * pct) / 100) * 2) / 2;
   return target >= lastWeight + RAMP_SUGGEST_MARGIN_KG ? target : null;
 }
-
-export function formatSetGoal(plan: SetPlan): string | null {
-  if (plan.targetDurationSec != null) return `${plan.targetDurationSec} s`;
-  if (plan.targetReps == null) return null;
-  if (plan.setType === "WARMUP")
-    return `${plan.targetReps} reps de calentamiento`;
-  if (plan.setType === "RAMP") return `${plan.targetReps} reps de rampa`;
-  return `${formatRepRange(plan.targetReps, plan.targetRepsMax)} reps`;
-}

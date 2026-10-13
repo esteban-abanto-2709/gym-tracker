@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-103] ¿Deben existir las series libres?
+Un ejercicio de rutina sin bloques ("Series libres") no tiene meta: la app no sabe cuándo pasar al siguiente ni puede calcular el fuego, y obliga a casos especiales en la sesión guiada. Discutir si quitarlas (exigir al menos un bloque al guardar) o darles un uso claro.
+
 ## [WL-098] Tutoriales guiados
 Desde una tarjeta de Novedades, un botón "ver tutorial" que oscurece la pantalla e ilumina paso a paso dónde tocar (p. ej. Perfil → Medidas). Opcional: solo lo ve quien lo pide. Con una librería existente (`driver.js` o `react-joyride`, ambas MIT) y solo para las dos o tres funciones que más confunden, porque cada cambio de pantalla puede romper un tutorial.
 

@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-102] Sin pantalla intermedia entre series (2026-10-13 17:13)
+Al registrar, una capa muestra la serie desde el toque, salta el check al confirmarse y queda 1 s más (con a qué ejercicio pasas); bloquea el doble toque y luego sigue la próxima serie o el siguiente pendiente sin tocar nada más. La pantalla de serie guardada queda solo como "¡Rutina completada!"; un ejercicio libre se queda con un "Siguiente: X" debajo.
+
 ## [TD-101] El reloj de descanso vuelve al ejercicio (2026-10-13 16:36)
 Revierte TD-092 con otro diseño: el descanso es una píldora (reloj y número) en la esquina de la tarjeta del ejercicio, espejo del fuego; la pantalla de serie guardada ya no lo muestra. Al completar la rutina, "Terminar sesión" es el botón principal y "Una serie extra" permite seguir en el mismo ejercicio.
 

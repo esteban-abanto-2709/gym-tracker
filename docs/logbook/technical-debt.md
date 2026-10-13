@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-104] Los ejercicios "extra" de la sesión son código muerto
+- **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:104`, `apps/web/src/lib/activeSession.ts:16`
+- **Riesgo:** 2/10
+- **Problema:** la sesión guiada guarda y combina `extras` (ejercicios agregados a mitad de sesión), pero ninguna pantalla los agrega desde que el mapa solo reemplaza.
+- **Impacto futuro:** ramas y tipos que nadie ejerce confunden al leer la sesión y al decidir sobre las series libres (WL-103).
+- **Sugerencia:** borrar `extras` del hook y de `ActiveSession`, o devolver el "agregar ejercicio" al mapa si se quiere.
+- **Fecha:** 2026-10-13 · **Estado:** Abierto
+
 ## [TD-099] El editor de rutinas no explica dónde va el peso
 - **Ubicación:** `apps/web/src/components/routines/RoutineEditor.tsx`
 - **Riesgo:** 3/10

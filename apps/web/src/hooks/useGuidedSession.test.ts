@@ -190,6 +190,79 @@ describe("useGuidedSession", () => {
         }),
       ).toBe("free");
     });
+
+    describe("al registrar", () => {
+      const start = async (r: Routine, overrides: Partial<ActiveSession>) => {
+        saveSession(overrides);
+        vi.mocked(api.get).mockResolvedValue(r);
+        vi.mocked(api.post).mockResolvedValue(undefined);
+        const hook = renderHook(() => useGuidedSession());
+        await waitFor(() => expect(hook.result.current.loading).toBe(false));
+        return hook.result;
+      };
+      const set = { weightKg: 60, reps: 8 };
+
+      it("se queda en el ejercicio si le faltan series", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        await act(() => result.current.logSet(set));
+        expect(result.current.currentIndex).toBe(0);
+        expect(result.current.setsDoneForCurrent).toBe(1);
+        expect(result.current.phase).toBe("logging");
+        expect(result.current.flash).toBeNull();
+      });
+
+      it("con la ultima serie pasa solo al siguiente pendiente", async () => {
+        const result = await start(legs, {
+          currentIndex: 0,
+          progress: { 0: 2, 1: 3 },
+        });
+        await act(() => result.current.logSet(set));
+        expect(result.current.currentItem?.exerciseId).toBe("leg-extension");
+        expect(result.current.phase).toBe("logging");
+      });
+
+      it("un ejercicio libre se queda para seguir registrando", async () => {
+        const withFree = {
+          ...legs,
+          items: [item("free", 0, 0), ...legs.items.slice(1)],
+        };
+        const result = await start(withFree, { currentIndex: 0, progress: {} });
+        await act(() => result.current.logSet(set));
+        expect(result.current.currentItem?.exerciseId).toBe("free");
+        expect(result.current.nextItem?.exerciseId).toBe("hip-thrust");
+      });
+
+      it("sin pendientes termina en la pantalla final", async () => {
+        const result = await start(legs, {
+          currentIndex: 2,
+          progress: { 0: 3, 1: 3, 2: 2 },
+        });
+        await act(() => result.current.logSet(set));
+        expect(result.current.phase).toBe("done");
+      });
+
+      it("dos toques seguidos guardan una sola serie", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockClear();
+        await act(() =>
+          Promise.all([
+            result.current.logSet(set),
+            result.current.logSet(set),
+          ]),
+        );
+        expect(api.post).toHaveBeenCalledOnce();
+        expect(result.current.setsDoneForCurrent).toBe(1);
+      });
+
+      it("si falla el guardado sigue en la misma serie", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockRejectedValueOnce(new Error("offline"));
+        await act(() => result.current.logSet(set));
+        expect(result.current.setsDoneForCurrent).toBe(0);
+        expect(result.current.phase).toBe("logging");
+        expect(result.current.flash).toBeNull();
+      });
+    });
   });
 
   it("una sesion de otro dia no se retoma", async () => {

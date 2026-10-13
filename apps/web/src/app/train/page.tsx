@@ -9,7 +9,6 @@ import { formatClock } from "@/lib/setDisplay";
 import { routes } from "@/lib/routes";
 import {
   formatBlocks,
-  formatSetGoal,
   plannedSetCount,
   setPlan,
 } from "@/lib/blocks";
@@ -17,10 +16,17 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
+import { SaveOverlay } from "@/components/train/SaveOverlay";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
-import { Loader2, ClipboardList, ListChecks, Timer } from "lucide-react";
+import {
+  Loader2,
+  ClipboardList,
+  ListChecks,
+  Timer,
+  ArrowRight,
+} from "lucide-react";
 
 export default function TrainPage() {
   const {
@@ -34,7 +40,7 @@ export default function TrainPage() {
     currentItem,
     nextItem,
     setsDoneForCurrent,
-    lastResult,
+    flash,
     mapItems,
     position,
     totalCount,
@@ -87,28 +93,12 @@ export default function TrainPage() {
     );
   }
 
-  const plannedSets = plannedSetCount(currentItem.blocks);
-  const hasPendingSets = setsDoneForCurrent < plannedSets;
   const currentTarget = formatBlocks(currentItem.blocks);
   const currentPlan = setPlan(currentItem.blocks, setsDoneForCurrent);
-  const nextGoal = formatSetGoal(currentPlan);
-
-  // What the lifter should set up next, shown during rest on the done screen.
-  const nextUp = hasPendingSets
-    ? {
-        label: "Sigue en la misma máquina",
-        name: currentItem.exercise.name,
-        detail: `Serie ${setsDoneForCurrent + 1}${
-          nextGoal ? ` · objetivo ${nextGoal}` : ""
-        }`,
-      }
-    : nextItem
-      ? {
-          label: "Prepara la siguiente máquina",
-          name: nextItem.exercise.name,
-          detail: formatBlocks(nextItem.blocks) ?? "",
-        }
-      : null;
+  const freeWithNext =
+    plannedSetCount(currentItem.blocks) === 0 &&
+    setsDoneForCurrent > 0 &&
+    nextItem != null;
 
   return (
     <PageShell variant="history">
@@ -130,16 +120,8 @@ export default function TrainPage() {
         }
       />
 
-      {phase === "done" && lastResult ? (
-        <SetDoneScreen
-          result={lastResult}
-          hasPendingSets={hasPendingSets}
-          nextItem={nextItem}
-          nextUp={nextUp}
-          onContinueSet={continueSet}
-          onNext={goNext}
-          onFinish={finish}
-        />
+      {phase === "done" ? (
+        <SetDoneScreen onExtraSet={continueSet} onFinish={finish} />
       ) : (
         <main className="flex-1 flex flex-col justify-center px-6 py-6 relative z-10 animate-fade-in-up">
           <div className="max-w-md mx-auto w-full space-y-5">
@@ -188,9 +170,22 @@ export default function TrainPage() {
               onLog={logSet}
               onLogRamp={logRamp}
             />
+
+            {freeWithNext && (
+              <button
+                type="button"
+                onClick={goNext}
+                className="w-full py-3 text-muted-foreground hover:text-foreground font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                Siguiente: {nextItem.exercise.name}
+              </button>
+            )}
           </div>
         </main>
       )}
+
+      {flash && <SaveOverlay flash={flash} />}
 
       {mapOpen && (
         <SessionMap

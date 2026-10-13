@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
@@ -14,6 +14,7 @@ import { rememberEquipment } from "@/lib/equipmentMemory";
 import { plannedSetCount } from "@/lib/blocks";
 import type { LogSetInput } from "@/components/train/SetForm";
 import { notifyError } from "@/lib/notify";
+import { setMetrics } from "@/lib/setDisplay";
 
 type Phase = "logging" | "done";
 
@@ -29,13 +30,22 @@ export interface SessionMapItem {
   replacedFrom: string | null; // original exercise name when this slot was replaced
 }
 
-export interface LastResult {
-  exerciseName: string;
-  weightKg: number | null;
-  reps: number | null;
-  durationSec: number | null;
-  setNumber: number;
+export interface SaveFlash {
+  title: string;
+  detail: string;
+  saved: boolean;
+  next: string | null;
+  leaving: boolean;
 }
+
+const FLASH_MS = 1000;
+const FADE_MS = 250;
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+const describeSet = ({ weightKg, reps, durationSec }: LogSetInput) =>
+  setMetrics({ weight: weightKg, reps, durationSec })
+    .map((m) => `${m.value} ${m.unit}`)
+    .join(" × ");
 
 async function postSet(
   exerciseId: string,
@@ -71,7 +81,8 @@ export function useGuidedSession() {
   const [loading, setLoading] = useState(session !== null);
   const [logging, setLogging] = useState(false);
   const [phase, setPhase] = useState<Phase>("logging");
-  const [lastResult, setLastResult] = useState<LastResult | null>(null);
+  const [flash, setFlash] = useState<SaveFlash | null>(null);
+  const savingRef = useRef(false);
 
   const routineId = session?.routineId;
   useEffect(() => {
@@ -161,68 +172,104 @@ export function useGuidedSession() {
     return (progress[i] ?? 0) < plannedSetCount(items[i]?.blocks ?? []);
   });
 
+  // After saving sets on the current item: stay while it has sets left (a
+  // free item stays while there is somewhere to go), else move to the next
+  // pending item, else the routine is complete.
+  const settle = useCallback(
+    (added: number) => {
+      if (!session || !currentItem) return null;
+      const done = (progress[currentIndex] ?? 0) + added;
+      const target = plannedSetCount(currentItem.blocks);
+      const stay = target > 0 ? done < target : nextIndex >= 0;
+      const advance = !stay && nextIndex >= 0;
+      persist({
+        ...session,
+        progress: { ...progress, [currentIndex]: done },
+        lastSetAt: new Date().toISOString(),
+        ...(advance ? { currentIndex: nextIndex } : {}),
+      });
+      if (!stay && !advance) setPhase("done");
+      return advance ? items[nextIndex].exercise.name : null;
+    },
+    [session, currentItem, progress, currentIndex, nextIndex, items, persist],
+  );
+
+  // Covers the screen from the tap until the save lands and its check has
+  // been on screen long enough to read, so a second tap cannot log twice.
+  const saveWithFlash = useCallback(
+    async (title: string, detail: string, save: () => Promise<number>) => {
+      if (savingRef.current) return;
+      savingRef.current = true;
+      setLogging(true);
+      setFlash({ title, detail, saved: false, next: null, leaving: false });
+      try {
+        const next = settle(await save());
+        setFlash((f) => f && { ...f, saved: true, next });
+        await wait(FLASH_MS);
+        setFlash((f) => f && { ...f, leaving: true });
+        await wait(FADE_MS);
+      } finally {
+        savingRef.current = false;
+        setFlash(null);
+        setLogging(false);
+      }
+    },
+    [settle],
+  );
+
   const logSet = useCallback(
     async (input: LogSetInput) => {
       if (!session || !currentItem) return;
-      const { weightKg, reps, durationSec } = input;
-      setLogging(true);
+      const setNumber = (progress[currentIndex] ?? 0) + 1;
       const run = async () => {
         try {
-          await postSet(currentItem.exerciseId, session.routineId, input);
-
-          const setNumber = (progress[currentIndex] ?? 0) + 1;
-          const nextProgress = { ...progress, [currentIndex]: setNumber };
-          persist({
-            ...session,
-            progress: nextProgress,
-            lastSetAt: new Date().toISOString(),
-          });
-
-          setLastResult({
-            exerciseName: currentItem.exercise.name,
-            weightKg: weightKg ?? null,
-            reps: reps ?? null,
-            durationSec: durationSec ?? null,
-            setNumber,
-          });
-          setPhase("done");
+          await saveWithFlash(
+            `Serie ${setNumber}`,
+            `${currentItem.exercise.name} · ${describeSet(input)}`,
+            async () => {
+              await postSet(currentItem.exerciseId, session.routineId, input);
+              return 1;
+            },
+          );
         } catch (e) {
           console.error("Error logging set:", e);
           notifyError("No se pudo registrar la serie", run);
-        } finally {
-          setLogging(false);
         }
       };
       await run();
     },
-    [session, currentItem, progress, currentIndex, persist],
+    [session, currentItem, progress, currentIndex, saveWithFlash],
   );
 
   const logRamp = useCallback(
     async (sets: LogSetInput[]) => {
       if (!session || !currentItem) return;
-      setLogging(true);
       const before = progress[currentIndex] ?? 0;
-      let done = before;
+      let saved = 0;
       try {
-        for (const set of sets) {
-          await postSet(currentItem.exerciseId, session.routineId, set);
-          done += 1;
-        }
+        await saveWithFlash(
+          "Rampa",
+          `${currentItem.exercise.name} · ${sets.length} series`,
+          async () => {
+            for (const set of sets) {
+              await postSet(currentItem.exerciseId, session.routineId, set);
+              saved += 1;
+            }
+            return saved;
+          },
+        );
       } catch (e) {
         console.error("Error logging ramp:", e);
+        if (saved > 0)
+          persist({
+            ...session,
+            progress: { ...progress, [currentIndex]: before + saved },
+            lastSetAt: new Date().toISOString(),
+          });
         notifyError("No se pudo registrar la rampa");
-      } finally {
-        persist({
-          ...session,
-          progress: { ...progress, [currentIndex]: done },
-          lastSetAt:
-            done > before ? new Date().toISOString() : session.lastSetAt,
-        });
-        setLogging(false);
       }
     },
-    [session, currentItem, progress, currentIndex, persist],
+    [session, currentItem, progress, currentIndex, saveWithFlash, persist],
   );
 
   // Stay on the same exercise and log the next set.
@@ -313,7 +360,7 @@ export function useGuidedSession() {
     currentItem,
     nextItem,
     setsDoneForCurrent,
-    lastResult,
+    flash,
     mapItems,
     position,
     totalCount,
