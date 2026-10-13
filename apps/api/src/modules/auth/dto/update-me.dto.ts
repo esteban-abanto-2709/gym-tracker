@@ -1,5 +1,13 @@
 import { Locale } from '@prisma/client';
-import { IsEnum, IsOptional, ValidateIf } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 import { IsPastDate } from '@/common/date-only';
 
 export class UpdateMeDto {
@@ -10,4 +18,18 @@ export class UpdateMeDto {
   @ValidateIf((o: UpdateMeDto) => o.exerciseLocale !== undefined)
   @IsEnum(Locale)
   exerciseLocale?: Locale;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(200)
+  @IsString({ each: true })
+  @MaxLength(64, { each: true })
+  newsOpened?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(200)
+  @IsString({ each: true })
+  @MaxLength(64, { each: true })
+  newsSeen?: string[];
 }

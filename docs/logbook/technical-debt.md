@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-095] La sesión da por terminada la rutina si te adelantas
+- **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:131`
+- **Riesgo:** 5/10
+- **Problema:** el siguiente ejercicio se busca solo hacia adelante desde el actual. Si desde el mapa de la sesión saltas al último y lo completas, la pantalla de serie guardada no ofrece "Siguiente" aunque queden ejercicios anteriores sin hacer.
+- **Impacto futuro:** el usuario cree que terminó y se va con ejercicios pendientes; frena anunciar la sesión flexible como novedad.
+- **Sugerencia:** buscar el siguiente pendiente en toda la rutina (primero hacia adelante, luego desde el inicio).
+- **Fecha:** 2026-10-13 · **Estado:** Abierto
+
 ## [TD-094] Los colores de borde de Tailwind no se aplican
 - **Ubicación:** `apps/web/src/app/globals.css:100`
 - **Riesgo:** 4/10

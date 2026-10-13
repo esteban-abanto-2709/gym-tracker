@@ -20,6 +20,8 @@ model User {
   activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
   birthDate       DateTime?         @db.Date
   exerciseLocale  Locale            @default(en)
+  newsOpened      String[]          @default([])
+  newsSeen        String[]          @default([])
   measurements    BodyMeasurement[]
   exercises       Exercise[]
   createdAt       DateTime          @default(now())

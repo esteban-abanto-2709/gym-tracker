@@ -97,6 +97,8 @@ export class AuthService {
           birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null,
         }),
         ...(dto.exerciseLocale && { exerciseLocale: dto.exerciseLocale }),
+        ...(dto.newsOpened && { newsOpened: [...new Set(dto.newsOpened)] }),
+        ...(dto.newsSeen && { newsSeen: [...new Set(dto.newsSeen)] }),
       },
     });
     return this.publicUser(user);
@@ -110,6 +112,8 @@ export class AuthService {
       slug: user.slug,
       birthDate: user.birthDate ? fromDbDate(user.birthDate) : null,
       exerciseLocale: user.exerciseLocale,
+      newsOpened: user.newsOpened,
+      newsSeen: user.newsSeen,
     };
   }
 

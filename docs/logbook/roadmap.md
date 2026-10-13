@@ -13,6 +13,12 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
 > de cada tarea está en [`../product-vision.md`](../product-vision.md).
 
+## [RM-096] Novedades
+- **Objetivo:** que el usuario descubra lo que ofrece la app sin un tutorial que interrumpa: quien llega por recomendación de un amigo encuentra el catálogo, y quien ya la usa se entera de lo nuevo.
+- **Alcance:** icono con un punto en Hoy que abre un panel con tarjetas cortas; cada una se despliega con su descripción y un botón "Ir" a la pantalla correcta. Las no vistas salen primero. La lista vive en el código y solo entra lo que le aporta al usuario; lo abierto y lo visto se guarda por usuario. El tutorial queda para otra tarea.
+- **Hecho cuando:** un usuario nuevo ve el punto, abre el panel con las 7 novedades iniciales y lo visto se mantiene al entrar desde otro dispositivo.
+- **Fecha:** 2026-10-13 · **Estado:** En progreso (2026-10-13)
+
 ## [RM-054] Calculadora de discos
 - **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
 - **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).
