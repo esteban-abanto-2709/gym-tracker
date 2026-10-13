@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-098] Tutoriales guiados
+Desde una tarjeta de Novedades, un botón "ver tutorial" que oscurece la pantalla e ilumina paso a paso dónde tocar (p. ej. Perfil → Medidas). Opcional: solo lo ve quien lo pide. Con una librería existente (`driver.js` o `react-joyride`, ambas MIT) y solo para las dos o tres funciones que más confunden, porque cada cambio de pantalla puede romper un tutorial.
+
 ## [WL-097] Deslizar para cerrar los paneles
 Bajar con el dedo para cerrar los paneles que suben desde abajo (Novedades, Exportar, Idioma, Medidas, mapa de la sesión), los cinco a la vez para que se comporten igual. Primero elegir librería: `vaul` (la del Drawer de shadcn) parece sin mantenimiento, verificarlo y comparar con alternativas como el drag de `motion`.
 

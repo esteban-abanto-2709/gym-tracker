@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-095] El siguiente ejercicio es el que te falta (2026-10-13 15:50)
+"Siguiente" busca el primer ejercicio sin terminar ni saltar, hacia adelante y luego desde el inicio: ya no recomienda uno hecho ni da la rutina por completada con pendientes atrás. Un ejercicio libre cuenta como hecho con una serie.
+
 ## [RM-096] Novedades (2026-10-13 14:40)
 Icono con punto en Hoy que abre un panel de tarjetas desplegables con "Ir" a su pantalla; las no vistas primero y lo abierto/visto guardado por usuario (`User.newsOpened`/`newsSeen`). 7 novedades iniciales en `apps/web/src/lib/news.ts`; cómo registrarlas en `docs/news.md`.
 

@@ -92,6 +92,94 @@ describe("useGuidedSession", () => {
     expect(result.current.session?.lastSetAt).toBe(lastSetAt);
   });
 
+  describe("siguiente ejercicio", () => {
+    const item = (id: string, position: number, sets: number) => ({
+      exerciseId: id,
+      exercise: { id, name: id },
+      position,
+      blocks:
+        sets > 0
+          ? [{ kind: "weight_reps" as const, sets, reps: 8, repsMax: null }]
+          : [],
+    });
+    const legs: Routine = {
+      ...routine,
+      items: [
+        item("hack", 0, 3),
+        item("hip-thrust", 1, 3),
+        item("leg-extension", 2, 3),
+      ],
+    };
+
+    const nextFor = async (
+      r: Routine,
+      overrides: Partial<ActiveSession>,
+    ) => {
+      saveSession(overrides);
+      vi.mocked(api.get).mockResolvedValue(r);
+      const { result } = renderHook(() => useGuidedSession());
+      await waitFor(() => expect(result.current.loading).toBe(false));
+      return result.current.nextItem?.exerciseId ?? null;
+    };
+
+    it("vuelve al pendiente de atras si ya no queda nada adelante", async () => {
+      const twoItems = { ...legs, items: legs.items.slice(0, 2) };
+      expect(
+        await nextFor(twoItems, { currentIndex: 1, progress: { 1: 3 } }),
+      ).toBe("hack");
+    });
+
+    it("no recomienda un ejercicio ya terminado", async () => {
+      expect(
+        await nextFor(legs, { currentIndex: 0, progress: { 0: 3, 1: 3 } }),
+      ).toBe("leg-extension");
+    });
+
+    it("sigue hacia adelante antes de volver al que se dejo atras", async () => {
+      expect(
+        await nextFor(legs, { currentIndex: 1, progress: { 1: 3 } }),
+      ).toBe("leg-extension");
+    });
+
+    it("un ejercicio a medias sigue pendiente", async () => {
+      expect(
+        await nextFor(legs, {
+          currentIndex: 2,
+          progress: { 0: 1, 1: 3, 2: 3 },
+        }),
+      ).toBe("hack");
+    });
+
+    it("no recomienda los saltados y sin pendientes no hay siguiente", async () => {
+      expect(
+        await nextFor(legs, {
+          currentIndex: 1,
+          progress: { 1: 3, 2: 3 },
+          skipped: { 0: true },
+        }),
+      ).toBeNull();
+    });
+
+    it("un ejercicio libre cuenta como hecho con una serie", async () => {
+      const withFree = {
+        ...legs,
+        items: [item("free", 0, 0), ...legs.items.slice(1)],
+      };
+      expect(
+        await nextFor(withFree, {
+          currentIndex: 1,
+          progress: { 0: 1, 1: 3 },
+        }),
+      ).toBe("leg-extension");
+      expect(
+        await nextFor(withFree, {
+          currentIndex: 2,
+          progress: { 1: 3, 2: 3 },
+        }),
+      ).toBe("free");
+    });
+  });
+
   it("una sesion de otro dia no se retoma", async () => {
     saveSession({ startedAt: "2020-01-01T10:00:00Z" });
 

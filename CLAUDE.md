@@ -65,7 +65,8 @@ pnpm run build                # prisma generate + nest build
 pnpm run lint                 # check only; lint:fix to autofix
 pnpm run test:unit            # jest (src/**/*.spec.ts)
 pnpm run test:e2e             # jest + supertest (test/)
-pnpm exec prisma migrate dev  # new migration
+pnpm exec prisma migrate dev  # new migration (Prisma 7: does not regenerate the client)
+pnpm exec prisma generate     # run after migrate dev, or tests see the old schema
 
 # apps/web
 pnpm dev                      # web on :3000

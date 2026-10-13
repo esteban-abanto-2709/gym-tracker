@@ -127,8 +127,17 @@ export function useGuidedSession() {
     .map((_, i) => i)
     .filter((i) => !skipped[i]);
 
-  // "Next machine" = first live item after the current one.
-  const nextIndex = liveIndices.find((i) => i > currentIndex) ?? -1;
+  // "Next machine" = first unfinished live item after the current one,
+  // wrapping to the start. Free items count as finished after one set.
+  const isUnfinished = (i: number) => {
+    const target = plannedSetCount(items[i]?.blocks ?? []);
+    return (progress[i] ?? 0) < Math.max(target, 1);
+  };
+  const nextIndex =
+    [
+      ...liveIndices.filter((i) => i > currentIndex),
+      ...liveIndices.filter((i) => i < currentIndex),
+    ].find(isUnfinished) ?? -1;
   const nextItem: RoutineItem | null = nextIndex >= 0 ? items[nextIndex] : null;
 
   const routineItemCount = routine?.items.length ?? 0;

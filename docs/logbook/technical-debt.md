@@ -14,12 +14,12 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-095] La sesión da por terminada la rutina si te adelantas
-- **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:131`
-- **Riesgo:** 5/10
-- **Problema:** el siguiente ejercicio se busca solo hacia adelante desde el actual. Si desde el mapa de la sesión saltas al último y lo completas, la pantalla de serie guardada no ofrece "Siguiente" aunque queden ejercicios anteriores sin hacer.
-- **Impacto futuro:** el usuario cree que terminó y se va con ejercicios pendientes; frena anunciar la sesión flexible como novedad.
-- **Sugerencia:** buscar el siguiente pendiente en toda la rutina (primero hacia adelante, luego desde el inicio).
+## [TD-099] El editor de rutinas no explica dónde va el peso
+- **Ubicación:** `apps/web/src/components/routines/RoutineEditor.tsx`
+- **Riesgo:** 3/10
+- **Problema:** la rutina define series y reps, pero no peso, a propósito: el peso se pone al entrenar y la app recuerda el último. Nada en el editor lo dice, y la primera pregunta de un usuario nuevo fue "¿cómo pongo el peso de los ejercicios?".
+- **Impacto futuro:** cada usuario nuevo se traba en el mismo punto al armar su primera rutina.
+- **Sugerencia:** una línea de ayuda en el editor ("El peso lo pones al entrenar; la app recuerda el último") y una tarjeta en Novedades.
 - **Fecha:** 2026-10-13 · **Estado:** Abierto
 
 ## [TD-094] Los colores de borde de Tailwind no se aplican
