@@ -15,6 +15,10 @@ export class ExerciseNamesInterceptor implements NestInterceptor {
     if (!user) return next.handle();
     return next
       .handle()
-      .pipe(map((body: unknown) => localizeExerciseNames(body, user.locale)));
+      .pipe(
+        map((body: unknown) =>
+          localizeExerciseNames(body, user.exerciseLocale),
+        ),
+      );
   }
 }

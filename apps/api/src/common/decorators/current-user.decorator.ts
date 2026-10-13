@@ -4,7 +4,7 @@ import type { Locale } from '@prisma/client';
 
 export interface AuthUser {
   id: string;
-  locale: Locale;
+  exerciseLocale: Locale;
 }
 
 export const CurrentUser = createParamDecorator(

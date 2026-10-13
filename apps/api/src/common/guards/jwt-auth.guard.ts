@@ -8,7 +8,6 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
-import { resolveLocale } from '@/common/locale';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 
 @Injectable()
@@ -38,13 +37,10 @@ export class JwtAuthGuard implements CanActivate {
     }
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { locale: true },
+      select: { exerciseLocale: true },
     });
     if (!user) throw new UnauthorizedException();
-    req.user = {
-      id: userId,
-      locale: resolveLocale(user.locale, req.headers['accept-language']),
-    };
+    req.user = { id: userId, exerciseLocale: user.exerciseLocale };
     return true;
   }
 }

@@ -125,27 +125,18 @@ describe('ExercisesController (e2e)', () => {
     }
   });
 
-  describe('stores the new name in the creator language', () => {
+  describe('stores the new name in the user exercise language', () => {
     const localeOf = async (exerciseId: string) =>
       (await prisma.exerciseName.findMany({ where: { exerciseId } })).map(
         (n) => [n.locale, n.searchName],
       );
+    const setLanguage = (exerciseLocale: 'es' | 'en') =>
+      prisma.user.update({ where: { id: userId }, data: { exerciseLocale } });
 
-    it('uses the device language when it is Spanish', async () => {
+    it('uses English by default, whatever the device language', async () => {
       const res = await agent
         .post('/exercises')
         .set('Accept-Language', 'es-PE,es;q=0.9')
-        .send({ name: `Remo Ráro ${stamp}` })
-        .expect(201);
-      expect(await localeOf((res.body as { id: string }).id)).toEqual([
-        ['es', `remo raro ${stamp}`],
-      ]);
-    });
-
-    it('uses English for any other device language', async () => {
-      const res = await agent
-        .post('/exercises')
-        .set('Accept-Language', 'fr-FR,fr;q=0.9')
         .send({ name: `Rowing ${stamp}` })
         .expect(201);
       expect(await localeOf((res.body as { id: string }).id)).toEqual([
@@ -153,25 +144,18 @@ describe('ExercisesController (e2e)', () => {
       ]);
     });
 
-    it('prefers the saved user language over the device', async () => {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { locale: 'en' },
-      });
+    it('uses Spanish when the user chose it', async () => {
+      await setLanguage('es');
       try {
         const res = await agent
           .post('/exercises')
-          .set('Accept-Language', 'es-PE')
-          .send({ name: `Pref ${stamp}` })
+          .send({ name: `Remo Ráro ${stamp}` })
           .expect(201);
-        expect((await localeOf((res.body as { id: string }).id))[0][0]).toBe(
-          'en',
-        );
+        expect(await localeOf((res.body as { id: string }).id)).toEqual([
+          ['es', `remo raro ${stamp}`],
+        ]);
       } finally {
-        await prisma.user.update({
-          where: { id: userId },
-          data: { locale: null },
-        });
+        await setLanguage('en');
       }
     });
   });
@@ -216,12 +200,12 @@ describe('ExercisesController (e2e)', () => {
       await prisma.routine.deleteMany({ where: { userId } });
       await prisma.user.update({
         where: { id: userId },
-        data: { locale: null },
+        data: { exerciseLocale: 'en' },
       });
       await prisma.exercise.delete({ where: { id: officialId } });
     });
 
-    it('lists the name in the device language and both names for search', async () => {
+    it('lists English by default, ignoring the device, with both names for search', async () => {
       const res = await agent
         .get('/exercises')
         .set('Accept-Language', 'es-PE')
@@ -229,7 +213,7 @@ describe('ExercisesController (e2e)', () => {
       const official = (
         res.body as { id: string; name: string; searchNames: string[] }[]
       ).find((e) => e.id === officialId);
-      expect(official?.name).toBe(es);
+      expect(official?.name).toBe(en);
       expect(official?.searchNames.sort()).toEqual(
         [en.toLowerCase(), es.toLowerCase()].sort(),
       );
@@ -239,7 +223,6 @@ describe('ExercisesController (e2e)', () => {
     it('creating with the name in another language returns the official', async () => {
       const res = await agent
         .post('/exercises')
-        .set('Accept-Language', 'en-US')
         .send({ name: es.toUpperCase() })
         .expect(201);
       expect((res.body as { id: string; name: string }).id).toBe(officialId);
@@ -247,6 +230,7 @@ describe('ExercisesController (e2e)', () => {
     });
 
     it('localizes names inside routines and sets', async () => {
+      await agent.patch('/auth/me').send({ exerciseLocale: 'es' }).expect(200);
       await agent
         .post('/routines')
         .send({
@@ -259,10 +243,7 @@ describe('ExercisesController (e2e)', () => {
         .send({ exerciseId: officialId, reps: 5 })
         .expect(201);
 
-      const routines = await agent
-        .get('/routines')
-        .set('Accept-Language', 'es-PE')
-        .expect(200);
+      const routines = await agent.get('/routines').expect(200);
       const items = (
         routines.body as {
           items: { exercise: { id: string; name: string } }[];
@@ -274,7 +255,6 @@ describe('ExercisesController (e2e)', () => {
         new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
       const sets = await agent
         .get(`/workouts?from=${day(-1)}&to=${day(1)}`)
-        .set('Accept-Language', 'en-US')
         .expect(200);
       expect(
         nameOf(
@@ -282,27 +262,30 @@ describe('ExercisesController (e2e)', () => {
             (w) => w.exercise,
           ),
         ),
-      ).toBe(en);
+      ).toBe(es);
+
+      await agent.patch('/auth/me').send({ exerciseLocale: 'en' }).expect(200);
     });
 
-    it('the saved preference wins over the device language', async () => {
+    it('saves the exercise language from the profile', async () => {
       const me = await agent
         .patch('/auth/me')
-        .send({ locale: 'en' })
+        .send({ exerciseLocale: 'es' })
         .expect(200);
-      expect((me.body as { locale: string }).locale).toBe('en');
+      expect((me.body as { exerciseLocale: string }).exerciseLocale).toBe('es');
 
       const res = await agent
         .get('/exercises')
-        .set('Accept-Language', 'es-PE')
+        .set('Accept-Language', 'en-US')
         .expect(200);
-      expect(nameOf(res.body as { id: string; name: string }[])).toBe(en);
+      expect(nameOf(res.body as { id: string; name: string }[])).toBe(es);
 
-      await agent.patch('/auth/me').send({ locale: null }).expect(200);
+      await agent.patch('/auth/me').send({ exerciseLocale: 'en' }).expect(200);
     });
 
-    it('rejects an unsupported language', () => {
-      return agent.patch('/auth/me').send({ locale: 'fr' }).expect(400);
+    it('rejects an unsupported or empty language', async () => {
+      await agent.patch('/auth/me').send({ exerciseLocale: 'fr' }).expect(400);
+      await agent.patch('/auth/me').send({ exerciseLocale: null }).expect(400);
     });
   });
 });

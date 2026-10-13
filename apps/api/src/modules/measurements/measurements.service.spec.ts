@@ -118,10 +118,10 @@ describe('UpdateMeDto', () => {
     expect(await errorsFor({ birthDate: '2999-01-01' })).toHaveLength(1);
   });
 
-  it('accepts es, en or null as the language and rejects anything else', async () => {
-    expect(await errorsFor({ locale: 'es' })).toHaveLength(0);
-    expect(await errorsFor({ locale: 'en' })).toHaveLength(0);
-    expect(await errorsFor({ locale: null })).toHaveLength(0);
-    expect(await errorsFor({ locale: 'fr' })).toHaveLength(1);
+  it('accepts es or en as the exercise language and rejects anything else', async () => {
+    expect(await errorsFor({ exerciseLocale: 'es' })).toHaveLength(0);
+    expect(await errorsFor({ exerciseLocale: 'en' })).toHaveLength(0);
+    expect(await errorsFor({ exerciseLocale: null })).toHaveLength(1);
+    expect(await errorsFor({ exerciseLocale: 'fr' })).toHaveLength(1);
   });
 });

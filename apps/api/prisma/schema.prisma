@@ -19,7 +19,7 @@ model User {
   activeProgramId String?
   activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
   birthDate       DateTime?         @db.Date
-  locale          Locale?
+  exerciseLocale  Locale            @default(en)
   measurements    BodyMeasurement[]
   exercises       Exercise[]
   createdAt       DateTime          @default(now())

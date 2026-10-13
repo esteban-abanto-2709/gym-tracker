@@ -17,13 +17,13 @@ export class ExercisesController {
   ) {
     return this.exercisesService.create(
       user.id,
-      user.locale,
+      user.exerciseLocale,
       createExerciseDto,
     );
   }
 
   @Get()
   async findAll(@CurrentUser() user: AuthUser) {
-    return this.exercisesService.findAll(user.locale);
+    return this.exercisesService.findAll(user.exerciseLocale);
   }
 }

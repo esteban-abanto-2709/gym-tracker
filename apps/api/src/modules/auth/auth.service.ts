@@ -96,7 +96,7 @@ export class AuthService {
         ...(dto.birthDate !== undefined && {
           birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null,
         }),
-        ...(dto.locale !== undefined && { locale: dto.locale }),
+        ...(dto.exerciseLocale && { exerciseLocale: dto.exerciseLocale }),
       },
     });
     return this.publicUser(user);
@@ -109,7 +109,7 @@ export class AuthService {
       username: user.username,
       slug: user.slug,
       birthDate: user.birthDate ? fromDbDate(user.birthDate) : null,
-      locale: user.locale,
+      exerciseLocale: user.exerciseLocale,
     };
   }
 
