@@ -141,6 +141,18 @@ describe("useGuidedSession", () => {
       ).toBe("leg-extension");
     });
 
+    it("cuenta los ejercicios que faltan, sin los saltados", async () => {
+      saveSession({
+        currentIndex: 1,
+        progress: { 0: 1, 1: 3 },
+        skipped: { 2: true },
+      });
+      vi.mocked(api.get).mockResolvedValue(legs);
+      const { result } = renderHook(() => useGuidedSession());
+      await waitFor(() => expect(result.current.loading).toBe(false));
+      expect(result.current.remainingCount).toBe(1);
+    });
+
     it("un ejercicio a medias sigue pendiente", async () => {
       expect(
         await nextFor(legs, {

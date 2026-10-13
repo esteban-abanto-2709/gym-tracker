@@ -5,6 +5,7 @@ import type { Exercise } from "@/lib/types";
 import type { SessionMapItem } from "@/hooks/useGuidedSession";
 import { plannedSetCount } from "@/lib/blocks";
 import { AddExerciseSheet } from "@/components/train/AddExerciseSheet";
+import { FinishSessionDialog } from "@/components/train/FinishSessionDialog";
 import {
   ArrowLeftRight,
   X,
@@ -12,15 +13,18 @@ import {
   SkipForward,
   Repeat,
   RotateCcw,
+  Flag,
 } from "lucide-react";
 
 interface SessionMapProps {
   items: SessionMapItem[];
   position: number;
   totalCount: number;
+  remainingCount: number;
   onGoTo: (index: number) => void;
   onSkip: (index: number) => void;
   onReplace: (index: number, exercise: Exercise) => void;
+  onFinish: () => void;
   onClose: () => void;
 }
 
@@ -53,12 +57,15 @@ export function SessionMap({
   items,
   position,
   totalCount,
+  remainingCount,
   onGoTo,
   onSkip,
   onReplace,
+  onFinish,
   onClose,
 }: SessionMapProps) {
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
+  const [finishOpen, setFinishOpen] = useState(false);
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null);
 
   return (
@@ -195,6 +202,15 @@ export function SessionMap({
               </div>
             );
           })}
+
+          <button
+            type="button"
+            onClick={() => setFinishOpen(true)}
+            className="w-full mt-6 py-3.5 rounded-2xl bg-destructive/10 text-destructive font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <Flag className="w-5 h-5" strokeWidth={2.5} />
+            Terminar sesión
+          </button>
         </div>
       </div>
 
@@ -208,6 +224,13 @@ export function SessionMap({
           onClose={() => setReplacingIndex(null)}
         />
       )}
+
+      <FinishSessionDialog
+        open={finishOpen}
+        onOpenChange={setFinishOpen}
+        remainingCount={remainingCount}
+        onConfirm={onFinish}
+      />
     </>
   );
 }

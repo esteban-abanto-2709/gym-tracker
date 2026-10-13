@@ -37,6 +37,7 @@ export default function TrainPage() {
     mapItems,
     position,
     totalCount,
+    remainingCount,
     logSet,
     logRamp,
     continueSet,
@@ -185,12 +186,14 @@ export default function TrainPage() {
           items={mapItems}
           position={position}
           totalCount={totalCount}
+          remainingCount={remainingCount}
           onGoTo={(i) => {
             goToIndex(i);
             setMapOpen(false);
           }}
           onSkip={skipItem}
           onReplace={replaceItem}
+          onFinish={finish}
           onClose={() => setMapOpen(false)}
         />
       )}

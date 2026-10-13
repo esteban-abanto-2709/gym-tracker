@@ -138,6 +138,7 @@ export function useGuidedSession() {
       ...liveIndices.filter((i) => i > currentIndex),
       ...liveIndices.filter((i) => i < currentIndex),
     ].find(isUnfinished) ?? -1;
+  const remainingCount = liveIndices.filter(isUnfinished).length;
   const nextItem: RoutineItem | null = nextIndex >= 0 ? items[nextIndex] : null;
 
   const routineItemCount = routine?.items.length ?? 0;
@@ -316,6 +317,7 @@ export function useGuidedSession() {
     mapItems,
     position,
     totalCount,
+    remainingCount,
     allDone,
     logSet,
     logRamp,

@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-100] Terminar la sesión desde el mapa (sin registrar nada) (2026-10-13 16:21)
+El mapa de la sesión tiene "Terminar sesión" al pie; un modal confirma y muestra en grande cuántos ejercicios quedan sin hacer. De paso, el tema define `destructive`: los rojos de borrar y de error nunca se pintaban.
+
 ## [TD-095] El siguiente ejercicio es el que te falta (2026-10-13 15:50)
 "Siguiente" busca el primer ejercicio sin terminar ni saltar, hacia adelante y luego desde el inicio: ya no recomienda uno hecho ni da la rutina por completada con pendientes atrás. Un ejercicio libre cuenta como hecho con una serie.
 
