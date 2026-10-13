@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-094] Los colores de borde de Tailwind no se aplican
+- **Ubicación:** `apps/web/src/app/globals.css:100`
+- **Riesgo:** 4/10
+- **Problema:** la regla global `* { border-color: hsl(var(--border)); }` está fuera de las capas de Tailwind, y en Tailwind 4 los estilos sin capa ganan a las utilidades. Por eso `border-primary` y los demás colores de borde nunca se ven: el botón "Medir" y la opción elegida del panel de idioma muestran el borde gris.
+- **Impacto futuro:** cualquier diseño que dependa de un borde de color (selección, foco, error) no se ve como se diseñó, y es difícil de notar.
+- **Sugerencia:** mover la regla dentro de `@layer base` y revisar visualmente las pantallas, porque varios bordes cambiarán de color a la vez.
+- **Fecha:** 2026-10-13 · **Estado:** Abierto
+
 ## [TD-091] La lista de equipos no tiene la máquina Smith
 - **Ubicación:** tabla `Equipment` (sembrada en la migración `equipo_tabla_y_slug`)
 - **Riesgo:** 3/10

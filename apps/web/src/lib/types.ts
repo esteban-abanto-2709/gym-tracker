@@ -8,7 +8,7 @@ export interface AuthUser {
   username: string;
   slug: string;
   birthDate: string | null;
-  locale: Locale | null;
+  exerciseLocale: Locale;
 }
 
 export interface BodyMeasurement {

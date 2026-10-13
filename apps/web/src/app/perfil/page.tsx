@@ -1,16 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { BirthDateRow } from "@/components/profile/BirthDateRow";
-import { LanguageRow } from "@/components/profile/LanguageRow";
+import { LanguageSheet } from "@/components/profile/LanguageSheet";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
-import { LogOut } from "lucide-react";
+import { Languages, LogOut } from "lucide-react";
 
 export default function PerfilPage() {
   const { user, logout } = useAuth();
   const initial = user?.username?.charAt(0)?.toUpperCase() ?? "?";
+  const [languageOpen, setLanguageOpen] = useState(false);
 
   return (
     <PageShell variant="history">
@@ -21,14 +23,27 @@ export default function PerfilPage() {
             <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.9] tracking-tight">
               Perfil
             </h1>
-            <button
-              type="button"
-              onClick={() => logout()}
-              className="flex items-center gap-1.5 rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold text-muted-foreground hover:text-destructive hover:border-destructive/50 active:scale-95 transition-all"
-            >
-              <LogOut className="w-4 h-4" strokeWidth={2.5} />
-              Salir
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setLanguageOpen(true)}
+                aria-label="Idioma"
+                className="flex items-center gap-1.5 rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold text-muted-foreground hover:text-primary hover:border-primary/50 active:scale-95 transition-all"
+              >
+                <Languages className="w-4 h-4" strokeWidth={2.5} />
+                <span className="font-display uppercase tracking-wide">
+                  {user?.exerciseLocale ?? "en"}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => logout()}
+                className="flex items-center gap-1.5 rounded-xl border-2 border-input px-3 py-1.5 text-sm font-bold text-muted-foreground hover:text-destructive hover:border-destructive/50 active:scale-95 transition-all"
+              >
+                <LogOut className="w-4 h-4" strokeWidth={2.5} />
+                Salir
+              </button>
+            </div>
           </div>
 
           <div className="mt-6 rounded-2xl border-2 border-input bg-card overflow-hidden">
@@ -46,12 +61,15 @@ export default function PerfilPage() {
               </div>
             </div>
             <BirthDateRow />
-            <LanguageRow />
           </div>
 
           <MeasurementsSection />
         </div>
       </main>
+
+      {languageOpen && (
+        <LanguageSheet onClose={() => setLanguageOpen(false)} />
+      )}
 
       <BottomNav />
     </PageShell>

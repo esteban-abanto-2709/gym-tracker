@@ -26,8 +26,8 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
 ## [RM-093] Traducir la interfaz
-- **Objetivo:** que la interfaz (botones, títulos, mensajes) se muestre en el idioma del usuario, usando la misma preferencia de idioma que los ejercicios (RM-086).
-- **Alcance:** instalar una librería de i18n para Next.js (candidata: `next-intl`, verificar su API al empezar) y sacar los textos de cada pantalla a archivos de traducción `es`/`en`. Incluye los nombres de equipo (lista fija), el formato de fechas (hoy fijo en español) y los textos explicativos de la exportación para la IA.
+- **Objetivo:** que la interfaz (botones, títulos, mensajes) se muestre en el idioma del usuario. Es una preferencia aparte del idioma de los ejercicios (RM-086): hay quien quiere la interfaz en español y los ejercicios en inglés.
+- **Alcance:** instalar una librería de i18n para Next.js (candidata: `next-intl`, verificar su API al empezar) y sacar los textos de cada pantalla a archivos de traducción `es`/`en`. Incluye los nombres de equipo (lista fija), el formato de fechas (hoy fijo en español) y los textos explicativos de la exportación para la IA. Sin preferencia guardada, la interfaz usa el idioma del celular si es `es` o `en`; cualquier otro, `en`. El selector va en el mismo panel de idioma del perfil, debajo de "Nombres de ejercicios".
 - **Hecho cuando:** con el idioma en inglés, la interfaz, los equipos, las fechas y la exportación salen en inglés.
 - **Fecha:** 2026-10-12 · **Estado:** Abierto
 
