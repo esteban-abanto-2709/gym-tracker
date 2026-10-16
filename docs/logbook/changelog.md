@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [RM-114] Guardar series sin esperar a la red (2026-10-16 12:32)
+La serie se marca y avanza al instante: queda en una lista de pendientes en `localStorage` y se envía por detrás con un `clientId` que la API usa para no duplicarla. Al terminar con pendientes se ofrece reintentar o descartar; la recomendación de la siguiente serie espera a que se envíen.
+
 ---
 
 ## [TD-106] El fuego no se actualiza entre series del mismo ejercicio (2026-10-16 11:25)

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { api } from "@/lib/api";
+import { flushPendingSets } from "@/lib/pendingSets";
 import { routes } from "@/lib/routes";
 import type { Equipment, SetType } from "@/lib/types";
 import {
@@ -95,13 +96,15 @@ export function SetForm({
 
   useEffect(() => {
     let active = true;
-    api
-      .get<Recommendation>(
-        routes.api.workouts.recommendation(
-          exerciseId,
-          equipmentId,
-          setType,
-          step,
+    flushPendingSets()
+      .then(() =>
+        api.get<Recommendation>(
+          routes.api.workouts.recommendation(
+            exerciseId,
+            equipmentId,
+            setType,
+            step,
+          ),
         ),
       )
       .then((rec) => {

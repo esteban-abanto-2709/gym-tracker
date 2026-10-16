@@ -3,9 +3,10 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { SetForm } from "./SetForm";
 import { api } from "@/lib/api";
 import type { SetPlan } from "@/lib/blocks";
+import { addPendingSets } from "@/lib/pendingSets";
 
 vi.mock("@/lib/api", () => ({
-  api: { get: vi.fn() },
+  api: { get: vi.fn(), post: vi.fn() },
 }));
 
 const get = vi.mocked(api.get);
@@ -43,6 +44,38 @@ const inputs = () => screen.getAllByRole("spinbutton") as HTMLInputElement[];
 const values = () => inputs().map((i) => i.value);
 
 describe("SetForm", () => {
+  it("pide la ultima serie despues de enviar la que quedo pendiente", async () => {
+    addPendingSets([
+      {
+        clientId: "c-1",
+        label: "Press banca · 60 kg × 8 reps",
+        body: {
+          exerciseId: "ex-bench",
+          routineId: "r-1",
+          reps: 8,
+          weight: 60,
+          durationSec: null,
+          equipmentId: null,
+          setType: "WORKING",
+          step: null,
+        },
+      },
+    ]);
+    const order: string[] = [];
+    vi.mocked(api.post).mockImplementationOnce(async () => {
+      order.push("post");
+    });
+    get.mockImplementationOnce(async () => {
+      order.push("get");
+      return rec({ lastWeight: 60, lastReps: 8 });
+    });
+
+    render(<SetForm {...props} />);
+
+    await waitFor(() => expect(values()).toEqual(["60", "8"]));
+    expect(order).toEqual(["post", "get"]);
+  });
+
   it("arranca con las reps de la meta y luego precarga la ultima serie", async () => {
     get.mockResolvedValue(rec({ lastWeight: 60, lastReps: 7 }));
 
@@ -65,8 +98,10 @@ describe("SetForm", () => {
 
     expect(values()).toEqual(["", "10"]);
     expect(screen.getByText("Sin registro previo")).toBeTruthy();
-    expect(get).toHaveBeenLastCalledWith(
-      expect.stringContaining("exerciseId=ex-row"),
+    await waitFor(() =>
+      expect(get).toHaveBeenLastCalledWith(
+        expect.stringContaining("exerciseId=ex-row"),
+      ),
     );
   });
 

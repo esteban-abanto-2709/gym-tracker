@@ -13,7 +13,14 @@ import {
 import { rememberEquipment } from "@/lib/equipmentMemory";
 import { plannedSetCount } from "@/lib/blocks";
 import type { LogSetInput } from "@/components/train/SetForm";
-import { notifyError } from "@/lib/notify";
+import {
+  type PendingSet,
+  addPendingSets,
+  discardPendingSets,
+  flushPendingSets,
+  newClientId,
+  readPendingSets,
+} from "@/lib/pendingSets";
 import { setMetrics } from "@/lib/setDisplay";
 
 type Phase = "logging" | "done";
@@ -33,7 +40,6 @@ export interface SessionMapItem {
 export interface SaveFlash {
   title: string;
   detail: string;
-  saved: boolean;
   next: string | null;
   leaving: boolean;
 }
@@ -47,29 +53,26 @@ const describeSet = ({ weightKg, reps, durationSec }: LogSetInput) =>
     .map((m) => `${m.value} ${m.unit}`)
     .join(" × ");
 
-async function postSet(
-  exerciseId: string,
+function pendingSet(
+  exercise: { id: string; name: string },
   routineId: string,
-  {
-    weightKg,
-    reps,
-    durationSec,
-    equipmentId,
-    setType = "WORKING",
-    step,
-  }: LogSetInput,
-) {
-  await api.post(routes.api.workouts.create(), {
-    exerciseId,
-    reps: reps ?? null,
-    weight: weightKg ?? null,
-    durationSec: durationSec ?? null,
-    equipmentId: equipmentId ?? null,
-    routineId,
-    setType,
-    step: step ?? null,
-  });
-  rememberEquipment(exerciseId, equipmentId ?? null);
+  input: LogSetInput,
+): PendingSet {
+  const { weightKg, reps, durationSec, equipmentId, setType, step } = input;
+  return {
+    clientId: newClientId(),
+    label: `${exercise.name} · ${describeSet(input)}`,
+    body: {
+      exerciseId: exercise.id,
+      routineId,
+      reps: reps ?? null,
+      weight: weightKg ?? null,
+      durationSec: durationSec ?? null,
+      equipmentId: equipmentId ?? null,
+      setType: setType ?? "WORKING",
+      step: step ?? null,
+    },
+  };
 }
 
 export function useGuidedSession() {
@@ -83,6 +86,15 @@ export function useGuidedSession() {
   const [phase, setPhase] = useState<Phase>("logging");
   const [flash, setFlash] = useState<SaveFlash | null>(null);
   const savingRef = useRef(false);
+  const [unsaved, setUnsaved] = useState<PendingSet[] | null>(null);
+  const [retrying, setRetrying] = useState(false);
+
+  useEffect(() => {
+    const sync = () => void flushPendingSets();
+    sync();
+    window.addEventListener("online", sync);
+    return () => window.removeEventListener("online", sync);
+  }, []);
 
   const routineId = session?.routineId;
   useEffect(() => {
@@ -194,17 +206,19 @@ export function useGuidedSession() {
     [session, currentItem, progress, currentIndex, nextIndex, items, persist],
   );
 
-  // Covers the screen from the tap until the save lands and its check has
-  // been on screen long enough to read, so a second tap cannot log twice.
+  // Covers the screen from the tap until its check has been on screen long
+  // enough to read, so a second tap cannot log twice. The sets are queued
+  // locally and sent in the background.
   const saveWithFlash = useCallback(
-    async (title: string, detail: string, save: () => Promise<number>) => {
+    async (title: string, detail: string, sets: PendingSet[]) => {
       if (savingRef.current) return;
       savingRef.current = true;
       setLogging(true);
-      setFlash({ title, detail, saved: false, next: null, leaving: false });
       try {
-        const next = settle(await save());
-        setFlash((f) => f && { ...f, saved: true, next });
+        addPendingSets(sets);
+        void flushPendingSets();
+        const next = settle(sets.length);
+        setFlash({ title, detail, next, leaving: false });
         await wait(FLASH_MS);
         setFlash((f) => f && { ...f, leaving: true });
         await wait(FADE_MS);
@@ -221,22 +235,12 @@ export function useGuidedSession() {
     async (input: LogSetInput) => {
       if (!session || !currentItem) return;
       const setNumber = (progress[currentIndex] ?? 0) + 1;
-      const run = async () => {
-        try {
-          await saveWithFlash(
-            `Serie ${setNumber}`,
-            `${currentItem.exercise.name} · ${describeSet(input)}`,
-            async () => {
-              await postSet(currentItem.exerciseId, session.routineId, input);
-              return 1;
-            },
-          );
-        } catch (e) {
-          console.error("Error logging set:", e);
-          notifyError("No se pudo registrar la serie", run);
-        }
-      };
-      await run();
+      rememberEquipment(currentItem.exerciseId, input.equipmentId ?? null);
+      await saveWithFlash(
+        `Serie ${setNumber}`,
+        `${currentItem.exercise.name} · ${describeSet(input)}`,
+        [pendingSet(currentItem.exercise, session.routineId, input)],
+      );
     },
     [session, currentItem, progress, currentIndex, saveWithFlash],
   );
@@ -244,32 +248,16 @@ export function useGuidedSession() {
   const logRamp = useCallback(
     async (sets: LogSetInput[]) => {
       if (!session || !currentItem) return;
-      const before = progress[currentIndex] ?? 0;
-      let saved = 0;
-      try {
-        await saveWithFlash(
-          "Rampa",
-          `${currentItem.exercise.name} · ${sets.length} series`,
-          async () => {
-            for (const set of sets) {
-              await postSet(currentItem.exerciseId, session.routineId, set);
-              saved += 1;
-            }
-            return saved;
-          },
-        );
-      } catch (e) {
-        console.error("Error logging ramp:", e);
-        if (saved > 0)
-          persist({
-            ...session,
-            progress: { ...progress, [currentIndex]: before + saved },
-            lastSetAt: new Date().toISOString(),
-          });
-        notifyError("No se pudo registrar la rampa");
-      }
+      rememberEquipment(currentItem.exerciseId, sets.at(-1)?.equipmentId ?? null);
+      await saveWithFlash(
+        "Rampa",
+        `${currentItem.exercise.name} · ${sets.length} series`,
+        sets.map((set) =>
+          pendingSet(currentItem.exercise, session.routineId, set),
+        ),
+      );
     },
-    [session, currentItem, progress, currentIndex, saveWithFlash, persist],
+    [session, currentItem, saveWithFlash],
   );
 
   // Stay on the same exercise and log the next set.
@@ -344,10 +332,31 @@ export function useGuidedSession() {
     [session, persist],
   );
 
-  const finish = useCallback(() => {
+  const leave = useCallback(() => {
     clearActiveSession();
     router.push(routes.home());
   }, [router]);
+
+  const retryUnsaved = useCallback(async () => {
+    setUnsaved(readPendingSets());
+    setRetrying(true);
+    const left = await flushPendingSets();
+    setRetrying(false);
+    if (left === 0) leave();
+    else setUnsaved(readPendingSets());
+  }, [leave]);
+
+  const finish = useCallback(() => {
+    if (readPendingSets().length === 0) leave();
+    else void retryUnsaved();
+  }, [leave, retryUnsaved]);
+
+  const discardUnsaved = useCallback(() => {
+    discardPendingSets();
+    leave();
+  }, [leave]);
+
+  const closeUnsaved = useCallback(() => setUnsaved(null), []);
 
   return {
     loading,
@@ -374,5 +383,10 @@ export function useGuidedSession() {
     skipItem,
     replaceItem,
     finish,
+    unsaved,
+    retrying,
+    retryUnsaved,
+    discardUnsaved,
+    closeUnsaved,
   };
 }

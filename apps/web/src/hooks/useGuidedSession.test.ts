@@ -3,6 +3,7 @@ import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGuidedSession } from "./useGuidedSession";
 import { api } from "@/lib/api";
 import { readActiveSession, type ActiveSession } from "@/lib/activeSession";
+import { addPendingSets, readPendingSets } from "@/lib/pendingSets";
 import type { Routine } from "@/lib/types";
 
 vi.mock("next/navigation", () => ({
@@ -254,13 +255,86 @@ describe("useGuidedSession", () => {
         expect(result.current.setsDoneForCurrent).toBe(1);
       });
 
-      it("si falla el guardado sigue en la misma serie", async () => {
+      it("avanza sin esperar a que responda el servidor", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        let answer: (v: unknown) => void = () => {};
+        vi.mocked(api.post).mockReturnValueOnce(
+          new Promise((r) => (answer = r)),
+        );
+        await act(() => result.current.logSet(set));
+        expect(result.current.setsDoneForCurrent).toBe(1);
+        expect(readPendingSets()).toHaveLength(1);
+        await act(async () => answer(undefined));
+        await waitFor(() => expect(readPendingSets()).toHaveLength(0));
+      });
+
+      it("si falla el envio avanza igual y la serie queda pendiente", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         vi.mocked(api.post).mockRejectedValueOnce(new Error("offline"));
         await act(() => result.current.logSet(set));
-        expect(result.current.setsDoneForCurrent).toBe(0);
-        expect(result.current.phase).toBe("logging");
+        expect(result.current.setsDoneForCurrent).toBe(1);
         expect(result.current.flash).toBeNull();
+        expect(readPendingSets()).toHaveLength(1);
+      });
+
+      it("al terminar con pendientes ofrece reintentar con el mismo clientId", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockClear();
+        vi.mocked(api.post).mockRejectedValueOnce(new Error("offline"));
+        await act(() => result.current.logSet(set));
+        const clientId = readPendingSets()[0].clientId;
+
+        vi.mocked(api.post).mockRejectedValueOnce(new Error("offline"));
+        await act(async () => result.current.finish());
+        await waitFor(() => expect(result.current.retrying).toBe(false));
+        expect(result.current.unsaved).toHaveLength(1);
+        expect(readActiveSession()).not.toBeNull();
+
+        await act(() => result.current.retryUnsaved());
+        expect(readPendingSets()).toHaveLength(0);
+        expect(readActiveSession()).toBeNull();
+        const sent = vi
+          .mocked(api.post)
+          .mock.calls.map(([, body]) => (body as { clientId: string }).clientId);
+        expect(sent).toEqual([clientId, clientId, clientId]);
+      });
+
+      it("descartar borra las pendientes y cierra la sesion", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockRejectedValue(new Error("offline"));
+        await act(() => result.current.logSet(set));
+        await act(async () => result.current.finish());
+        await waitFor(() => expect(result.current.unsaved).toHaveLength(1));
+
+        act(() => result.current.discardUnsaved());
+        expect(readPendingSets()).toHaveLength(0);
+        expect(readActiveSession()).toBeNull();
+      });
+
+      it("al abrir envia lo que quedo pendiente de antes", async () => {
+        addPendingSets([
+          {
+            clientId: "c-1",
+            label: "Press banca · 60 kg × 8 reps",
+            body: {
+              exerciseId: "ex-bench",
+              routineId: "r-upper",
+              reps: 8,
+              weight: 60,
+              durationSec: null,
+              equipmentId: null,
+              setType: "WORKING",
+              step: null,
+            },
+          },
+        ]);
+        vi.mocked(api.post).mockClear();
+        await start(legs, { currentIndex: 0, progress: {} });
+        await waitFor(() => expect(readPendingSets()).toHaveLength(0));
+        expect(api.post).toHaveBeenCalledWith(
+          "/workouts",
+          expect.objectContaining({ clientId: "c-1", exerciseId: "ex-bench" }),
+        );
       });
     });
   });

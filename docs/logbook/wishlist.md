@@ -59,7 +59,7 @@ Además de programas, publicar rutinas sueltas ("Espalda de Cbum", la que armó 
 Un gráfico de radar con cuánto trabajas cada músculo (bíceps, tríceps, cuádriceps, isquios…), para ver qué sobreentrenas y qué descuidas. Depende de que el catálogo tenga músculos (RM-056). Antes de construir otras gráficas, buscar una librería que calce con el stack.
 
 ## [WL-065] Sesión de entrenamiento en el servidor
-Hoy cada `Workout` es una serie suelta y la sesión guiada vive en `localStorage`. Una entidad de sesión en la base permitiría continuarla desde otro dispositivo, registrar sin red y evitar series duplicadas al reintentar (TD-014). Las referencias analizadas coinciden en este cambio.
+Hoy cada `Workout` es una serie suelta y la sesión guiada vive en `localStorage`. Una entidad de sesión en la base permitiría continuarla desde otro dispositivo. Registrar sin red y no duplicar al reintentar ya lo resuelve RM-114 sin ella. Las referencias analizadas coinciden en este cambio.
 
 ## [WL-003] Compararse con amigos
 Rivalidad sana y opcional: comparar el radar de músculos, la constancia (días por semana) o la carga en un ejercicio. Preferir compartir una imagen o un link por WhatsApp antes que construir perfiles, amistades o chat.

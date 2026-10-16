@@ -13,16 +13,12 @@ export function SaveOverlay({ flash }: { flash: SaveFlash }) {
         <div className="relative w-24 h-24">
           <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
           <div
-            className={`relative w-24 h-24 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/40 ${
-              flash.saved ? "animate-pop" : "opacity-50"
-            }`}
+            className="relative w-24 h-24 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/40 animate-pop"
           >
-            {flash.saved && (
-              <Check
-                className="w-12 h-12 text-primary-foreground"
-                strokeWidth={3.5}
-              />
-            )}
+            <Check
+              className="w-12 h-12 text-primary-foreground"
+              strokeWidth={3.5}
+            />
           </div>
         </div>
 

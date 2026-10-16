@@ -17,6 +17,7 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { SaveOverlay } from "@/components/train/SaveOverlay";
+import { UnsavedSetsDialog } from "@/components/train/UnsavedSetsDialog";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
@@ -53,6 +54,11 @@ export default function TrainPage() {
     skipItem,
     replaceItem,
     finish,
+    unsaved,
+    retrying,
+    retryUnsaved,
+    discardUnsaved,
+    closeUnsaved,
   } = useGuidedSession();
 
   const { equipment } = useEquipment();
@@ -187,6 +193,14 @@ export default function TrainPage() {
       )}
 
       {flash && <SaveOverlay flash={flash} />}
+
+      <UnsavedSetsDialog
+        sets={unsaved}
+        retrying={retrying}
+        onRetry={retryUnsaved}
+        onDiscard={discardUnsaved}
+        onClose={closeUnsaved}
+      />
 
       {mapOpen && (
         <SessionMap

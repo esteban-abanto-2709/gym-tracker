@@ -13,12 +13,6 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
 > de cada tarea está en [`../product-vision.md`](../product-vision.md).
 
-## [RM-114] Guardar series sin esperar a la red
-- **Objetivo:** que registrar una serie se sienta instantáneo: cada viaje al servidor cuesta ~250 ms y la animación hoy lo espera.
-- **Alcance:** (1) API idempotente: `POST /workouts` acepta un `clientId` opcional, único por usuario; si llega repetido devuelve la serie existente. (2) Web: la serie se marca y avanza al instante, queda en una lista de pendientes en la sesión local y se envía por detrás; si al terminar queda algo sin guardar, se ofrece reintentar. Cierra TD-014.
-- **Hecho cuando:** en dev, offline, se registran dos series, se vuelve a online y se termina la sesión: quedan exactamente dos filas, sin esperar en ningún toque.
-- **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-16)
-
 ## [RM-054] Calculadora de discos
 - **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
 - **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).
