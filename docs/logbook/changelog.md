@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-085] Los backups locales del servidor no se borran nunca (2026-10-16 11:12)
+`backup.sh` borra, tras cada backup, los `gym-prod_*.sql` de más de 14 días en su carpeta de salida; cubre el backup diario y el de cada deploy porque ambos pasan por el script.
+
 ## [TD-102] Sin pantalla intermedia entre series (2026-10-13 17:13)
 Al registrar, una capa muestra la serie desde el toque, salta el check al confirmarse y queda 1 s más (con a qué ejercicio pasas); bloquea el doble toque y luego sigue la próxima serie o el siguiente pendiente sin tocar nada más. La pantalla de serie guardada queda solo como "¡Rutina completada!"; un ejercicio libre se queda con un "Siguiente: X" debajo.
 

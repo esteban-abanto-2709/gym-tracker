@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-105] El build de la web depende de Google Fonts en la red
+- **Ubicación:** `apps/web/src/app/layout.tsx:2`
+- **Riesgo:** 4/10
+- **Problema:** `next/font/google` descarga Oswald, Space Grotesk y Space Mono durante `next build`. El 2026-10-13 la imagen web del CD falló por eso (`next/font/google queries have exactly one entry`) con el mismo código que en CI compiló bien, y el deploy no corrió; el siguiente push pasó sin cambios.
+- **Impacto futuro:** deploys que fallan al azar y sin aviso; un cambio puede quedarse sin llegar a prod sin que nadie lo note.
+- **Sugerencia:** servir las fuentes desde el repo con `next/font/local` y quitar la descarga del build.
+- **Fecha:** 2026-10-14 · **Estado:** Abierto
+
 ## [TD-104] Los ejercicios "extra" de la sesión son código muerto
 - **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:104`, `apps/web/src/lib/activeSession.ts:16`
 - **Riesgo:** 2/10
@@ -61,14 +69,6 @@ changelog y se borra de aquí.
 - **Impacto futuro:** mezcla de idiomas que confunde a quien lea el código y choca con la capa de idioma de los ejercicios (RM-086).
 - **Sugerencia:** revisar ambas apps y pasar a inglés todo lo que no sea texto de UI; las migraciones ya aplicadas no se renombran.
 - **Fecha:** 2026-10-11 · **Estado:** Abierto
-
-## [TD-085] Los backups locales del servidor no se borran nunca
-- **Ubicación:** `apps/docker/scripts/update.sh:6`
-- **Riesgo:** 2/10
-- **Problema:** cada deploy y cada backup diario dejan un `gym-prod_*.sql` en `apps/docker/backups/` del servidor y nada los borra. La copia fuera de la máquina ya tiene su propia retención; en el disco solo hacen falta los recientes. Hoy: 9 archivos, 3,3 MB.
-- **Impacto futuro:** crecimiento sin límite (~200 MB/año al ritmo actual, más a medida que crecen los datos) hasta llenar el disco del servidor.
-- **Sugerencia:** al final de `update.sh`, `find backups -name 'gym-prod_*.sql' -mtime +14 -delete`; cubre también los del backup diario porque comparten carpeta.
-- **Fecha:** 2026-10-10 · **Estado:** Abierto
 
 ## [TD-081] Rutinas hace scroll con varias rutinas
 - **Ubicación:** `apps/web/src/app/routines/page.tsx`
