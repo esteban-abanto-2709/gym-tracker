@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { formatDuration } from "@/lib/setDisplay";
+import { flushPendingSets } from "@/lib/pendingSets";
 import { routes } from "@/lib/routes";
 import type {
   ExerciseProgress as Progress,
@@ -87,12 +88,14 @@ export function ExerciseProgress({
 
   useEffect(() => {
     let active = true;
-    api
-      .get<Progress>(
-        routes.api.workouts.progress(
-          exerciseId,
-          routineId,
-          Intl.DateTimeFormat().resolvedOptions().timeZone,
+    flushPendingSets()
+      .then(() =>
+        api.get<Progress>(
+          routes.api.workouts.progress(
+            exerciseId,
+            routineId,
+            Intl.DateTimeFormat().resolvedOptions().timeZone,
+          ),
         ),
       )
       .then((data) => {

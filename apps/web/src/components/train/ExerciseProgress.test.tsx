@@ -2,11 +2,16 @@ import { beforeEach, describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { ExerciseProgress as Progress } from "@/lib/types";
 import { ExerciseProgress } from "./ExerciseProgress";
+import { addPendingSets } from "@/lib/pendingSets";
 
 const get = vi.fn();
+const post = vi.fn();
 
 vi.mock("@/lib/api", () => ({
-  api: { get: (url: string) => get(url) },
+  api: {
+    get: (url: string) => get(url),
+    post: (url: string, body: unknown) => post(url, body),
+  },
 }));
 
 const progress = (streak: number): Progress => ({
@@ -27,6 +32,39 @@ const progress = (streak: number): Progress => ({
 describe("ExerciseProgress", () => {
   beforeEach(() => {
     get.mockReset();
+    post.mockReset();
+  });
+
+  it("sends the pending set before asking for the streak", async () => {
+    addPendingSets([
+      {
+        clientId: "c-1",
+        label: "ex",
+        body: {
+          exerciseId: "ex",
+          routineId: "r",
+          reps: 8,
+          weight: 50,
+          durationSec: null,
+          equipmentId: null,
+          setType: "WORKING",
+          step: null,
+        },
+      },
+    ]);
+    const order: string[] = [];
+    post.mockImplementationOnce(async () => {
+      order.push("post");
+    });
+    get.mockImplementationOnce(async () => {
+      order.push("get");
+      return progress(1);
+    });
+
+    render(<ExerciseProgress exerciseId="ex" routineId="r" setsDone={1} />);
+
+    expect(await screen.findByText("1")).toBeTruthy();
+    expect(order).toEqual(["post", "get"]);
   });
 
   it("asks for the streak again after each set on the same exercise", async () => {
