@@ -152,6 +152,7 @@ export default function TrainPage() {
                   key={currentItem.exerciseId}
                   exerciseId={currentItem.exerciseId}
                   routineId={session.routineId}
+                  setsDone={setsDoneForCurrent}
                 />
               )}
               <TikTokButton

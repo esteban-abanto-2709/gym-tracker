@@ -20,6 +20,7 @@ import { ArrowDown, ArrowUp, Flame } from "lucide-react";
 interface ExerciseProgressProps {
   exerciseId: string;
   routineId: string;
+  setsDone: number;
 }
 
 const PAGE = 4;
@@ -78,6 +79,7 @@ function badgeArrow(progress: Progress) {
 export function ExerciseProgress({
   exerciseId,
   routineId,
+  setsDone,
 }: ExerciseProgressProps) {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [open, setOpen] = useState(false);
@@ -100,7 +102,7 @@ export function ExerciseProgress({
     return () => {
       active = false;
     };
-  }, [exerciseId, routineId]);
+  }, [exerciseId, routineId, setsDone]);
 
   if (
     !progress ||

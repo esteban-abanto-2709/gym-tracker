@@ -12,6 +12,9 @@ Resumen en ≤2 líneas de lo que se hizo.
 
 ---
 
+## [TD-106] El fuego no se actualiza entre series del mismo ejercicio (2026-10-16 11:25)
+Sin la pantalla intermedia, la tarjeta del ejercicio ya no se volvía a montar y el fuego solo se consultaba al llegar al ejercicio. Ahora se vuelve a pedir tras cada serie guardada, sin parpadear: muestra el valor anterior hasta que llega el nuevo.
+
 ## [TD-085] Los backups locales del servidor no se borran nunca (2026-10-16 11:12)
 `backup.sh` borra, tras cada backup, los `gym-prod_*.sql` de más de 14 días en su carpeta de salida; cubre el backup diario y el de cada deploy porque ambos pasan por el script.
 
