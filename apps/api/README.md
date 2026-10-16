@@ -50,7 +50,8 @@ por separado para soportar un pooler delante.
 pnpm run start:dev    # desarrollo con recarga
 pnpm run build        # prisma generate + compilación a dist/
 pnpm run start:prod   # node dist/main (requiere build)
-pnpm run lint         # ESLint con --fix
+pnpm run lint         # ESLint, solo revisa
+pnpm run lint:fix     # ESLint y corrige lo que pueda
 pnpm run format       # Prettier
 pnpm run test:unit    # Jest, specs junto al código (src/**/*.spec.ts)
 pnpm run test:e2e     # Jest + Supertest (test/*.e2e-spec.ts)
@@ -64,6 +65,9 @@ pnpm exec prisma generate        # regenerar el cliente
 pnpm exec prisma studio          # explorar la base
 ```
 
+En Prisma 7, `migrate dev` ya no regenera el cliente: corre `prisma generate`
+después, o los tests y el editor siguen viendo el schema anterior.
+
 ## Arquitectura
 
 ```
@@ -74,18 +78,22 @@ src/
 ├── common/
 │   ├── decorators/       # @Public() y @CurrentUser()
 │   ├── guards/           # JwtAuthGuard: lee la cookie `token`
+│   ├── interceptors/     # ExerciseNamesInterceptor: nombres en el idioma del usuario
 │   ├── date-only.ts      # fechas sin hora (YYYY-MM-DD) y su validador
+│   ├── locale.ts         # elegir el nombre por idioma y normalizar búsquedas
 │   ├── slugify.ts        # slugs de ejercicios y usuarios
 │   └── timezone.util.ts  # agrupar por día local según la tz del cliente
 ├── modules/
 │   ├── auth/             # registro, login, Google, logout, /me
-│   ├── exercises/        # catálogo global de ejercicios
+│   ├── exercises/        # catálogo global de ejercicios y los oficiales (official-exercises.ts)
 │   ├── equipment/        # catálogo global de equipos
-│   ├── workouts/         # series registradas + recomendación de peso
+│   ├── workouts/         # series registradas, última serie y racha
 │   ├── routines/         # rutinas y sus bloques tipados
 │   ├── programs/         # programas, programa activo, explorar y copiar
 │   └── measurements/     # medidas corporales opcionales con fecha
-└── providers/prisma/     # PrismaService sobre un pg.Pool
+├── providers/prisma/     # PrismaService sobre un pg.Pool
+├── scripts/seed.ts       # carga o actualiza los ejercicios oficiales
+└── types/                # tipos de Express (req.user)
 ```
 
 Cada módulo sigue el patrón Nest de `controller` + `service` + `dto/`. Los
@@ -102,6 +110,10 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 - **Validación estricta:** `ValidationPipe` con `whitelist` y
   `forbidNonWhitelisted`; un campo que no esté en el DTO devuelve 400.
 - **Conflictos de nombre** (`P2002` de Prisma) en programas se traducen a 409.
+- **Nombres de ejercicio por idioma:** los services devuelven los ejercicios con
+  todos sus nombres, y `ExerciseNamesInterceptor` deja en cada respuesta solo el
+  del idioma de ejercicios del usuario (`User.exerciseLocale`, inglés por
+  defecto). Ningún endpoint elige el idioma por su cuenta.
 
 ## Autenticación
 
@@ -121,12 +133,13 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/auth/google` | Login o registro con ID token de Google (público) |
 | POST | `/auth/logout` | Cierra sesión |
 | GET | `/auth/me` | Usuario actual |
-| PATCH | `/auth/me` | Cambia o borra (`null`) la fecha de nacimiento |
-| GET | `/exercises` | Catálogo de ejercicios, por nombre |
-| POST | `/exercises` | Crea un ejercicio |
+| PATCH | `/auth/me` | Cambia la fecha de nacimiento (o la borra con `null`), el idioma de ejercicios y las novedades abiertas o vistas |
+| GET | `/exercises` | Catálogo de ejercicios, con el nombre en el idioma del usuario |
+| POST | `/exercises` | Crea un ejercicio propio, con el nombre en el idioma del usuario |
 | GET | `/equipment` | Catálogo de equipos |
-| GET | `/workouts` | Todas las series del usuario, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente) |
-| POST | `/workouts` | Registra una serie |
+| GET | `/workouts?from=&to=` | Las series de un rango de fechas, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente) |
+| GET | `/workouts/days?tz=` | Los días con series (en la zona horaria del cliente) y las series del día más reciente |
+| POST | `/workouts` | Registra una serie. Con `clientId`, repetir el envío devuelve la misma serie en vez de duplicarla |
 | PATCH | `/workouts/:id` | Edita una serie |
 | DELETE | `/workouts/:id` | Borra una serie |
 | GET | `/workouts/recommendation` | Última serie, para precargar el formulario (ver abajo) |
@@ -156,7 +169,9 @@ no se deduce a simple vista:
 
 - **`Workout` es una serie**, no una sesión. Lleva peso, reps o duración,
   equipo, `setType` (`WORKING`, `WARMUP`, `RAMP`) y `step` (el escalón de la
-  rampa). Sin `weight` ni `durationSec` es una serie de solo reps.
+  rampa). Sin `weight` ni `durationSec` es una serie de solo reps. `clientId`
+  es opcional y único por usuario: la web lo genera para reintentar un envío
+  sin duplicar la serie.
 - **`RoutineItem.blocks`** es una lista JSON de bloques tipados por `kind`:
   `weight_reps`, `reps`, `time`, `warmup` y `ramp`. En la base es JSON libre;
   la forma la garantizan `modules/routines/blocks.ts` y
@@ -167,8 +182,13 @@ no se deduce a simple vista:
 - **`BodyMeasurement`** es una medida corporal opcional: una por usuario y
   fecha, con peso, % de grasa y altura opcionales. Un `CHECK` en la base exige
   al menos uno. `User.birthDate` es un valor único; la edad se calcula.
-- **`Exercise`** es solo `name` + `slug`; cómo se mide un ejercicio vive en el
-  bloque, no en el ejercicio.
+- **`Exercise`** lleva `slug`, músculos principales y secundarios y `mechanic`
+  (compuesto o aislado). Sus nombres viven en **`ExerciseName`**, uno por idioma
+  (`en`, `es`), con un `searchName` sin tildes ni mayúsculas para el buscador.
+  Los oficiales no tienen `createdById`; los que crea un usuario sí. Cómo se
+  mide un ejercicio vive en el bloque de la rutina, no en el ejercicio.
+- **`User.newsOpened` / `newsSeen`** guardan qué novedades de la app abrió o vio
+  cada usuario.
 
 ## Última serie
 
@@ -204,6 +224,7 @@ no se deduce a simple vista:
 `Dockerfile` multi-stage sobre `node:22-alpine`. Las dependencias de producción
 se instalan en su propia etapa con el store de pnpm en un cache mount, y la
 imagen final copia solo ese `node_modules`, `dist/` y el cliente de Prisma: sin
-pnpm ni store dentro. Al arrancar
-ejecuta `prisma migrate deploy` antes de `node dist/main`. La orquestación con
+pnpm ni store dentro. Al arrancar ejecuta `prisma migrate deploy`, luego el seed
+de ejercicios oficiales (`dist/scripts/seed`; si falla, la API arranca igual) y
+por último `node dist/main`. La orquestación con
 la web y la base vive en [`apps/docker/`](../docker/README.md).

@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-115] Animación de serie guardada con más movimiento
+Desde RM-114 el check sale al instante, pero el overlay aparece y se va algo de golpe, con una micropausa. Darle una entrada y salida más fluida (transición desde el botón, salida que se funda con la pantalla siguiente). Detalle fino: se ve al usar, no al leer el código.
+
 ## [WL-103] ¿Deben existir las series libres?
 Un ejercicio de rutina sin bloques ("Series libres") no tiene meta: la app no sabe cuándo pasar al siguiente ni puede calcular el fuego, y obliga a casos especiales en la sesión guiada. Discutir si quitarlas (exigir al menos un bloque al guardar) o darles un uso claro.
 

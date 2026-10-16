@@ -226,7 +226,10 @@ Corre `pg_dump` dentro del contenedor `gym-tracker-sql` (misma versión que el
 servidor, sin líos de compatibilidad) con las credenciales de las variables del
 propio contenedor, así que no lee ningún `.env` ni necesita `pg_dump` en el host.
 Escribe primero un `.tmp` y lo renombra al terminar: un dump fallido nunca deja un
-archivo que parezca bueno. En stdout imprime solo la ruta del archivo, para
+archivo que parezca bueno. Al terminar borra de esa carpeta los
+`gym-prod_*.sql` de más de 14 días, para que los dumps no llenen el disco del
+servidor: la copia larga es la que se lleva fuera de la máquina. En stdout
+imprime solo la ruta del archivo, para
 encadenarlo con lo que lo copie fuera de la máquina:
 
 ```bash
