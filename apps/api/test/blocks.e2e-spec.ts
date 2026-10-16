@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
@@ -101,27 +102,28 @@ describe('Bloques y sets (e2e)', () => {
         .expect(201);
       routineId = created.body.id;
 
-      expect(created.body.items.map((i: { blocks: unknown[] }) => i.blocks))
-        .toEqual([
-          [
-            { kind: 'warmup', sets: 1, reps: 25 },
-            { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null },
-          ],
-          [{ kind: 'reps', sets: 2, reps: null, repsMax: null }],
-          [{ kind: 'time', sets: 2, durationSec: 30 }],
-          [],
-          [
-            {
-              kind: 'ramp',
-              steps: [
-                { reps: 10, pct: 50 },
-                { reps: 5, pct: 70 },
-                { reps: 3, pct: null },
-              ],
-            },
-            { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null },
-          ],
-        ]);
+      expect(
+        created.body.items.map((i: { blocks: unknown[] }) => i.blocks),
+      ).toEqual([
+        [
+          { kind: 'warmup', sets: 1, reps: 25 },
+          { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null },
+        ],
+        [{ kind: 'reps', sets: 2, reps: null, repsMax: null }],
+        [{ kind: 'time', sets: 2, durationSec: 30 }],
+        [],
+        [
+          {
+            kind: 'ramp',
+            steps: [
+              { reps: 10, pct: 50 },
+              { reps: 5, pct: 70 },
+              { reps: 3, pct: null },
+            ],
+          },
+          { kind: 'weight_reps', sets: 3, reps: 8, repsMax: null },
+        ],
+      ]);
     });
 
     it('devuelve los mismos bloques al releerla', async () => {
@@ -255,6 +257,38 @@ describe('Bloques y sets (e2e)', () => {
         .expect(200);
 
       expect(updated.body).toMatchObject({ weight: null, reps: 12 });
+    });
+
+    it('con el mismo clientId guarda una sola vez y devuelve la misma serie', async () => {
+      const clientId = randomUUID();
+      const set = { exerciseId, reps: 8, weight: 40, clientId };
+
+      const [a, b] = await Promise.all([
+        agent.post('/workouts').send(set).expect(201),
+        agent.post('/workouts').send(set).expect(201),
+      ]);
+      const c = await agent.post('/workouts').send(set).expect(201);
+
+      expect(b.body.id).toBe(a.body.id);
+      expect(c.body.id).toBe(a.body.id);
+      expect(await prisma.workout.count({ where: { userId, clientId } })).toBe(
+        1,
+      );
+    });
+
+    it('sin clientId cada envio es una serie nueva', async () => {
+      const set = { exerciseId, reps: 6, weight: 30 };
+      const a = await agent.post('/workouts').send(set).expect(201);
+      const b = await agent.post('/workouts').send(set).expect(201);
+
+      expect(b.body.id).not.toBe(a.body.id);
+    });
+
+    it('rechaza un clientId que no sea uuid', async () => {
+      await agent
+        .post('/workouts')
+        .send({ exerciseId, reps: 5, clientId: 'abc' })
+        .expect(400);
     });
   });
 

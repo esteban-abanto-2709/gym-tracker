@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SetType } from '@prisma/client';
+import { Prisma, SetType } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
@@ -40,8 +40,31 @@ export class WorkoutsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string, createWorkoutDto: CreateWorkoutDto) {
+    const clientId = createWorkoutDto.clientId ?? null;
+    try {
+      return await this.insert(userId, createWorkoutDto, clientId);
+    } catch (e) {
+      if (
+        clientId &&
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+        return this.prisma.workout.findUniqueOrThrow({
+          where: { userId_clientId: { userId, clientId } },
+        });
+      }
+      throw e;
+    }
+  }
+
+  private insert(
+    userId: string,
+    createWorkoutDto: CreateWorkoutDto,
+    clientId: string | null,
+  ) {
     return this.prisma.workout.create({
       data: {
+        clientId,
         userId,
         exerciseId: createWorkoutDto.exerciseId,
         reps:

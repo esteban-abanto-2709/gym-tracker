@@ -14,6 +14,62 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-113] El login no limita los intentos
+- **Ubicación:** `apps/api/src/modules/auth/auth.controller.ts:37`
+- **Riesgo:** 6/10
+- **Problema:** `POST /auth/login` y `POST /auth/register` aceptan intentos sin límite: nada frena a quien pruebe contraseñas en bucle contra un correo conocido.
+- **Impacto futuro:** con más cuentas reales por invitación, una contraseña débil se puede adivinar sin que nadie lo note.
+- **Sugerencia:** `@nestjs/throttler` solo en las rutas de auth (p. ej. 5 intentos por minuto por IP), leyendo la IP real que pasa el túnel.
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
+## [TD-112] Google se vincula a una cuenta de correo que nadie verificó
+- **Ubicación:** `apps/api/src/modules/auth/auth.service.ts:65`
+- **Riesgo:** 6/10
+- **Problema:** el registro con correo y contraseña no verifica el correo, y el login con Google vincula su `googleId` a cualquier cuenta que ya tenga ese correo. Alguien puede registrarse antes con el correo de otra persona; cuando esa persona entre con Google, usará una cuenta cuya contraseña conoce el otro.
+- **Impacto futuro:** acceso ajeno a los datos de un amigo invitado. Poco probable en un círculo cerrado, pero es la puerta que hay que cerrar antes de abrir el registro.
+- **Sugerencia:** al vincular una cuenta con contraseña, borrar `passwordHash` (Google pasa a ser el dueño del correo) o pedir la contraseña antes de vincular.
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
+## [TD-111] El correo distingue mayúsculas
+- **Ubicación:** `apps/api/src/modules/auth/dto/login.dto.ts` y `register.dto.ts` (`email`), `apps/api/src/modules/auth/auth.service.ts:24` y `:42`
+- **Riesgo:** 5/10
+- **Problema:** la API guarda y busca el correo tal cual llega. `Miguel@gmail.com` y `miguel@gmail.com` son dos cuentas distintas, y quien se registró con mayúscula no entra si después escribe en minúscula. La web desactiva el autocapitalizado, pero el autocompletado o un pegado pueden traerla igual.
+- **Impacto futuro:** "no puedo entrar" o cuentas duplicadas sin explicación, justo cuando aún no hay recuperar contraseña (WL-061).
+- **Sugerencia:** `@Transform` a `trim().toLowerCase()` en los DTO y una migración que pase a minúscula los correos existentes (revisando antes que no choquen).
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
+## [TD-110] El deploy da verde aunque la app no arranque
+- **Ubicación:** `apps/docker/scripts/update.sh:10`
+- **Riesgo:** 7/10
+- **Problema:** el script hace `docker compose up -d` y termina; el CD lo da por bueno si el comando salió con 0. Si una migración falla o la API se cae al arrancar, el contenedor queda reiniciándose y el CD sigue en verde. Tampoco hay un camino escrito para volver a la imagen anterior.
+- **Impacto futuro:** prod caído sin aviso mientras un usuario real entrena; uno se entera cuando alguien escribe por WhatsApp.
+- **Sugerencia:** tras el `up -d`, esperar a que la API responda (un endpoint de salud o `docker compose up -d --wait` con `healthcheck` en `api` y `web`) y fallar si no; documentar el rollback con la etiqueta del SHA anterior.
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
+## [TD-109] Los tests e2e de la API no corren en el CI
+- **Ubicación:** `.github/workflows/ci.yml:41`
+- **Riesgo:** 5/10
+- **Problema:** `apps/api/test/` tiene tres suites e2e (auth, bloques, ejercicios) contra una base real, pero el CI solo corre `test:unit`. El job ya define `DATABASE_URL` sin un Postgres que lo atienda.
+- **Impacto futuro:** los tests que más protegen las migraciones y la validación de bloques solo corren si alguien se acuerda, y todo lo que llega a `main` va directo a prod.
+- **Sugerencia:** un `services: postgres` en el job `api`, `prisma migrate deploy` y `pnpm run test:e2e` antes del build.
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
+## [TD-108] La tabla de series no tiene índices
+- **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
+- **Riesgo:** 4/10
+- **Problema:** Postgres no indexa solo las llaves foráneas, y `Workout` no declara ningún `@@index`. Todas las consultas filtran por `userId` (y casi todas por `exerciseId`) y ordenan por `createdAt`, así que cada una recorre la tabla entera, que suma las series de todos los usuarios.
+- **Impacto futuro:** la pantalla de entrenar se vuelve más lenta con cada serie y cada amigo nuevo; hoy no se nota con unas miles de filas.
+- **Sugerencia:** `@@index([userId, exerciseId, createdAt])` y `@@index([userId, createdAt])`; la migración es segura sobre datos reales.
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
+## [TD-107] "Última serie" trae todo el historial del ejercicio para usar una fila
+- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:70` (`getRecommendation`)
+- **Riesgo:** 4/10
+- **Problema:** la consulta principal es un `findMany` sin `take` que carga todas las series del ejercicio con ese equipo, y solo se usa `sets[0]`. Corre cada vez que se abre el formulario de una serie. `getDays` (`:129`) también lee todas las fechas del usuario en cada llamada.
+- **Impacto futuro:** el formulario tarda más en precargarse cuanto más entrenas un ejercicio: justo lo contrario de "no pensar".
+- **Sugerencia:** `findFirst` (o `take: 1`) en `getRecommendation`; `getDays` puede esperar a que se note.
+- **Fecha:** 2026-10-16 · **Estado:** Abierto
+
 ## [TD-105] El build de la web depende de Google Fonts en la red
 - **Ubicación:** `apps/web/src/app/layout.tsx:2`
 - **Riesgo:** 4/10

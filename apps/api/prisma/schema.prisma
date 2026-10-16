@@ -136,7 +136,10 @@ model Workout {
   equipment   Equipment? @relation(fields: [equipmentId], references: [id])
   setType     SetType    @default(WORKING)
   step        Int?
+  clientId    String?
   createdAt   DateTime   @default(now())
+
+  @@unique([userId, clientId])
 }
 
 enum SetType {

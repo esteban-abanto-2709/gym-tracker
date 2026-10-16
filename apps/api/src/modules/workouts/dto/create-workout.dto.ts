@@ -62,4 +62,8 @@ export class CreateWorkoutDto {
   @IsInt()
   @IsPositive()
   step?: number;
+
+  @IsOptional()
+  @IsUUID()
+  clientId?: string;
 }
