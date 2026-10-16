@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [RM-116] Tests end-to-end del entrenamiento guiado (2026-10-16 15:29)
+Playwright en `apps/web` (WebKit a tamaño iPhone) contra el stack de dev: entrena una rutina adelantándose a otro ejercicio, comprueba que no se da por completada con pendientes (regresión de TD-095) y que las 6 series llegan a la API. Deja capturas en `e2e-screenshots/`.
+
 ## [RM-114] Guardar series sin esperar a la red (2026-10-16 12:32)
 La serie se marca y avanza al instante: queda en una lista de pendientes en `localStorage` y se envía por detrás con un `clientId` que la API usa para no duplicarla. Al terminar con pendientes se ofrece reintentar o descartar; la recomendación de la siguiente serie espera a que se envíen.
 

@@ -46,7 +46,24 @@ pnpm start    # sirve el build
 pnpm lint     # ESLint
 pnpm test     # Vitest, tests junto al código (src/**/*.test.ts[x])
 pnpm format   # Prettier
+pnpm test:e2e # Playwright (ver abajo)
 ```
+
+## Tests end-to-end
+
+`e2e/` recorre viajes completos en WebKit a tamaño iPhone 13 contra una web ya
+levantada: el stack de `apps/docker/dev` en `http://localhost:3000`, o la URL de
+`E2E_BASE_URL`. Nunca contra prod. Cada corrida registra un usuario desechable
+(`e2e-…@example.test`) y crea su propia rutina por la API.
+
+```bash
+pnpm exec playwright install webkit   # una vez
+pnpm test:e2e
+```
+
+Las capturas de los momentos clave quedan en `e2e-screenshots/` para revisar la
+UX; si un test falla, la traza queda en `e2e-results/` y el reporte en
+`e2e-report/`. Las tres carpetas están ignoradas por git.
 
 ## Cómo habla con la API
 
