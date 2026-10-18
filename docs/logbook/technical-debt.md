@@ -30,14 +30,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** `@nestjs/throttler` solo en las rutas de auth (p. ej. 5 intentos por minuto por IP), leyendo la IP real que pasa el túnel.
 - **Fecha:** 2026-10-16 · **Estado:** Abierto
 
-## [TD-112] Google se vincula a una cuenta de correo que nadie verificó
-- **Ubicación:** `apps/api/src/modules/auth/auth.service.ts:65`
-- **Riesgo:** 6/10
-- **Problema:** el registro con correo y contraseña no verifica el correo, y el login con Google vincula su `googleId` a cualquier cuenta que ya tenga ese correo. Alguien puede registrarse antes con el correo de otra persona; cuando esa persona entre con Google, usará una cuenta cuya contraseña conoce el otro.
-- **Impacto futuro:** acceso ajeno a los datos de un amigo invitado. Poco probable en un círculo cerrado, pero es la puerta que hay que cerrar antes de abrir el registro.
-- **Sugerencia:** al vincular una cuenta con contraseña, borrar `passwordHash` (Google pasa a ser el dueño del correo) o pedir la contraseña antes de vincular.
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
-
 ## [TD-109] Los tests e2e de la API no corren en el CI
 - **Ubicación:** `.github/workflows/ci.yml:41`
 - **Riesgo:** 5/10

@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-112] Google se vincula a una cuenta de correo que nadie verificó (2026-10-18 09:58)
+Al vincular Google a una cuenta con contraseña, la contraseña se borra (Google pasa a ser el dueño del correo) y se cierran sus sesiones abiertas: quien se registró antes con un correo ajeno queda fuera. Test e2e con Google simulado.
+
 ## [TD-120] Una sesión iniciada no se puede cerrar desde el servidor (2026-10-18 09:53)
 `User.tokenVersion` viaja en el token y el guard lo compara: cerrar sesión sube la versión y cierra la sesión en todos los dispositivos. Los tokens sin versión siguen valiendo (nadie pierde la sesión con el deploy); test e2e de revocación.
 

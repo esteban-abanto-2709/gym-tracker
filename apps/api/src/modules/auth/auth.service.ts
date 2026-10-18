@@ -71,7 +71,11 @@ export class AuthService {
       if (existing.googleId) return this.publicUser(existing);
       const linked = await this.prisma.user.update({
         where: { id: existing.id },
-        data: { googleId: payload.sub },
+        data: {
+          googleId: payload.sub,
+          passwordHash: null,
+          tokenVersion: { increment: 1 },
+        },
       });
       return this.publicUser(linked);
     }

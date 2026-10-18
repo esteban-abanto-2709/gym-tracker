@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-122] Manual de funcionamiento
+Un documento no técnico que explique cómo funciona la app para cualquier persona, con sus reglas concretas: qué cuenta para la racha, qué pasa con la sesión guiada al terminar el día, que cerrar sesión cierra todos los dispositivos (TD-120), etc. Distinto de `product-vision.md` (el porqué) y de los README (lo técnico).
+
 ## [WL-119] Borrar mi cuenta y mis datos
 Desde el perfil, borrar la cuenta con todo lo suyo: series, rutinas, programas, medidas y fecha de nacimiento. Hace falta antes de abrir la app a gente que no conoces en persona, porque ya se guardan datos personales. Hoy la base lo impide: `Workout`, `Routine` y `Program` no tienen `onDelete` y `Exercise.createdBy` es `Restrict`. Los ejercicios que creó el usuario son del catálogo global y otros los usan, así que se quedan sin dueño (`SetNull`) en vez de borrarse. Confirmar con la contraseña, o escribiendo el correo si la cuenta es de Google.
 
