@@ -8,6 +8,7 @@ import { BirthDateRow } from "@/components/profile/BirthDateRow";
 import { LanguageSheet } from "@/components/profile/LanguageSheet";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
+import { PasswordRow } from "@/components/profile/PasswordRow";
 import { Languages, LogOut, Trash2 } from "lucide-react";
 
 export default function PerfilPage() {
@@ -63,6 +64,7 @@ export default function PerfilPage() {
               </div>
             </div>
             <BirthDateRow />
+            {user?.hasPassword && <PasswordRow />}
           </div>
 
           <MeasurementsSection />

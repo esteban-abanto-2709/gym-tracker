@@ -24,6 +24,10 @@ interface AuthContextValue {
   ) => Promise<void>;
   loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<void>;
   deleteAccount: (confirmation: {
     password?: string;
     email?: string;
@@ -105,6 +109,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace(routes.login());
   }, [router]);
 
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      const res = await fetch(`/api${routes.api.auth.password()}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(
+          res.status === 403
+            ? "La contraseña actual no es correcta."
+            : err.message || "No se pudo cambiar la contraseña",
+        );
+      }
+      setUser(await res.json());
+    },
+    [],
+  );
+
   const deleteAccount = useCallback(
     async (confirmation: { password?: string; email?: string }) => {
       const res = await fetch(`/api${routes.api.auth.me()}`, {
@@ -164,6 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         loginWithGoogle,
         logout,
+        changePassword,
         deleteAccount,
         updateMe,
       }}

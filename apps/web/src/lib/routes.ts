@@ -30,6 +30,7 @@ export const routes = {
       register: () => "/auth/register",
       google: () => "/auth/google",
       logout: () => "/auth/logout",
+      password: () => "/auth/password",
     },
     workouts: {
       create: () => "/workouts",
