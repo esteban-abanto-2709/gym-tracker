@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -12,6 +13,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { DeleteMeDto } from './dto/delete-me.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { fromDbDate, toDbDate } from '@/common/date-only';
 
 const DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
@@ -109,6 +111,24 @@ export class AuthService {
       where: { id, tokenVersion: currentVersion },
       data: { tokenVersion: { increment: 1 } },
     });
+  }
+
+  async changePassword(id: string, dto: ChangePasswordDto) {
+    const user = await this.prisma.user.findUniqueOrThrow({ where: { id } });
+    if (!user.passwordHash) {
+      throw new BadRequestException('Account has no password');
+    }
+    if (!(await bcrypt.compare(dto.currentPassword, user.passwordHash))) {
+      throw new ForbiddenException('Current password does not match');
+    }
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: {
+        passwordHash: await bcrypt.hash(dto.newPassword, 10),
+        tokenVersion: { increment: 1 },
+      },
+    });
+    return this.publicUser(updated);
   }
 
   async deleteMe(id: string, dto: DeleteMeDto) {

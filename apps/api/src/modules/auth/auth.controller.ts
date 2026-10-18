@@ -18,6 +18,7 @@ import { LoginDto } from './dto/login.dto';
 import { GoogleLoginDto } from './dto/google-login.dto';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { DeleteMeDto } from './dto/delete-me.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { Public } from '@/common/decorators/public.decorator';
 import {
   CurrentUser,
@@ -93,6 +94,18 @@ export class AuthController {
   @Patch('me')
   updateMe(@CurrentUser() user: AuthUser, @Body() dto: UpdateMeDto) {
     return this.authService.updateMe(user.id, dto);
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Patch('password')
+  async changePassword(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: ChangePasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const updated = await this.authService.changePassword(user.id, dto);
+    await this.setAuthCookie(res, user.id);
+    return updated;
   }
 
   @UseGuards(ThrottlerGuard)
