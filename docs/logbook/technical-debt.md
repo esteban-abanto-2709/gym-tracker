@@ -22,14 +22,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** validar que la rutina pertenezca al usuario antes de crear la serie y cubrirlo con un test de acceso cruzado.
 - **Fecha:** 2026-10-17 · **Estado:** Abierto
 
-## [TD-113] El login no limita los intentos
-- **Ubicación:** `apps/api/src/modules/auth/auth.controller.ts:37`
-- **Riesgo:** 6/10
-- **Problema:** `POST /auth/login` y `POST /auth/register` aceptan intentos sin límite: nada frena a quien pruebe contraseñas en bucle contra un correo conocido.
-- **Impacto futuro:** con más cuentas reales por invitación, una contraseña débil se puede adivinar sin que nadie lo note.
-- **Sugerencia:** `@nestjs/throttler` solo en las rutas de auth (p. ej. 5 intentos por minuto por IP), leyendo la IP real que pasa el túnel.
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
-
 ## [TD-109] Los tests e2e de la API no corren en el CI
 - **Ubicación:** `.github/workflows/ci.yml:41`
 - **Riesgo:** 5/10

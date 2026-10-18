@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-113] El login no limita los intentos (2026-10-18 10:07)
+Login y registro admiten 5 intentos por minuto por cliente con `@nestjs/throttler`; el cliente sale de `cf-connecting-ip` (detrás del túnel `req.ip` es el contenedor web, igual para todos). Al pasarse, 429 con mensaje en español. Test e2e del límite.
+
 ## [TD-112] Google se vincula a una cuenta de correo que nadie verificó (2026-10-18 09:58)
 Al vincular Google a una cuenta con contraseña, la contraseña se borra (Google pasa a ser el dueño del correo) y se cierran sus sesiones abiertas: quien se registró antes con un correo ajeno queda fuera. Test e2e con Google simulado.
 
