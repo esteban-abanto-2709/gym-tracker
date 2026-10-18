@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Patch,
   Post,
@@ -16,6 +17,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { GoogleLoginDto } from './dto/google-login.dto';
 import { UpdateMeDto } from './dto/update-me.dto';
+import { DeleteMeDto } from './dto/delete-me.dto';
 import { Public } from '@/common/decorators/public.decorator';
 import {
   CurrentUser,
@@ -91,6 +93,18 @@ export class AuthController {
   @Patch('me')
   updateMe(@CurrentUser() user: AuthUser, @Body() dto: UpdateMeDto) {
     return this.authService.updateMe(user.id, dto);
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Delete('me')
+  async deleteMe(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: DeleteMeDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.deleteMe(user.id, dto);
+    res.clearCookie(COOKIE_NAME, this.cookieOptions());
+    return { ok: true };
   }
 
   private async setAuthCookie(res: Response, userId: string) {

@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateMeDto } from './dto/update-me.dto';
+import { DeleteMeDto } from './dto/delete-me.dto';
 import { fromDbDate, toDbDate } from '@/common/date-only';
 
 const DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
@@ -107,6 +109,35 @@ export class AuthService {
       where: { id, tokenVersion: currentVersion },
       data: { tokenVersion: { increment: 1 } },
     });
+  }
+
+  async deleteMe(id: string, dto: DeleteMeDto) {
+    const user = await this.prisma.user.findUniqueOrThrow({ where: { id } });
+    const confirmed = user.passwordHash
+      ? !!dto.password &&
+        (await bcrypt.compare(dto.password, user.passwordHash))
+      : dto.email === user.email;
+    if (!confirmed) {
+      throw new ForbiddenException('Confirmation does not match');
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.workout.deleteMany({ where: { userId: id } }),
+      this.prisma.routine.deleteMany({ where: { userId: id } }),
+      this.prisma.program.deleteMany({ where: { userId: id } }),
+      this.prisma.exercise.deleteMany({
+        where: {
+          createdById: id,
+          workouts: { none: {} },
+          routineItems: { none: {} },
+        },
+      }),
+      this.prisma.exercise.updateMany({
+        where: { createdById: id },
+        data: { createdById: null },
+      }),
+      this.prisma.user.delete({ where: { id } }),
+    ]);
   }
 
   async updateMe(id: string, dto: UpdateMeDto) {
