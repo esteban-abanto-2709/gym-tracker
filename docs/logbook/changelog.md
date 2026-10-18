@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [RM-123] Portada pública (2026-10-18 15:28)
+`treno.rocks/` sin sesión muestra una portada con la promesa, una serie de ejemplo tal como la ve la app y acceso directo a crear cuenta o ingresar; con sesión sigue siendo Hoy. Sirve como página principal en la pantalla de consentimiento de Google.
+
 ## [RM-121] Aviso de privacidad (2026-10-18 15:09)
 Página pública `/privacidad` (se abre con o sin sesión) con qué se guarda, para qué, quién lo ve (los programas salen en Explorar), las copias de 90 días, cómo borrar la cuenta y un correo de contacto; enlazada desde login, registro y perfil. Falta ponerla como política en la pantalla de consentimiento de Google OAuth.
 

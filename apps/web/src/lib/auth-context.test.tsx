@@ -47,6 +47,13 @@ describe("AuthProvider guard", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
+  it("lets a logged-out user stay on the home page to see the landing", async () => {
+    meResponds(false);
+    renderAt("/");
+    expect(await screen.findByText("contenido")).toBeTruthy();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
   it("still sends a logged-out user from a private page to login", async () => {
     meResponds(false);
     renderAt("/perfil");

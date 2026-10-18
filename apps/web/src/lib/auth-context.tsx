@@ -168,7 +168,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const isPublic = PUBLIC_PATHS.has(pathname);
-  const isOpen = OPEN_PATHS.has(pathname);
+  const isOpen =
+    OPEN_PATHS.has(pathname) || (!user && pathname === routes.home());
 
   useEffect(() => {
     if (loading || isOpen) return;
