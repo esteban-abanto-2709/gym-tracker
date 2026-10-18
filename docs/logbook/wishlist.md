@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-119] Borrar mi cuenta y mis datos
+Desde el perfil, borrar la cuenta con todo lo suyo: series, rutinas, programas, medidas y fecha de nacimiento. Hace falta antes de abrir la app a gente que no conoces en persona, porque ya se guardan datos personales. Hoy la base lo impide: `Workout`, `Routine` y `Program` no tienen `onDelete` y `Exercise.createdBy` es `Restrict`. Los ejercicios que creó el usuario son del catálogo global y otros los usan, así que se quedan sin dueño (`SetNull`) en vez de borrarse. Confirmar con la contraseña, o escribiendo el correo si la cuenta es de Google.
+
 ## [WL-115] Animación de serie guardada con más movimiento
 Desde RM-114 el check sale al instante, pero el overlay aparece y se va algo de golpe, con una micropausa. Darle una entrada y salida más fluida (transición desde el botón, salida que se funda con la pantalla siguiente). Detalle fino: se ve al usar, no al leer el código.
 
@@ -50,7 +53,7 @@ Una experiencia cómoda en la computadora para lo que no se hace entre series: r
 Para abrir la app a amigos: cada usuario recibe un cupo fijo de invitaciones (p. ej. 4) que comparte por link. El link se puede regenerar, pero quien ya entró no se expulsa.
 
 ## [WL-061] Recuperar y cambiar la contraseña
-Obligatorio antes de tener usuarios que no sean el autor. Google sigue siendo el camino principal, por ser el de menos pasos.
+Obligatorio antes de tener usuarios que no sean el autor. Google sigue siendo el camino principal, por ser el de menos pasos. Son dos partes: cambiarla con la sesión iniciada (no necesita correo) y recuperarla por un link al correo, que exige que la app pueda enviar correos (proveedor por decidir; candidato: Resend, con SPF/DKIM en el DNS). Depende de TD-120: sin él, una contraseña nueva no cierra las sesiones abiertas con la vieja.
 
 ## [WL-060] Crear un programa con tu IA
 La app entrega un `.md` con el formato de programas y rutinas, las convenciones de registro y qué preguntarle al usuario. Tu IA de confianza lo usa para armar el programa y devuelve un JSON; al importarlo se crea un programa **nuevo**, nunca se reemplaza uno existente. No incluye historial: si quieres que la IA lo considere, se lo pasas aparte con la exportación (RM-021).

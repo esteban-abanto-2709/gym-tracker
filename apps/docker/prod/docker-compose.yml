@@ -41,6 +41,13 @@ services:
         condition: service_healthy
     networks:
       - gym-tracker-network
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO /dev/null http://127.0.0.1:4000/healthz || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+      start_interval: 2s
 
   # Next.js Frontend
   web:
@@ -56,9 +63,17 @@ services:
     environment:
       - API_INTERNAL_URL=http://api:4000
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - gym-tracker-network
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO /dev/null http://127.0.0.1:3000/api/healthz || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+      start_interval: 2s
 
   # Cloudflare Tunnel
   cloudflared:

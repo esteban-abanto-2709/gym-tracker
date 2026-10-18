@@ -92,9 +92,37 @@ docker compose down -v               # detener y BORRAR el volumen de datos
 > ```
 >
 > `update.sh` hace un backup de la base, baja las imágenes nuevas, recrea los
-> contenedores que cambiaron (la API aplica sus migraciones al arrancar) y borra
-> las imágenes viejas. El `git pull` va antes para correr siempre la versión
+> contenedores que cambiaron (la API aplica sus migraciones al arrancar), espera
+> hasta 3 minutos a que `api` y `web` pasen su healthcheck y borra las imágenes
+> viejas. Si no quedan sanas, imprime el estado y los últimos logs y sale con
+> error: el CD queda en rojo y GitHub te avisa por correo. Una migración que
+> falla detiene la API (no arranca sobre un esquema a medias), así que también
+> deja el deploy en rojo. El `git pull` va antes para correr siempre la versión
 > recién bajada del script.
+>
+> **Volver a la versión anterior** si un deploy sale en rojo. El SHA bueno es el
+> del último deploy verde (en GitHub Actions o con `git log` en el servidor):
+>
+> - **Sin migración de por medio:** `git revert <commit>` y push a `main`; el CD
+>   despliega la versión anterior.
+> - **Si falló una migración:** Prisma bloquea las siguientes (`P3009`) hasta
+>   limpiar la base, así que el revert solo no basta. En el servidor, desde
+>   `apps/docker/prod/`, primero vuelve a las imágenes anteriores y después
+>   restaura el backup que `update.sh` hizo justo antes (la línea
+>   `backup previo:` del log del CD). El orden importa: `restore.sh` arranca la
+>   API al terminar, y debe arrancar la imagen vieja.
+>
+>   ```bash
+>   sha=<sha-bueno>
+>   for app in api web; do
+>     docker pull ghcr.io/esteban-abanto-2709/gym-tracker-$app:$sha
+>     docker tag ghcr.io/esteban-abanto-2709/gym-tracker-$app:$sha ghcr.io/esteban-abanto-2709/gym-tracker-$app:latest
+>   done
+>   sh ../scripts/restore.sh prod ../backups/gym-prod_<fecha>.sql
+>   docker compose up -d --wait --wait-timeout 180
+>   ```
+>
+>   Luego corrige la migración (o revierte el commit) antes del siguiente push.
 >
 > **`--build` construye desde tu carpeta de trabajo** (`apps/api`, `apps/web`) y
 > etiqueta el resultado con esos mismos nombres: sirve para un self-host propio o

@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 const SHOTS = "e2e-screenshots/train";
 
 const shot = (page: Page, name: string) =>
-  page.screenshot({ path: `${SHOTS}/${name}.png` });
+  page.screenshot({ path: `${SHOTS}/${name}.png`, animations: "disabled" });
 
 async function logSet(page: Page, weight: string) {
   await page.locator('input[inputmode="decimal"]').fill(weight);
@@ -52,8 +52,10 @@ test("trains a guided routine, jumping ahead, without ending it early", async ({
   expect(routine.ok()).toBeTruthy();
 
   await page.goto("/routines");
+  const start = page.getByRole("button", { name: "Empezar Rutina" });
+  await expect(start).toBeVisible();
   await shot(page, "01-routines");
-  await page.getByRole("button", { name: "Empezar Rutina" }).click();
+  await start.click();
   await currentExercise(page, a.name);
   await shot(page, "02-first-set");
 
@@ -61,6 +63,9 @@ test("trains a guided routine, jumping ahead, without ending it early", async ({
   await currentExercise(page, a.name);
 
   await page.getByTitle("Mapa de la sesión").click();
+  await expect(
+    page.getByRole("heading", { name: "Mapa de la sesión" }),
+  ).toBeVisible();
   await shot(page, "03-session-map");
   await page.getByRole("button").filter({ hasText: c.name }).click();
   await currentExercise(page, c.name);
@@ -91,5 +96,6 @@ test("trains a guided routine, jumping ahead, without ending it early", async ({
 
   await page.getByRole("button", { name: "Terminar sesión" }).click();
   await expect(page).toHaveURL("/");
+  await expect(page.getByRole("link", { name: /Iniciar/ })).toBeVisible();
   await shot(page, "06-home");
 });

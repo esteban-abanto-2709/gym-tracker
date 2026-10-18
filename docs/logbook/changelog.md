@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-110] El deploy da verde aunque la app no arranque (2026-10-18 09:25)
+`update.sh` espera con `up --wait` a los healthchecks de `api` y `web` y deja el CD en rojo si no quedan sanos; una migración fallida ya no deja la API arrancando sobre el esquema viejo, y `web` escucha en `0.0.0.0`. Rollback documentado en `apps/docker/README.md`.
+
 ## [RM-116] Tests end-to-end del entrenamiento guiado (2026-10-16 15:29)
 Playwright en `apps/web` (WebKit a tamaño iPhone) contra el stack de dev: entrena una rutina adelantándose a otro ejercicio, comprueba que no se da por completada con pendientes (regresión de TD-095) y que las 6 series llegan a la API. Deja capturas en `e2e-screenshots/`.
 

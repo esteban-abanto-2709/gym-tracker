@@ -53,10 +53,12 @@ está en `main`, y un pull request nunca debe publicar nada.
   conecta hacia afuera; SSH sigue cerrado a todo salvo a quien lo administra.
 - **Qué ejecuta:** `git pull --ff-only` y luego
   [`apps/docker/scripts/update.sh`](../../apps/docker/scripts/update.sh), recién
-  bajado: backup previo de la base, `docker compose pull`, `up -d` (que aplica las
-  migraciones pendientes al arrancar la API) y limpieza de imágenes viejas.
+  bajado: backup previo de la base, `docker compose pull`, `up -d --wait` (que
+  aplica las migraciones pendientes al arrancar la API y espera a que `api` y
+  `web` pasen su healthcheck) y limpieza de imágenes viejas.
 - **Resultado visible:** el job espera a que el servidor termine (máximo 10 min),
-  imprime su salida y falla si el comando falló.
+  imprime su salida y falla si el comando falló, incluido el caso en que la app
+  no queda sana (una migración fallida o una API que no arranca).
 - **El backup previo** queda en `apps/docker/backups/` del servidor: si una
   migración rompe algo, hay una copia de un minuto antes.
 

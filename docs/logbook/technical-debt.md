@@ -14,6 +14,22 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-120] Una sesión iniciada no se puede cerrar desde el servidor
+- **Ubicación:** `apps/api/src/modules/auth/auth.module.ts:10`, `apps/api/src/common/guards/jwt-auth.guard.ts:36`, `apps/api/src/modules/auth/auth.controller.ts:58` (`logout`)
+- **Riesgo:** 6/10
+- **Problema:** el token dura 30 días y el guard solo comprueba que la firma sea válida y el usuario exista. `logout` borra la cookie de ese dispositivo, pero un token copiado sigue sirviendo, y no hay forma de anular las sesiones de un usuario.
+- **Impacto futuro:** cambiar o recuperar la contraseña (WL-061) no saca a quien ya entró con ella: sigue dentro hasta que venza el token.
+- **Sugerencia:** campo `tokenVersion` en `User` que viaja en el token; el guard ya lee al usuario en cada petición, así que basta compararlo. Subirlo al cambiar la contraseña da además "cerrar sesión en todos los dispositivos".
+- **Fecha:** 2026-10-18 · **Estado:** Abierto
+
+## [TD-118] Una serie puede apuntar a la rutina de otro usuario
+- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:78` (`create`), `dto/create-workout.dto.ts:55`
+- **Riesgo:** 4/10
+- **Problema:** `POST /workouts` guarda el `routineId` que manda el cliente sin comprobar que la rutina sea del usuario. `programs` sí lo verifica (`assertOwnRoutines`).
+- **Impacto futuro:** con más usuarios, una petición armada a mano puede colgar series en la rutina de otro y alterar su "hoy te toca" y su historial por rutina.
+- **Sugerencia:** validar que la rutina pertenezca al usuario antes de crear la serie y cubrirlo con un test de acceso cruzado.
+- **Fecha:** 2026-10-17 · **Estado:** Abierto
+
 ## [TD-113] El login no limita los intentos
 - **Ubicación:** `apps/api/src/modules/auth/auth.controller.ts:37`
 - **Riesgo:** 6/10
@@ -36,14 +52,6 @@ changelog y se borra de aquí.
 - **Problema:** la API guarda y busca el correo tal cual llega. `Miguel@gmail.com` y `miguel@gmail.com` son dos cuentas distintas, y quien se registró con mayúscula no entra si después escribe en minúscula. La web desactiva el autocapitalizado, pero el autocompletado o un pegado pueden traerla igual.
 - **Impacto futuro:** "no puedo entrar" o cuentas duplicadas sin explicación, justo cuando aún no hay recuperar contraseña (WL-061).
 - **Sugerencia:** `@Transform` a `trim().toLowerCase()` en los DTO y una migración que pase a minúscula los correos existentes (revisando antes que no choquen).
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
-
-## [TD-110] El deploy da verde aunque la app no arranque
-- **Ubicación:** `apps/docker/scripts/update.sh:10`
-- **Riesgo:** 7/10
-- **Problema:** el script hace `docker compose up -d` y termina; el CD lo da por bueno si el comando salió con 0. Si una migración falla o la API se cae al arrancar, el contenedor queda reiniciándose y el CD sigue en verde. Tampoco hay un camino escrito para volver a la imagen anterior.
-- **Impacto futuro:** prod caído sin aviso mientras un usuario real entrena; uno se entera cuando alguien escribe por WhatsApp.
-- **Sugerencia:** tras el `up -d`, esperar a que la API responda (un endpoint de salud o `docker compose up -d --wait` con `healthcheck` en `api` y `web`) y fallar si no; documentar el rollback con la etiqueta del SHA anterior.
 - **Fecha:** 2026-10-16 · **Estado:** Abierto
 
 ## [TD-109] Los tests e2e de la API no corren en el CI

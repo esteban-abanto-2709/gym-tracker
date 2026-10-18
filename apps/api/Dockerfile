@@ -40,5 +40,5 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 
-# Start the application with automatic migrations and the official exercise seed (a failed seed does not block startup)
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/scripts/seed; node dist/main"]
+# Start the application with automatic migrations and the official exercise seed (a failed migration stops startup, a failed seed does not)
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && { node dist/scripts/seed; node dist/main; }"]
