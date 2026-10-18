@@ -46,14 +46,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** al vincular una cuenta con contraseña, borrar `passwordHash` (Google pasa a ser el dueño del correo) o pedir la contraseña antes de vincular.
 - **Fecha:** 2026-10-16 · **Estado:** Abierto
 
-## [TD-111] El correo distingue mayúsculas
-- **Ubicación:** `apps/api/src/modules/auth/dto/login.dto.ts` y `register.dto.ts` (`email`), `apps/api/src/modules/auth/auth.service.ts:24` y `:42`
-- **Riesgo:** 5/10
-- **Problema:** la API guarda y busca el correo tal cual llega. `Miguel@gmail.com` y `miguel@gmail.com` son dos cuentas distintas, y quien se registró con mayúscula no entra si después escribe en minúscula. La web desactiva el autocapitalizado, pero el autocompletado o un pegado pueden traerla igual.
-- **Impacto futuro:** "no puedo entrar" o cuentas duplicadas sin explicación, justo cuando aún no hay recuperar contraseña (WL-061).
-- **Sugerencia:** `@Transform` a `trim().toLowerCase()` en los DTO y una migración que pase a minúscula los correos existentes (revisando antes que no choquen).
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
-
 ## [TD-109] Los tests e2e de la API no corren en el CI
 - **Ubicación:** `.github/workflows/ci.yml:41`
 - **Riesgo:** 5/10

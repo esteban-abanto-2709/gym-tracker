@@ -61,9 +61,10 @@ export class AuthService {
     if (!payload?.email || !payload.email_verified) {
       throw new UnauthorizedException('Cuenta de Google no verificada');
     }
+    const email = payload.email.trim().toLowerCase();
 
     const existing = await this.prisma.user.findFirst({
-      where: { OR: [{ googleId: payload.sub }, { email: payload.email }] },
+      where: { OR: [{ googleId: payload.sub }, { email }] },
     });
 
     if (existing) {
@@ -75,10 +76,10 @@ export class AuthService {
       return this.publicUser(linked);
     }
 
-    const username = payload.name || payload.email.split('@')[0];
+    const username = payload.name || email.split('@')[0];
     const slug = await this.uniqueSlug(username);
     const user = await this.prisma.user.create({
-      data: { email: payload.email, username, slug, googleId: payload.sub },
+      data: { email, username, slug, googleId: payload.sub },
     });
     return this.publicUser(user);
   }

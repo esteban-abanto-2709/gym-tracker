@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-111] El correo distingue mayúsculas (2026-10-18 09:49)
+Registro, login y Google guardan y buscan el correo en minúscula y sin espacios; una migración pasa a minúscula los correos existentes (en prod no había choques). Test e2e de registro y login con otra capitalización.
+
 ## [TD-105] El build de la web depende de Google Fonts en la red (2026-10-18 09:45)
 Oswald, Space Grotesk y Space Mono viven en `apps/web/src/app/fonts/` (woff2 de Fontsource, con su licencia OFL) y se cargan con `next/font/local`: el build ya no descarga nada de Google.
 
