@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-120] Una sesión iniciada no se puede cerrar desde el servidor (2026-10-18 09:53)
+`User.tokenVersion` viaja en el token y el guard lo compara: cerrar sesión sube la versión y cierra la sesión en todos los dispositivos. Los tokens sin versión siguen valiendo (nadie pierde la sesión con el deploy); test e2e de revocación.
+
 ## [TD-111] El correo distingue mayúsculas (2026-10-18 09:49)
 Registro, login y Google guardan y buscan el correo en minúscula y sin espacios; una migración pasa a minúscula los correos existentes (en prod no había choques). Test e2e de registro y login con otra capitalización.
 

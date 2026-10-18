@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Patch, Post, Res } from '@nestjs/common';
-import type { Response, CookieOptions } from 'express';
+import { Body, Controller, Get, Patch, Post, Req, Res } from '@nestjs/common';
+import type { Request, Response, CookieOptions } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -29,7 +29,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.register(dto);
-    this.setAuthCookie(res, user.id);
+    await this.setAuthCookie(res, user.id);
     return user;
   }
 
@@ -40,7 +40,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.validateUser(dto);
-    this.setAuthCookie(res, user.id);
+    await this.setAuthCookie(res, user.id);
     return user;
   }
 
@@ -51,12 +51,22 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.loginWithGoogle(dto.credential);
-    this.setAuthCookie(res, user.id);
+    await this.setAuthCookie(res, user.id);
     return user;
   }
 
+  @Public()
   @Post('logout')
-  logout(@Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const token = req.cookies?.[COOKIE_NAME] as string | undefined;
+    const payload = token
+      ? await this.jwt
+          .verifyAsync<{ sub: string; ver?: number }>(token)
+          .catch(() => null)
+      : null;
+    if (payload) {
+      await this.authService.revokeSessions(payload.sub, payload.ver ?? 0);
+    }
     res.clearCookie(COOKIE_NAME, this.cookieOptions());
     return { ok: true };
   }
@@ -71,8 +81,9 @@ export class AuthController {
     return this.authService.updateMe(user.id, dto);
   }
 
-  private setAuthCookie(res: Response, userId: string) {
-    const token = this.jwt.sign({ sub: userId });
+  private async setAuthCookie(res: Response, userId: string) {
+    const ver = await this.authService.tokenVersion(userId);
+    const token = this.jwt.sign({ sub: userId, ver });
     res.cookie(COOKIE_NAME, token, {
       ...this.cookieOptions(),
       maxAge: COOKIE_MAX_AGE,

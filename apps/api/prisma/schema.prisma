@@ -13,6 +13,7 @@ model User {
   slug            String            @unique
   passwordHash    String?
   googleId        String?           @unique
+  tokenVersion    Int               @default(0)
   workouts        Workout[]
   routines        Routine[]
   programs        Program[]         @relation("UserPrograms")

@@ -90,6 +90,21 @@ export class AuthService {
     return this.publicUser(user);
   }
 
+  async tokenVersion(id: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id },
+      select: { tokenVersion: true },
+    });
+    return user.tokenVersion;
+  }
+
+  async revokeSessions(id: string, currentVersion: number) {
+    await this.prisma.user.updateMany({
+      where: { id, tokenVersion: currentVersion },
+      data: { tokenVersion: { increment: 1 } },
+    });
+  }
+
   async updateMe(id: string, dto: UpdateMeDto) {
     const user = await this.prisma.user.update({
       where: { id },

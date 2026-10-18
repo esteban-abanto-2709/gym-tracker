@@ -29,17 +29,20 @@ export class JwtAuthGuard implements CanActivate {
     const token = req.cookies?.token as string | undefined;
     if (!token) throw new UnauthorizedException();
 
-    let userId: string;
+    let payload: { sub: string; ver?: number };
     try {
-      userId = (await this.jwt.verifyAsync<{ sub: string }>(token)).sub;
+      payload = await this.jwt.verifyAsync(token);
     } catch {
       throw new UnauthorizedException();
     }
+    const userId = payload.sub;
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { exerciseLocale: true },
+      select: { exerciseLocale: true, tokenVersion: true },
     });
-    if (!user) throw new UnauthorizedException();
+    if (!user || (payload.ver ?? 0) !== user.tokenVersion) {
+      throw new UnauthorizedException();
+    }
     req.user = { id: userId, exerciseLocale: user.exerciseLocale };
     return true;
   }

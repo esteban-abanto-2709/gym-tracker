@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-120] Una sesión iniciada no se puede cerrar desde el servidor
-- **Ubicación:** `apps/api/src/modules/auth/auth.module.ts:10`, `apps/api/src/common/guards/jwt-auth.guard.ts:36`, `apps/api/src/modules/auth/auth.controller.ts:58` (`logout`)
-- **Riesgo:** 6/10
-- **Problema:** el token dura 30 días y el guard solo comprueba que la firma sea válida y el usuario exista. `logout` borra la cookie de ese dispositivo, pero un token copiado sigue sirviendo, y no hay forma de anular las sesiones de un usuario.
-- **Impacto futuro:** cambiar o recuperar la contraseña (WL-061) no saca a quien ya entró con ella: sigue dentro hasta que venza el token.
-- **Sugerencia:** campo `tokenVersion` en `User` que viaja en el token; el guard ya lee al usuario en cada petición, así que basta compararlo. Subirlo al cambiar la contraseña da además "cerrar sesión en todos los dispositivos".
-- **Fecha:** 2026-10-18 · **Estado:** Abierto
-
 ## [TD-118] Una serie puede apuntar a la rutina de otro usuario
 - **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:78` (`create`), `dto/create-workout.dto.ts:55`
 - **Riesgo:** 4/10
