@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-105] El build de la web depende de Google Fonts en la red (2026-10-18 09:45)
+Oswald, Space Grotesk y Space Mono viven en `apps/web/src/app/fonts/` (woff2 de Fontsource, con su licencia OFL) y se cargan con `next/font/local`: el build ya no descarga nada de Google.
+
 ## [TD-110] El deploy da verde aunque la app no arranque (2026-10-18 09:25)
 `update.sh` espera con `up --wait` a los healthchecks de `api` y `web` y deja el CD en rojo si no quedan sanos; una migración fallida ya no deja la API arrancando sobre el esquema viejo, y `web` escucha en `0.0.0.0`. Rollback documentado en `apps/docker/README.md`.
 

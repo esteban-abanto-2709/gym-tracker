@@ -78,14 +78,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** `findFirst` (o `take: 1`) en `getRecommendation`; `getDays` puede esperar a que se note.
 - **Fecha:** 2026-10-16 · **Estado:** Abierto
 
-## [TD-105] El build de la web depende de Google Fonts en la red
-- **Ubicación:** `apps/web/src/app/layout.tsx:2`
-- **Riesgo:** 4/10
-- **Problema:** `next/font/google` descarga Oswald, Space Grotesk y Space Mono durante `next build`. El 2026-10-13 la imagen web del CD falló por eso (`next/font/google queries have exactly one entry`) con el mismo código que en CI compiló bien, y el deploy no corrió; el siguiente push pasó sin cambios.
-- **Impacto futuro:** deploys que fallan al azar y sin aviso; un cambio puede quedarse sin llegar a prod sin que nadie lo note.
-- **Sugerencia:** servir las fuentes desde el repo con `next/font/local` y quitar la descarga del build.
-- **Fecha:** 2026-10-14 · **Estado:** Abierto
-
 ## [TD-104] Los ejercicios "extra" de la sesión son código muerto
 - **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:104`, `apps/web/src/lib/activeSession.ts:16`
 - **Riesgo:** 2/10

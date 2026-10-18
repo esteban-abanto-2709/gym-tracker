@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Oswald, Space_Grotesk, Space_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -7,22 +7,24 @@ import { AuthProvider } from "@/lib/auth-context";
 
 // Oswald: display condensado (títulos, números, botones). Space Grotesk:
 // cuerpo/UI. Space Mono: etiquetas "kicker". Ver globals.css (@theme inline).
-const oswald = Oswald({
+const oswald = localFont({
+  src: "./fonts/oswald.woff2",
   variable: "--font-oswald",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "200 700",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const spaceGrotesk = localFont({
+  src: "./fonts/space-grotesk.woff2",
   variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "300 700",
 });
 
-const spaceMono = Space_Mono({
+const spaceMono = localFont({
+  src: [
+    { path: "./fonts/space-mono-400.woff2", weight: "400" },
+    { path: "./fonts/space-mono-700.woff2", weight: "700" },
+  ],
   variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
