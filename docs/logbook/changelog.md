@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [RM-121] Aviso de privacidad (2026-10-18 15:09)
+Página pública `/privacidad` (se abre con o sin sesión) con qué se guarda, para qué, quién lo ve (los programas salen en Explorar), las copias de 90 días, cómo borrar la cuenta y un correo de contacto; enlazada desde login, registro y perfil. Falta ponerla como política en la pantalla de consentimiento de Google OAuth.
+
 ## [WL-119] Borrar mi cuenta y mis datos (2026-10-18 10:38)
 Perfil → "Borrar mi cuenta" confirma con la contraseña o, en cuentas de Google, con el correo, y borra series, rutinas, programas y medidas en una transacción. Los ejercicios que creó se borran si nadie más los usa; si alguien los usa, quedan sin dueño.
 

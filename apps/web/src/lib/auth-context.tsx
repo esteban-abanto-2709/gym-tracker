@@ -13,6 +13,7 @@ import { api } from "@/lib/api";
 import type { AuthUser } from "@/lib/types";
 
 const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
+const OPEN_PATHS = new Set<string>([routes.privacy()]);
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -167,17 +168,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const isPublic = PUBLIC_PATHS.has(pathname);
+  const isOpen = OPEN_PATHS.has(pathname);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || isOpen) return;
     if (!user && !isPublic) {
       router.replace(routes.login());
     } else if (user && isPublic) {
       router.replace(routes.home());
     }
-  }, [loading, user, isPublic, router]);
+  }, [loading, user, isPublic, isOpen, router]);
 
-  if (loading || (!user && !isPublic) || (user && isPublic)) {
+  if (
+    loading ||
+    (!isOpen && ((!user && !isPublic) || (user && isPublic)))
+  ) {
     return <FullScreenLoader />;
   }
 

@@ -103,6 +103,13 @@ export default function LoginPage() {
             Regístrate
           </Link>
         </p>
+
+        <Link
+          href={routes.privacy()}
+          className="block text-xs text-center text-muted-foreground underline underline-offset-4"
+        >
+          Privacidad
+        </Link>
       </form>
     </main>
   );

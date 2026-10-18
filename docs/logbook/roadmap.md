@@ -68,9 +68,3 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Alcance:** selector Claro / Oscuro / Sistema en el perfil, guardado por usuario en la base igual que el idioma de los ejercicios (`User.exerciseLocale`), con "Sistema" por defecto. Aplica también al `themeColor` y al tema de los toasts. Temas extra (tipo Dracula) siguen en WL-062.
 - **Hecho cuando:** un usuario con el celular en oscuro elige "Claro", cierra sesión, entra desde otro dispositivo y ve la app en claro.
 - **Fecha:** 2026-10-16 · **Estado:** Abierto
-
-## [RM-121] Aviso de privacidad
-- **Objetivo:** que quien entra a la app sepa qué datos suyos se guardan y cómo borrarlos. Se guardan peso, % de grasa y fecha de nacimiento, que son datos de salud.
-- **Alcance:** una página pública corta: qué se guarda, para qué, que nadie más lo ve salvo lo que el usuario publique, cómo borrar la cuenta (WL-119) y cuánto duran los backups (90 días). Enlazada desde el login, el registro y el perfil. Su URL sirve también para pasar la pantalla de consentimiento de Google OAuth a "En producción".
-- **Hecho cuando:** la página se abre sin sesión desde el login y la pantalla de consentimiento de Google la tiene como política de privacidad.
-- **Fecha:** 2026-10-18 · **Estado:** Abierto

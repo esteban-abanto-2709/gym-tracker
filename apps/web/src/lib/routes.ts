@@ -22,6 +22,7 @@ export const routes = {
   log: () => "/log",
   login: () => "/login",
   register: () => "/register",
+  privacy: () => "/privacidad",
 
   api: {
     auth: {

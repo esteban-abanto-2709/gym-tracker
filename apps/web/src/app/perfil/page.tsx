@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { routes } from "@/lib/routes";
 import { useAuth } from "@/lib/auth-context";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -77,6 +79,12 @@ export default function PerfilPage() {
             <Trash2 className="w-4 h-4" strokeWidth={2.5} />
             Borrar mi cuenta
           </button>
+          <Link
+            href={routes.privacy()}
+            className="mt-4 block text-xs text-center text-muted-foreground underline underline-offset-4"
+          >
+            Privacidad
+          </Link>
         </div>
       </main>
 
