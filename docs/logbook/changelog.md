@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-118] Una serie puede apuntar a la rutina de otro usuario (2026-10-18 10:13)
+`POST /workouts` responde 404 si el `routineId` no es una rutina del usuario, igual que `programs`. Test e2e de acceso cruzado con dos cuentas.
+
 ## [TD-113] El login no limita los intentos (2026-10-18 10:07)
 Login y registro admiten 5 intentos por minuto por cliente con `@nestjs/throttler`; el cliente sale de `cf-connecting-ip` (detrás del túnel `req.ip` es el contenedor web, igual para todos). Al pasarse, 429 con mensaje en español. Test e2e del límite.
 

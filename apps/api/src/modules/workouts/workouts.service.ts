@@ -41,6 +41,13 @@ export class WorkoutsService {
 
   async create(userId: string, createWorkoutDto: CreateWorkoutDto) {
     const clientId = createWorkoutDto.clientId ?? null;
+    const { routineId } = createWorkoutDto;
+    if (
+      routineId &&
+      !(await this.prisma.routine.count({ where: { id: routineId, userId } }))
+    ) {
+      throw new NotFoundException('Routine not found');
+    }
     try {
       return await this.insert(userId, createWorkoutDto, clientId);
     } catch (e) {

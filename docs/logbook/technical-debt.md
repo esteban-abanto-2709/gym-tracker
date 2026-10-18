@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-118] Una serie puede apuntar a la rutina de otro usuario
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:78` (`create`), `dto/create-workout.dto.ts:55`
-- **Riesgo:** 4/10
-- **Problema:** `POST /workouts` guarda el `routineId` que manda el cliente sin comprobar que la rutina sea del usuario. `programs` sí lo verifica (`assertOwnRoutines`).
-- **Impacto futuro:** con más usuarios, una petición armada a mano puede colgar series en la rutina de otro y alterar su "hoy te toca" y su historial por rutina.
-- **Sugerencia:** validar que la rutina pertenezca al usuario antes de crear la serie y cubrirlo con un test de acceso cruzado.
-- **Fecha:** 2026-10-17 · **Estado:** Abierto
-
 ## [TD-109] Los tests e2e de la API no corren en el CI
 - **Ubicación:** `.github/workflows/ci.yml:41`
 - **Riesgo:** 5/10
