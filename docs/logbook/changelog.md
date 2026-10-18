@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [WL-119] Borrar mi cuenta y mis datos (2026-10-18 10:38)
+Perfil → "Borrar mi cuenta" confirma con la contraseña o, en cuentas de Google, con el correo, y borra series, rutinas, programas y medidas en una transacción. Los ejercicios que creó se borran si nadie más los usa; si alguien los usa, quedan sin dueño.
+
 ## [TD-118] Una serie puede apuntar a la rutina de otro usuario (2026-10-18 10:13)
 `POST /workouts` responde 404 si el `routineId` no es una rutina del usuario, igual que `programs`. Test e2e de acceso cruzado con dos cuentas.
 

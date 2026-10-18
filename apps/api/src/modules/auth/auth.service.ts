@@ -161,6 +161,7 @@ export class AuthService {
       email: user.email,
       username: user.username,
       slug: user.slug,
+      hasPassword: !!user.passwordHash,
       birthDate: user.birthDate ? fromDbDate(user.birthDate) : null,
       exerciseLocale: user.exerciseLocale,
       newsOpened: user.newsOpened,

@@ -7,6 +7,7 @@ export interface AuthUser {
   email: string;
   username: string;
   slug: string;
+  hasPassword: boolean;
   birthDate: string | null;
   exerciseLocale: Locale;
   newsOpened: string[];

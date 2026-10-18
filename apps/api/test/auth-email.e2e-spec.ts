@@ -49,6 +49,7 @@ describe('AuthController email case (e2e)', () => {
       .expect(201);
     userId = res.body.id;
     expect(res.body.email).toBe(email);
+    expect(res.body.hasPassword).toBe(true);
   });
 
   it('logs in whatever the case of the email', async () => {

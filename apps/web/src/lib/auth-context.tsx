@@ -24,6 +24,10 @@ interface AuthContextValue {
   ) => Promise<void>;
   loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: (confirmation: {
+    password?: string;
+    email?: string;
+  }) => Promise<void>;
   updateMe: (
     changes: Partial<
       Pick<AuthUser, "birthDate" | "exerciseLocale" | "newsOpened" | "newsSeen">
@@ -101,6 +105,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace(routes.login());
   }, [router]);
 
+  const deleteAccount = useCallback(
+    async (confirmation: { password?: string; email?: string }) => {
+      const res = await fetch(`/api${routes.api.auth.me()}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(confirmation),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(
+          res.status === 403
+            ? "No coincide. Revisa lo que escribiste."
+            : err.message || "No se pudo borrar la cuenta",
+        );
+      }
+      setUser(null);
+      router.replace(routes.login());
+    },
+    [router],
+  );
+
   const updateMe = useCallback(
     async (
       changes: Partial<
@@ -132,7 +158,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, loginWithGoogle, logout, updateMe }}
+      value={{
+        user,
+        login,
+        register,
+        loginWithGoogle,
+        logout,
+        deleteAccount,
+        updateMe,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -10,9 +10,6 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 ## [WL-122] Manual de funcionamiento
 Un documento no técnico que explique cómo funciona la app para cualquier persona, con sus reglas concretas: qué cuenta para la racha, qué pasa con la sesión guiada al terminar el día, que cerrar sesión cierra todos los dispositivos (TD-120), etc. Distinto de `product-vision.md` (el porqué) y de los README (lo técnico).
 
-## [WL-119] Borrar mi cuenta y mis datos
-**En progreso (2026-10-18).** Desde el perfil, borrar la cuenta con todo lo suyo: series, rutinas, programas, medidas y fecha de nacimiento. Hace falta antes de abrir la app a gente que no conoces en persona, porque ya se guardan datos personales. Los ejercicios que creó son del catálogo compartido: se borran si nadie más los usa y, si alguien los usa, se quedan sin dueño. Confirmar con la contraseña, o escribiendo el correo si la cuenta es de Google. API hecha (`DELETE /auth/me`); falta el botón en Perfil.
-
 ## [WL-115] Animación de serie guardada con más movimiento
 Desde RM-114 el check sale al instante, pero el overlay aparece y se va algo de golpe, con una micropausa. Darle una entrada y salida más fluida (transición desde el botón, salida que se funda con la pantalla siguiente). Detalle fino: se ve al usar, no al leer el código.
 

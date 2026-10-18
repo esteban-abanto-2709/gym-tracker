@@ -7,12 +7,14 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { BirthDateRow } from "@/components/profile/BirthDateRow";
 import { LanguageSheet } from "@/components/profile/LanguageSheet";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
-import { Languages, LogOut } from "lucide-react";
+import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
+import { Languages, LogOut, Trash2 } from "lucide-react";
 
 export default function PerfilPage() {
   const { user, logout } = useAuth();
   const initial = user?.username?.charAt(0)?.toUpperCase() ?? "?";
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
     <PageShell variant="history">
@@ -64,12 +66,23 @@ export default function PerfilPage() {
           </div>
 
           <MeasurementsSection />
+
+          <button
+            type="button"
+            onClick={() => setDeleteOpen(true)}
+            className="mt-10 mx-auto flex items-center gap-1.5 text-sm font-bold text-muted-foreground hover:text-destructive active:scale-95 transition-all"
+          >
+            <Trash2 className="w-4 h-4" strokeWidth={2.5} />
+            Borrar mi cuenta
+          </button>
         </div>
       </main>
 
       {languageOpen && (
         <LanguageSheet onClose={() => setLanguageOpen(false)} />
       )}
+
+      <DeleteAccountDialog open={deleteOpen} onOpenChange={setDeleteOpen} />
 
       <BottomNav />
     </PageShell>

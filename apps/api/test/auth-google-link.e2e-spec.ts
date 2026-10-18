@@ -64,6 +64,7 @@ describe('AuthController google linking (e2e)', () => {
       .send({ credential: 'fake' })
       .expect(201);
     expect(res.body.id).toBe(userId);
+    expect(res.body.hasPassword).toBe(false);
     const ownerCookie = res.get('Set-Cookie')![0].split(';')[0];
 
     await request(app.getHttpServer())
