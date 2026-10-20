@@ -165,6 +165,10 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/routines/:id/publish` | Publica una rutina propia con un slug (foto fija) |
 | POST | `/programs/:id/publish` | Publica un programa propio con sus rutinas (foto fija) |
 | GET | `/publications/slug-available` | `?kind=ROUTINE\|PROGRAM&slug=`: si el slug está libre |
+| GET | `/explore/routines`, `/explore/programs` | Publicaciones (`?sort=likes\|copies\|recent`, 50 como máximo) con autor (`username` y `slug`), me gusta, copias, `likedByMe` e `isMine` |
+| GET | `/explore/{routines\|programs}/:slug` | Una publicación con sus rutinas y ejercicios |
+| POST | `/explore/routines/:slug/copy` | Copia la rutina como rutina suelta |
+| POST | `/explore/programs/:slug/copy` | Copia el programa entero (lo activa si no tenías uno) o, con `routinePosition`, solo esa rutina |
 
 ## Modelo de datos
 
@@ -187,7 +191,8 @@ no se deduce a simple vista:
   `PublicationRoutine` y `PublicationRoutineItem`, sin enlace al original, así
   que editarlo o borrarlo no cambia lo publicado. El slug es único por `kind`
   (`ROUTINE` o `PROGRAM`); `PublicationLike` y `PublicationCopy` llevan un
-  registro por usuario. Borrar la cuenta borra sus publicaciones.
+  registro por usuario. Borrar la cuenta borra sus publicaciones. Copiar tu
+  propia publicación no se registra en `PublicationCopy`, así que no suma.
 - **`BodyMeasurement`** es una medida corporal opcional: una por usuario y
   fecha, con peso, % de grasa y altura opcionales. Un `CHECK` en la base exige
   al menos uno. `User.birthDate` es un valor único; la edad se calcula.
