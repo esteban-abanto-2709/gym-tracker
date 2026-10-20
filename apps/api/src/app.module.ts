@@ -12,6 +12,7 @@ import { EquipmentModule } from './modules/equipment/equipment.module';
 import { RoutinesModule } from './modules/routines/routines.module';
 import { ProgramsModule } from './modules/programs/programs.module';
 import { MeasurementsModule } from './modules/measurements/measurements.module';
+import { PublicationsModule } from './modules/publications/publications.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MeasurementsModule } from './modules/measurements/measurements.module';
     RoutinesModule,
     ProgramsModule,
     MeasurementsModule,
+    PublicationsModule,
   ],
   controllers: [AppController],
   providers: [

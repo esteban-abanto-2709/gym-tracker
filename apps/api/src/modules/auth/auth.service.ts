@@ -145,11 +145,13 @@ export class AuthService {
       this.prisma.workout.deleteMany({ where: { userId: id } }),
       this.prisma.routine.deleteMany({ where: { userId: id } }),
       this.prisma.program.deleteMany({ where: { userId: id } }),
+      this.prisma.publication.deleteMany({ where: { authorId: id } }),
       this.prisma.exercise.deleteMany({
         where: {
           createdById: id,
           workouts: { none: {} },
           routineItems: { none: {} },
+          publicationItems: { none: {} },
         },
       }),
       this.prisma.exercise.updateMany({

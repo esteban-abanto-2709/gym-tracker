@@ -90,7 +90,8 @@ src/
 │   ├── workouts/         # series registradas, última serie y racha
 │   ├── routines/         # rutinas y sus bloques tipados
 │   ├── programs/         # programas, programa activo, explorar y copiar
-│   └── measurements/     # medidas corporales opcionales con fecha
+│   ├── measurements/     # medidas corporales opcionales con fecha
+│   └── publications/     # publicar rutinas y programas como foto fija
 ├── providers/prisma/     # PrismaService sobre un pg.Pool
 ├── scripts/seed.ts       # carga o actualiza los ejercicios oficiales
 └── types/                # tipos de Express (req.user)
@@ -161,6 +162,9 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | GET | `/measurements` | Medidas corporales del usuario, la más nueva primero |
 | PUT | `/measurements` | Crea o reemplaza la medida de una fecha |
 | DELETE | `/measurements/:date` | Borra la medida de una fecha |
+| POST | `/routines/:id/publish` | Publica una rutina propia con un slug (foto fija) |
+| POST | `/programs/:id/publish` | Publica un programa propio con sus rutinas (foto fija) |
+| GET | `/publications/slug-available` | `?kind=ROUTINE\|PROGRAM&slug=`: si el slug está libre |
 
 ## Modelo de datos
 
@@ -179,6 +183,11 @@ no se deduce a simple vista:
 - **`Program`** agrupa rutinas en orden (`programPosition`). El usuario tiene un
   `activeProgram`; la rutina que toca se deriva de la última serie registrada.
   `copiedFromId` guarda de qué programa salió una copia.
+- **`Publication`** es una foto fija: publicar copia la rutina o el programa a
+  `PublicationRoutine` y `PublicationRoutineItem`, sin enlace al original, así
+  que editarlo o borrarlo no cambia lo publicado. El slug es único por `kind`
+  (`ROUTINE` o `PROGRAM`); `PublicationLike` y `PublicationCopy` llevan un
+  registro por usuario. Borrar la cuenta borra sus publicaciones.
 - **`BodyMeasurement`** es una medida corporal opcional: una por usuario y
   fecha, con peso, % de grasa y altura opcionales. Un `CHECK` en la base exige
   al menos uno. `User.birthDate` es un valor único; la edad se calcula.

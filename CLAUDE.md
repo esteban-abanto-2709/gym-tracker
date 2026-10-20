@@ -109,6 +109,10 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
   `reps`, `time`, `warmup`, `ramp`). Free-form JSON in the DB; its shape is
   enforced by `apps/api/src/modules/routines/blocks.ts` + `dto/routine-block.dto.ts`
   and mirrored in `apps/web/src/lib/types.ts` and `apps/web/src/lib/blocks.ts`.
+- **Publications** are frozen snapshots: publishing copies a routine or
+  program into `Publication` → `PublicationRoutine` → `PublicationRoutineItem`
+  with no link back to the source, so editing or deleting the original never
+  changes what was published. The slug is unique per kind.
 - **Programs** order routines; the user's active program decides "today's
   routine" by rotating from the last logged set.
 - **Last set** (`GET /workouts/recommendation`) only prefills the set form; it

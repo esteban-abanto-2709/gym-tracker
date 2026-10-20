@@ -25,6 +25,9 @@ model User {
   newsSeen        String[]          @default([])
   measurements    BodyMeasurement[]
   exercises       Exercise[]
+  publications    Publication[]
+  likes           PublicationLike[]
+  copies          PublicationCopy[]
   createdAt       DateTime          @default(now())
 }
 
@@ -58,17 +61,18 @@ model Program {
 }
 
 model Exercise {
-  id               String         @id @default(uuid())
-  slug             String         @unique
-  primaryMuscles   Muscle[]       @default([])
-  secondaryMuscles Muscle[]       @default([])
+  id               String                   @id @default(uuid())
+  slug             String                   @unique
+  primaryMuscles   Muscle[]                 @default([])
+  secondaryMuscles Muscle[]                 @default([])
   mechanic         Mechanic?
   createdById      String?
-  createdBy        User?          @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdBy        User?                    @relation(fields: [createdById], references: [id], onDelete: Restrict)
   names            ExerciseName[]
   workouts         Workout[]
   routineItems     RoutineItem[]
-  createdAt        DateTime       @default(now())
+  publicationItems PublicationRoutineItem[]
+  createdAt        DateTime                 @default(now())
 }
 
 model ExerciseName {
@@ -173,4 +177,71 @@ model RoutineItem {
   position   Int
   blocks     Json     @default("[]")
   createdAt  DateTime @default(now())
+}
+
+enum PublicationKind {
+  ROUTINE
+  PROGRAM
+}
+
+model Publication {
+  id          String               @id @default(uuid())
+  kind        PublicationKind
+  slug        String
+  name        String
+  description String?
+  authorId    String
+  author      User                 @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  routines    PublicationRoutine[]
+  likes       PublicationLike[]
+  copies      PublicationCopy[]
+  publishedAt DateTime             @default(now())
+
+  @@unique([kind, slug])
+  @@index([authorId])
+}
+
+model PublicationRoutine {
+  id            String                   @id @default(uuid())
+  publicationId String
+  publication   Publication              @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  name          String
+  position      Int
+  items         PublicationRoutineItem[]
+
+  @@index([publicationId])
+}
+
+model PublicationRoutineItem {
+  id         String             @id @default(uuid())
+  routineId  String
+  routine    PublicationRoutine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise           @relation(fields: [exerciseId], references: [id])
+  position   Int
+  blocks     Json               @default("[]")
+
+  @@index([routineId])
+}
+
+model PublicationLike {
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicationId String
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@id([userId, publicationId])
+  @@index([publicationId])
+}
+
+model PublicationCopy {
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicationId String
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@id([userId, publicationId])
+  @@index([publicationId])
 }
