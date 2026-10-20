@@ -37,7 +37,8 @@ import {
   type DraftItem,
   type DraftStep,
 } from "@/components/routines/SortableExerciseItem";
-import { Loader2, Plus } from "lucide-react";
+import Link from "next/link";
+import { Globe, Loader2, Plus } from "lucide-react";
 
 interface RoutineEditorProps {
   routineId?: string;
@@ -309,6 +310,18 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
       <AppHeader
         leftAction={<BackAction href={routes.routines()} />}
         title={isEdit ? "Editar Rutina" : "Nueva Rutina"}
+        rightAction={
+          routineId ? (
+            <Link
+              href={routes.routinePublish(routineId)}
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="Publicar rutina"
+              aria-label="Publicar rutina"
+            >
+              <Globe className="w-5 h-5" />
+            </Link>
+          ) : undefined
+        }
       />
 
       <main className="flex-1 px-6 py-8 relative z-10 animate-fade-in-up">

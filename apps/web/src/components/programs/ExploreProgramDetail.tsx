@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import { formatBlocks } from "@/lib/blocks";
 import type { CopiedProgram } from "@/lib/types";
 import { useExplorePrograms } from "@/hooks/useExplorePrograms";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
+import { RoutineSnapshotList } from "@/components/publications/RoutineSnapshotList";
 import { Copy, Loader2 } from "lucide-react";
 
 export function ExploreProgramDetail({ programId }: { programId: string }) {
@@ -69,43 +69,7 @@ export function ExploreProgramDetail({ programId }: { programId: string }) {
                 </h1>
               </div>
 
-              <div className="space-y-3">
-                {program.routines.map((routine, index) => (
-                  <section
-                    key={routine.id}
-                    className="rounded-2xl border-2 border-input bg-card p-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="shrink-0 w-7 h-7 rounded-lg bg-secondary grid place-items-center font-display text-muted-foreground">
-                        {index + 1}
-                      </span>
-                      <h2 className="font-bold text-foreground text-lg leading-tight truncate">
-                        {routine.name}
-                      </h2>
-                    </div>
-                    <ul className="mt-3 space-y-1.5">
-                      {routine.items.map((item) => {
-                        const target = formatBlocks(item.blocks);
-                        return (
-                          <li
-                            key={item.id ?? item.position}
-                            className="flex items-baseline justify-between gap-3 text-sm"
-                          >
-                            <span className="min-w-0 truncate text-foreground">
-                              {item.exercise.name}
-                            </span>
-                            {target && (
-                              <span className="shrink-0 text-xs text-muted-foreground">
-                                {target}
-                              </span>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </section>
-                ))}
-              </div>
+              <RoutineSnapshotList routines={program.routines} />
 
               <div className="space-y-2">
                 <button

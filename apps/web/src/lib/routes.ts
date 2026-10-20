@@ -1,4 +1,4 @@
-import type { SetType } from "@/lib/types";
+import type { PublicationKind, SetType } from "@/lib/types";
 
 const dayStart = (day: string, offset = 0) => {
   const [y, m, d] = day.split("-").map(Number);
@@ -13,9 +13,11 @@ export const routes = {
   routines: () => "/routines",
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,
+  routinePublish: (id: string) => `/routines/${id}/publish`,
   programs: () => "/programs",
   programNew: () => "/programs/new",
   programEdit: (id: string) => `/programs/${id}`,
+  programPublish: (id: string) => `/programs/${id}/publish`,
   explore: () => "/explore",
   exploreProgram: (id: string) => `/explore/${id}`,
   train: () => "/train",
@@ -78,6 +80,12 @@ export const routes = {
       active: () => "/programs/active",
       explore: () => "/programs/explore",
       copy: (id: string) => `/programs/${id}/copy`,
+    },
+    publications: {
+      publishRoutine: (id: string) => `/routines/${id}/publish`,
+      publishProgram: (id: string) => `/programs/${id}/publish`,
+      slugAvailable: (kind: PublicationKind, slug: string) =>
+        `/publications/slug-available?kind=${kind}&slug=${encodeURIComponent(slug)}`,
     },
   },
 } as const;

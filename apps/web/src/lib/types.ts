@@ -127,6 +127,25 @@ export interface Program {
   createdAt: string;
 }
 
+export type PublicationKind = "ROUTINE" | "PROGRAM";
+
+export interface PublicationRoutine {
+  id: string;
+  name: string;
+  position: number;
+  items: RoutineItem[];
+}
+
+export interface Publication {
+  id: string;
+  kind: PublicationKind;
+  slug: string;
+  name: string;
+  description: string | null;
+  publishedAt: string;
+  routines: PublicationRoutine[];
+}
+
 export interface ExploreProgram extends Program {
   user: { username: string };
 }

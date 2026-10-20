@@ -9,7 +9,7 @@ import { notifyError } from "@/lib/notify";
 import type { Program, Routine } from "@/lib/types";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
-import { ClipboardList, Loader2, Plus, Trash2 } from "lucide-react";
+import { ClipboardList, Globe, Loader2, Plus, Trash2 } from "lucide-react";
 
 interface ProgramEditorProps {
   programId?: string;
@@ -131,16 +131,26 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
         leftAction={<BackAction href={routes.programs()} />}
         title={isEdit ? "Editar Programa" : "Nuevo Programa"}
         rightAction={
-          isEdit ? (
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="text-muted-foreground hover:text-destructive transition-colors"
-              title="Eliminar programa"
-              aria-label="Eliminar programa"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+          programId ? (
+            <div className="flex items-center gap-4">
+              <Link
+                href={routes.programPublish(programId)}
+                className="text-muted-foreground hover:text-primary transition-colors"
+                title="Publicar programa"
+                aria-label="Publicar programa"
+              >
+                <Globe className="w-5 h-5" />
+              </Link>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="text-muted-foreground hover:text-destructive transition-colors"
+                title="Eliminar programa"
+                aria-label="Eliminar programa"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
           ) : undefined
         }
       />
