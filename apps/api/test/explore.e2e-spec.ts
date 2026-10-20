@@ -27,6 +27,7 @@ describe('Explore (e2e)', () => {
   let third: Agent;
   const userIds: string[] = [];
   let exerciseIds: string[];
+  let programId: string;
 
   const routineSlug = `e2e-exp-routine-${stamp}`;
   const quietSlug = `e2e-exp-quiet-${stamp}`;
@@ -115,7 +116,7 @@ describe('Explore (e2e)', () => {
     const pull = await createRoutine(author, `Exp Pull ${stamp}`, [
       exerciseIds[2],
     ]);
-    const programId = (
+    programId = (
       await author
         .post('/programs')
         .send({ name: `Exp PPL ${stamp}`, routineIds: [push, pull] })
@@ -264,5 +265,13 @@ describe('Explore (e2e)', () => {
     );
 
     await reader.get('/explore/routines').query({ sort: 'best' }).expect(400);
+  });
+
+  it('no longer copies or lists programs through the old by-id routes', async () => {
+    await reader
+      .post(`/programs/${programId}/copy`)
+      .set('cf-connecting-ip', ip())
+      .expect(404);
+    await reader.get('/programs/explore').expect(404);
   });
 });

@@ -89,7 +89,7 @@ src/
 │   ├── equipment/        # catálogo global de equipos
 │   ├── workouts/         # series registradas, última serie y racha
 │   ├── routines/         # rutinas y sus bloques tipados
-│   ├── programs/         # programas, programa activo, explorar y copiar
+│   ├── programs/         # programas y programa activo
 │   ├── measurements/     # medidas corporales opcionales con fecha
 │   └── publications/     # publicar rutinas y programas como foto fija
 ├── providers/prisma/     # PrismaService sobre un pg.Pool
@@ -154,8 +154,6 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/programs` | Crea un programa |
 | GET | `/programs/active` | Programa activo y la rutina que toca hoy |
 | PUT | `/programs/active` | Cambia o quita el programa activo |
-| GET | `/programs/explore` | Programas de otros usuarios |
-| POST | `/programs/:id/copy` | Copia un programa ajeno (con sus rutinas) |
 | GET | `/programs/:id` | Un programa |
 | PATCH | `/programs/:id` | Edita un programa |
 | DELETE | `/programs/:id` | Borra un programa |
@@ -186,7 +184,8 @@ no se deduce a simple vista:
   `dto/routine-block.dto.ts`.
 - **`Program`** agrupa rutinas en orden (`programPosition`). El usuario tiene un
   `activeProgram`; la rutina que toca se deriva de la última serie registrada.
-  `copiedFromId` guarda de qué programa salió una copia.
+  `copiedFromId` solo existe en copias hechas con el Explorar anterior a las
+  publicaciones; ya no se escribe.
 - **`Publication`** es una foto fija: publicar copia la rutina o el programa a
   `PublicationRoutine` y `PublicationRoutineItem`, sin enlace al original, así
   que editarlo o borrarlo no cambia lo publicado. El slug es único por `kind`
