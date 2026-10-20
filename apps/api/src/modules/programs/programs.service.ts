@@ -1,9 +1,6 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { withUniqueName } from '@/common/unique-name';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { itemsInclude } from '../routines/routines.service';
 import { CreateProgramDto } from './dto/create-program.dto';
@@ -40,17 +37,19 @@ export class ProgramsService {
   async create(userId: string, dto: CreateProgramDto) {
     await this.assertOwnRoutines(userId, dto.routineIds);
 
-    return this.withUniqueName(() =>
-      this.prisma.$transaction(async (tx) => {
-        const program = await tx.program.create({
-          data: { userId, name: dto.name },
-        });
-        await this.assignRoutines(tx, program.id, dto.routineIds);
-        return tx.program.findUniqueOrThrow({
-          where: { id: program.id },
-          include: routinesInclude,
-        });
-      }),
+    return withUniqueName(
+      () =>
+        this.prisma.$transaction(async (tx) => {
+          const program = await tx.program.create({
+            data: { userId, name: dto.name },
+          });
+          await this.assignRoutines(tx, program.id, dto.routineIds);
+          return tx.program.findUniqueOrThrow({
+            where: { id: program.id },
+            include: routinesInclude,
+          });
+        }),
+      'Program name already exists',
     );
   }
 
@@ -81,8 +80,14 @@ export class ProgramsService {
     }
 
     const [programs, routines, user] = await Promise.all([
-      this.prisma.program.findMany({ where: { userId }, select: { name: true } }),
-      this.prisma.routine.findMany({ where: { userId }, select: { name: true } }),
+      this.prisma.program.findMany({
+        where: { userId },
+        select: { name: true },
+      }),
+      this.prisma.routine.findMany({
+        where: { userId },
+        select: { name: true },
+      }),
       this.prisma.user.findUniqueOrThrow({
         where: { id: userId },
         select: { activeProgramId: true },
@@ -155,19 +160,21 @@ export class ProgramsService {
       await this.assertOwnRoutines(userId, dto.routineIds);
     }
 
-    return this.withUniqueName(() =>
-      this.prisma.$transaction(async (tx) => {
-        if (dto.routineIds) {
-          await this.releaseRoutines(tx, id);
-          await this.assignRoutines(tx, id, dto.routineIds);
-        }
+    return withUniqueName(
+      () =>
+        this.prisma.$transaction(async (tx) => {
+          if (dto.routineIds) {
+            await this.releaseRoutines(tx, id);
+            await this.assignRoutines(tx, id, dto.routineIds);
+          }
 
-        return tx.program.update({
-          where: { id },
-          data: dto.name ? { name: dto.name } : {},
-          include: routinesInclude,
-        });
-      }),
+          return tx.program.update({
+            where: { id },
+            data: dto.name ? { name: dto.name } : {},
+            include: routinesInclude,
+          });
+        }),
+      'Program name already exists',
     );
   }
 
@@ -245,19 +252,5 @@ export class ProgramsService {
       where: { programId },
       data: { programId: null, programPosition: null },
     });
-  }
-
-  private async withUniqueName<T>(run: () => Promise<T>) {
-    try {
-      return await run();
-    } catch (e) {
-      if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === 'P2002'
-      ) {
-        throw new ConflictException('Program name already exists');
-      }
-      throw e;
-    }
   }
 }

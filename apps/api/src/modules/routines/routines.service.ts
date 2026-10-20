@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { withUniqueName } from '@/common/unique-name';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateRoutineDto, RoutineItemDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
@@ -16,14 +17,18 @@ export class RoutinesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string, createRoutineDto: CreateRoutineDto) {
-    return this.prisma.routine.create({
-      data: {
-        userId,
-        name: createRoutineDto.name,
-        items: { create: this.mapItems(createRoutineDto.items) },
-      },
-      include: itemsInclude,
-    });
+    return withUniqueName(
+      () =>
+        this.prisma.routine.create({
+          data: {
+            userId,
+            name: createRoutineDto.name,
+            items: { create: this.mapItems(createRoutineDto.items) },
+          },
+          include: itemsInclude,
+        }),
+      'Routine name already exists',
+    );
   }
 
   async findAll(userId: string) {
@@ -50,23 +55,27 @@ export class RoutinesService {
   async update(id: string, userId: string, updateRoutineDto: UpdateRoutineDto) {
     await this.findOne(id, userId);
 
-    return this.prisma.$transaction(async (tx) => {
-      if (updateRoutineDto.items) {
-        await tx.routineItem.deleteMany({ where: { routineId: id } });
-        await tx.routineItem.createMany({
-          data: this.mapItems(updateRoutineDto.items).map((item) => ({
-            ...item,
-            routineId: id,
-          })),
-        });
-      }
+    return withUniqueName(
+      () =>
+        this.prisma.$transaction(async (tx) => {
+          if (updateRoutineDto.items) {
+            await tx.routineItem.deleteMany({ where: { routineId: id } });
+            await tx.routineItem.createMany({
+              data: this.mapItems(updateRoutineDto.items).map((item) => ({
+                ...item,
+                routineId: id,
+              })),
+            });
+          }
 
-      return tx.routine.update({
-        where: { id },
-        data: updateRoutineDto.name ? { name: updateRoutineDto.name } : {},
-        include: itemsInclude,
-      });
-    });
+          return tx.routine.update({
+            where: { id },
+            data: updateRoutineDto.name ? { name: updateRoutineDto.name } : {},
+            include: itemsInclude,
+          });
+        }),
+      'Routine name already exists',
+    );
   }
 
   async remove(id: string, userId: string) {

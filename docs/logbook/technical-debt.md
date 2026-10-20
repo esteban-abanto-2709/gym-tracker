@@ -116,7 +116,7 @@ changelog y se borra de aquí.
 - **Problema:** `Routine` es única por `[userId, name]`, pero el servicio no captura el `P2002` de Prisma: crear o renombrar una rutina con un nombre que ya tienes devuelve 500 y el editor solo muestra "No se pudo guardar la rutina", sin decir por qué. `programs` ya lo resuelve con un 409 y un aviso en el editor.
 - **Impacto futuro:** con amigos usando la app (y copias que suman rutinas con sufijo), chocar con un nombre es más probable y el error no explica qué corregir.
 - **Sugerencia:** reutilizar el patrón `withUniqueName` de `programs.service.ts` (409) y avisar en `RoutineEditor` si el nombre ya existe.
-- **Fecha:** 2026-09-30 · **Estado:** Abierto
+- **Fecha:** 2026-09-30 · **Estado:** En progreso (2026-10-20)
 
 ## [TD-015] GoogleLogin re-inicializa GSI varias veces (warning en consola)
 - **Ubicación:** `apps/web/src/components/auth/GoogleButton.tsx` (usa `GoogleLogin`), montado en `/login` y `/register`; provider en `apps/web/src/app/layout.tsx`.
