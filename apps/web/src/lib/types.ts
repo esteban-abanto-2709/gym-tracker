@@ -146,7 +146,7 @@ export interface Publication {
   routines: PublicationRoutine[];
 }
 
-export type ExploreTab = "routines" | "programs";
+export type ExploreTab = "routines" | "programs" | "mine";
 export type ExploreSort = "likes" | "copies" | "recent";
 
 export interface ExploreSocial {

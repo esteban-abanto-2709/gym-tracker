@@ -5,7 +5,7 @@ import type {
   SetType,
 } from "@/lib/types";
 
-const kindPath: Record<PublicationKind, ExploreTab> = {
+const kindPath: Record<PublicationKind, Exclude<ExploreTab, "mine">> = {
   ROUTINE: "routines",
   PROGRAM: "programs",
 };
@@ -93,6 +93,9 @@ export const routes = {
     publications: {
       publishRoutine: (id: string) => `/routines/${id}/publish`,
       publishProgram: (id: string) => `/programs/${id}/publish`,
+      mine: () => "/publications/mine",
+      update: (id: string) => `/publications/${id}`,
+      delete: (id: string) => `/publications/${id}`,
       slugAvailable: (kind: PublicationKind, slug: string) =>
         `/publications/slug-available?kind=${kind}&slug=${encodeURIComponent(slug)}`,
     },

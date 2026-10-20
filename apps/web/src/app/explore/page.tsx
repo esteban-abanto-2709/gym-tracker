@@ -1,4 +1,5 @@
 import { ExploreBrowser } from "@/components/publications/ExploreBrowser";
+import type { ExploreTab } from "@/lib/types";
 
 export default async function ExplorePage({
   searchParams,
@@ -6,7 +7,7 @@ export default async function ExplorePage({
   searchParams: Promise<{ tab?: string }>;
 }) {
   const { tab } = await searchParams;
-  return (
-    <ExploreBrowser initialTab={tab === "routines" ? "routines" : "programs"} />
-  );
+  const initialTab: ExploreTab =
+    tab === "routines" || tab === "mine" ? tab : "programs";
+  return <ExploreBrowser initialTab={initialTab} />;
 }

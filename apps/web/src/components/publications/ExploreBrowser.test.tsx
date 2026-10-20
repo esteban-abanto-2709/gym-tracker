@@ -9,7 +9,9 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace }),
 }));
 
-vi.mock("@/lib/api", () => ({ api: { get: vi.fn() } }));
+vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+
+vi.mock("@/lib/api", () => ({ api: { get: vi.fn(), delete: vi.fn() } }));
 
 const item = (overrides: object) => ({
   id: "p-1",
@@ -86,5 +88,43 @@ describe("ExploreBrowser", () => {
     await vi.waitFor(() =>
       expect(api.get).toHaveBeenCalledWith("/explore/programs?sort=copies"),
     );
+  });
+
+  it("la pestaña Mías trae tus publicaciones sin el orden", async () => {
+    render(<ExploreBrowser initialTab="mine" />);
+
+    expect(await screen.findByText("Espalda Cbum")).toBeTruthy();
+    expect(api.get).toHaveBeenCalledWith("/publications/mine");
+    expect(screen.queryByRole("button", { name: "Populares" })).toBeNull();
+  });
+
+  it("sin publicaciones propias no muestra la pestaña Mías", async () => {
+    vi.mocked(api.get).mockImplementation(async (url: string) =>
+      url === "/publications/mine" ? [] : [item({})],
+    );
+    render(<ExploreBrowser initialTab="mine" />);
+
+    expect(await screen.findByText("Upper/Lower")).toBeTruthy();
+    expect(screen.queryByRole("tab", { name: "Mías" })).toBeNull();
+    expect(
+      screen.getByRole("tab", { name: "Programas" }).getAttribute("aria-selected"),
+    ).toBe("true");
+  });
+
+  it("al eliminar tu última publicación vuelve a Programas sin la pestaña Mías", async () => {
+    vi.mocked(api.delete).mockResolvedValue({ id: "r-1" });
+    render(<ExploreBrowser initialTab="mine" />);
+    await screen.findByText("Espalda Cbum");
+
+    fireEvent.click(screen.getByRole("button", { name: "Eliminar Espalda Cbum" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Eliminar publicación" }),
+    );
+
+    expect(await screen.findByText("Upper/Lower")).toBeTruthy();
+    expect(screen.queryByRole("tab", { name: "Mías" })).toBeNull();
+    expect(replace).toHaveBeenLastCalledWith("/explore?tab=programs", {
+      scroll: false,
+    });
   });
 });

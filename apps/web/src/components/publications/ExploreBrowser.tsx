@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type {
   ExploreListItem,
@@ -13,12 +13,13 @@ import type {
 import { useExplore } from "@/hooks/useExplore";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
-import { AuthorName } from "./AuthorName";
-import { ChevronRight, Compass, Copy, Heart, Loader2 } from "lucide-react";
+import { ExploreCard, ExploreEmpty, ExploreLoading } from "./ExploreCard";
+import { MyPublications } from "./MyPublications";
 
-const TABS: { value: ExploreTab; label: string; kind: PublicationKind }[] = [
-  { value: "programs", label: "Programas", kind: "PROGRAM" },
-  { value: "routines", label: "Rutinas", kind: "ROUTINE" },
+const TABS: { value: ExploreTab; label: string }[] = [
+  { value: "programs", label: "Programas" },
+  { value: "routines", label: "Rutinas" },
+  { value: "mine", label: "Mías" },
 ];
 
 const SORTS: { value: ExploreSort; label: string }[] = [
@@ -31,12 +32,30 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
   const router = useRouter();
   const [tab, setTab] = useState(initialTab);
   const [sort, setSort] = useState<ExploreSort>("likes");
-  const kind = TABS.find((t) => t.value === tab)!.kind;
-  const { items, loading } = useExplore(kind, sort);
+  const [mine, setMine] = useState<ExploreListItem[] | null>(null);
+
+  useEffect(() => {
+    api
+      .get<ExploreListItem[]>(routes.api.publications.mine())
+      .then(setMine)
+      .catch((e) => {
+        console.error("Error fetching my publications:", e);
+        setMine([]);
+      });
+  }, []);
 
   const changeTab = (value: ExploreTab) => {
     setTab(value);
     router.replace(routes.explore(value), { scroll: false });
+  };
+
+  const hasMine = (mine?.length ?? 0) > 0;
+  const tabs = TABS.filter((t) => t.value !== "mine" || hasMine);
+  const current = tab === "mine" && mine !== null && !hasMine ? "programs" : tab;
+
+  const changeMine = (items: ExploreListItem[]) => {
+    setMine(items);
+    if (items.length === 0) changeTab("programs");
   };
 
   return (
@@ -44,17 +63,19 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
       <AppHeader leftAction={<BackAction href={routes.home()} />} title="Explorar">
         <div
           role="tablist"
-          className="grid grid-cols-2 gap-1 rounded-xl bg-secondary p-1"
+          className={`grid gap-1 rounded-xl bg-secondary p-1 ${
+            tabs.length === 3 ? "grid-cols-3" : "grid-cols-2"
+          }`}
         >
-          {TABS.map((t) => (
+          {tabs.map((t) => (
             <button
               key={t.value}
               type="button"
               role="tab"
-              aria-selected={tab === t.value}
+              aria-selected={current === t.value}
               onClick={() => changeTab(t.value)}
               className={`rounded-lg py-2 font-display uppercase tracking-wide transition-colors ${
-                tab === t.value
+                current === t.value
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
@@ -67,42 +88,18 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
 
       <main className="flex-1 px-6 py-6 relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto space-y-3">
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {SORTS.map((s) => (
-              <button
-                key={s.value}
-                type="button"
-                aria-pressed={sort === s.value}
-                onClick={() => setSort(s.value)}
-                className={`shrink-0 rounded-full border-2 px-3 py-1 text-sm font-bold transition-colors ${
-                  sort === s.value
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-input text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
-            </div>
-          ) : items.length === 0 ? (
-            <div className="flex flex-col items-center text-center py-16 px-6 text-muted-foreground">
-              <Compass className="w-12 h-12 mb-3 opacity-40" />
-              <p className="font-display font-bold uppercase text-foreground text-2xl tracking-tight">
-                Nada publicado aún
-              </p>
-              <p className="text-sm opacity-70">
-                {kind === "PROGRAM"
-                  ? "Publica un programa desde su editor, con el ícono del globo."
-                  : "Publica una rutina desde su editor, con el ícono del globo."}
-              </p>
-            </div>
+          {current === "mine" ? (
+            mine === null ? (
+              <ExploreLoading />
+            ) : (
+              <MyPublications items={mine} onChange={changeMine} />
+            )
           ) : (
-            items.map((item) => <ExploreCard key={item.id} item={item} />)
+            <PublicList
+              kind={current === "programs" ? "PROGRAM" : "ROUTINE"}
+              sort={sort}
+              onSort={setSort}
+            />
           )}
         </div>
       </main>
@@ -110,52 +107,51 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
   );
 }
 
-function ExploreCard({ item }: { item: ExploreListItem }) {
-  const isProgram = item.kind === "PROGRAM";
-  const exercises = item.routines[0]?.exerciseCount ?? 0;
+function PublicList({
+  kind,
+  sort,
+  onSort,
+}: {
+  kind: PublicationKind;
+  sort: ExploreSort;
+  onSort: (sort: ExploreSort) => void;
+}) {
+  const { items, loading } = useExplore(kind, sort);
 
   return (
-    <Link
-      href={routes.explorePublication(item.kind, item.slug)}
-      className="flex items-center gap-3 rounded-2xl border-2 border-input bg-card p-4 hover:border-primary/50 active:scale-[0.98] transition-all"
-    >
-      <span className="min-w-0 flex-1">
-        <span className="flex items-center gap-2">
-          <span className="min-w-0 truncate font-bold text-foreground text-lg leading-tight">
-            {item.name}
-          </span>
-          {item.isMine && (
-            <span className="shrink-0 rounded-md bg-secondary px-1.5 py-0.5 kicker text-[0.55rem] text-muted-foreground">
-              Tuya
-            </span>
-          )}
-        </span>
-        <span className="block kicker text-[0.6rem] text-muted-foreground mt-1.5">
-          de <AuthorName author={item.author} /> ·{" "}
-          {isProgram
-            ? `${item.routines.length} ${item.routines.length === 1 ? "rutina" : "rutinas"}`
-            : `${exercises} ${exercises === 1 ? "ejercicio" : "ejercicios"}`}
-        </span>
-        {isProgram && (
-          <span className="block text-xs text-muted-foreground truncate mt-1">
-            {item.routines.map((r) => r.name).join(" → ")}
-          </span>
-        )}
-        <span className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <Heart
-              className={`w-3.5 h-3.5 ${item.likedByMe ? "fill-primary text-primary" : ""}`}
-              aria-hidden
-            />
-            <span aria-label="me gusta">{item.likeCount}</span>
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Copy className="w-3.5 h-3.5" aria-hidden />
-            <span aria-label="copias">{item.copyCount}</span>
-          </span>
-        </span>
-      </span>
-      <ChevronRight className="shrink-0 w-5 h-5 text-muted-foreground" />
-    </Link>
+    <>
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {SORTS.map((s) => (
+          <button
+            key={s.value}
+            type="button"
+            aria-pressed={sort === s.value}
+            onClick={() => onSort(s.value)}
+            className={`shrink-0 rounded-full border-2 px-3 py-1 text-sm font-bold transition-colors ${
+              sort === s.value
+                ? "border-foreground bg-foreground text-background"
+                : "border-input text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <ExploreLoading />
+      ) : items.length === 0 ? (
+        <ExploreEmpty
+          title="Nada publicado aún"
+          hint={
+            kind === "PROGRAM"
+              ? "Publica un programa desde su editor, con el ícono del globo."
+              : "Publica una rutina desde su editor, con el ícono del globo."
+          }
+        />
+      ) : (
+        items.map((item) => <ExploreCard key={item.id} item={item} />)
+      )}
+    </>
   );
 }
