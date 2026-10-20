@@ -39,8 +39,8 @@ The full reasoning, including the progression rules, is in
   `apps/docker/scripts/update.sh` (backup, pull images, `up -d`). Whatever lands
   on `main` reaches prod, migrations included.
 - **CI:** `.github/workflows/ci.yml` runs lint, unit tests and build for both
-  apps on every PR to `main` and inside `cd.yml`. Lint is at zero problems;
-  keep it there.
+  apps, plus the API e2e suites against a Postgres service, on every PR to
+  `main` and inside `cd.yml`. Lint is at zero problems; keep it there.
 
 ## Repository layout
 

@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-109] Los tests e2e de la API corren en el CI (2026-10-20 17:14)
+El job `api` levanta un Postgres 16 como servicio, aplica las migraciones, siembra el catálogo oficial y corre `test:e2e` antes del build: lo que llega a `main` pasa por las suites contra una base real.
+
 ## [WL-061] Cambiar la contraseña (2026-10-18 15:46)
 Perfil → Contraseña (solo en cuentas con contraseña) pide la actual y la nueva; `PATCH /auth/password` cierra las demás sesiones y mantiene la actual. Recuperarla por correo queda aparte en WL-124.
 

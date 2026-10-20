@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-109] Los tests e2e de la API no corren en el CI
-- **Ubicación:** `.github/workflows/ci.yml:41`
-- **Riesgo:** 5/10
-- **Problema:** `apps/api/test/` tiene tres suites e2e (auth, bloques, ejercicios) contra una base real, pero el CI solo corre `test:unit`. El job ya define `DATABASE_URL` sin un Postgres que lo atienda.
-- **Impacto futuro:** los tests que más protegen las migraciones y la validación de bloques solo corren si alguien se acuerda, y todo lo que llega a `main` va directo a prod.
-- **Sugerencia:** un `services: postgres` en el job `api`, `prisma migrate deploy` y `pnpm run test:e2e` antes del build.
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
-
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
 - **Riesgo:** 4/10
