@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-041] Nombre de rutina repetido responde 409 (2026-10-20 17:24)
+Crear o renombrar una rutina con un nombre que ya tienes responde 409 en vez de 500 (`withUniqueName` pasa a `common/` y lo comparten rutinas y programas), y el editor avisa "Ya tienes una rutina con ese nombre" y no deja guardar.
+
 ## [TD-109] Los tests e2e de la API corren en el CI (2026-10-20 17:14)
 El job `api` levanta un Postgres 16 como servicio, aplica las migraciones, siembra el catálogo oficial y corre `test:e2e` antes del build: lo que llega a `main` pasa por las suites contra una base real.
 

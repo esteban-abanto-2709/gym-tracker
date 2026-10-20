@@ -110,14 +110,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** fijar los finales de línea (`.gitattributes` con `eol=lf` o `endOfLine: "auto"`), correr `pnpm run format` una vez y verificar con `prettier --check` en el CI en vez de por ESLint.
 - **Fecha:** 2026-10-06 · **Estado:** Abierto
 
-## [TD-041] Nombre de rutina repetido responde 500
-- **Ubicación:** `apps/api/src/modules/routines/routines.service.ts:18` (`create`) y `:50` (`update`).
-- **Riesgo:** 4/10
-- **Problema:** `Routine` es única por `[userId, name]`, pero el servicio no captura el `P2002` de Prisma: crear o renombrar una rutina con un nombre que ya tienes devuelve 500 y el editor solo muestra "No se pudo guardar la rutina", sin decir por qué. `programs` ya lo resuelve con un 409 y un aviso en el editor.
-- **Impacto futuro:** con amigos usando la app (y copias que suman rutinas con sufijo), chocar con un nombre es más probable y el error no explica qué corregir.
-- **Sugerencia:** reutilizar el patrón `withUniqueName` de `programs.service.ts` (409) y avisar en `RoutineEditor` si el nombre ya existe.
-- **Fecha:** 2026-09-30 · **Estado:** En progreso (2026-10-20)
-
 ## [TD-015] GoogleLogin re-inicializa GSI varias veces (warning en consola)
 - **Ubicación:** `apps/web/src/components/auth/GoogleButton.tsx` (usa `GoogleLogin`), montado en `/login` y `/register`; provider en `apps/web/src/app/layout.tsx`.
 - **Riesgo:** 2/10

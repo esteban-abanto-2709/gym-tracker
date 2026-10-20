@@ -26,6 +26,7 @@ import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
 import type { Exercise, Routine, RoutineBlock } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
+import { useRoutines } from "@/hooks/useRoutines";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import { PageShell } from "@/components/layout/PageShell";
@@ -134,6 +135,8 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     createExercise,
     creatingExercise,
   } = useExercises();
+
+  const { routines } = useRoutines();
 
   const [name, setName] = useState("");
   const [items, setItems] = useState<DraftItem[]>([]);
@@ -245,7 +248,11 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     }
   };
 
-  const canSave = name.trim().length > 0 && items.length > 0 && !saving;
+  const duplicateName = routines.some(
+    (r) => r.id !== routineId && r.name === name.trim(),
+  );
+  const canSave =
+    name.trim().length > 0 && items.length > 0 && !duplicateName && !saving;
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -321,6 +328,11 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
               className="w-full bg-transparent border-b-2 border-input focus:border-primary text-foreground font-display font-bold uppercase text-4xl tracking-tight px-0 py-2 outline-none transition-colors placeholder:text-muted-foreground/40"
               autoComplete="off"
             />
+            {duplicateName && (
+              <p className="text-sm text-destructive">
+                Ya tienes una rutina con ese nombre.
+              </p>
+            )}
           </div>
 
           <ExerciseCombobox
