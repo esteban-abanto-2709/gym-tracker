@@ -13,7 +13,7 @@ registras y sueltas el celular.
 ## Para quién
 
 - **Hoy:** el autor, que la usa cada semana en el gimnasio.
-- **Siguiente:** sus amigos, y los amigos de ellos, por invitación.
+- **Siguiente:** sus amigos, y los amigos de ellos.
 - **El perfil:** gente joven de nivel **intermedio**. Conoce los ejercicios y
   sabe hacerlos bien, pero sigue descubriendo matices. No necesita que la app le
   enseñe a entrenar; necesita que no le estorbe. Los principiantes absolutos no
@@ -100,7 +100,7 @@ La lógica que guía las sugerencias, sin que el usuario la configure:
   funcione aunque se vaya la luz.
 - **Pulir el momento de entrenar:** historial del ejercicio con racha, buscar el
   ejercicio en video, calculadora de discos y un registro de un toque.
-- **Abrirla a amigos por invitación**, con una versión cómoda en escritorio para
+- **Abrirla a amigos**, con una versión cómoda en escritorio para
   revisar tus datos, exportarlos o importar un programa armado con tu IA.
 - **Compartir programas y rutinas sueltas** que otros puedan copiar y adaptar.
 

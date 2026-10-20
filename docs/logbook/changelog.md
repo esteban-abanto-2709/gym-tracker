@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [WL-061] Cambiar la contraseña (2026-10-18 15:46)
+Perfil → Contraseña (solo en cuentas con contraseña) pide la actual y la nueva; `PATCH /auth/password` cierra las demás sesiones y mantiene la actual. Recuperarla por correo queda aparte en WL-124.
+
 ## [RM-123] Portada pública (2026-10-18 15:28)
 `treno.rocks/` sin sesión muestra una portada con la promesa, una serie de ejemplo tal como la ve la app y acceso directo a crear cuenta o ingresar; con sesión sigue siendo Hoy. Sirve como página principal en la pantalla de consentimiento de Google.
 

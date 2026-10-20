@@ -7,7 +7,7 @@ per-app READMEs hold the technical detail.
 
 Gym Tracker: a strength-training logger meant to be used **between sets without
 thinking** — you see what you did last time, repeat it or go up, log it and put
-the phone away. The owner uses it every week; friends are next, by invitation.
+the phone away. The owner uses it every week; friends are next.
 
 **Product certainties (judge every change against them):**
 

@@ -7,6 +7,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 
 ---
 
+## [WL-124] Recuperar la contraseña por correo
+El "¿Olvidaste tu contraseña?": link de un solo uso por correo que caduca, `POST /auth/forgot` (responde igual exista o no la cuenta) y `POST /auth/reset` (cierra todas las sesiones con TD-120), con límite de intentos. Exige que la app envíe correos: proveedor (candidato Resend) y SPF/DKIM en el DNS. Aplazado: hoy casi todos entran con Google y cambiar la contraseña ya existe (WL-061).
+
 ## [WL-122] Manual de funcionamiento
 Un documento no técnico que explique cómo funciona la app para cualquier persona, con sus reglas concretas: qué cuenta para la racha, qué pasa con la sesión guiada al terminar el día, que cerrar sesión cierra todos los dispositivos (TD-120), etc. Distinto de `product-vision.md` (el porqué) y de los README (lo técnico).
 
@@ -49,12 +52,6 @@ Columna `unit` en `Workout` para mostrar el peso en la unidad en que se registr�
 ## [WL-058] Versión de escritorio
 Una experiencia cómoda en la computadora para lo que no se hace entre series: revisar tu progreso, exportar tus datos e importar o armar programas. En escritorio, el video del ejercicio puede abrirse en YouTube en vez de TikTok.
 
-## [WL-059] Invitaciones con cupo
-Para abrir la app a amigos: cada usuario recibe un cupo fijo de invitaciones (p. ej. 4) que comparte por link. El link se puede regenerar, pero quien ya entró no se expulsa.
-
-## [WL-061] Recuperar y cambiar la contraseña
-**En progreso (2026-10-18).** Obligatorio antes de tener usuarios que no sean el autor. Google sigue siendo el camino principal, por ser el de menos pasos. Son dos partes: cambiarla con la sesión iniciada (no necesita correo) y recuperarla por un link al correo, que exige que la app pueda enviar correos (proveedor por decidir; candidato: Resend, con SPF/DKIM en el DNS). Cambiarla: hecho (Perfil → Contraseña, solo en cuentas con contraseña; `PATCH /auth/password` cierra las demás sesiones con TD-120 y mantiene la actual). Recuperarla: pendiente.
-
 ## [WL-060] Crear un programa con tu IA
 La app entrega un `.md` con el formato de programas y rutinas, las convenciones de registro y qué preguntarle al usuario. Tu IA de confianza lo usa para armar el programa y devuelve un JSON; al importarlo se crea un programa **nuevo**, nunca se reemplaza uno existente. No incluye historial: si quieres que la IA lo considere, se lo pasas aparte con la exportación (RM-021).
 
@@ -71,7 +68,7 @@ Hoy cada `Workout` es una serie suelta y la sesión guiada vive en `localStorage
 Rivalidad sana y opcional: comparar el radar de músculos, la constancia (días por semana) o la carga en un ejercicio. Preferir compartir una imagen o un link por WhatsApp antes que construir perfiles, amistades o chat.
 
 ## [WL-064] Analíticas de uso
-Saber cuántos usuarios entran, cuántos entrenan cada semana y cuánto se usan las invitaciones. Empezar con consultas a la base antes que con una herramienta.
+Saber cuántos usuarios entran, cuántos entrenan cada semana y cuántos vuelven. Empezar con consultas a la base antes que con una herramienta.
 
 ## [WL-063] Personalización por usuario y ejercicio
 El ejercicio (nombre, músculos, descripción) es común a todos, pero cada usuario lo hace a su manera: otra barra (la corta para hip thrust), otros discos o las escalas de las máquinas de su gimnasio. Con esa capa, la calculadora de discos se adapta a cada uno y la sugerencia de subir puede proponer un peso concreto con el salto real de su equipo (la prensa sube de a 10 kg por lado; la barra, de a 5 kg en total).
