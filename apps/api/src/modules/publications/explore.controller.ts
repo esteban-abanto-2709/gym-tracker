@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { PublicationKind } from '@prisma/client';
 import { ExploreService } from './explore.service';
 import { CopyProgramDto, ExploreQueryDto } from './dto/explore.dto';
@@ -15,6 +17,8 @@ import {
   CurrentUser,
   type AuthUser,
 } from '@/common/decorators/current-user.decorator';
+
+const LIKE_LIMIT = { default: { limit: 30, ttl: 60_000 } };
 
 @Controller('explore')
 export class ExploreController {
@@ -80,6 +84,66 @@ export class ExploreController {
       user.id,
       slug,
       copyProgramDto.routinePosition,
+    );
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Throttle(LIKE_LIMIT)
+  @Put('routines/:slug/like')
+  async likeRoutine(
+    @CurrentUser() user: AuthUser,
+    @Param('slug') slug: string,
+  ) {
+    return this.exploreService.setLike(
+      user.id,
+      PublicationKind.ROUTINE,
+      slug,
+      true,
+    );
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Throttle(LIKE_LIMIT)
+  @Put('programs/:slug/like')
+  async likeProgram(
+    @CurrentUser() user: AuthUser,
+    @Param('slug') slug: string,
+  ) {
+    return this.exploreService.setLike(
+      user.id,
+      PublicationKind.PROGRAM,
+      slug,
+      true,
+    );
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Throttle(LIKE_LIMIT)
+  @Delete('routines/:slug/like')
+  async unlikeRoutine(
+    @CurrentUser() user: AuthUser,
+    @Param('slug') slug: string,
+  ) {
+    return this.exploreService.setLike(
+      user.id,
+      PublicationKind.ROUTINE,
+      slug,
+      false,
+    );
+  }
+
+  @UseGuards(ThrottlerGuard)
+  @Throttle(LIKE_LIMIT)
+  @Delete('programs/:slug/like')
+  async unlikeProgram(
+    @CurrentUser() user: AuthUser,
+    @Param('slug') slug: string,
+  ) {
+    return this.exploreService.setLike(
+      user.id,
+      PublicationKind.PROGRAM,
+      slug,
+      false,
     );
   }
 }

@@ -166,6 +166,7 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | GET | `/explore/routines`, `/explore/programs` | Publicaciones (`?sort=likes\|copies\|recent`, 50 como máximo) con autor (`username` y `slug`), me gusta, copias, `likedByMe` e `isMine` |
 | GET | `/explore/{routines\|programs}/:slug` | Una publicación con sus rutinas y ejercicios |
 | POST | `/explore/routines/:slug/copy` | Copia la rutina como rutina suelta |
+| PUT, DELETE | `/explore/{routines\|programs}/:slug/like` | Da o quita tu me gusta (idempotente; el tuyo propio da 403). Devuelve `likeCount` y `likedByMe` |
 | POST | `/explore/programs/:slug/copy` | Copia el programa entero (lo activa si no tenías uno) o, con `routinePosition`, solo esa rutina |
 
 ## Modelo de datos

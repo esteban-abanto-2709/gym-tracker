@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, PublicationKind } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { itemsInclude } from '../routines/routines.service';
@@ -85,6 +89,38 @@ export class ExploreService {
       throw new NotFoundException(`Publication ${slug} not found`);
     }
     return withSocial(publication, userId);
+  }
+
+  async setLike(
+    userId: string,
+    kind: PublicationKind,
+    slug: string,
+    liked: boolean,
+  ) {
+    const publication = await this.prisma.publication.findUnique({
+      where: { kind_slug: { kind, slug } },
+      select: { id: true, authorId: true },
+    });
+    if (!publication) {
+      throw new NotFoundException(`Publication ${slug} not found`);
+    }
+    if (publication.authorId === userId) {
+      throw new ForbiddenException('You cannot like your own publication');
+    }
+
+    const like = { userId, publicationId: publication.id };
+    if (liked) {
+      await this.prisma.publicationLike.createMany({
+        data: [like],
+        skipDuplicates: true,
+      });
+    } else {
+      await this.prisma.publicationLike.deleteMany({ where: like });
+    }
+    const likeCount = await this.prisma.publicationLike.count({
+      where: { publicationId: publication.id },
+    });
+    return { likeCount, likedByMe: liked };
   }
 
   async copyRoutine(userId: string, slug: string) {
