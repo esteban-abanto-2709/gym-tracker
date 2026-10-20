@@ -68,6 +68,32 @@ export class PublicationsService {
     );
   }
 
+  async rename(userId: string, id: string, name: string) {
+    await this.findOwn(userId, id);
+    return this.prisma.publication.update({
+      where: { id },
+      data: { name: name.trim() },
+      select: { id: true, name: true },
+    });
+  }
+
+  async remove(userId: string, id: string) {
+    await this.findOwn(userId, id);
+    await this.prisma.publication.delete({ where: { id } });
+    return { id };
+  }
+
+  private async findOwn(userId: string, id: string) {
+    const publication = await this.prisma.publication.findFirst({
+      where: { id, authorId: userId },
+      select: { id: true },
+    });
+    if (!publication) {
+      throw new NotFoundException(`Publication ${id} not found`);
+    }
+    return publication;
+  }
+
   async isSlugAvailable(kind: PublicationKind, slug: string) {
     const taken = await this.prisma.publication.count({
       where: { kind, slug },

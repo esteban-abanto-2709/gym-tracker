@@ -163,6 +163,9 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/routines/:id/publish` | Publica una rutina propia con un slug (foto fija) |
 | POST | `/programs/:id/publish` | Publica un programa propio con sus rutinas (foto fija) |
 | GET | `/publications/slug-available` | `?kind=ROUTINE\|PROGRAM&slug=`: si el slug está libre |
+| GET | `/publications/mine` | Tus publicaciones de los dos tipos, la más nueva primero, con sus contadores |
+| PATCH | `/publications/:id` | Renombra tu publicación (`{ name }`); el slug no cambia |
+| DELETE | `/publications/:id` | Elimina tu publicación con sus me gusta; las copias de los demás se quedan |
 | GET | `/explore/routines`, `/explore/programs` | Publicaciones (`?sort=likes\|copies\|recent`, 50 como máximo) con autor (`username` y `slug`), me gusta, copias, `likedByMe` e `isMine` |
 | GET | `/explore/{routines\|programs}/:slug` | Una publicación con sus rutinas y ejercicios |
 | POST | `/explore/routines/:slug/copy` | Copia la rutina como rutina suelta |

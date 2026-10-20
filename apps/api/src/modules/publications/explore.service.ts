@@ -55,9 +55,27 @@ type SnapshotRoutine = Prisma.PublicationRoutineGetPayload<{
 export class ExploreService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async list(userId: string, kind: PublicationKind, sort: ExploreSort) {
-    const publications = await this.prisma.publication.findMany({
+  list(userId: string, kind: PublicationKind, sort: ExploreSort) {
+    return this.summaries(userId, {
       where: { kind },
+      orderBy: orderBy[sort],
+      take: PAGE_SIZE,
+    });
+  }
+
+  mine(userId: string) {
+    return this.summaries(userId, {
+      where: { authorId: userId },
+      orderBy: [{ publishedAt: 'desc' }],
+    });
+  }
+
+  private async summaries(
+    userId: string,
+    query: Pick<Prisma.PublicationFindManyArgs, 'where' | 'orderBy' | 'take'>,
+  ) {
+    const publications = await this.prisma.publication.findMany({
+      ...query,
       include: {
         ...socialInclude(userId),
         routines: {
@@ -65,8 +83,6 @@ export class ExploreService {
           select: { name: true, _count: { select: { items: true } } },
         },
       },
-      orderBy: orderBy[sort],
-      take: PAGE_SIZE,
     });
     return publications.map((publication) => {
       const { routines, ...rest } = withSocial(publication, userId);

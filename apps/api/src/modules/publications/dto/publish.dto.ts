@@ -1,6 +1,7 @@
 import { PublicationKind } from '@prisma/client';
 import {
   IsEnum,
+  IsNotEmpty,
   IsNotIn,
   IsOptional,
   IsString,
@@ -24,6 +25,14 @@ export class PublishDto extends SlugDto {
   @IsString()
   @MaxLength(280)
   description?: string;
+}
+
+export class RenamePublicationDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(100)
+  @Matches(/\S/)
+  name: string;
 }
 
 export class SlugAvailableDto extends SlugDto {
