@@ -16,7 +16,8 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { AuthorName } from "./AuthorName";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
-import { Copy, Heart, Loader2 } from "lucide-react";
+import { LikeButton } from "./LikeButton";
+import { Copy, Loader2 } from "lucide-react";
 
 interface PublicationDetailProps {
   kind: PublicationKind;
@@ -118,10 +119,13 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
                   </p>
                 )}
                 <p className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <Heart className="w-4 h-4" aria-hidden />
-                    {publication.likeCount} me gusta
-                  </span>
+                  <LikeButton
+                    kind={kind}
+                    slug={slug}
+                    likeCount={publication.likeCount}
+                    likedByMe={publication.likedByMe}
+                    isMine={publication.isMine}
+                  />
                   <span className="inline-flex items-center gap-1.5">
                     <Copy className="w-4 h-4" aria-hidden />
                     {publication.copyCount}{" "}

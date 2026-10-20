@@ -103,6 +103,8 @@ export const routes = {
         `/explore/${kindPath[kind]}/${slug}`,
       copy: (kind: PublicationKind, slug: string) =>
         `/explore/${kindPath[kind]}/${slug}/copy`,
+      like: (kind: PublicationKind, slug: string) =>
+        `/explore/${kindPath[kind]}/${slug}/like`,
     },
   },
 } as const;

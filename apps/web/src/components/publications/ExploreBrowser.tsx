@@ -143,7 +143,10 @@ function ExploreCard({ item }: { item: ExploreListItem }) {
         )}
         <span className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
-            <Heart className="w-3.5 h-3.5" aria-hidden />
+            <Heart
+              className={`w-3.5 h-3.5 ${item.likedByMe ? "fill-primary text-primary" : ""}`}
+              aria-hidden
+            />
             <span aria-label="me gusta">{item.likeCount}</span>
           </span>
           <span className="inline-flex items-center gap-1">
