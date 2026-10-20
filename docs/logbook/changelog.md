@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [WL-039] Publicar programas y rutinas sueltas (2026-10-20 18:29)
+Todo es privado y se publica como foto fija con slug propio (`/explore/routines/:slug`, `/explore/programs/:slug`). Explorar por pestañas y orden, copiar entero o una sola rutina, un me gusta por cuenta, copias por persona, "Mías" para renombrar y eliminar, compartir el link y novedad `explore-programs-2`.
+
 ## [TD-041] Nombre de rutina repetido responde 409 (2026-10-20 17:24)
 Crear o renombrar una rutina con un nombre que ya tienes responde 409 en vez de 500 (`withUniqueName` pasa a `common/` y lo comparten rutinas y programas), y el editor avisa "Ya tienes una rutina con ese nombre" y no deja guardar.
 

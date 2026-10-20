@@ -19,6 +19,13 @@ export interface NewsItem {
 
 export const NEWS: NewsItem[] = [
   {
+    id: "explore-programs-2",
+    Icon: Compass,
+    title: "Publica y copia rutinas y programas",
+    body: "Lo tuyo ahora es privado: publica lo que quieras con el globo del editor. En Explorar copia un programa entero o una sola rutina, dale me gusta y comparte el link.",
+    href: "/explore",
+  },
+  {
     id: "programs",
     Icon: CalendarRange,
     title: "Arma tu programa y la app te dice qué toca hoy",
@@ -50,13 +57,6 @@ export const NEWS: NewsItem[] = [
     title: "Registra tus medidas",
     body: "Anota altura, peso y % de grasa con su fecha para ver cómo cambias. Van en el archivo que exportas, así tu IA te asesora mejor.",
     href: "/perfil#medidas",
-  },
-  {
-    id: "explore-programs",
-    Icon: Compass,
-    title: "Copia el programa de otro",
-    body: "Mira los programas que armaron los demás y quédate con una copia tuya, lista para entrenar y para cambiarla a tu gusto.",
-    href: "/explore",
   },
   {
     id: "exercise-language",

@@ -17,6 +17,7 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { AuthorName } from "./AuthorName";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
 import { LikeButton } from "./LikeButton";
+import { ShareButton } from "./ShareButton";
 import { Copy, Loader2 } from "lucide-react";
 
 interface PublicationDetailProps {
@@ -92,6 +93,14 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
           <BackAction href={routes.explore(isProgram ? "programs" : "routines")} />
         }
         title={isProgram ? "Programa" : "Rutina"}
+        rightAction={
+          publication ? (
+            <ShareButton
+              title={publication.name}
+              path={routes.explorePublication(kind, slug)}
+            />
+          ) : undefined
+        }
       />
 
       <main className="flex-1 px-6 py-8 relative z-10 animate-fade-in-up">

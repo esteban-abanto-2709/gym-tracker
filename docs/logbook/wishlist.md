@@ -10,6 +10,9 @@ Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
 ## [WL-124] Recuperar la contraseña por correo
 El "¿Olvidaste tu contraseña?": link de un solo uso por correo que caduca, `POST /auth/forgot` (responde igual exista o no la cuenta) y `POST /auth/reset` (cierra todas las sesiones con TD-120), con límite de intentos. Exige que la app envíe correos: proveedor (candidato Resend) y SPF/DKIM en el DNS. Aplazado: hoy casi todos entran con Google y cambiar la contraseña ya existe (WL-061).
 
+## [WL-125] Ver una publicación sin cuenta
+Hoy el link de una rutina o un programa publicado pide iniciar sesión, y por eso WhatsApp no muestra una vista previa (título e imagen). Abrir `/explore/{routines|programs}/:slug` en solo lectura sin sesión, con su Open Graph, haría que el link se entienda solo; copiar seguiría pidiendo una cuenta. Antes hay que decidir qué se muestra del autor.
+
 ## [WL-122] Manual de funcionamiento
 Un documento no técnico que explique cómo funciona la app para cualquier persona, con sus reglas concretas: qué cuenta para la racha, qué pasa con la sesión guiada al terminar el día, que cerrar sesión cierra todos los dispositivos (TD-120), etc. Distinto de `product-vision.md` (el porqué) y de los README (lo técnico).
 
@@ -54,9 +57,6 @@ Una experiencia cómoda en la computadora para lo que no se hace entre series: r
 
 ## [WL-060] Crear un programa con tu IA
 La app entrega un `.md` con el formato de programas y rutinas, las convenciones de registro y qué preguntarle al usuario. Tu IA de confianza lo usa para armar el programa y devuelve un JSON; al importarlo se crea un programa **nuevo**, nunca se reemplaza uno existente. No incluye historial: si quieres que la IA lo considere, se lo pasas aparte con la exportación (RM-021).
-
-## [WL-039] Publicar programas y rutinas sueltas
-**En progreso (2026-10-20).** Todo es privado; publicar crea una foto fija con slug propio (`/explore/routines/:slug`, `/explore/programs/:slug`) sin ancla a la rutina o el programa original. El autor solo puede renombrarla o eliminarla; las copias de los demás se quedan. Un "me gusta" por cuenta; el contador de copias cuenta personas distintas y no baja si borran su copia. El autor no puede darse "me gusta", pero sí copiar su propia publicación sin sumar al contador. Explorar ordena por "me gusta", copias o recientes.
 
 ## [WL-047] Análisis por músculo
 Un gráfico de radar con cuánto trabajas cada músculo (bíceps, tríceps, cuádriceps, isquios…), para ver qué sobreentrenas y qué descuidas. Depende de que el catálogo tenga músculos (RM-056). Antes de construir otras gráficas, buscar una librería que calce con el stack.
