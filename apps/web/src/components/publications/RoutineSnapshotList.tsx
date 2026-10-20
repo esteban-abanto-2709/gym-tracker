@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { formatBlocks } from "@/lib/blocks";
 import type { RoutineItem } from "@/lib/types";
 
@@ -7,10 +8,12 @@ interface SnapshotRoutine {
   items: RoutineItem[];
 }
 
-export function RoutineSnapshotList({
+export function RoutineSnapshotList<T extends SnapshotRoutine>({
   routines,
+  renderAction,
 }: {
-  routines: SnapshotRoutine[];
+  routines: T[];
+  renderAction?: (routine: T) => ReactNode;
 }) {
   return (
     <div className="space-y-3">
@@ -23,9 +26,10 @@ export function RoutineSnapshotList({
             <span className="shrink-0 w-7 h-7 rounded-lg bg-secondary grid place-items-center font-display text-muted-foreground">
               {index + 1}
             </span>
-            <h2 className="font-bold text-foreground text-lg leading-tight truncate">
+            <h2 className="min-w-0 flex-1 font-bold text-foreground text-lg leading-tight truncate">
               {routine.name}
             </h2>
+            {renderAction?.(routine)}
           </div>
           <ul className="mt-3 space-y-1.5">
             {routine.items.map((item) => {

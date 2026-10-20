@@ -175,7 +175,7 @@ export default function RoutinesPage() {
                 </span>
               </Link>
               <Link
-                href={routes.explore()}
+                href={routes.explore("routines")}
                 className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
               >
                 <Compass

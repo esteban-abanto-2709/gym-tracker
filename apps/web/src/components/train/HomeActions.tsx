@@ -81,7 +81,7 @@ export function HomeActions() {
   if (isNewUser) {
     return (
       <>
-        <Link href={routes.explore()} className={cardClass}>
+        <Link href={routes.explore("programs")} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
           <p className="kicker text-[0.65rem] opacity-55 relative">
             Empieza aquí

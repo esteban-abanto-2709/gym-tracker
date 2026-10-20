@@ -1,4 +1,14 @@
-import type { PublicationKind, SetType } from "@/lib/types";
+import type {
+  ExploreSort,
+  ExploreTab,
+  PublicationKind,
+  SetType,
+} from "@/lib/types";
+
+const kindPath: Record<PublicationKind, ExploreTab> = {
+  ROUTINE: "routines",
+  PROGRAM: "programs",
+};
 
 const dayStart = (day: string, offset = 0) => {
   const [y, m, d] = day.split("-").map(Number);
@@ -18,8 +28,9 @@ export const routes = {
   programNew: () => "/programs/new",
   programEdit: (id: string) => `/programs/${id}`,
   programPublish: (id: string) => `/programs/${id}/publish`,
-  explore: () => "/explore",
-  exploreProgram: (id: string) => `/explore/${id}`,
+  explore: (tab?: ExploreTab) => (tab ? `/explore?tab=${tab}` : "/explore"),
+  explorePublication: (kind: PublicationKind, slug: string) =>
+    `/explore/${kindPath[kind]}/${slug}`,
   train: () => "/train",
   log: () => "/log",
   login: () => "/login",
@@ -78,14 +89,20 @@ export const routes = {
       update: (id: string) => `/programs/${id}`,
       delete: (id: string) => `/programs/${id}`,
       active: () => "/programs/active",
-      explore: () => "/programs/explore",
-      copy: (id: string) => `/programs/${id}/copy`,
     },
     publications: {
       publishRoutine: (id: string) => `/routines/${id}/publish`,
       publishProgram: (id: string) => `/programs/${id}/publish`,
       slugAvailable: (kind: PublicationKind, slug: string) =>
         `/publications/slug-available?kind=${kind}&slug=${encodeURIComponent(slug)}`,
+    },
+    explore: {
+      list: (kind: PublicationKind, sort: ExploreSort) =>
+        `/explore/${kindPath[kind]}?sort=${sort}`,
+      get: (kind: PublicationKind, slug: string) =>
+        `/explore/${kindPath[kind]}/${slug}`,
+      copy: (kind: PublicationKind, slug: string) =>
+        `/explore/${kindPath[kind]}/${slug}/copy`,
     },
   },
 } as const;

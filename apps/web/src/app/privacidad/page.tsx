@@ -24,7 +24,7 @@ const sections: { title: string; items: React.ReactNode[] }[] = [
   {
     title: "Quién los ve",
     items: [
-      "Solo tú. La excepción son tus programas: aparecen en Explorar con tu nombre de usuario y otros usuarios pueden copiarlos.",
+      "Solo tú. La excepción es lo que tú decides publicar: esa rutina o ese programa aparece en Explorar con tu nombre de usuario, tal como estaba al publicarlo, y otros usuarios pueden verlo, darle me gusta y copiarlo. Lo que no publicas no lo ve nadie.",
       "Cuando exportas tus datos para una IA, ese archivo lo compartes tú con quien elijas.",
       "Para funcionar, la app usa un servidor donde vive la base de datos, Cloudflare (por donde pasa el tráfico de la página) y Google (solo si entras con Google).",
     ],
@@ -40,6 +40,7 @@ const sections: { title: string; items: React.ReactNode[] }[] = [
     items: [
       "Desde Perfil → Borrar mi cuenta. Se borra al instante con todo lo tuyo; de las copias de seguridad desaparece en 90 días como máximo.",
       "Los ejercicios que creaste se borran también, salvo los que otra persona usa: esos quedan en el catálogo sin tu nombre.",
+      "Tus publicaciones se borran con tu cuenta. Las copias que otras personas ya hicieron son suyas y se quedan.",
     ],
   },
   {

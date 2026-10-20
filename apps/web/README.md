@@ -93,7 +93,9 @@ UX; si un test falla, la traza queda en `e2e-results/` y el reporte en
 | `/success` | Confirmación tras registrar en día libre |
 | `/routines`, `/routines/new`, `/routines/[id]` | Listar, crear y editar rutinas |
 | `/programs`, `/programs/new`, `/programs/[id]` | Listar, crear y editar programas |
-| `/explore`, `/explore/[id]` | Programas de otros usuarios y copiarlos |
+| `/explore` | Publicaciones por pestaña (`?tab=programs\|routines`) y orden (populares, más copiados, recientes) |
+| `/explore/programs/[slug]`, `/explore/routines/[slug]` | Una publicación: copiarla entera o, en un programa, solo una rutina |
+| `/routines/[id]/publish`, `/programs/[id]/publish` | Publicar una rutina o un programa con su slug |
 | `/history` | Historial por día: repetir, editar y borrar series; exportar un rango para tu IA (`.md`) |
 | `/perfil` | Cuenta, idioma de los ejercicios, fecha de nacimiento, medidas corporales y cierre de sesión |
 | `/login`, `/register` | Acceso con email o Google |

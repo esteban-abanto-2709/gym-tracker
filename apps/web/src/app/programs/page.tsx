@@ -106,7 +106,7 @@ export default function ProgramsPage() {
 
           {!loading && (
             <Link
-              href={routes.explore()}
+              href={routes.explore("programs")}
               className="mt-6 flex items-center gap-3 rounded-2xl border-2 border-dashed border-border p-4 text-muted-foreground hover:border-primary/50 hover:text-foreground active:scale-[0.98] transition-all"
             >
               <Compass className="shrink-0 w-6 h-6" strokeWidth={2.5} />

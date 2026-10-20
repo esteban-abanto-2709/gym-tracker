@@ -146,8 +146,26 @@ export interface Publication {
   routines: PublicationRoutine[];
 }
 
-export interface ExploreProgram extends Program {
-  user: { username: string };
+export type ExploreTab = "routines" | "programs";
+export type ExploreSort = "likes" | "copies" | "recent";
+
+export interface ExploreSocial {
+  author: { username: string; slug: string };
+  likeCount: number;
+  copyCount: number;
+  likedByMe: boolean;
+  isMine: boolean;
+}
+
+export type ExploreListItem = Omit<Publication, "routines"> &
+  ExploreSocial & {
+    routines: { name: string; exerciseCount: number }[];
+  };
+
+export type ExploreDetail = Publication & ExploreSocial;
+
+export interface CopiedRoutine {
+  routine: Routine;
 }
 
 export interface CopiedProgram {
