@@ -1,4 +1,4 @@
-import { Locale } from '@prisma/client';
+import { Locale, Theme } from '@prisma/client';
 import {
   ArrayMaxSize,
   IsArray,
@@ -18,6 +18,10 @@ export class UpdateMeDto {
   @ValidateIf((o: UpdateMeDto) => o.exerciseLocale !== undefined)
   @IsEnum(Locale)
   exerciseLocale?: Locale;
+
+  @ValidateIf((o: UpdateMeDto) => o.theme !== undefined)
+  @IsEnum(Theme)
+  theme?: Theme;
 
   @IsOptional()
   @IsArray()

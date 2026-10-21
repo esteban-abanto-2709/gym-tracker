@@ -69,6 +69,20 @@ describe('AuthController /auth/me (e2e)', () => {
     expect(res.body.newsSeen).toEqual(['tiktok']);
   });
 
+  it('starts on the system theme and stores the chosen one', async () => {
+    const before = await agent.get('/auth/me').expect(200);
+    expect(before.body.theme).toBe('system');
+
+    await agent.patch('/auth/me').send({ theme: 'light' }).expect(200);
+
+    const after = await agent.get('/auth/me').expect(200);
+    expect(after.body.theme).toBe('light');
+  });
+
+  it('rejects an unknown theme', async () => {
+    await agent.patch('/auth/me').send({ theme: 'dracula' }).expect(400);
+  });
+
   it('rejects ids that are not short strings', async () => {
     await agent
       .patch('/auth/me')

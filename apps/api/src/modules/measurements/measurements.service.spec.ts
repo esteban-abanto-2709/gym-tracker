@@ -124,4 +124,12 @@ describe('UpdateMeDto', () => {
     expect(await errorsFor({ exerciseLocale: null })).toHaveLength(1);
     expect(await errorsFor({ exerciseLocale: 'fr' })).toHaveLength(1);
   });
+
+  it('accepts system, light or dark as the theme and rejects anything else', async () => {
+    expect(await errorsFor({ theme: 'system' })).toHaveLength(0);
+    expect(await errorsFor({ theme: 'light' })).toHaveLength(0);
+    expect(await errorsFor({ theme: 'dark' })).toHaveLength(0);
+    expect(await errorsFor({ theme: null })).toHaveLength(1);
+    expect(await errorsFor({ theme: 'dracula' })).toHaveLength(1);
+  });
 });

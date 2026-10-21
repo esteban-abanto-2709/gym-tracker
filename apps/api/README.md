@@ -134,7 +134,7 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST | `/auth/google` | Login o registro con ID token de Google (público) |
 | POST | `/auth/logout` | Cierra sesión |
 | GET | `/auth/me` | Usuario actual |
-| PATCH | `/auth/me` | Cambia la fecha de nacimiento (o la borra con `null`), el idioma de ejercicios y las novedades abiertas o vistas |
+| PATCH | `/auth/me` | Cambia la fecha de nacimiento (o la borra con `null`), el idioma de ejercicios, el tema (`system`, `light` o `dark`) y las novedades abiertas o vistas |
 | GET | `/exercises` | Catálogo de ejercicios, con el nombre en el idioma del usuario |
 | POST | `/exercises` | Crea un ejercicio propio, con el nombre en el idioma del usuario |
 | GET | `/equipment` | Catálogo de equipos |

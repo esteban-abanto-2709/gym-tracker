@@ -21,6 +21,7 @@ model User {
   activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
   birthDate       DateTime?         @db.Date
   exerciseLocale  Locale            @default(en)
+  theme           Theme             @default(system)
   newsOpened      String[]          @default([])
   newsSeen        String[]          @default([])
   measurements    BodyMeasurement[]
@@ -90,6 +91,12 @@ model ExerciseName {
 enum Locale {
   es
   en
+}
+
+enum Theme {
+  system
+  light
+  dark
 }
 
 enum Muscle {

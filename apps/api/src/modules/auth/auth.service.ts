@@ -170,6 +170,7 @@ export class AuthService {
           birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null,
         }),
         ...(dto.exerciseLocale && { exerciseLocale: dto.exerciseLocale }),
+        ...(dto.theme && { theme: dto.theme }),
         ...(dto.newsOpened && { newsOpened: [...new Set(dto.newsOpened)] }),
         ...(dto.newsSeen && { newsSeen: [...new Set(dto.newsSeen)] }),
       },
@@ -186,6 +187,7 @@ export class AuthService {
       hasPassword: !!user.passwordHash,
       birthDate: user.birthDate ? fromDbDate(user.birthDate) : null,
       exerciseLocale: user.exerciseLocale,
+      theme: user.theme,
       newsOpened: user.newsOpened,
       newsSeen: user.newsSeen,
     };
