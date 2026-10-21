@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [WL-127] Ajustes fuera del Perfil (2026-10-21 12:13)
+Perfil queda con tu identidad y tus medidas; tema, nombres de ejercicios, nacimiento, contraseña, privacidad, cerrar sesión y borrar cuenta pasan a `/perfil/ajustes`, detrás de un engranaje.
+
 ## [RM-117] Elegir modo claro u oscuro (2026-10-21 11:18)
 Selector Sistema / Claro / Oscuro en Perfil con `next-themes`, guardado en `User.theme` y aplicado al entrar desde cualquier dispositivo; sin sesión siempre sigue al sistema. Toasts y color de la barra siguen al tema.
 

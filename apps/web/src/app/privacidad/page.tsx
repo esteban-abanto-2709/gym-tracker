@@ -38,7 +38,7 @@ const sections: { title: string; items: React.ReactNode[] }[] = [
   {
     title: "Borrar tu cuenta",
     items: [
-      "Desde Perfil → Borrar mi cuenta. Se borra al instante con todo lo tuyo; de las copias de seguridad desaparece en 90 días como máximo.",
+      "Desde Perfil → Ajustes → Borrar mi cuenta. Se borra al instante con todo lo tuyo; de las copias de seguridad desaparece en 90 días como máximo.",
       "Los ejercicios que creaste se borran también, salvo los que otra persona usa: esos quedan en el catálogo sin tu nombre.",
       "Tus publicaciones se borran con tu cuenta. Las copias que otras personas ya hicieron son suyas y se quedan.",
     ],

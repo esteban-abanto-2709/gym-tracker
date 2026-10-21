@@ -20,6 +20,7 @@ export const routes = {
   success: () => "/success",
   history: () => "/history",
   profile: () => "/perfil",
+  settings: () => "/perfil/ajustes",
   routines: () => "/routines",
   routineNew: () => "/routines/new",
   routineEdit: (id: string) => `/routines/${id}`,

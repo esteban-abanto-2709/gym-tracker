@@ -62,7 +62,7 @@ export const NEWS: NewsItem[] = [
     id: "exercise-language",
     Icon: Languages,
     title: "Ejercicios en inglés o español",
-    body: "Elige cómo se ven los nombres en tus rutinas y tu historial con el botón de idioma del Perfil. Para buscar sirve cualquiera.",
-    href: "/perfil",
+    body: "Elige cómo se ven los nombres en tus rutinas y tu historial en Perfil → Ajustes. Para buscar sirve cualquiera.",
+    href: "/perfil/ajustes",
   },
 ];
