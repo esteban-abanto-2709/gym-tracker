@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
-import { THEME_COLORS } from "@/lib/theme";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 
 // Oswald: display condensado (títulos, números, botones). Space Grotesk:
@@ -40,10 +39,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: THEME_COLORS.light },
-    { media: "(prefers-color-scheme: dark)", color: THEME_COLORS.dark },
-  ],
 };
 
 export default function RootLayout({

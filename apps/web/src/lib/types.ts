@@ -2,6 +2,8 @@
 
 export type Locale = "es" | "en";
 
+export type Theme = "system" | "light" | "dark";
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -10,6 +12,7 @@ export interface AuthUser {
   hasPassword: boolean;
   birthDate: string | null;
   exerciseLocale: Locale;
+  theme: Theme;
   newsOpened: string[];
   newsSeen: string[];
 }

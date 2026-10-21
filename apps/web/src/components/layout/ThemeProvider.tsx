@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
-import { THEME_COLORS } from "@/lib/theme";
+
+const THEME_COLORS = { light: "#EDEBE4", dark: "#09090B" } as const;
 
 function ThemedChrome() {
   const { resolvedTheme } = useTheme();
@@ -17,12 +18,24 @@ function ThemedChrome() {
   }, [resolvedTheme, resolved]);
 
   return (
-    <Toaster
-      theme={resolvedTheme ? resolved : "system"}
-      richColors
-      position="top-center"
-      mobileOffset={{ top: "calc(env(safe-area-inset-top) + 16px)" }}
-    />
+    <>
+      <meta
+        name="theme-color"
+        media="(prefers-color-scheme: light)"
+        content={THEME_COLORS.light}
+      />
+      <meta
+        name="theme-color"
+        media="(prefers-color-scheme: dark)"
+        content={THEME_COLORS.dark}
+      />
+      <Toaster
+        theme={resolvedTheme ? resolved : "system"}
+        richColors
+        position="top-center"
+        mobileOffset={{ top: "calc(env(safe-area-inset-top) + 16px)" }}
+      />
+    </>
   );
 }
 

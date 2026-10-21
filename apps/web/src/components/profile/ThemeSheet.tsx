@@ -2,13 +2,14 @@
 
 import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/lib/auth-context";
+import { notifyError } from "@/lib/notify";
+import type { Theme } from "@/lib/types";
 import type { LucideIcon } from "lucide-react";
 import { Check, Monitor, Moon, Sun, X } from "lucide-react";
 
-export type ThemeChoice = "system" | "light" | "dark";
-
 export const THEME_OPTIONS: {
-  value: ThemeChoice;
+  value: Theme;
   label: string;
   hint: string;
   icon: LucideIcon;
@@ -24,8 +25,20 @@ export const THEME_OPTIONS: {
 ];
 
 export function ThemeSheet({ onClose }: { onClose: () => void }) {
+  const { user, updateMe } = useAuth();
   const { theme, setTheme } = useTheme();
   const current = theme ?? "system";
+
+  const choose = async (value: Theme) => {
+    if (value === current) return;
+    setTheme(value);
+    try {
+      await updateMe({ theme: value });
+    } catch {
+      setTheme(user?.theme ?? "system");
+      notifyError("No se pudo guardar el tema");
+    }
+  };
 
   return createPortal(
     <>
@@ -70,7 +83,7 @@ export function ThemeSheet({ onClose }: { onClose: () => void }) {
                   type="button"
                   role="radio"
                   aria-checked={selected}
-                  onClick={() => setTheme(value)}
+                  onClick={() => choose(value)}
                   className={`flex items-center gap-4 rounded-2xl border-2 px-4 py-3.5 text-left transition-all active:scale-[0.98] ${
                     selected
                       ? "border-primary bg-primary/10"

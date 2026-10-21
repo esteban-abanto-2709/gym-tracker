@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [RM-117] Elegir modo claro u oscuro (2026-10-21 11:18)
+Selector Sistema / Claro / Oscuro en Perfil con `next-themes`, guardado en `User.theme` y aplicado al entrar desde cualquier dispositivo; sin sesión siempre sigue al sistema. Toasts y color de la barra siguen al tema.
+
 ## [WL-039] Publicar programas y rutinas sueltas (2026-10-20 18:29)
 Todo es privado y se publica como foto fija con slug propio (`/explore/routines/:slug`, `/explore/programs/:slug`). Explorar por pestañas y orden, copiar entero o una sola rutina, un me gusta por cuenta, copias por persona, "Mías" para renombrar y eliminar, compartir el link y novedad `explore-programs-2`.
 

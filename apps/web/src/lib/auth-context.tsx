@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { routes } from "@/lib/routes";
 import { api } from "@/lib/api";
 import type { AuthUser } from "@/lib/types";
@@ -35,7 +36,10 @@ interface AuthContextValue {
   }) => Promise<void>;
   updateMe: (
     changes: Partial<
-      Pick<AuthUser, "birthDate" | "exerciseLocale" | "newsOpened" | "newsSeen">
+      Pick<
+        AuthUser,
+        "birthDate" | "exerciseLocale" | "theme" | "newsOpened" | "newsSeen"
+      >
     >,
   ) => Promise<void>;
 }
@@ -71,6 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     authFetch<AuthUser>(routes.api.auth.me())
@@ -158,7 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       changes: Partial<
         Pick<
           AuthUser,
-          "birthDate" | "exerciseLocale" | "newsOpened" | "newsSeen"
+          "birthDate" | "exerciseLocale" | "theme" | "newsOpened" | "newsSeen"
         >
       >,
     ) => {
@@ -166,6 +171,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     [],
   );
+
+  const accountTheme = user?.theme ?? "system";
+  useEffect(() => {
+    if (!loading) setTheme(accountTheme);
+  }, [loading, accountTheme, setTheme]);
 
   const isPublic = PUBLIC_PATHS.has(pathname);
   const isOpen =
@@ -180,10 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [loading, user, isPublic, isOpen, router]);
 
-  if (
-    loading ||
-    (!isOpen && ((!user && !isPublic) || (user && isPublic)))
-  ) {
+  if (loading || (!isOpen && ((!user && !isPublic) || (user && isPublic)))) {
     return <FullScreenLoader />;
   }
 

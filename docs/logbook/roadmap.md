@@ -62,9 +62,3 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 - **Alcance:** mover Postgres del compose de prod a un servicio administrado. Migración con `backup.sh`/`restore.sh` y reversible: si no convence, la base vuelve al compose. La API solo cambia de `DATABASE_URL`/`DIRECT_URL`. Si las migraciones dejan de correr en el arranque de la API, `prisma` vuelve a devDependencies y la imagen se ahorra la CLI (`node_modules` 371 → 136 MB medido); la CLI carga Studio al arrancar, así que no se puede recortar por dentro.
 - **Hecho cuando:** prod corre contra la base administrada con todos los datos, el backup automático del servicio existe y se probó restaurar uno en dev.
 - **Fecha:** 2026-10-08 · **Estado:** Abierto
-
-## [RM-117] Elegir modo claro u oscuro
-- **Objetivo:** que cada usuario elija cómo ver la app en vez de depender del modo de su celular. Hoy la app sigue `prefers-color-scheme` (`apps/web/src/app/globals.css:46`): no hay selector y la preferencia no se guarda.
-- **Alcance:** selector Claro / Oscuro / Sistema en el perfil, guardado por usuario en la base igual que el idioma de los ejercicios (`User.exerciseLocale`), con "Sistema" por defecto. Aplica también al `themeColor` y al tema de los toasts. Temas extra (tipo Dracula) siguen en WL-062.
-- **Hecho cuando:** un usuario con el celular en oscuro elige "Claro", cierra sesión, entra desde otro dispositivo y ve la app en claro.
-- **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-21)

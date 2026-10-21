@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider } from "./auth-context";
 
 const replace = vi.fn();
+const setTheme = vi.fn();
 let pathname = "/";
 
 vi.mock("next/navigation", () => ({
@@ -10,13 +11,19 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathname,
 }));
 
-const meResponds = (loggedIn: boolean) =>
+vi.mock("next-themes", () => ({
+  useTheme: () => ({ setTheme }),
+}));
+
+const meResponds = (loggedIn: boolean, theme = "system") =>
   vi.stubGlobal(
     "fetch",
     vi.fn().mockResolvedValue({
       ok: loggedIn,
       json: () =>
-        Promise.resolve(loggedIn ? { id: "u1" } : { message: "Unauthorized" }),
+        Promise.resolve(
+          loggedIn ? { id: "u1", theme } : { message: "Unauthorized" },
+        ),
     }),
   );
 
@@ -59,5 +66,22 @@ describe("AuthProvider guard", () => {
     renderAt("/perfil");
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
     expect(screen.queryByText("contenido")).toBeNull();
+  });
+});
+
+describe("AuthProvider theme", () => {
+  beforeEach(() => setTheme.mockReset());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("applies the theme saved in the account", async () => {
+    meResponds(true, "light");
+    renderAt("/perfil");
+    await waitFor(() => expect(setTheme).toHaveBeenCalledWith("light"));
+  });
+
+  it("follows the system without a session", async () => {
+    meResponds(false);
+    renderAt("/login");
+    await waitFor(() => expect(setTheme).toHaveBeenCalledWith("system"));
   });
 });
