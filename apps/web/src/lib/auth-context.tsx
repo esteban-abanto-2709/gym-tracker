@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useEffectEvent,
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -173,9 +174,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const accountTheme = user?.theme ?? "system";
+  const applyAccountTheme = useEffectEvent(() => setTheme(accountTheme));
   useEffect(() => {
-    if (!loading) setTheme(accountTheme);
-  }, [loading, accountTheme, setTheme]);
+    if (!loading) applyAccountTheme();
+  }, [loading, accountTheme]);
 
   const isPublic = PUBLIC_PATHS.has(pathname);
   const isOpen =

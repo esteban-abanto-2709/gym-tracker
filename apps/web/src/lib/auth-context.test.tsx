@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("next-themes", () => ({
-  useTheme: () => ({ setTheme }),
+  useTheme: () => ({ setTheme: (theme: string) => setTheme(theme) }),
 }));
 
 const meResponds = (loggedIn: boolean, theme = "system") =>
@@ -29,7 +29,7 @@ const meResponds = (loggedIn: boolean, theme = "system") =>
 
 const renderAt = (path: string) => {
   pathname = path;
-  render(
+  return render(
     <AuthProvider>
       <p>contenido</p>
     </AuthProvider>,
@@ -83,5 +83,17 @@ describe("AuthProvider theme", () => {
     meResponds(false);
     renderAt("/login");
     await waitFor(() => expect(setTheme).toHaveBeenCalledWith("system"));
+  });
+
+  it("does not reapply the account theme when the provider re-renders", async () => {
+    meResponds(true, "light");
+    const { rerender } = renderAt("/perfil");
+    await screen.findByText("contenido");
+    rerender(
+      <AuthProvider>
+        <p>contenido</p>
+      </AuthProvider>,
+    );
+    expect(setTheme).toHaveBeenCalledTimes(1);
   });
 });
