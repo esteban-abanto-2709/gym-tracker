@@ -43,35 +43,35 @@
   );
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 240 11% 4%;
-    --foreground: 45 27% 94%;
-    --card: 240 8% 8%;
-    --card-foreground: 45 27% 94%;
-    --popover: 240 8% 8%;
-    --popover-foreground: 45 27% 94%;
-    --primary: 4 100% 59%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 9% 12%;
-    --secondary-foreground: 45 27% 94%;
-    --muted: 240 9% 12%;
-    --muted-foreground: 45 10% 62%;
-    --accent: 240 9% 12%;
-    --accent-foreground: 45 27% 94%;
-    --destructive: 4 100% 59%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 8% 16%;
-    --input: 240 8% 16%;
-    --ring: 4 100% 59%;
+@custom-variant dark (&:where(.dark, .dark *));
 
-    /* Custom semantic tokens */
-    --surface-elevated: 240 9% 12%;
-    --brand-gradient-start: 4 100% 59%;
-    --brand-gradient-end: 4 85% 48%;
-    --success: 72 100% 62%;
-    --success-foreground: 240 6% 5%;
-  }
+.dark {
+  --background: 240 11% 4%;
+  --foreground: 45 27% 94%;
+  --card: 240 8% 8%;
+  --card-foreground: 45 27% 94%;
+  --popover: 240 8% 8%;
+  --popover-foreground: 45 27% 94%;
+  --primary: 4 100% 59%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 9% 12%;
+  --secondary-foreground: 45 27% 94%;
+  --muted: 240 9% 12%;
+  --muted-foreground: 45 10% 62%;
+  --accent: 240 9% 12%;
+  --accent-foreground: 45 27% 94%;
+  --destructive: 4 100% 59%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 8% 16%;
+  --input: 240 8% 16%;
+  --ring: 4 100% 59%;
+
+  /* Custom semantic tokens */
+  --surface-elevated: 240 9% 12%;
+  --brand-gradient-start: 4 100% 59%;
+  --brand-gradient-end: 4 85% 48%;
+  --success: 72 100% 62%;
+  --success-foreground: 240 6% 5%;
 }
 
 @theme inline {

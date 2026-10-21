@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { routes } from "@/lib/routes";
 import { useAuth } from "@/lib/auth-context";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { BirthDateRow } from "@/components/profile/BirthDateRow";
 import { LanguageSheet } from "@/components/profile/LanguageSheet";
+import { THEME_OPTIONS, ThemeSheet } from "@/components/profile/ThemeSheet";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { PasswordRow } from "@/components/profile/PasswordRow";
@@ -16,6 +18,11 @@ import { Languages, LogOut, Trash2 } from "lucide-react";
 export default function PerfilPage() {
   const { user, logout } = useAuth();
   const initial = user?.username?.charAt(0)?.toUpperCase() ?? "?";
+  const { theme } = useTheme();
+  const ThemeIcon = (
+    THEME_OPTIONS.find((o) => o.value === theme) ?? THEME_OPTIONS[0]
+  ).icon;
+  const [themeOpen, setThemeOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -29,6 +36,14 @@ export default function PerfilPage() {
               Perfil
             </h1>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setThemeOpen(true)}
+                aria-label="Tema"
+                className="flex items-center rounded-xl border-2 border-input px-2.5 py-1.5 text-muted-foreground hover:text-primary hover:border-primary/50 active:scale-95 transition-all"
+              >
+                <ThemeIcon className="w-5 h-5" strokeWidth={2.5} />
+              </button>
               <button
                 type="button"
                 onClick={() => setLanguageOpen(true)}
@@ -88,9 +103,9 @@ export default function PerfilPage() {
         </div>
       </main>
 
-      {languageOpen && (
-        <LanguageSheet onClose={() => setLanguageOpen(false)} />
-      )}
+      {themeOpen && <ThemeSheet onClose={() => setThemeOpen(false)} />}
+
+      {languageOpen && <LanguageSheet onClose={() => setLanguageOpen(false)} />}
 
       <DeleteAccountDialog open={deleteOpen} onOpenChange={setDeleteOpen} />
 

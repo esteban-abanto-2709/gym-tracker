@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { THEME_COLORS } from "@/lib/theme";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 
 // Oswald: display condensado (títulos, números, botones). Space Grotesk:
 // cuerpo/UI. Space Mono: etiquetas "kicker". Ver globals.css (@theme inline).
@@ -40,8 +41,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#EDEBE4" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090B" },
+    { media: "(prefers-color-scheme: light)", color: THEME_COLORS.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME_COLORS.dark },
   ],
 };
 
@@ -51,21 +52,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${oswald.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
       >
-        <GoogleOAuthProvider
-          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
-        >
-          <AuthProvider>{children}</AuthProvider>
-        </GoogleOAuthProvider>
-        <Toaster
-          theme="system"
-          richColors
-          position="top-center"
-          mobileOffset={{ top: "calc(env(safe-area-inset-top) + 16px)" }}
-        />
+        <ThemeProvider>
+          <GoogleOAuthProvider
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
+          >
+            <AuthProvider>{children}</AuthProvider>
+          </GoogleOAuthProvider>
+        </ThemeProvider>
         <div className="portrait-lock" aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"

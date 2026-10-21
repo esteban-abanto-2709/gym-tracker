@@ -133,3 +133,10 @@ changelog y se borra de aquí.
 - **Impacto futuro:** El usuario limpia la búsqueda y el teclado móvil se abre sobre otro campo; confusión y typos en el nombre de la rutina.
 - **Sugerencia:** guardar un `ref` al input de búsqueda dentro del combobox y enfocar ese ref.
 - **Fecha:** 2026-07-23 · **Estado:** Abierto
+
+## [TD-126] Cada hoja inferior copia su propio armazón
+- **Ubicación:** `apps/web/src/components/profile/ThemeSheet.tsx:30`, `LanguageSheet.tsx:37`, `MeasureSheet.tsx`, `history/ExportSheet.tsx`, `news/NewsButton.tsx`, `train/SessionMap.tsx`
+- **Riesgo:** 3/10
+- **Problema:** el portal, el fondo oscuro, el contenedor `anchor-bottom` con su animación, la barrita y el encabezado con la X se repiten casi idénticos en seis componentes.
+- **Impacto futuro:** un arreglo de las hojas (accesibilidad, cerrar deslizando, foco) hay que hacerlo seis veces y alguna queda distinta.
+- **Fecha:** 2026-10-21 · **Estado:** Abierto
