@@ -12,7 +12,7 @@ const EMAIL = `e2e-${stamp}@test.local`;
 const PASSWORD = 'e2e-password';
 const EXERCISE = `E2E Bloques ${stamp}`;
 
-describe('Bloques y sets (e2e)', () => {
+describe('Blocks and sets (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
   let agent: ReturnType<typeof request.agent>;
@@ -60,8 +60,8 @@ describe('Bloques y sets (e2e)', () => {
     await app.close();
   });
 
-  describe('rutinas con bloques', () => {
-    it('guarda los cuatro tipos y los devuelve normalizados', async () => {
+  describe('routines with blocks', () => {
+    it('saves the four kinds and returns them normalized', async () => {
       const created = await agent
         .post('/routines')
         .send({
@@ -126,7 +126,7 @@ describe('Bloques y sets (e2e)', () => {
       ]);
     });
 
-    it('devuelve los mismos bloques al releerla', async () => {
+    it('returns the same blocks when read again', async () => {
       const read = await agent.get(`/routines/${routineId}`).expect(200);
       expect(read.body.items[0].blocks[0]).toEqual({
         kind: 'warmup',
@@ -137,7 +137,7 @@ describe('Bloques y sets (e2e)', () => {
       expect(read.body.items[4].blocks[0].steps).toHaveLength(3);
     });
 
-    it('actualiza el tipo de un bloque', async () => {
+    it('updates the kind of a block', async () => {
       const updated = await agent
         .patch(`/routines/${routineId}`)
         .send({
@@ -158,18 +158,21 @@ describe('Bloques y sets (e2e)', () => {
     });
 
     it.each([
-      ['tipo legacy', [{ kind: 'legacy', sets: 3, reps: 8 }]],
-      ['tipo desconocido', [{ kind: 'superset', sets: 3 }]],
-      ['rampa sin escalones', [{ kind: 'ramp', steps: [] }]],
-      ['rampa con series sueltas', [{ kind: 'ramp', sets: 3 }]],
-      ['campo ajeno al tipo', [{ kind: 'reps', sets: 2, durationSec: 30 }]],
-      ['meta invalida', [{ kind: 'time', sets: 0, durationSec: 30 }]],
-      ['sin lista de bloques', undefined],
-    ])('rechaza %s con 400', async (_label, blocks) => {
+      ['legacy kind', [{ kind: 'legacy', sets: 3, reps: 8 }]],
+      ['unknown kind', [{ kind: 'superset', sets: 3 }]],
+      ['ramp without steps', [{ kind: 'ramp', steps: [] }]],
+      ['ramp with plain sets', [{ kind: 'ramp', sets: 3 }]],
+      [
+        'field foreign to the kind',
+        [{ kind: 'reps', sets: 2, durationSec: 30 }],
+      ],
+      ['invalid target', [{ kind: 'time', sets: 0, durationSec: 30 }]],
+      ['no block list', undefined],
+    ])('rejects %s with 400', async (_label, blocks) => {
       await agent
         .post('/routines')
         .send({
-          name: `E2E invalida ${stamp}`,
+          name: `E2E invalid ${stamp}`,
           items: [{ exerciseId, position: 0, blocks }],
         })
         .expect(400);
@@ -177,7 +180,7 @@ describe('Bloques y sets (e2e)', () => {
   });
 
   describe('sets', () => {
-    it('registra un set con peso, uno de solo reps y uno de tiempo', async () => {
+    it('logs a weighted set, a reps-only set and a timed set', async () => {
       const weightSet = await agent
         .post('/workouts')
         .send({ exerciseId, reps: 8, weight: 60, equipmentId: 'barra' })
@@ -202,7 +205,7 @@ describe('Bloques y sets (e2e)', () => {
       expect(timeSet.body).toMatchObject({ weight: null, durationSec: 45 });
     });
 
-    it('registra un calentamiento con su tipo', async () => {
+    it('logs a warmup with its type', async () => {
       const warmup = await agent
         .post('/workouts')
         .send({
@@ -216,7 +219,7 @@ describe('Bloques y sets (e2e)', () => {
       expect(warmup.body.setType).toBe('WARMUP');
     });
 
-    it('registra un escalon de rampa con su numero', async () => {
+    it('logs a ramp step with its number', async () => {
       const ramp = await agent
         .post('/workouts')
         .send({
@@ -231,21 +234,21 @@ describe('Bloques y sets (e2e)', () => {
       expect(ramp.body).toMatchObject({ setType: 'RAMP', step: 1 });
     });
 
-    it('rechaza un escalon que no sea positivo', async () => {
+    it('rejects a non-positive step', async () => {
       await agent
         .post('/workouts')
         .send({ exerciseId, reps: 10, weight: 30, setType: 'RAMP', step: 0 })
         .expect(400);
     });
 
-    it('rechaza peso y duracion en el mismo set', async () => {
+    it('rejects weight and duration in the same set', async () => {
       await agent
         .post('/workouts')
         .send({ exerciseId, reps: 1, weight: 10, durationSec: 30 })
         .expect(400);
     });
 
-    it('permite quitarle el peso a un set existente', async () => {
+    it('allows removing the weight from an existing set', async () => {
       const created = await agent
         .post('/workouts')
         .send({ exerciseId, reps: 10, weight: 5 })
@@ -259,7 +262,7 @@ describe('Bloques y sets (e2e)', () => {
       expect(updated.body).toMatchObject({ weight: null, reps: 12 });
     });
 
-    it('con el mismo clientId guarda una sola vez y devuelve la misma serie', async () => {
+    it('with the same clientId saves once and returns the same set', async () => {
       const clientId = randomUUID();
       const set = { exerciseId, reps: 8, weight: 40, clientId };
 
@@ -276,7 +279,7 @@ describe('Bloques y sets (e2e)', () => {
       );
     });
 
-    it('sin clientId cada envio es una serie nueva', async () => {
+    it('without clientId each request is a new set', async () => {
       const set = { exerciseId, reps: 6, weight: 30 };
       const a = await agent.post('/workouts').send(set).expect(201);
       const b = await agent.post('/workouts').send(set).expect(201);
@@ -284,7 +287,7 @@ describe('Bloques y sets (e2e)', () => {
       expect(b.body.id).not.toBe(a.body.id);
     });
 
-    it('rechaza un clientId que no sea uuid', async () => {
+    it('rejects a clientId that is not a uuid', async () => {
       await agent
         .post('/workouts')
         .send({ exerciseId, reps: 5, clientId: 'abc' })
@@ -292,7 +295,7 @@ describe('Bloques y sets (e2e)', () => {
     });
   });
 
-  describe('recomendacion', () => {
+  describe('recommendation', () => {
     beforeAll(async () => {
       await prisma.workout.deleteMany({ where: { userId } });
       const base = new Date('2026-09-10T10:00:00.000Z');
@@ -358,12 +361,12 @@ describe('Bloques y sets (e2e)', () => {
     const rec = (query: string) =>
       agent.get(`/workouts/recommendation?exerciseId=${exerciseId}${query}`);
 
-    it('por defecto usa solo series efectivas del mismo equipo', async () => {
+    it('by default uses only working sets with the same equipment', async () => {
       const res = await rec('&equipmentId=barra').expect(200);
       expect(res.body).toMatchObject({ lastWeight: 60, lastReps: 8 });
     });
 
-    it('con setType=WARMUP usa solo calentamientos', async () => {
+    it('with setType=WARMUP uses only warmups', async () => {
       const res = await rec('&equipmentId=barra&setType=WARMUP').expect(200);
       expect(res.body).toMatchObject({ lastWeight: 20, lastReps: 25 });
     });
@@ -372,7 +375,7 @@ describe('Bloques y sets (e2e)', () => {
       [1, 30, 10],
       [2, 45, 5],
     ])(
-      'cada escalon de la rampa recuerda su propio peso (%i)',
+      'each ramp step remembers its own weight (%i)',
       async (step, weight, reps) => {
         const res = await rec(
           `&equipmentId=barra&setType=RAMP&step=${step}`,
@@ -381,26 +384,26 @@ describe('Bloques y sets (e2e)', () => {
       },
     );
 
-    it('la rampa devuelve el peso efectivo como referencia', async () => {
+    it('the ramp returns the working weight as reference', async () => {
       const res = await rec('&equipmentId=barra&setType=RAMP&step=1').expect(
         200,
       );
       expect(res.body.workingWeight).toBe(60);
     });
 
-    it('un escalon sin historial no inventa peso', async () => {
+    it('a step without history does not make up a weight', async () => {
       const res = await rec('&equipmentId=barra&setType=RAMP&step=3').expect(
         200,
       );
       expect(res.body).toMatchObject({ lastWeight: null, workingWeight: 60 });
     });
 
-    it('lastMeasure sale del ultimo set del ejercicio, sin filtros', async () => {
+    it('lastMeasure comes from the last set of the exercise, unfiltered', async () => {
       const res = await rec('&equipmentId=barra').expect(200);
       expect(res.body.lastMeasure).toBe('reps');
     });
 
-    it('sin historial del filtro devuelve nulos pero conserva lastMeasure', async () => {
+    it('without history for the filter returns nulls but keeps lastMeasure', async () => {
       const res = await rec('&equipmentId=mancuernas').expect(200);
       expect(res.body).toMatchObject({
         lastWeight: null,
@@ -409,16 +412,16 @@ describe('Bloques y sets (e2e)', () => {
       });
     });
 
-    it('rechaza un escalon que no sea numero', async () => {
+    it('rejects a step that is not a number', async () => {
       await rec('&setType=RAMP&step=uno').expect(400);
     });
 
-    it('rechaza un setType desconocido', async () => {
+    it('rejects an unknown setType', async () => {
       await rec('&setType=COOLDOWN').expect(400);
     });
   });
 
-  it('sin sesion responde 401', async () => {
+  it('responds 401 without a session', async () => {
     await request(app.getHttpServer()).get('/routines').expect(401);
   });
 });

@@ -26,7 +26,7 @@ import {
 } from '@/common/decorators/current-user.decorator';
 
 const COOKIE_NAME = 'token';
-const COOKIE_MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 días
+const COOKIE_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
 
 @Controller('auth')
 export class AuthController {

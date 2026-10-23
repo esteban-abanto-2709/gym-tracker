@@ -21,7 +21,7 @@ const setup = () => {
 };
 
 describe('MeasurementsService', () => {
-  it('guarda una medida con un solo dato y la devuelve con fecha simple', async () => {
+  it('saves a measurement with a single value and returns it with a plain date', async () => {
     const { service, bodyMeasurement } = setup();
 
     const saved = await service.upsert('u1', {
@@ -49,7 +49,7 @@ describe('MeasurementsService', () => {
     });
   });
 
-  it('rechaza una medida sin ningun dato', async () => {
+  it('rejects a measurement with no values', async () => {
     const { service, bodyMeasurement } = setup();
     await expect(
       service.upsert('u1', { date: '2026-10-08', weightKg: null }),
@@ -57,7 +57,7 @@ describe('MeasurementsService', () => {
     expect(bodyMeasurement.upsert).not.toHaveBeenCalled();
   });
 
-  it('borrar una fecha sin medida o mal escrita da 404', async () => {
+  it('deleting a date with no measurement or a malformed one returns 404', async () => {
     const { service, bodyMeasurement } = setup();
     await expect(service.remove('u1', 'ayer')).rejects.toBeInstanceOf(
       NotFoundException,
@@ -75,14 +75,14 @@ describe('UpsertMeasurementDto', () => {
       (e) => e.property,
     );
 
-  it('acepta cualquier combinacion de datos opcionales', async () => {
+  it('accepts any combination of optional values', async () => {
     expect(await errorsFor({ date: '2026-10-08', heightCm: 172 })).toEqual([]);
     expect(
       await errorsFor({ date: '2026-10-08', weightKg: 77.9, bodyFatPct: 18.2 }),
     ).toEqual([]);
   });
 
-  it('rechaza fechas futuras, imposibles o mal formadas', async () => {
+  it('rejects future, impossible or malformed dates', async () => {
     const tomorrow = new Date(Date.now() + 2 * 86_400_000);
     for (const date of [
       toLocalDateString(tomorrow),
@@ -93,7 +93,7 @@ describe('UpsertMeasurementDto', () => {
     }
   });
 
-  it('rechaza valores fuera de rango', async () => {
+  it('rejects out-of-range values', async () => {
     const errors = await errorsFor({
       date: '2026-10-08',
       weightKg: 5,
@@ -108,7 +108,7 @@ describe('UpdateMeDto', () => {
   const errorsFor = async (payload: Record<string, unknown>) =>
     validate(plainToInstance(UpdateMeDto, payload));
 
-  it('acepta una fecha de nacimiento o null para borrarla', async () => {
+  it('accepts a birth date or null to clear it', async () => {
     expect(await errorsFor({ birthDate: '1997-09-27' })).toHaveLength(0);
     expect(await errorsFor({ birthDate: null })).toHaveLength(0);
   });

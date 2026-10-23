@@ -50,7 +50,7 @@ describe('ExercisesController (e2e)', () => {
     await app.close();
   });
 
-  it('/exercises (GET) sin sesion responde 401', () => {
+  it('/exercises (GET) responds 401 without a session', () => {
     return request(app.getHttpServer()).get('/exercises').expect(401);
   });
 

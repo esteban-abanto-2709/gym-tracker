@@ -15,7 +15,7 @@ const ACCENTS: Record<string, string> = {
   Ñ: 'N',
 };
 
-// Debe coincidir con el slugify SQL de la migración 20260723201500_equipo_tabla_y_slug.
+// Must match the SQL slugify in migration 20260723201500_equipo_tabla_y_slug.
 export function slugify(name: string): string {
   return name
     .trim()

@@ -16,7 +16,7 @@ const serviceWithSets = (sets: unknown[]) =>
 const day = (iso: string) => new Date(iso);
 
 describe('WorkoutsService.getRecommendation', () => {
-  it('en un ejercicio de tiempo devuelve la ultima duracion', async () => {
+  it('returns the last duration for a timed exercise', async () => {
     const service = serviceWithSets([
       {
         weight: null,
@@ -38,7 +38,7 @@ describe('WorkoutsService.getRecommendation', () => {
     expect(rec.lastWeight).toBeNull();
   });
 
-  it('en un set solo de reps devuelve las reps', async () => {
+  it('returns the reps for a reps-only set', async () => {
     const service = serviceWithSets([
       {
         weight: null,
@@ -62,7 +62,7 @@ describe('WorkoutsService.getRecommendation', () => {
 });
 
 describe('WorkoutsService.findAll', () => {
-  it('trae el nombre de la rutina de cada serie, solo las del usuario', async () => {
+  it('includes the routine name of each set, only for the user', async () => {
     const findMany = jest.fn().mockResolvedValue([]);
     const service = new WorkoutsService({
       workout: { findMany },
@@ -84,7 +84,7 @@ describe('WorkoutsService.findAll', () => {
     );
   });
 
-  it('filtra por rango: desde inclusive, hasta exclusivo', async () => {
+  it('filters by range: from inclusive, to exclusive', async () => {
     const findMany = jest.fn().mockResolvedValue([]);
     const service = new WorkoutsService({
       workout: { findMany },
@@ -111,7 +111,7 @@ describe('WorkoutsService.findAll', () => {
 });
 
 describe('WorkoutsService.getDays', () => {
-  it('devuelve los dias locales y las series desde el inicio del ultimo dia', async () => {
+  it('returns the local days and the sets since the start of the last day', async () => {
     const findMany = jest
       .fn()
       .mockResolvedValueOnce([
@@ -141,7 +141,7 @@ describe('WorkoutsService.getDays', () => {
     );
   });
 
-  it('sin series no pide nada mas', async () => {
+  it('with no sets it queries nothing else', async () => {
     const findMany = jest.fn().mockResolvedValue([]);
     const service = new WorkoutsService({
       workout: { findMany },
@@ -167,7 +167,7 @@ describe('WorkoutsService lastMeasure', () => {
     [{ weight: null, durationSec: 30 }, 'time'],
     [null, null],
   ])(
-    'deduce la medicion del ultimo set aunque no coincidan los filtros (%o)',
+    'infers the measure from the last set even if the filters do not match (%o)',
     async (latest, expected) => {
       expect((await recWithLatest(latest)).lastMeasure).toBe(expected);
     },
@@ -196,31 +196,31 @@ describe('WorkoutsService set types', () => {
 
   const whereOf = (findMany: FindMany) => findMany.mock.calls[0][0].where;
 
-  it('la recomendacion usa solo series efectivas por defecto', async () => {
+  it('the recommendation uses only working sets by default', async () => {
     const { service, findMany } = setup();
     await service.getRecommendation('u1', 'e1');
     expect(whereOf(findMany).setType).toBe('WORKING');
   });
 
-  it('la recomendacion de calentamiento usa solo calentamientos', async () => {
+  it('the warmup recommendation uses only warmups', async () => {
     const { service, findMany } = setup();
     await service.getRecommendation('u1', 'e1', undefined, 'WARMUP');
     expect(whereOf(findMany).setType).toBe('WARMUP');
   });
 
-  it('la recomendacion de rampa filtra por escalon', async () => {
+  it('the ramp recommendation filters by step', async () => {
     const { service, findMany } = setup();
     await service.getRecommendation('u1', 'e1', undefined, 'RAMP', 2);
     expect(whereOf(findMany)).toMatchObject({ setType: 'RAMP', step: 2 });
   });
 
-  it('la recomendacion efectiva no filtra por escalon', async () => {
+  it('the working recommendation does not filter by step', async () => {
     const { service, findMany } = setup();
     await service.getRecommendation('u1', 'e1');
     expect(whereOf(findMany)).not.toHaveProperty('step');
   });
 
-  it('la rampa devuelve el peso efectivo del ejercicio', async () => {
+  it('the ramp returns the working weight of the exercise', async () => {
     const { service, findFirst } = setup();
     findFirst
       .mockResolvedValueOnce({ weight: 58.5, durationSec: null })
@@ -235,13 +235,13 @@ describe('WorkoutsService set types', () => {
     expect(rec.workingWeight).toBe(58.5);
   });
 
-  it('fuera de la rampa no se consulta el peso efectivo', async () => {
+  it('outside the ramp the working weight is not queried', async () => {
     const { service, findFirst } = setup();
     await service.getRecommendation('u1', 'e1');
     expect(findFirst).toHaveBeenCalledTimes(1);
   });
 
-  it('un set sin tipo se guarda como efectivo', async () => {
+  it('a set without a type is saved as a working set', async () => {
     const { service, create } = setup();
     await service.create('u1', {
       exerciseId: 'e1',
@@ -251,7 +251,7 @@ describe('WorkoutsService set types', () => {
     expect(create.mock.calls[0][0].data.setType).toBe('WORKING');
   });
 
-  it('un set de tiempo se guarda sin reps aunque lleguen', async () => {
+  it('a timed set is saved without reps even if they are sent', async () => {
     const { service, create } = setup();
     await service.create('u1', { exerciseId: 'e1', reps: 1, durationSec: 45 });
     expect(create.mock.calls[0][0].data).toMatchObject({
@@ -267,21 +267,21 @@ describe('CreateWorkoutDto', () => {
   const errorsFor = async (payload: Record<string, unknown>) =>
     validate(plainToInstance(CreateWorkoutDto, payload));
 
-  it('acepta un set solo de reps, sin peso ni duracion', async () => {
+  it('accepts a reps-only set, without weight or duration', async () => {
     expect(await errorsFor(base)).toHaveLength(0);
     expect(await errorsFor({ ...base, weight: null })).toHaveLength(0);
   });
 
-  it('rechaza un set con peso y duracion a la vez', async () => {
+  it('rejects a set with both weight and duration', async () => {
     const errors = await errorsFor({ ...base, weight: 10, durationSec: 30 });
     expect(errors.map((e) => e.property)).toContain('weight');
   });
 
-  it('acepta un set con peso', async () => {
+  it('accepts a set with weight', async () => {
     expect(await errorsFor({ ...base, weight: 60 })).toHaveLength(0);
   });
 
-  it('acepta el tipo de set y rechaza uno desconocido', async () => {
+  it('accepts the set type and rejects an unknown one', async () => {
     expect(
       await errorsFor({ ...base, weight: 20, setType: 'WARMUP' }),
     ).toHaveLength(0);
@@ -293,7 +293,7 @@ describe('CreateWorkoutDto', () => {
     expect(errors.map((e) => e.property)).toContain('setType');
   });
 
-  it('acepta un escalon de rampa y rechaza uno no positivo', async () => {
+  it('accepts a ramp step and rejects a non-positive one', async () => {
     expect(
       await errorsFor({ ...base, weight: 20, setType: 'RAMP', step: 2 }),
     ).toHaveLength(0);
@@ -301,12 +301,12 @@ describe('CreateWorkoutDto', () => {
     expect(errors.map((e) => e.property)).toContain('step');
   });
 
-  it('acepta un set solo con duracion, sin reps', async () => {
+  it('accepts a duration-only set, without reps', async () => {
     const { exerciseId } = base;
     expect(await errorsFor({ exerciseId, durationSec: 45 })).toHaveLength(0);
   });
 
-  it('rechaza un set sin reps ni duracion', async () => {
+  it('rejects a set without reps or duration', async () => {
     const errors = await errorsFor({ exerciseId: base.exerciseId });
     expect(errors.map((e) => e.property)).toContain('reps');
   });
@@ -316,11 +316,11 @@ describe('UpdateWorkoutDto', () => {
   const errorsFor = async (payload: Record<string, unknown>) =>
     validate(plainToInstance(UpdateWorkoutDto, payload));
 
-  it('permite quitar el peso de un set', async () => {
+  it('allows removing the weight from a set', async () => {
     expect(await errorsFor({ reps: 12, weight: null })).toHaveLength(0);
   });
 
-  it('rechaza peso y duracion a la vez', async () => {
+  it('rejects weight and duration together', async () => {
     const errors = await errorsFor({ weight: 10, durationSec: 30 });
     expect(errors.map((e) => e.property)).toContain('weight');
   });

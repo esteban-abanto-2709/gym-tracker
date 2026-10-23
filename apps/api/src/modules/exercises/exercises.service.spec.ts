@@ -5,7 +5,6 @@ describe('ExercisesService', () => {
   let service: ExercisesService;
 
   beforeEach(async () => {
-    // Aquí es donde luego inyectaremos el PrismaMock
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {

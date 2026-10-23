@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-129] Los errores de la API llegan en inglés a la interfaz
+- **Ubicación:** `apps/web/src/app/login/page.tsx:27`, `app/register/page.tsx:32`, `components/auth/GoogleButton.tsx:31`, `components/profile/DeleteAccountDialog.tsx:51`, `components/profile/PasswordRow.tsx:58` (muestran `err.message` tal cual); mensajes en `apps/api/src/modules/*/*.service.ts`.
+- **Riesgo:** 4/10
+- **Problema:** la interfaz muestra el mensaje que devuelve la API, que está en inglés (`Invalid credentials`, `Email already registered`, `Current password does not match`…), salvo `Cuenta de Google no verificada` en `auth.service.ts:66`, que está en español. Quien se equivoca de contraseña ve un error en inglés en una app en español.
+- **Impacto futuro:** confunde justo a quien entra por primera vez y bloquea pasar a inglés la excepción de Google (TD-088) sin cambiar lo que ve el usuario.
+- **Sugerencia:** que la API devuelva un código estable por error (como ya pasa con `Slug already taken` en `PublishForm`) y que el web lo traduzca a un texto en español; encaja después con RM-093.
+- **Fecha:** 2026-10-23 · **Estado:** Abierto
+
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
 - **Riesgo:** 4/10
@@ -76,7 +84,7 @@ changelog y se borra de aquí.
 - **Problema:** la regla es que todo el código va en inglés y solo lo que ve el usuario va en español, pero hay partes en español (por ejemplo, nombres de tests como `sin sesion responde 401` y la migración `saneo_catalogo_ejercicios`).
 - **Impacto futuro:** mezcla de idiomas que confunde a quien lea el código y choca con la capa de idioma de los ejercicios (RM-086).
 - **Sugerencia:** revisar ambas apps y pasar a inglés todo lo que no sea texto de UI; las migraciones ya aplicadas no se renombran.
-- **Fecha:** 2026-10-11 · **Estado:** Abierto
+- **Fecha:** 2026-10-11 · **Estado:** En progreso (2026-10-23)
 
 ## [TD-081] Rutinas hace scroll con varias rutinas
 - **Ubicación:** `apps/web/src/app/routines/page.tsx`

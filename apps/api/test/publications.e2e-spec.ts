@@ -137,14 +137,14 @@ describe('Publications (e2e)', () => {
   it('publishes a routine as a snapshot of its exercises', async () => {
     const res = await publish(author, 'routines', routineId, {
       slug: slug('back'),
-      description: '  Espalda pesada  ',
+      description: '  Heavy back  ',
     }).expect(201);
     publication = res.body as Published;
 
     expect(publication.kind).toBe('ROUTINE');
     expect(publication.slug).toBe(slug('back'));
     expect(publication.name).toBe(`E2E pub A ${stamp}`);
-    expect(publication.description).toBe('Espalda pesada');
+    expect(publication.description).toBe('Heavy back');
     expect(publication.routines).toHaveLength(1);
     expect(
       publication.routines[0].items.map((i) => [i.exerciseId, i.blocks]),

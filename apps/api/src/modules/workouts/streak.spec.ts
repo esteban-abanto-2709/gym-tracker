@@ -21,7 +21,7 @@ const streakOf = (sets: StreakSet[], today = '2026-10-20') =>
   computeStreak(groupSessions(sets, TZ), target, today);
 
 describe('computeStreak', () => {
-  it('dos sesiones con todas las series al tope suman 2 y sugieren subir', () => {
+  it('two sessions with every set at the top count 2 and suggest going up', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -30,7 +30,7 @@ describe('computeStreak', () => {
     ).toEqual({ streak: 2, suggestion: 'up' });
   });
 
-  it('una serie bajo el tope rompe la racha', () => {
+  it('a set below the top breaks the streak', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -39,7 +39,7 @@ describe('computeStreak', () => {
     ).toEqual({ streak: 0, suggestion: null });
   });
 
-  it('una sesion vieja rota no borra la racha posterior', () => {
+  it('an old broken session does not erase the later streak', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 9, 10]),
@@ -49,7 +49,7 @@ describe('computeStreak', () => {
     ).toBe(2);
   });
 
-  it('subir el peso reinicia la racha', () => {
+  it('raising the weight restarts the streak', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -58,7 +58,7 @@ describe('computeStreak', () => {
     ).toBe(1);
   });
 
-  it('cambiar de equipo reinicia la racha', () => {
+  it('changing equipment restarts the streak', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -67,7 +67,7 @@ describe('computeStreak', () => {
     ).toBe(1);
   });
 
-  it('el dia libre no suma ni rompe', () => {
+  it('a free day neither adds nor breaks', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -77,7 +77,7 @@ describe('computeStreak', () => {
     ).toEqual({ streak: 2, suggestion: 'up' });
   });
 
-  it('menos series de las que pide la rutina no suma', () => {
+  it('fewer sets than the routine asks for does not add', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -86,7 +86,7 @@ describe('computeStreak', () => {
     ).toBe(0);
   });
 
-  it('la sesion de hoy a medias y al tope no rompe la racha', () => {
+  it('an unfinished session today at the top does not break the streak', () => {
     expect(
       streakOf(
         [
@@ -99,7 +99,7 @@ describe('computeStreak', () => {
     ).toBe(2);
   });
 
-  it('hoy con una serie bajo el tope ya rompe la racha', () => {
+  it('a set below the top today already breaks the streak', () => {
     expect(
       streakOf(
         [...session('2026-10-04', [10, 10, 10]), ...session('2026-10-20', [9])],
@@ -108,7 +108,7 @@ describe('computeStreak', () => {
     ).toBe(0);
   });
 
-  it('bajo el piso sugiere bajar', () => {
+  it('below the floor suggests going down', () => {
     expect(
       streakOf([
         ...session('2026-10-01', [10, 10, 10]),
@@ -117,7 +117,7 @@ describe('computeStreak', () => {
     ).toEqual({ streak: 0, suggestion: 'down' });
   });
 
-  it('sin rango el tope es la meta de reps', () => {
+  it('without a range the top is the reps target', () => {
     const sessions = groupSessions(session('2026-10-04', [8, 8, 8]), TZ);
     expect(
       computeStreak(sessions, { sets: 3, reps: 8, repsMax: null }, '2026-10-20')
@@ -125,7 +125,7 @@ describe('computeStreak', () => {
     ).toBe(1);
   });
 
-  it('sin sesiones con rutina no hay racha ni sugerencia', () => {
+  it('without routine sessions there is no streak or suggestion', () => {
     expect(
       streakOf(session('2026-10-04', [10, 10, 10], { free: true })),
     ).toEqual({ streak: 0, suggestion: null });
@@ -133,7 +133,7 @@ describe('computeStreak', () => {
 });
 
 describe('groupSessions', () => {
-  it('separa por dia, rutina y equipo, de la mas reciente a la mas vieja', () => {
+  it('splits by day, routine and equipment, newest first', () => {
     const sessions = groupSessions(
       [
         ...session('2026-10-01', [10, 9]),

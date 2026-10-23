@@ -44,8 +44,8 @@ const setup = (ownedRoutines: number) => {
   return { service, tx, assigned };
 };
 
-describe('ProgramsService rutinas', () => {
-  it('asigna las rutinas en el orden recibido', async () => {
+describe('ProgramsService routines', () => {
+  it('assigns the routines in the order received', async () => {
     const { service, assigned } = setup(2);
 
     await service.create('u1', {
@@ -59,7 +59,7 @@ describe('ProgramsService rutinas', () => {
     ]);
   });
 
-  it('al editar suelta las rutinas anteriores antes de reasignar', async () => {
+  it('on edit releases the previous routines before reassigning', async () => {
     const { service, tx, assigned } = setup(1);
 
     await service.update('p1', 'u1', { routineIds: [LOWER_A] });
@@ -76,7 +76,7 @@ describe('ProgramsService rutinas', () => {
     ]);
   });
 
-  it('rechaza rutinas que no son del usuario', async () => {
+  it('rejects routines the user does not own', async () => {
     const { service, tx } = setup(1);
 
     await expect(
@@ -90,31 +90,31 @@ describe('nextInRotation', () => {
   const rotation = ['upper-a', 'lower-a', 'upper-b', 'lower-b'];
 
   it.each([
-    ['sin historial toca la primera', null, 'upper-a'],
-    ['en medio de la rotacion toca la siguiente', 'lower-a', 'upper-b'],
-    ['tras la ultima vuelve al inicio', 'lower-b', 'upper-a'],
-    ['una rutina que ya no esta en el programa reinicia', 'push', 'upper-a'],
+    ['with no history picks the first', null, 'upper-a'],
+    ['mid-rotation picks the next', 'lower-a', 'upper-b'],
+    ['after the last wraps to the start', 'lower-b', 'upper-a'],
+    ['a routine no longer in the program restarts', 'push', 'upper-a'],
   ])('%s', (_label, last, expected) => {
     expect(nextInRotation(rotation, last)).toBe(expected);
   });
 
-  it('un programa sin rutinas no sugiere nada', () => {
+  it('a program without routines suggests nothing', () => {
     expect(nextInRotation([], 'upper-a')).toBeNull();
   });
 });
 
 describe('uniqueName', () => {
   it.each([
-    ['libre queda igual', [], 'Upper A'],
-    ['repetido suma (2)', ['Upper A'], 'Upper A (2)'],
-    ['salta los sufijos ocupados', ['Upper A', 'Upper A (2)'], 'Upper A (3)'],
+    ['a free name stays the same', [], 'Upper A'],
+    ['a taken name gets (2)', ['Upper A'], 'Upper A (2)'],
+    ['skips taken suffixes', ['Upper A', 'Upper A (2)'], 'Upper A (3)'],
   ])('%s', (_label, taken, expected) => {
     expect(uniqueName('Upper A', new Set(taken))).toBe(expected);
   });
 });
 
 describe('CreateProgramDto', () => {
-  it('rechaza una rutina repetida', async () => {
+  it('rejects a repeated routine', async () => {
     const errors = await validate(
       plainToInstance(CreateProgramDto, {
         name: 'PPL',

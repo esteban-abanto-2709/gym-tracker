@@ -34,7 +34,7 @@ const dtoErrors = async (blocks: unknown, strict = false) =>
   );
 
 describe('RoutinesService blocks', () => {
-  it('completa cada tipo con sus campos y null en lo que falta', async () => {
+  it('fills each kind with its fields and null for the missing ones', async () => {
     expect(
       await storedBlocks([
         { kind: 'weight_reps' },
@@ -62,11 +62,11 @@ describe('RoutinesService blocks', () => {
     ]);
   });
 
-  it('un slot sin bloques queda libre', async () => {
+  it('a slot without blocks stays free', async () => {
     expect(await storedBlocks([])).toEqual([]);
   });
 
-  it('respeta el orden de los bloques', async () => {
+  it('keeps the order of the blocks', async () => {
     expect(
       await storedBlocks([
         { kind: 'warmup', sets: 2, reps: 12 },
@@ -80,7 +80,7 @@ describe('RoutinesService blocks', () => {
 });
 
 describe('CreateRoutineDto blocks', () => {
-  it('acepta todos los tipos de bloque', async () => {
+  it('accepts every block kind', async () => {
     const errors = await dtoErrors(
       [
         { kind: 'weight_reps', sets: 3, reps: 8, repsMax: 10 },
@@ -103,32 +103,29 @@ describe('CreateRoutineDto blocks', () => {
     expect(errors).toHaveLength(0);
   });
 
-  it('rechaza un slot sin la lista de bloques', async () => {
+  it('rejects a slot without the block list', async () => {
     expect(await dtoErrors(undefined)).not.toHaveLength(0);
   });
 
-  it.each(['superset', 'legacy'])(
-    'rechaza el tipo de bloque %s',
-    async (kind) => {
-      expect(await dtoErrors([{ kind }])).not.toHaveLength(0);
-    },
-  );
+  it.each(['superset', 'legacy'])('rejects the block kind %s', async (kind) => {
+    expect(await dtoErrors([{ kind }])).not.toHaveLength(0);
+  });
 
   it.each([
-    ['sin escalones', { steps: [] }],
-    ['sin la lista de escalones', {}],
-    ['con un escalon invalido', { steps: [{ reps: 0 }] }],
-    ['con un campo ajeno en el escalon', { steps: [{ reps: 10, sets: 1 }] }],
-  ])('rechaza una rampa %s', async (_label, extra) => {
+    ['without steps', { steps: [] }],
+    ['without the step list', {}],
+    ['with an invalid step', { steps: [{ reps: 0 }] }],
+    ['with a foreign field in a step', { steps: [{ reps: 10, sets: 1 }] }],
+  ])('rejects a ramp %s', async (_label, extra) => {
     expect(
       await dtoErrors([{ kind: 'ramp', ...extra }], true),
     ).not.toHaveLength(0);
   });
 
   it.each([
-    ['menor que el minimo', { reps: 10, repsMax: 8 }],
-    ['sin minimo', { repsMax: 10 }],
-  ])('rechaza un maximo de reps %s', async (_label, extra) => {
+    ['below the minimum', { reps: 10, repsMax: 8 }],
+    ['without a minimum', { repsMax: 10 }],
+  ])('rejects a max reps %s', async (_label, extra) => {
     for (const kind of ['weight_reps', 'reps']) {
       expect(await dtoErrors([{ kind, sets: 3, ...extra }])).not.toHaveLength(
         0,
@@ -136,7 +133,7 @@ describe('CreateRoutineDto blocks', () => {
     }
   });
 
-  it('rechaza metas invalidas dentro del bloque', async () => {
+  it('rejects invalid targets inside the block', async () => {
     expect(await dtoErrors([{ kind: 'time', sets: 0 }])).not.toHaveLength(0);
   });
 
@@ -149,7 +146,7 @@ describe('CreateRoutineDto blocks', () => {
     ['weight_reps', { durationSec: 30 }],
     ['ramp', { steps: [{ reps: 10, pct: 50 }] }],
   ])(
-    'rechaza en un bloque %s un campo que no le corresponde',
+    'rejects a field that does not belong to a %s block',
     async (kind, extra) => {
       const errors = await dtoErrors([{ kind, sets: 2, ...extra }], true);
       expect(errors).not.toHaveLength(0);
