@@ -88,6 +88,8 @@ jobs:
 
       - run: pnpm run lint
 
+      - run: pnpm run format:check
+
       - run: pnpm test
 
       - run: pnpm run build

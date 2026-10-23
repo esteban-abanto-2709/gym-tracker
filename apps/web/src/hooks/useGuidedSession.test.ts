@@ -71,7 +71,10 @@ describe("useGuidedSession", () => {
     expect(api.get).toHaveBeenCalledWith("/routines/r-upper");
     expect(result.current.currentItem?.exerciseId).toBe("ex-row");
     expect(result.current.setsDoneForCurrent).toBe(1);
-    expect(result.current.mapItems.map((m) => m.status)).toEqual(["done", "partial"]);
+    expect(result.current.mapItems.map((m) => m.status)).toEqual([
+      "done",
+      "partial",
+    ]);
     expect(result.current.position).toBe(2);
     expect(result.current.totalCount).toBe(2);
   });
@@ -112,10 +115,7 @@ describe("useGuidedSession", () => {
       ],
     };
 
-    const nextFor = async (
-      r: Routine,
-      overrides: Partial<ActiveSession>,
-    ) => {
+    const nextFor = async (r: Routine, overrides: Partial<ActiveSession>) => {
       saveSession(overrides);
       vi.mocked(api.get).mockResolvedValue(r);
       const { result } = renderHook(() => useGuidedSession());
@@ -137,9 +137,9 @@ describe("useGuidedSession", () => {
     });
 
     it("sigue hacia adelante antes de volver al que se dejo atras", async () => {
-      expect(
-        await nextFor(legs, { currentIndex: 1, progress: { 1: 3 } }),
-      ).toBe("leg-extension");
+      expect(await nextFor(legs, { currentIndex: 1, progress: { 1: 3 } })).toBe(
+        "leg-extension",
+      );
     });
 
     it("cuenta los ejercicios que faltan, sin los saltados", async () => {
@@ -246,10 +246,7 @@ describe("useGuidedSession", () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         vi.mocked(api.post).mockClear();
         await act(() =>
-          Promise.all([
-            result.current.logSet(set),
-            result.current.logSet(set),
-          ]),
+          Promise.all([result.current.logSet(set), result.current.logSet(set)]),
         );
         expect(api.post).toHaveBeenCalledOnce();
         expect(result.current.setsDoneForCurrent).toBe(1);
@@ -295,7 +292,9 @@ describe("useGuidedSession", () => {
         expect(readActiveSession()).toBeNull();
         const sent = vi
           .mocked(api.post)
-          .mock.calls.map(([, body]) => (body as { clientId: string }).clientId);
+          .mock.calls.map(
+            ([, body]) => (body as { clientId: string }).clientId,
+          );
         expect(sent).toEqual([clientId, clientId, clientId]);
       });
 

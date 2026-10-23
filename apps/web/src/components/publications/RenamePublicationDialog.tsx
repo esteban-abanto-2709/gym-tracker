@@ -37,8 +37,8 @@ export function RenamePublicationDialog({
             Renombrar
           </DialogTitle>
           <DialogDescription>
-            Solo cambia el nombre visible. La dirección y lo publicado se
-            quedan igual.
+            Solo cambia el nombre visible. La dirección y lo publicado se quedan
+            igual.
           </DialogDescription>
         </DialogHeader>
         <form

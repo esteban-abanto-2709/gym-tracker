@@ -57,7 +57,9 @@ describe("LikeButton", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Me gusta" }));
 
-    expect(await screen.findByRole("button", { name: "Me gusta" })).toBeTruthy();
+    expect(
+      await screen.findByRole("button", { name: "Me gusta" }),
+    ).toBeTruthy();
     expect(screen.getByText("4 me gusta")).toBeTruthy();
   });
 

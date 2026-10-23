@@ -146,9 +146,7 @@ export function useGuidedSession() {
   };
 
   // Indices still in play (not skipped), in order — the checklist backbone.
-  const liveIndices = items
-    .map((_, i) => i)
-    .filter((i) => !skipped[i]);
+  const liveIndices = items.map((_, i) => i).filter((i) => !skipped[i]);
 
   // "Next machine" = first unfinished live item after the current one,
   // wrapping to the start. Free items count as finished after one set.
@@ -248,7 +246,10 @@ export function useGuidedSession() {
   const logRamp = useCallback(
     async (sets: LogSetInput[]) => {
       if (!session || !currentItem) return;
-      rememberEquipment(currentItem.exerciseId, sets.at(-1)?.equipmentId ?? null);
+      rememberEquipment(
+        currentItem.exerciseId,
+        sets.at(-1)?.equipmentId ?? null,
+      );
       await saveWithFlash(
         "Rampa",
         `${currentItem.exercise.name} · ${sets.length} series`,

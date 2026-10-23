@@ -12,9 +12,7 @@ export function SaveOverlay({ flash }: { flash: SaveFlash }) {
       <div className="flex flex-col items-center text-center max-w-md w-full animate-rise-in">
         <div className="relative w-24 h-24">
           <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
-          <div
-            className="relative w-24 h-24 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/40 animate-pop"
-          >
+          <div className="relative w-24 h-24 rounded-full bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] flex items-center justify-center shadow-lg shadow-primary/40 animate-pop">
             <Check
               className="w-12 h-12 text-primary-foreground"
               strokeWidth={3.5}

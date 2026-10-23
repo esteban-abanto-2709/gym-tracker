@@ -26,9 +26,7 @@ export function useExercises() {
   }, []);
 
   // Derived: filtered exercises based on search term
-  const filteredExercises = exercises.filter((ex) =>
-    matchesSearch(ex, search),
-  );
+  const filteredExercises = exercises.filter((ex) => matchesSearch(ex, search));
 
   // Create a new exercise and add it to the local list
   const createExercise = useCallback(

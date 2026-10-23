@@ -17,7 +17,11 @@ vi.mock("@/lib/api", () => ({
 
 const get = vi.mocked(api.get);
 
-const squat: Exercise = { id: "ex-squat", name: "Sentadilla", slug: "sentadilla" };
+const squat: Exercise = {
+  id: "ex-squat",
+  name: "Sentadilla",
+  slug: "sentadilla",
+};
 const curl: Exercise = { id: "ex-curl", name: "Curl", slug: "curl" };
 const exercises = [squat, curl];
 
@@ -35,7 +39,12 @@ beforeEach(() => {
 describe("useWorkoutForm: repetir un set", () => {
   it("precarga ejercicio, peso, reps y medida con ?repeat=true", async () => {
     searchParams = new URLSearchParams("repeat=true");
-    saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5", measure: "weight_reps" });
+    saveRepeat({
+      exerciseId: "ex-squat",
+      weight: "80",
+      reps: "5",
+      measure: "weight_reps",
+    });
 
     const { result } = renderHook(() => useWorkoutForm(exercises, false));
 
@@ -47,7 +56,13 @@ describe("useWorkoutForm: repetir un set", () => {
 
   it("repite una serie de tiempo con su medida aunque la API sugiera otra", async () => {
     searchParams = new URLSearchParams("repeat=true");
-    saveRepeat({ exerciseId: "ex-curl", weight: "", reps: "1", durationSec: "45", measure: "time" });
+    saveRepeat({
+      exerciseId: "ex-curl",
+      weight: "",
+      reps: "1",
+      durationSec: "45",
+      measure: "time",
+    });
     get.mockResolvedValue({ lastMeasure: "weight_reps" });
 
     const { result } = renderHook(() => useWorkoutForm(exercises, false));
@@ -79,7 +94,9 @@ describe("useWorkoutForm: repetir un set", () => {
     searchParams = new URLSearchParams("repeat=true");
     saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5" });
 
-    const { result, rerender } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result, rerender } = renderHook(() =>
+      useWorkoutForm(exercises, false),
+    );
     await waitFor(() => expect(result.current.selectedExercise).toEqual(squat));
 
     act(() => result.current.setSelectedExercise(curl));

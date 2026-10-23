@@ -36,8 +36,8 @@ export function DeletePublicationDialog({
           <AlertDialogDescription asChild>
             <div className="space-y-2 text-left">
               <p>
-                {publication ? `"${publication.name}"` : "Esta publicación"} deja
-                de verse en Explorar y no se puede deshacer.
+                {publication ? `"${publication.name}"` : "Esta publicación"}{" "}
+                deja de verse en Explorar y no se puede deshacer.
               </p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>

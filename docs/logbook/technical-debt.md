@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-128] El web no tiene Prettier
-- **Ubicación:** `apps/web/package.json` (`"format": "npx prettier --write ."`)
-- **Riesgo:** 2/10
-- **Problema:** Prettier no está en las dependencias ni hay `.prettierrc`; `format` baja la última versión con `npx` y usa la config por defecto. Con la config de la API, 44 archivos de `src/` no cumplen.
-- **Impacto futuro:** diffs con ruido de formato y estilos mezclados; no se puede verificar en el CI.
-- **Sugerencia:** igual que en la API (TD-068): Prettier como dependencia, `.prettierrc`, `format:check` en el CI y formatear una vez.
-- **Fecha:** 2026-10-23 · **Estado:** Abierto
-
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
 - **Riesgo:** 4/10

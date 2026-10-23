@@ -79,7 +79,9 @@ describe("PublicationDetail", () => {
     render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
     await screen.findByText("Upper/Lower");
 
-    fireEvent.click(screen.getByRole("button", { name: "Copiar solo Lower A" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Copiar solo Lower A" }),
+    );
 
     await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/routines"));
     expect(api.post).toHaveBeenCalledWith(

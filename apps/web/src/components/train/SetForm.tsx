@@ -204,7 +204,9 @@ export function SetForm({
     <div className="space-y-2">
       <label className="kicker text-muted-foreground text-[0.6rem]">
         Reps
-        {targetReps ? ` · meta ${formatRepRange(targetReps, targetRepsMax)}` : ""}
+        {targetReps
+          ? ` · meta ${formatRepRange(targetReps, targetRepsMax)}`
+          : ""}
       </label>
       <input
         type="number"
@@ -227,11 +229,13 @@ export function SetForm({
           {setType === "RAMP" && `Rampa ${step} · `}
           {lastLabel}
         </p>
-        {setType === "RAMP" && pct != null && recommendation?.workingWeight != null && (
-          <p className="text-xs text-muted-foreground">
-            ≈ {pct} % de {recommendation.workingWeight} kg
-          </p>
-        )}
+        {setType === "RAMP" &&
+          pct != null &&
+          recommendation?.workingWeight != null && (
+            <p className="text-xs text-muted-foreground">
+              ≈ {pct} % de {recommendation.workingWeight} kg
+            </p>
+          )}
         {suggestedWeight != null && (
           <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
             <ArrowUp className="w-4 h-4" strokeWidth={3} />

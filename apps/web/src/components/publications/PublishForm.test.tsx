@@ -73,7 +73,9 @@ describe("PublishForm", () => {
     serve(["espalda-cbum"]);
     render(<PublishForm kind="ROUTINE" sourceId="r-back" />);
 
-    expect(await screen.findByText("Ya está en uso. Prueba otra.")).toBeTruthy();
+    expect(
+      await screen.findByText("Ya está en uso. Prueba otra."),
+    ).toBeTruthy();
     expect(publishButton().disabled).toBe(true);
   });
 

@@ -19,7 +19,10 @@ afterEach(() => {
 describe("ShareButton", () => {
   it("abre el menú de compartir del teléfono con el link", async () => {
     const share = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "share", { value: share, configurable: true });
+    Object.defineProperty(navigator, "share", {
+      value: share,
+      configurable: true,
+    });
     render(<ShareButton title="Upper/Lower" path={path} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Compartir" }));
@@ -39,7 +42,9 @@ describe("ShareButton", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Compartir" }));
 
-    await vi.waitFor(() => expect(toast.success).toHaveBeenCalledWith("Link copiado"));
+    await vi.waitFor(() =>
+      expect(toast.success).toHaveBeenCalledWith("Link copiado"),
+    );
     expect(writeText).toHaveBeenCalledWith(url);
   });
 

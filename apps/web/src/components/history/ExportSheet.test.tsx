@@ -41,9 +41,7 @@ const serveSets = (sets: Workout[]) =>
 const dayOf = (iso: string) => new Date(iso).toLocaleDateString("en-CA");
 
 const pressed = () =>
-  screen
-    .getAllByRole("button", { pressed: true })
-    .map((b) => b.textContent);
+  screen.getAllByRole("button", { pressed: true }).map((b) => b.textContent);
 
 describe("ExportSheet", () => {
   it("arranca en 30 dias y el resumen sigue al rango elegido", async () => {

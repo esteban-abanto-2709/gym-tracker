@@ -4,10 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { routes } from "@/lib/routes";
-import {
-  type ActiveSession,
-  readActiveSession,
-} from "@/lib/activeSession";
+import { type ActiveSession, readActiveSession } from "@/lib/activeSession";
 
 export function ContinueRoutineBanner() {
   const [session] = useState<ActiveSession | null>(readActiveSession);

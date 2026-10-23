@@ -15,7 +15,6 @@ const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
 
 const usesSeconds = (block: DraftBlock) => block.kind === "time";
 
-
 const usesRepRange = (block: DraftBlock) =>
   block.kind === "weight_reps" || block.kind === "reps";
 
@@ -306,7 +305,6 @@ export function SortableExerciseItem({
                 </div>
               </div>
             )}
-
           </div>
         ))}
 

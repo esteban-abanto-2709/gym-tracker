@@ -34,9 +34,9 @@ describe("measurements", () => {
   });
 
   it("muestra solo los datos registrados y el anio solo si no es el actual", () => {
-    expect(formatMeasurement(m("2026-10-08", { weightKg: 77.9, heightCm: 172 }))).toBe(
-      "172 cm · 77.9 kg",
-    );
+    expect(
+      formatMeasurement(m("2026-10-08", { weightKg: 77.9, heightCm: 172 })),
+    ).toBe("172 cm · 77.9 kg");
     expect(formatShortDate("2026-10-08", "2026-10-09")).toBe("8 oct");
     expect(formatShortDate("2025-10-08", "2026-10-09")).toBe("8 oct 2025");
   });

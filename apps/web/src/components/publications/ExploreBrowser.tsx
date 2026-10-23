@@ -51,7 +51,8 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
 
   const hasMine = (mine?.length ?? 0) > 0;
   const tabs = TABS.filter((t) => t.value !== "mine" || hasMine);
-  const current = tab === "mine" && mine !== null && !hasMine ? "programs" : tab;
+  const current =
+    tab === "mine" && mine !== null && !hasMine ? "programs" : tab;
 
   const changeMine = (items: ExploreListItem[]) => {
     setMine(items);
@@ -60,7 +61,10 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
 
   return (
     <PageShell variant="history">
-      <AppHeader leftAction={<BackAction href={routes.home()} />} title="Explorar">
+      <AppHeader
+        leftAction={<BackAction href={routes.home()} />}
+        title="Explorar"
+      >
         <div
           role="tablist"
           className={`grid gap-1 rounded-xl bg-secondary p-1 ${

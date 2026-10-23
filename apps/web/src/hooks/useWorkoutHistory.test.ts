@@ -75,9 +75,7 @@ describe("useWorkoutHistory", () => {
     await waitFor(() =>
       expect(result.current.currentWorkouts).toEqual([older]),
     );
-    expect(vi.mocked(api.get).mock.lastCall?.[0]).toMatch(
-      /^\/workouts\?from=/,
-    );
+    expect(vi.mocked(api.get).mock.lastCall?.[0]).toMatch(/^\/workouts\?from=/);
   });
 
   it("al borrar un set de otro dia mantiene el dia elegido", async () => {

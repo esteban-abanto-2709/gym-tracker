@@ -1,5 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { SetForm } from "./SetForm";
 import { api } from "@/lib/api";
 import type { SetPlan } from "@/lib/blocks";
@@ -93,7 +99,11 @@ describe("SetForm", () => {
 
     get.mockReturnValueOnce(new Promise(() => {}));
     rerender(
-      <SetForm {...props} exerciseId="ex-row" plan={{ ...plan, targetReps: 10 }} />,
+      <SetForm
+        {...props}
+        exerciseId="ex-row"
+        plan={{ ...plan, targetReps: 10 }}
+      />,
     );
 
     expect(values()).toEqual(["", "10"]);
@@ -109,7 +119,10 @@ describe("SetForm", () => {
     get.mockResolvedValue(rec({ workingWeight: 100 }));
 
     render(
-      <SetForm {...props} plan={{ ...plan, setType: "RAMP", step: 1, pct: 63 }} />,
+      <SetForm
+        {...props}
+        plan={{ ...plan, setType: "RAMP", step: 1, pct: 63 }}
+      />,
     );
 
     await waitFor(() => expect(values()[0]).toBe("63"));
@@ -142,7 +155,12 @@ describe("SetForm", () => {
       <SetForm
         {...props}
         onLog={onLog}
-        plan={{ ...plan, measure: "time", targetReps: null, targetDurationSec: 45 }}
+        plan={{
+          ...plan,
+          measure: "time",
+          targetReps: null,
+          targetDurationSec: 45,
+        }}
       />,
     );
     await waitFor(() => expect(values()).toEqual(["45"]));

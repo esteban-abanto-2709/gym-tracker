@@ -73,7 +73,9 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
     } catch (e) {
       console.error("Error copying routine:", e);
       setCopying(false);
-      notifyError("No se pudo copiar la rutina", () => copyOne(routinePosition));
+      notifyError("No se pudo copiar la rutina", () =>
+        copyOne(routinePosition),
+      );
     }
   };
 
@@ -90,7 +92,9 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
 
       <AppHeader
         leftAction={
-          <BackAction href={routes.explore(isProgram ? "programs" : "routines")} />
+          <BackAction
+            href={routes.explore(isProgram ? "programs" : "routines")}
+          />
         }
         title={isProgram ? "Programa" : "Rutina"}
         rightAction={

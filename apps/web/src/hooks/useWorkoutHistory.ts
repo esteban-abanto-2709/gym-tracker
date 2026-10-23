@@ -143,12 +143,7 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [
-    editingWorkout,
-    editReps,
-    editWeight,
-    editDuration,
-  ]);
+  }, [editingWorkout, editReps, editWeight, editDuration]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {

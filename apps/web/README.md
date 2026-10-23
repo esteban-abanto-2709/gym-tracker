@@ -6,15 +6,15 @@ proxy en el propio servidor de Next.
 
 ## Stack
 
-| Pieza | Versión |
-|---|---|
-| Runtime | Node.js 22 |
-| Framework | Next.js 16 (App Router, salida `standalone`) + React 19 |
-| UI | Tailwind CSS 4 · shadcn/ui sobre Radix · iconos `lucide-react` |
-| Interacción | `@dnd-kit` (reordenar ejercicios) · `sonner` (toasts) |
-| Auth con Google | `@react-oauth/google` |
-| Tests | Vitest + Testing Library sobre jsdom |
-| Gestor de paquetes | pnpm (pineado en `package.json`, vía corepack) |
+| Pieza              | Versión                                                        |
+| ------------------ | -------------------------------------------------------------- |
+| Runtime            | Node.js 22                                                     |
+| Framework          | Next.js 16 (App Router, salida `standalone`) + React 19        |
+| UI                 | Tailwind CSS 4 · shadcn/ui sobre Radix · iconos `lucide-react` |
+| Interacción        | `@dnd-kit` (reordenar ejercicios) · `sonner` (toasts)          |
+| Auth con Google    | `@react-oauth/google`                                          |
+| Tests              | Vitest + Testing Library sobre jsdom                           |
+| Gestor de paquetes | pnpm (pineado en `package.json`, vía corepack)                 |
 
 ## Puesta en marcha
 
@@ -29,10 +29,10 @@ Necesita la API corriendo (por defecto en `http://localhost:4000`).
 
 ## Variables de entorno
 
-| Variable | Cuándo se lee | Para qué |
-|---|---|---|
-| `API_INTERNAL_URL` | En el build (`next.config.ts`) | Destino del proxy `/api/*`. Por defecto `http://localhost:4000`. No llega al navegador |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | En el build | Se incrusta en el bundle para el botón de Google. Vacía = sin login con Google |
+| Variable                       | Cuándo se lee                  | Para qué                                                                               |
+| ------------------------------ | ------------------------------ | -------------------------------------------------------------------------------------- |
+| `API_INTERNAL_URL`             | En el build (`next.config.ts`) | Destino del proxy `/api/*`. Por defecto `http://localhost:4000`. No llega al navegador |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | En el build                    | Se incrusta en el bundle para el botón de Google. Vacía = sin login con Google         |
 
 Las dos se fijan al compilar: cambiarlas exige un build nuevo. En Docker llegan
 como build args.
@@ -85,20 +85,20 @@ UX; si un test falla, la traza queda en `e2e-results/` y el reporte en
 
 ## Rutas
 
-| Ruta | Pantalla |
-|---|---|
-| `/` | **Hoy**: hub para empezar o continuar la rutina, día libre, programa activo y novedades |
-| `/train` | Entrenamiento guiado: serie a serie, mapa de la sesión, saltar, reemplazar, añadir; racha, historial del ejercicio y tiempo de descanso |
-| `/log` | Día libre: registrar una serie suelta |
-| `/success` | Confirmación tras registrar en día libre |
-| `/routines`, `/routines/new`, `/routines/[id]` | Listar, crear y editar rutinas |
-| `/programs`, `/programs/new`, `/programs/[id]` | Listar, crear y editar programas |
-| `/explore` | Publicaciones por pestaña (`?tab=programs\|routines\|mine`) y orden (populares, más copiados, recientes); "Mías" deja renombrar y eliminar lo tuyo |
-| `/explore/programs/[slug]`, `/explore/routines/[slug]` | Una publicación: copiarla entera o, en un programa, solo una rutina |
-| `/routines/[id]/publish`, `/programs/[id]/publish` | Publicar una rutina o un programa con su slug |
-| `/history` | Historial por día: repetir, editar y borrar series; exportar un rango para tu IA (`.md`) |
-| `/perfil` | Cuenta, idioma de los ejercicios, fecha de nacimiento, medidas corporales y cierre de sesión |
-| `/login`, `/register` | Acceso con email o Google |
+| Ruta                                                   | Pantalla                                                                                                                                           |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                                    | **Hoy**: hub para empezar o continuar la rutina, día libre, programa activo y novedades                                                            |
+| `/train`                                               | Entrenamiento guiado: serie a serie, mapa de la sesión, saltar, reemplazar, añadir; racha, historial del ejercicio y tiempo de descanso            |
+| `/log`                                                 | Día libre: registrar una serie suelta                                                                                                              |
+| `/success`                                             | Confirmación tras registrar en día libre                                                                                                           |
+| `/routines`, `/routines/new`, `/routines/[id]`         | Listar, crear y editar rutinas                                                                                                                     |
+| `/programs`, `/programs/new`, `/programs/[id]`         | Listar, crear y editar programas                                                                                                                   |
+| `/explore`                                             | Publicaciones por pestaña (`?tab=programs\|routines\|mine`) y orden (populares, más copiados, recientes); "Mías" deja renombrar y eliminar lo tuyo |
+| `/explore/programs/[slug]`, `/explore/routines/[slug]` | Una publicación: copiarla entera o, en un programa, solo una rutina                                                                                |
+| `/routines/[id]/publish`, `/programs/[id]/publish`     | Publicar una rutina o un programa con su slug                                                                                                      |
+| `/history`                                             | Historial por día: repetir, editar y borrar series; exportar un rango para tu IA (`.md`)                                                           |
+| `/perfil`                                              | Cuenta, idioma de los ejercicios, fecha de nacimiento, medidas corporales y cierre de sesión                                                       |
+| `/login`, `/register`                                  | Acceso con email o Google                                                                                                                          |
 
 La navegación principal es la barra inferior de cuatro pestañas
 (`components/layout/BottomNav.tsx`): Hoy · Rutinas · Historial · Perfil.

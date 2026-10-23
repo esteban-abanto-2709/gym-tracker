@@ -7,11 +7,7 @@ import { useEquipment } from "@/hooks/useEquipment";
 import { useRestSeconds } from "@/hooks/useRestSeconds";
 import { formatClock } from "@/lib/setDisplay";
 import { routes } from "@/lib/routes";
-import {
-  formatBlocks,
-  plannedSetCount,
-  setPlan,
-} from "@/lib/blocks";
+import { formatBlocks, plannedSetCount, setPlan } from "@/lib/blocks";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { SetLogger } from "@/components/train/SetLogger";

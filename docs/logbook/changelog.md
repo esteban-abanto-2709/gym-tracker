@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-128] El web tiene Prettier y se verifica en el CI (2026-10-23 09:55)
+Prettier fijo como dependencia del web, `.prettierrc` con `endOfLine: auto`, `format:check` en el CI y el web formateado una vez (sin cambiar sus comillas dobles). VS Code formatea al guardar TS, JS y CSS con la extensión de Prettier, recomendada en `.vscode/extensions.json`.
+
 ## [TD-068] El formato de la API se verifica en el CI (2026-10-23 09:40)
 `prettier --check` corre en el CI tras el lint (`pnpm run format:check`); `endOfLine: auto` y `.prettierignore` para el lockfile. Se formateó la API una vez y se quitó `eslint-plugin-prettier`, que estaba apagado.
 

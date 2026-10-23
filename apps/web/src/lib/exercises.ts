@@ -5,11 +5,7 @@ const byOfficialThenName = (a: Exercise, b: Exercise) =>
   a.name.localeCompare(b.name);
 
 export const toSearchText = (text: string) =>
-  text
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+  text.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
 export function matchesSearch(exercise: Exercise, query: string): boolean {
   const needle = toSearchText(query);

@@ -28,7 +28,10 @@ const base = {
 };
 
 const seriesRows = (markdown: string) =>
-  markdown.split("## Series")[1].split("\n").filter((l) => /^\d{4}-/.test(l));
+  markdown
+    .split("## Series")[1]
+    .split("\n")
+    .filter((l) => /^\d{4}-/.test(l));
 
 describe("buildExport", () => {
   it("usa la fecha y hora local, ordena y filtra por el rango pedido", () => {
@@ -83,12 +86,19 @@ describe("buildExport", () => {
       measurements: [
         { date: "2026-08-01", heightCm: 171, weightKg: 81, bodyFatPct: null },
         { date: "2026-09-01", heightCm: 172, weightKg: 80.2, bodyFatPct: 20.1 },
-        { date: "2026-10-08", heightCm: null, weightKg: 77.9, bodyFatPct: null },
+        {
+          date: "2026-10-08",
+          heightCm: null,
+          weightKg: 77.9,
+          bodyFatPct: null,
+        },
       ],
     });
 
     expect(markdown).toContain("- Edad: 25 años");
-    expect(markdown).toContain("La primera fila (2026-09-01) es la última medida antes del período");
+    expect(markdown).toContain(
+      "La primera fila (2026-09-01) es la última medida antes del período",
+    );
     expect(markdown).toContain("2026-09-01,172,80.2,20.1\n2026-10-08,,77.9,\n");
     expect(markdown).not.toContain("2026-08-01");
     expect(markdown).toContain("No hay series registradas en este período.");

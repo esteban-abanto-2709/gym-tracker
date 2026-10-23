@@ -39,7 +39,9 @@ export default function RegisterPage() {
       {/* Cinta hazard + hero */}
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
-        <p className="kicker text-primary text-[0.7rem]">{"// tu primera serie"}</p>
+        <p className="kicker text-primary text-[0.7rem]">
+          {"// tu primera serie"}
+        </p>
         <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.88] tracking-tight mt-3">
           Crea tu
           <br />
@@ -58,7 +60,10 @@ export default function RegisterPage() {
         )}
 
         <div className="space-y-1.5">
-          <Label htmlFor="username" className="kicker text-muted-foreground text-[0.7rem]">
+          <Label
+            htmlFor="username"
+            className="kicker text-muted-foreground text-[0.7rem]"
+          >
             Nombre de usuario
           </Label>
           <Input
@@ -75,7 +80,10 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="kicker text-muted-foreground text-[0.7rem]">
+          <Label
+            htmlFor="email"
+            className="kicker text-muted-foreground text-[0.7rem]"
+          >
             Correo
           </Label>
           <Input
@@ -93,7 +101,10 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="password" className="kicker text-muted-foreground text-[0.7rem]">
+          <Label
+            htmlFor="password"
+            className="kicker text-muted-foreground text-[0.7rem]"
+          >
             Contraseña
           </Label>
           <PasswordInput

@@ -77,10 +77,7 @@ export function useWorkoutForm(
     let active = true;
     api
       .get<{ lastMeasure: SetMeasure | null }>(
-        routes.api.workouts.recommendation(
-          selectedExercise.id,
-          null,
-        ),
+        routes.api.workouts.recommendation(selectedExercise.id, null),
       )
       .then((rec) => {
         if (active && rec.lastMeasure) setMeasure(rec.lastMeasure);

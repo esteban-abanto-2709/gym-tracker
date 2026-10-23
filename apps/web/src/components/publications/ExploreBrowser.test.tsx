@@ -107,7 +107,9 @@ describe("ExploreBrowser", () => {
     expect(await screen.findByText("Upper/Lower")).toBeTruthy();
     expect(screen.queryByRole("tab", { name: "Mías" })).toBeNull();
     expect(
-      screen.getByRole("tab", { name: "Programas" }).getAttribute("aria-selected"),
+      screen
+        .getByRole("tab", { name: "Programas" })
+        .getAttribute("aria-selected"),
     ).toBe("true");
   });
 
@@ -116,7 +118,9 @@ describe("ExploreBrowser", () => {
     render(<ExploreBrowser initialTab="mine" />);
     await screen.findByText("Espalda Cbum");
 
-    fireEvent.click(screen.getByRole("button", { name: "Eliminar Espalda Cbum" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Eliminar Espalda Cbum" }),
+    );
     fireEvent.click(
       await screen.findByRole("button", { name: "Eliminar publicación" }),
     );

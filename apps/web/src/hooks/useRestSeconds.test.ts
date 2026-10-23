@@ -22,7 +22,11 @@ describe("useRestSeconds", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(T0.getTime() + 31 * 60_000));
 
-    expect(renderHook(() => useRestSeconds(undefined)).result.current).toBeNull();
-    expect(renderHook(() => useRestSeconds(T0.toISOString())).result.current).toBeNull();
+    expect(
+      renderHook(() => useRestSeconds(undefined)).result.current,
+    ).toBeNull();
+    expect(
+      renderHook(() => useRestSeconds(T0.toISOString())).result.current,
+    ).toBeNull();
   });
 });

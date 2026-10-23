@@ -34,7 +34,9 @@ export default function LoginPage() {
       {/* Cinta hazard + hero */}
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
-        <p className="kicker text-primary text-[0.7rem]">{"// directo a entrenar"}</p>
+        <p className="kicker text-primary text-[0.7rem]">
+          {"// directo a entrenar"}
+        </p>
         <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.88] tracking-tight mt-3">
           Sin vueltas.
           <br />
@@ -53,7 +55,10 @@ export default function LoginPage() {
         )}
 
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="kicker text-muted-foreground text-[0.7rem]">
+          <Label
+            htmlFor="email"
+            className="kicker text-muted-foreground text-[0.7rem]"
+          >
             Correo
           </Label>
           <Input
@@ -71,7 +76,10 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="password" className="kicker text-muted-foreground text-[0.7rem]">
+          <Label
+            htmlFor="password"
+            className="kicker text-muted-foreground text-[0.7rem]"
+          >
             Contraseña
           </Label>
           <PasswordInput

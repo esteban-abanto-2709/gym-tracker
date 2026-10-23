@@ -96,11 +96,7 @@ export interface RampBlock {
 }
 
 export type RoutineBlock =
-  | WeightRepsBlock
-  | RepsBlock
-  | TimeBlock
-  | WarmupBlock
-  | RampBlock;
+  WeightRepsBlock | RepsBlock | TimeBlock | WarmupBlock | RampBlock;
 
 export type SetType = "WORKING" | "WARMUP" | "RAMP";
 

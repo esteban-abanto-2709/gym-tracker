@@ -1,4 +1,7 @@
 {
-  "editor.formatOnSave": false,
+  "[typescript][typescriptreact][javascript][css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
   "material-icon-theme.activeIconPack": "nest"
 }

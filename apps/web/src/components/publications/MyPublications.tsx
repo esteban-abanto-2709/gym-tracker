@@ -30,7 +30,9 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
         { name },
       );
       onChange(
-        items.map((p) => (p.id === updated.id ? { ...p, name: updated.name } : p)),
+        items.map((p) =>
+          p.id === updated.id ? { ...p, name: updated.name } : p,
+        ),
       );
       setRenaming(null);
     } catch (e) {

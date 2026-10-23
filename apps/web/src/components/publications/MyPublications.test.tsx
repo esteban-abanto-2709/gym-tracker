@@ -60,14 +60,18 @@ describe("MyPublications", () => {
     render(<Harness />);
     await screen.findByText("Espalda Cbum");
 
-    fireEvent.click(screen.getByRole("button", { name: "Eliminar Espalda Cbum" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Eliminar Espalda Cbum" }),
+    );
 
     expect(await screen.findByText("Pierdes 12 me gusta.")).toBeTruthy();
     expect(
       screen.getByText("3 personas la copiaron: sus copias se quedan."),
     ).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "Eliminar publicación" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Eliminar publicación" }),
+    );
 
     await vi.waitFor(() =>
       expect(screen.queryByText("Espalda Cbum")).toBeNull(),
@@ -84,7 +88,9 @@ describe("MyPublications", () => {
     render(<Harness />);
     await screen.findByText("Espalda Cbum");
 
-    fireEvent.click(screen.getByRole("button", { name: "Renombrar Espalda Cbum" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Renombrar Espalda Cbum" }),
+    );
     fireEvent.change(await screen.findByLabelText("Nombre"), {
       target: { value: "  Espalda Cbum V2 " },
     });

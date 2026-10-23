@@ -49,7 +49,11 @@ export default function RoutinesPage() {
   const otherGroups = [
     ...programs
       .filter((p) => p.id !== activeProgramId)
-      .map((p) => ({ key: p.id, title: p.name, routines: inOrder(p.routines) })),
+      .map((p) => ({
+        key: p.id,
+        title: p.name,
+        routines: inOrder(p.routines),
+      })),
     {
       key: "loose",
       title: "Sin programa",
