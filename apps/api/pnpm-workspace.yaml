@@ -1,6 +1,6 @@
 nodeLinker: hoisted
 allowBuilds:
   prisma: true
-  "@prisma/engines": true
-  "unrs-resolver": false
+  '@prisma/engines': true
+  'unrs-resolver': false
   '@prisma/client': true

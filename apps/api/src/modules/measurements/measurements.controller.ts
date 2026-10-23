@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { MeasurementsService } from './measurements.service';
 import { UpsertMeasurementDto } from './dto/upsert-measurement.dto';
 import {

@@ -53,6 +53,8 @@ jobs:
 
       - run: pnpm run lint
 
+      - run: pnpm run format:check
+
       - run: pnpm run test:unit
 
       - run: pnpm exec prisma migrate deploy

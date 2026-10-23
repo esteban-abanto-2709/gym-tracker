@@ -8,7 +8,12 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 import { fromDbDate, isDateOnly, toDbDate } from '@/common/date-only';
 import { UpsertMeasurementDto } from './dto/upsert-measurement.dto';
 
-const toPublic = ({ date, weightKg, bodyFatPct, heightCm }: BodyMeasurement) => ({
+const toPublic = ({
+  date,
+  weightKg,
+  bodyFatPct,
+  heightCm,
+}: BodyMeasurement) => ({
   date: fromDbDate(date),
   weightKg,
   bodyFatPct,

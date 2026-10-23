@@ -5,16 +5,16 @@ Funciona sola: cualquier cliente que hable HTTP + cookies puede usarla.
 
 ## Stack
 
-| Pieza | Versión |
-|---|---|
-| Runtime | Node.js 22 |
-| Framework | NestJS 11 (Express 5) |
-| ORM | Prisma 7 con `@prisma/adapter-pg` (pool de `pg`) |
-| Base de datos | PostgreSQL 16 |
-| Auth | JWT (`@nestjs/jwt`) en cookie httpOnly · `google-auth-library` · `bcryptjs` |
-| Validación | `class-validator` + `class-transformer` |
-| Tests | Jest + Supertest |
-| Gestor de paquetes | pnpm 11 (pineado en `package.json`, vía corepack) |
+| Pieza              | Versión                                                                     |
+| ------------------ | --------------------------------------------------------------------------- |
+| Runtime            | Node.js 22                                                                  |
+| Framework          | NestJS 11 (Express 5)                                                       |
+| ORM                | Prisma 7 con `@prisma/adapter-pg` (pool de `pg`)                            |
+| Base de datos      | PostgreSQL 16                                                               |
+| Auth               | JWT (`@nestjs/jwt`) en cookie httpOnly · `google-auth-library` · `bcryptjs` |
+| Validación         | `class-validator` + `class-transformer`                                     |
+| Tests              | Jest + Supertest                                                            |
+| Gestor de paquetes | pnpm 11 (pineado en `package.json`, vía corepack)                           |
 
 ## Puesta en marcha
 
@@ -31,15 +31,15 @@ Para tener un Postgres local sin instalar nada:
 
 ## Variables de entorno
 
-| Variable | Obligatoria | Para qué |
-|---|---|---|
-| `DATABASE_URL` | Sí | Conexión en runtime (la usa el pool de `PrismaService`) |
-| `DIRECT_URL` | Sí | Conexión para migraciones (la lee `prisma.config.ts`) |
-| `JWT_SECRET` | Sí | Firma de los tokens de sesión |
-| `FRONTEND_URL` | Sí | Origen permitido por CORS |
-| `GOOGLE_CLIENT_ID` | Solo con Google | Audiencia esperada al verificar el ID token de Google |
-| `PORT` | No | Puerto HTTP (por defecto `4000`) |
-| `NODE_ENV` | No | En `production` la cookie de sesión se marca `secure` |
+| Variable           | Obligatoria     | Para qué                                                |
+| ------------------ | --------------- | ------------------------------------------------------- |
+| `DATABASE_URL`     | Sí              | Conexión en runtime (la usa el pool de `PrismaService`) |
+| `DIRECT_URL`       | Sí              | Conexión para migraciones (la lee `prisma.config.ts`)   |
+| `JWT_SECRET`       | Sí              | Firma de los tokens de sesión                           |
+| `FRONTEND_URL`     | Sí              | Origen permitido por CORS                               |
+| `GOOGLE_CLIENT_ID` | Solo con Google | Audiencia esperada al verificar el ID token de Google   |
+| `PORT`             | No              | Puerto HTTP (por defecto `4000`)                        |
+| `NODE_ENV`         | No              | En `production` la cookie de sesión se marca `secure`   |
 
 `DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma base; Prisma las pide
 por separado para soportar un pooler delante.
@@ -126,51 +126,51 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 
 ## Endpoints
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/healthz` | Salud del servicio (público) |
-| POST | `/auth/register` | Crea la cuenta y abre sesión (público) |
-| POST | `/auth/login` | Abre sesión (público) |
-| POST | `/auth/google` | Login o registro con ID token de Google (público) |
-| POST | `/auth/logout` | Cierra sesión |
-| GET | `/auth/me` | Usuario actual |
-| PATCH | `/auth/me` | Cambia la fecha de nacimiento (o la borra con `null`), el idioma de ejercicios, el tema (`system`, `light` o `dark`) y las novedades abiertas o vistas |
-| GET | `/exercises` | Catálogo de ejercicios, con el nombre en el idioma del usuario |
-| POST | `/exercises` | Crea un ejercicio propio, con el nombre en el idioma del usuario |
-| GET | `/equipment` | Catálogo de equipos |
-| GET | `/workouts?from=&to=` | Las series de un rango de fechas, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente) |
-| GET | `/workouts/days?tz=` | Los días con series (en la zona horaria del cliente) y las series del día más reciente |
-| POST | `/workouts` | Registra una serie. Con `clientId`, repetir el envío devuelve la misma serie en vez de duplicarla |
-| PATCH | `/workouts/:id` | Edita una serie |
-| DELETE | `/workouts/:id` | Borra una serie |
-| GET | `/workouts/recommendation` | Última serie, para precargar el formulario (ver abajo) |
-| GET | `/workouts/progress` | Racha e historial de un ejercicio (ver abajo) |
-| GET | `/routines` | Rutinas del usuario |
-| POST | `/routines` | Crea una rutina |
-| GET | `/routines/:id` | Una rutina con sus ítems |
-| PATCH | `/routines/:id` | Edita nombre, ítems y bloques |
-| DELETE | `/routines/:id` | Borra una rutina |
-| GET | `/programs` | Programas del usuario |
-| POST | `/programs` | Crea un programa |
-| GET | `/programs/active` | Programa activo y la rutina que toca hoy |
-| PUT | `/programs/active` | Cambia o quita el programa activo |
-| GET | `/programs/:id` | Un programa |
-| PATCH | `/programs/:id` | Edita un programa |
-| DELETE | `/programs/:id` | Borra un programa |
-| GET | `/measurements` | Medidas corporales del usuario, la más nueva primero |
-| PUT | `/measurements` | Crea o reemplaza la medida de una fecha |
-| DELETE | `/measurements/:date` | Borra la medida de una fecha |
-| POST | `/routines/:id/publish` | Publica una rutina propia con un slug (foto fija) |
-| POST | `/programs/:id/publish` | Publica un programa propio con sus rutinas (foto fija) |
-| GET | `/publications/slug-available` | `?kind=ROUTINE\|PROGRAM&slug=`: si el slug está libre |
-| GET | `/publications/mine` | Tus publicaciones de los dos tipos, la más nueva primero, con sus contadores |
-| PATCH | `/publications/:id` | Renombra tu publicación (`{ name }`); el slug no cambia |
-| DELETE | `/publications/:id` | Elimina tu publicación con sus me gusta; las copias de los demás se quedan |
-| GET | `/explore/routines`, `/explore/programs` | Publicaciones (`?sort=likes\|copies\|recent`, 50 como máximo) con autor (`username` y `slug`), me gusta, copias, `likedByMe` e `isMine` |
-| GET | `/explore/{routines\|programs}/:slug` | Una publicación con sus rutinas y ejercicios |
-| POST | `/explore/routines/:slug/copy` | Copia la rutina como rutina suelta |
-| PUT, DELETE | `/explore/{routines\|programs}/:slug/like` | Da o quita tu me gusta (idempotente; el tuyo propio da 403). Devuelve `likeCount` y `likedByMe` |
-| POST | `/explore/programs/:slug/copy` | Copia el programa entero (lo activa si no tenías uno) o, con `routinePosition`, solo esa rutina |
+| Método      | Ruta                                       | Descripción                                                                                                                                            |
+| ----------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET         | `/healthz`                                 | Salud del servicio (público)                                                                                                                           |
+| POST        | `/auth/register`                           | Crea la cuenta y abre sesión (público)                                                                                                                 |
+| POST        | `/auth/login`                              | Abre sesión (público)                                                                                                                                  |
+| POST        | `/auth/google`                             | Login o registro con ID token de Google (público)                                                                                                      |
+| POST        | `/auth/logout`                             | Cierra sesión                                                                                                                                          |
+| GET         | `/auth/me`                                 | Usuario actual                                                                                                                                         |
+| PATCH       | `/auth/me`                                 | Cambia la fecha de nacimiento (o la borra con `null`), el idioma de ejercicios, el tema (`system`, `light` o `dark`) y las novedades abiertas o vistas |
+| GET         | `/exercises`                               | Catálogo de ejercicios, con el nombre en el idioma del usuario                                                                                         |
+| POST        | `/exercises`                               | Crea un ejercicio propio, con el nombre en el idioma del usuario                                                                                       |
+| GET         | `/equipment`                               | Catálogo de equipos                                                                                                                                    |
+| GET         | `/workouts?from=&to=`                      | Las series de un rango de fechas, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente)                                 |
+| GET         | `/workouts/days?tz=`                       | Los días con series (en la zona horaria del cliente) y las series del día más reciente                                                                 |
+| POST        | `/workouts`                                | Registra una serie. Con `clientId`, repetir el envío devuelve la misma serie en vez de duplicarla                                                      |
+| PATCH       | `/workouts/:id`                            | Edita una serie                                                                                                                                        |
+| DELETE      | `/workouts/:id`                            | Borra una serie                                                                                                                                        |
+| GET         | `/workouts/recommendation`                 | Última serie, para precargar el formulario (ver abajo)                                                                                                 |
+| GET         | `/workouts/progress`                       | Racha e historial de un ejercicio (ver abajo)                                                                                                          |
+| GET         | `/routines`                                | Rutinas del usuario                                                                                                                                    |
+| POST        | `/routines`                                | Crea una rutina                                                                                                                                        |
+| GET         | `/routines/:id`                            | Una rutina con sus ítems                                                                                                                               |
+| PATCH       | `/routines/:id`                            | Edita nombre, ítems y bloques                                                                                                                          |
+| DELETE      | `/routines/:id`                            | Borra una rutina                                                                                                                                       |
+| GET         | `/programs`                                | Programas del usuario                                                                                                                                  |
+| POST        | `/programs`                                | Crea un programa                                                                                                                                       |
+| GET         | `/programs/active`                         | Programa activo y la rutina que toca hoy                                                                                                               |
+| PUT         | `/programs/active`                         | Cambia o quita el programa activo                                                                                                                      |
+| GET         | `/programs/:id`                            | Un programa                                                                                                                                            |
+| PATCH       | `/programs/:id`                            | Edita un programa                                                                                                                                      |
+| DELETE      | `/programs/:id`                            | Borra un programa                                                                                                                                      |
+| GET         | `/measurements`                            | Medidas corporales del usuario, la más nueva primero                                                                                                   |
+| PUT         | `/measurements`                            | Crea o reemplaza la medida de una fecha                                                                                                                |
+| DELETE      | `/measurements/:date`                      | Borra la medida de una fecha                                                                                                                           |
+| POST        | `/routines/:id/publish`                    | Publica una rutina propia con un slug (foto fija)                                                                                                      |
+| POST        | `/programs/:id/publish`                    | Publica un programa propio con sus rutinas (foto fija)                                                                                                 |
+| GET         | `/publications/slug-available`             | `?kind=ROUTINE\|PROGRAM&slug=`: si el slug está libre                                                                                                  |
+| GET         | `/publications/mine`                       | Tus publicaciones de los dos tipos, la más nueva primero, con sus contadores                                                                           |
+| PATCH       | `/publications/:id`                        | Renombra tu publicación (`{ name }`); el slug no cambia                                                                                                |
+| DELETE      | `/publications/:id`                        | Elimina tu publicación con sus me gusta; las copias de los demás se quedan                                                                             |
+| GET         | `/explore/routines`, `/explore/programs`   | Publicaciones (`?sort=likes\|copies\|recent`, 50 como máximo) con autor (`username` y `slug`), me gusta, copias, `likedByMe` e `isMine`                |
+| GET         | `/explore/{routines\|programs}/:slug`      | Una publicación con sus rutinas y ejercicios                                                                                                           |
+| POST        | `/explore/routines/:slug/copy`             | Copia la rutina como rutina suelta                                                                                                                     |
+| PUT, DELETE | `/explore/{routines\|programs}/:slug/like` | Da o quita tu me gusta (idempotente; el tuyo propio da 403). Devuelve `likeCount` y `likedByMe`                                                        |
+| POST        | `/explore/programs/:slug/copy`             | Copia el programa entero (lo activa si no tenías uno) o, con `routinePosition`, solo esa rutina                                                        |
 
 ## Modelo de datos
 

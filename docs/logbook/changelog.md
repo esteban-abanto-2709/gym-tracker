@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-068] El formato de la API se verifica en el CI (2026-10-23 09:40)
+`prettier --check` corre en el CI tras el lint (`pnpm run format:check`); `endOfLine: auto` y `.prettierignore` para el lockfile. Se formateó la API una vez y se quitó `eslint-plugin-prettier`, que estaba apagado.
+
 ## [WL-127] Ajustes fuera del Perfil (2026-10-21 12:13)
 Perfil queda con tu identidad y tus medidas; tema, nombres de ejercicios, nacimiento, contraseña, privacidad, cerrar sesión y borrar cuenta pasan a `/perfil/ajustes`, detrás de un engranaje.
 

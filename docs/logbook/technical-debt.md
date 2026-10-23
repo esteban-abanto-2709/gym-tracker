@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-128] El web no tiene Prettier
+- **Ubicación:** `apps/web/package.json` (`"format": "npx prettier --write ."`)
+- **Riesgo:** 2/10
+- **Problema:** Prettier no está en las dependencias ni hay `.prettierrc`; `format` baja la última versión con `npx` y usa la config por defecto. Con la config de la API, 44 archivos de `src/` no cumplen.
+- **Impacto futuro:** diffs con ruido de formato y estilos mezclados; no se puede verificar en el CI.
+- **Sugerencia:** igual que en la API (TD-068): Prettier como dependencia, `.prettierrc`, `format:check` en el CI y formatear una vez.
+- **Fecha:** 2026-10-23 · **Estado:** Abierto
+
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
 - **Riesgo:** 4/10
@@ -101,14 +109,6 @@ changelog y se borra de aquí.
 - **Impacto futuro:** quien no tenga TikTok toca el botón y no obtiene nada.
 - **Sugerencia:** probar en un iPhone sin TikTok desde la PWA instalada y, si hace falta respaldo, usar `x-safari-https://` sin depender de tiempos.
 - **Fecha:** 2026-10-07 · **Estado:** Abierto
-
-## [TD-068] El formato de la API no se verifica
-- **Ubicación:** `apps/api/eslint.config.mjs` (`'prettier/prettier': 'off'`)
-- **Riesgo:** 2/10
-- **Problema:** el plugin de Prettier está cargado pero apagado, así que el formato solo se aplica si alguien corre `pnpm run format`. Activado da 618 errores: 589 son `CRLF` de Windows (`core.autocrlf=true` frente al `endOfLine: lf` de Prettier) y unos 29 son formato real pendiente.
-- **Impacto futuro:** diffs con ruido de formato y estilos mezclados; no se puede sumar al CI tal como está.
-- **Sugerencia:** fijar los finales de línea (`.gitattributes` con `eol=lf` o `endOfLine: "auto"`), correr `pnpm run format` una vez y verificar con `prettier --check` en el CI en vez de por ESLint.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
 
 ## [TD-015] GoogleLogin re-inicializa GSI varias veces (warning en consola)
 - **Ubicación:** `apps/web/src/components/auth/GoogleButton.tsx` (usa `GoogleLogin`), montado en `/login` y `/register`; provider en `apps/web/src/app/layout.tsx`.

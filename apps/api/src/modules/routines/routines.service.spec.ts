@@ -120,9 +120,9 @@ describe('CreateRoutineDto blocks', () => {
     ['con un escalon invalido', { steps: [{ reps: 0 }] }],
     ['con un campo ajeno en el escalon', { steps: [{ reps: 10, sets: 1 }] }],
   ])('rechaza una rampa %s', async (_label, extra) => {
-    expect(await dtoErrors([{ kind: 'ramp', ...extra }], true)).not.toHaveLength(
-      0,
-    );
+    expect(
+      await dtoErrors([{ kind: 'ramp', ...extra }], true),
+    ).not.toHaveLength(0);
   });
 
   it.each([
