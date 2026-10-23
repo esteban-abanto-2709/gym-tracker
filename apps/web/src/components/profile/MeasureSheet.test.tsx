@@ -14,7 +14,7 @@ const props = {
 const save = () => screen.getByRole("button", { name: /guardar|actualizar/i });
 
 describe("MeasureSheet", () => {
-  it("guarda con un solo dato y deja los otros vacios", async () => {
+  it("saves with a single value and leaves the others empty", async () => {
     const onSave = vi.fn().mockResolvedValue(undefined);
     render(<MeasureSheet {...props} onSave={onSave} />);
 
@@ -34,7 +34,7 @@ describe("MeasureSheet", () => {
     );
   });
 
-  it("una fecha que ya tiene medida trae sus valores para actualizarla", () => {
+  it("a date that already has a measurement loads its values to update it", () => {
     render(<MeasureSheet {...props} onSave={vi.fn()} />);
 
     const date = document.querySelector('input[type="date"]')!;
@@ -45,7 +45,7 @@ describe("MeasureSheet", () => {
     expect(save().textContent).toContain("Actualizar");
   });
 
-  it("un valor fuera de rango bloquea el guardado y dice por que", () => {
+  it("an out-of-range value blocks saving and says why", () => {
     render(<MeasureSheet {...props} onSave={vi.fn()} />);
 
     fireEvent.change(screen.getByLabelText("Grasa (%)"), {

@@ -5,10 +5,6 @@ interface PageShellProps {
   variant?: "default" | "history";
 }
 
-/**
- * Wrapper compartido para todas las páginas.
- * Incluye el background pattern + gradient orb(s) decorativos.
- */
 export function PageShell({ children, variant = "default" }: PageShellProps) {
   return (
     <div className="min-h-dvh pb-[env(safe-area-inset-bottom)] bg-background flex flex-col relative overflow-hidden font-sans">

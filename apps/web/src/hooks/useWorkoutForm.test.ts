@@ -36,8 +36,8 @@ beforeEach(() => {
   get.mockResolvedValue({ lastMeasure: null });
 });
 
-describe("useWorkoutForm: repetir un set", () => {
-  it("precarga ejercicio, peso, reps y medida con ?repeat=true", async () => {
+describe("useWorkoutForm: repeating a set", () => {
+  it("preloads exercise, weight, reps and measure with ?repeat=true", async () => {
     searchParams = new URLSearchParams("repeat=true");
     saveRepeat({
       exerciseId: "ex-squat",
@@ -54,7 +54,7 @@ describe("useWorkoutForm: repetir un set", () => {
     expect(result.current.measure).toBe("weight_reps");
   });
 
-  it("repite una serie de tiempo con su medida aunque la API sugiera otra", async () => {
+  it("repeats a timed set with its measure even if the API suggests another", async () => {
     searchParams = new URLSearchParams("repeat=true");
     saveRepeat({
       exerciseId: "ex-curl",
@@ -73,7 +73,7 @@ describe("useWorkoutForm: repetir un set", () => {
     expect(get).not.toHaveBeenCalled();
   });
 
-  it("espera a que carguen los ejercicios antes de repetir", async () => {
+  it("waits for the exercises to load before repeating", async () => {
     searchParams = new URLSearchParams("repeat=true");
     saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5" });
 
@@ -90,7 +90,7 @@ describe("useWorkoutForm: repetir un set", () => {
     expect(result.current.weight).toBe("80");
   });
 
-  it("repite una sola vez: elegir otro ejercicio despues no vuelve al repetido", async () => {
+  it("repeats only once: picking another exercise later does not go back", async () => {
     searchParams = new URLSearchParams("repeat=true");
     saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5" });
 
@@ -105,7 +105,7 @@ describe("useWorkoutForm: repetir un set", () => {
     expect(result.current.selectedExercise).toEqual(curl);
   });
 
-  it("sin ?repeat=true ignora lo guardado", () => {
+  it("ignores the stored set without ?repeat=true", () => {
     saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5" });
 
     const { result } = renderHook(() => useWorkoutForm(exercises, false));
@@ -115,8 +115,8 @@ describe("useWorkoutForm: repetir un set", () => {
   });
 });
 
-describe("useWorkoutForm: elegir ejercicio", () => {
-  it("toma el ultimo equipo usado en ese ejercicio", async () => {
+describe("useWorkoutForm: picking an exercise", () => {
+  it("takes the last equipment used for that exercise", async () => {
     rememberEquipment({ "ex-squat": "eq-rack" });
 
     const { result } = renderHook(() => useWorkoutForm(exercises, false));
@@ -125,13 +125,13 @@ describe("useWorkoutForm: elegir ejercicio", () => {
     await waitFor(() => expect(result.current.equipmentId).toBe("eq-rack"));
   });
 
-  it("sin ejercicio no hay equipo", () => {
+  it("has no equipment without an exercise", () => {
     const { result } = renderHook(() => useWorkoutForm(exercises, false));
 
     expect(result.current.equipmentId).toBeNull();
   });
 
-  it("usa la ultima medida que devuelve la API", async () => {
+  it("uses the last measure the API returns", async () => {
     get.mockResolvedValue({ lastMeasure: "reps" });
 
     const { result } = renderHook(() => useWorkoutForm(exercises, false));
@@ -140,7 +140,7 @@ describe("useWorkoutForm: elegir ejercicio", () => {
     await waitFor(() => expect(result.current.measure).toBe("reps"));
   });
 
-  it("si el usuario ya cambio la medida, la API no la pisa", async () => {
+  it("the API does not override a measure the user already changed", async () => {
     let resolve!: (value: { lastMeasure: string }) => void;
     get.mockReturnValue(new Promise((r) => (resolve = r)));
 
@@ -152,7 +152,7 @@ describe("useWorkoutForm: elegir ejercicio", () => {
     expect(result.current.measure).toBe("time");
   });
 
-  it("al cambiar de ejercicio vuelve a peso y reps mientras llega la API", async () => {
+  it("switching exercise goes back to weight and reps while the API responds", async () => {
     get.mockReturnValue(new Promise(() => {}));
 
     const { result } = renderHook(() => useWorkoutForm(exercises, false));

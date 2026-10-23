@@ -7,7 +7,7 @@ const T0 = new Date("2026-10-09T10:00:00Z");
 describe("useRestSeconds", () => {
   afterEach(() => vi.useRealTimers());
 
-  it("cuenta desde la ultima serie y sigue subiendo", () => {
+  it("counts from the last set and keeps going up", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(T0.getTime() + 102_000));
 
@@ -18,7 +18,7 @@ describe("useRestSeconds", () => {
     expect(result.current).toBe(105);
   });
 
-  it("sin serie previa o pasada la media hora no muestra nada", () => {
+  it("shows nothing without a previous set or after half an hour", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(T0.getTime() + 31 * 60_000));
 

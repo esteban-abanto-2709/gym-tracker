@@ -10,13 +10,13 @@ const flash = {
 };
 
 describe("SaveOverlay", () => {
-  it("muestra la serie desde el toque", () => {
+  it("shows the set from the tap", () => {
     render(<SaveOverlay flash={flash} />);
     expect(screen.getByText("Serie 2")).toBeDefined();
     expect(screen.getByText("Hip Thrust · 60 kg × 8 reps")).toBeDefined();
   });
 
-  it("muestra a que ejercicio pasas", () => {
+  it("shows which exercise comes next", () => {
     render(<SaveOverlay flash={{ ...flash, next: "Leg Extension" }} />);
     expect(screen.getByText("Leg Extension")).toBeDefined();
   });

@@ -50,7 +50,7 @@ const inputs = () => screen.getAllByRole("spinbutton") as HTMLInputElement[];
 const values = () => inputs().map((i) => i.value);
 
 describe("SetForm", () => {
-  it("pide la ultima serie despues de enviar la que quedo pendiente", async () => {
+  it("asks for the last set after sending the pending one", async () => {
     addPendingSets([
       {
         clientId: "c-1",
@@ -82,7 +82,7 @@ describe("SetForm", () => {
     expect(order).toEqual(["post", "get"]);
   });
 
-  it("arranca con las reps de la meta y luego precarga la ultima serie", async () => {
+  it("starts with the target reps and then preloads the last set", async () => {
     get.mockResolvedValue(rec({ lastWeight: 60, lastReps: 7 }));
 
     render(<SetForm {...props} />);
@@ -92,7 +92,7 @@ describe("SetForm", () => {
     expect(screen.getByText("La última vez · 60 kg × 7")).toBeTruthy();
   });
 
-  it("al pasar a otro ejercicio limpia el formulario y precarga el nuevo", async () => {
+  it("moving to another exercise clears the form and preloads the new one", async () => {
     get.mockResolvedValueOnce(rec({ lastWeight: 60, lastReps: 7 }));
     const { rerender } = render(<SetForm {...props} />);
     await waitFor(() => expect(values()).toEqual(["60", "7"]));
@@ -115,7 +115,7 @@ describe("SetForm", () => {
     );
   });
 
-  it("en una rampa sin registro propone el porcentaje del peso efectivo", async () => {
+  it("a ramp with no history suggests the percentage of the working weight", async () => {
     get.mockResolvedValue(rec({ workingWeight: 100 }));
 
     render(
@@ -128,7 +128,7 @@ describe("SetForm", () => {
     await waitFor(() => expect(values()[0]).toBe("63"));
   });
 
-  it("con preferLastMeasure adopta la ultima medida usada", async () => {
+  it("with preferLastMeasure adopts the last measure used", async () => {
     get.mockResolvedValue(rec({ lastMeasure: "time", lastDurationSec: 45 }));
 
     render(<SetForm {...props} selectable preferLastMeasure />);
@@ -136,7 +136,7 @@ describe("SetForm", () => {
     await waitFor(() => expect(values()).toEqual(["45"]));
   });
 
-  it("si el usuario eligio la medida, la ultima usada no la pisa", async () => {
+  it("the last measure used does not override one the user chose", async () => {
     let resolve!: (value: unknown) => void;
     get.mockReturnValue(new Promise((r) => (resolve = r)));
 
@@ -147,7 +147,7 @@ describe("SetForm", () => {
     expect(values()).toEqual(["12"]);
   });
 
-  it("una serie de tiempo se registra sin reps", async () => {
+  it("a timed set is logged without reps", async () => {
     get.mockResolvedValue(rec({ lastDurationSec: 45 }));
     const onLog = vi.fn();
 

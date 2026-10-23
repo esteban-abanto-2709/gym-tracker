@@ -12,8 +12,6 @@ const tabs = [
   { href: routes.profile(), label: "Perfil", Icon: User },
 ];
 
-// Barra de pestañas top-level. Solo se monta en pantallas raíz (Hoy /
-// Rutinas / Historial / Perfil); las pantallas profundas conservan su header con "atrás".
 export function BottomNav() {
   const pathname = usePathname();
 

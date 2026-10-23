@@ -44,7 +44,7 @@ const pressed = () =>
   screen.getAllByRole("button", { pressed: true }).map((b) => b.textContent);
 
 describe("ExportSheet", () => {
-  it("arranca en 30 dias y el resumen sigue al rango elegido", async () => {
+  it("starts at 30 days and the summary follows the chosen range", async () => {
     serveSets([set(daysAgo(1)), set(daysAgo(10)), set(daysAgo(60))]);
     render(<ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />);
 
@@ -58,7 +58,7 @@ describe("ExportSheet", () => {
     expect(await screen.findByText("3 series")).toBeTruthy();
   });
 
-  it("sin series en el rango no deja exportar", async () => {
+  it("does not allow exporting without sets in the range", async () => {
     serveSets([set(daysAgo(60))]);
     render(<ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />);
 

@@ -21,7 +21,7 @@ const renderMap = (remainingCount: number) => {
 };
 
 describe("SessionMap", () => {
-  it("terminar la sesion pide confirmar y dice cuantos faltan", () => {
+  it("ending the session asks to confirm and says how many are left", () => {
     const onFinish = renderMap(2);
 
     fireEvent.click(screen.getByRole("button", { name: /Terminar sesión/ }));
@@ -33,7 +33,7 @@ describe("SessionMap", () => {
     expect(onFinish).toHaveBeenCalledOnce();
   });
 
-  it("seguir entrenando cierra el aviso sin terminar", () => {
+  it("keep training closes the warning without ending", () => {
     const onFinish = renderMap(0);
 
     fireEvent.click(screen.getByRole("button", { name: /Terminar sesión/ }));

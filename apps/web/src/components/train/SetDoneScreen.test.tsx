@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { SetDoneScreen } from "./SetDoneScreen";
 
 describe("SetDoneScreen", () => {
-  it("terminar es la accion principal y una serie extra sigue entrenando", () => {
+  it("finishing is the main action and an extra set keeps training", () => {
     const onFinish = vi.fn();
     const onExtraSet = vi.fn();
     render(<SetDoneScreen onFinish={onFinish} onExtraSet={onExtraSet} />);

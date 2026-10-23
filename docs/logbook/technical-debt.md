@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-130] Los ids de los equipos están en español
+- **Ubicación:** tabla `Equipment` (ids `barra`, `polea`, `mancuerna`, `maquina`, `otro`… sembrados en la migración `equipo_tabla_y_slug`); `apps/web/src/lib/equipmentIcons.ts`.
+- **Riesgo:** 2/10
+- **Problema:** la regla es que los slugs van en inglés, pero los ids de `Equipment` son palabras en español y aparecen en el código (iconos, tests, `equipmentId` de cada serie). Cambiarlos no es renombrar: es una migración de datos sobre `Workout.equipmentId` en prod y sobre el `localStorage` de `equipmentMemory`.
+- **Impacto futuro:** cada equipo nuevo (TD-091) suma otro id en español si no se decide antes.
+- **Sugerencia:** decidirlo al hacer TD-091 / RM-090, que ya tocan esa tabla: o se migran los ids a inglés en el mismo paso, o se acepta que los ids existentes quedan y los nuevos van en inglés.
+- **Fecha:** 2026-10-23 · **Estado:** Abierto
+
 ## [TD-129] Los errores de la API llegan en inglés a la interfaz
 - **Ubicación:** `apps/web/src/app/login/page.tsx:27`, `app/register/page.tsx:32`, `components/auth/GoogleButton.tsx:31`, `components/profile/DeleteAccountDialog.tsx:51`, `components/profile/PasswordRow.tsx:58` (muestran `err.message` tal cual); mensajes en `apps/api/src/modules/*/*.service.ts`.
 - **Riesgo:** 4/10
@@ -77,14 +85,6 @@ changelog y se borra de aquí.
 - **Impacto futuro:** la última vez, la racha y las sugerencias comparan pesos de series a una mano con series a dos manos.
 - **Sugerencia:** marcar lo unilateral en la serie (como el equipo), no como ejercicio aparte.
 - **Fecha:** 2026-10-12 · **Estado:** Abierto
-
-## [TD-088] Código con partes en español
-- **Ubicación:** `apps/api` y `apps/web` (identificadores, mensajes de log, nombres de tests, migraciones de datos)
-- **Riesgo:** 3/10
-- **Problema:** la regla es que todo el código va en inglés y solo lo que ve el usuario va en español, pero hay partes en español (por ejemplo, nombres de tests como `sin sesion responde 401` y la migración `saneo_catalogo_ejercicios`).
-- **Impacto futuro:** mezcla de idiomas que confunde a quien lea el código y choca con la capa de idioma de los ejercicios (RM-086).
-- **Sugerencia:** revisar ambas apps y pasar a inglés todo lo que no sea texto de UI; las migraciones ya aplicadas no se renombran.
-- **Fecha:** 2026-10-11 · **Estado:** En progreso (2026-10-23)
 
 ## [TD-081] Rutinas hace scroll con varias rutinas
 - **Ubicación:** `apps/web/src/app/routines/page.tsx`

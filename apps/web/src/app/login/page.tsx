@@ -22,7 +22,6 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(email.trim().toLowerCase(), password.trim());
-      // El guard de AuthProvider redirige al home al haber sesión.
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo ingresar");
       setSubmitting(false);
@@ -31,7 +30,6 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-dvh flex flex-col px-6 pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] max-w-md mx-auto w-full">
-      {/* Cinta hazard + hero */}
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
         <p className="kicker text-primary text-[0.7rem]">

@@ -46,7 +46,7 @@ beforeEach(() => {
 });
 
 describe("MyPublications", () => {
-  it("muestra tus publicaciones con su tipo y contadores", async () => {
+  it("shows your publications with their kind and counters", async () => {
     render(<Harness />);
 
     const card = (await screen.findByText("Espalda Cbum")).closest("a")!;
@@ -55,7 +55,7 @@ describe("MyPublications", () => {
     expect(screen.getByLabelText("copias").textContent).toBe("3");
   });
 
-  it("avisa lo que se pierde y elimina la publicación", async () => {
+  it("warns what is lost and deletes the publication", async () => {
     vi.mocked(api.delete).mockResolvedValue({ id: "pub-1" });
     render(<Harness />);
     await screen.findByText("Espalda Cbum");
@@ -80,7 +80,7 @@ describe("MyPublications", () => {
     expect(onChange).toHaveBeenLastCalledWith([]);
   });
 
-  it("renombra sin tocar el slug", async () => {
+  it("renames without touching the slug", async () => {
     vi.mocked(api.patch).mockResolvedValue({
       id: "pub-1",
       name: "Espalda Cbum V2",

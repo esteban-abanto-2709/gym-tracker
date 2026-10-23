@@ -49,7 +49,7 @@ beforeEach(() => {
 });
 
 describe("PublicationDetail", () => {
-  it("muestra el programa publicado con su autor y contadores", async () => {
+  it("shows the published program with its author and counters", async () => {
     render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
 
     expect(await screen.findByText("Upper/Lower")).toBeTruthy();
@@ -60,7 +60,7 @@ describe("PublicationDetail", () => {
     expect(api.get).toHaveBeenCalledWith("/explore/programs/upper-lower");
   });
 
-  it("copia el programa entero y va a Hoy si quedó activo", async () => {
+  it("copies the whole program and goes to Today if it became active", async () => {
     vi.mocked(api.post).mockResolvedValue({ program: {}, activated: true });
     render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
     await screen.findByText("Upper/Lower");
@@ -74,7 +74,7 @@ describe("PublicationDetail", () => {
     );
   });
 
-  it("copia solo una rutina del programa", async () => {
+  it("copies a single routine of the program", async () => {
     vi.mocked(api.post).mockResolvedValue({ routine: {} });
     render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
     await screen.findByText("Upper/Lower");
@@ -90,7 +90,7 @@ describe("PublicationDetail", () => {
     );
   });
 
-  it("avisa si la publicación ya no existe", async () => {
+  it("warns when the publication no longer exists", async () => {
     vi.mocked(api.get).mockRejectedValue(new Error("Not found"));
     render(<PublicationDetail kind="ROUTINE" slug="borrada" />);
 

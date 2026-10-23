@@ -17,7 +17,7 @@ afterEach(() => {
 });
 
 describe("ShareButton", () => {
-  it("abre el menú de compartir del teléfono con el link", async () => {
+  it("opens the phone share sheet with the link", async () => {
     const share = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "share", {
       value: share,
@@ -32,7 +32,7 @@ describe("ShareButton", () => {
     );
   });
 
-  it("sin menú de compartir copia el link", async () => {
+  it("copies the link without a share sheet", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {
       value: { writeText },
@@ -48,7 +48,7 @@ describe("ShareButton", () => {
     expect(writeText).toHaveBeenCalledWith(url);
   });
 
-  it("si el navegador no deja copiar, muestra el link", async () => {
+  it("shows the link when the browser cannot copy", async () => {
     Object.defineProperty(navigator, "clipboard", {
       value: { writeText: vi.fn().mockRejectedValue(new Error("denied")) },
       configurable: true,

@@ -34,7 +34,7 @@ const seriesRows = (markdown: string) =>
     .filter((l) => /^\d{4}-/.test(l));
 
 describe("buildExport", () => {
-  it("usa la fecha y hora local, ordena y filtra por el rango pedido", () => {
+  it("uses local date and time, sorts and filters by the requested range", () => {
     const { markdown, stats } = buildExport({
       ...base,
       workouts: [
@@ -55,7 +55,7 @@ describe("buildExport", () => {
     expect(markdown).toContain("exportado 2026-10-09 18:40 (America/Lima)");
   });
 
-  it("deja vacio lo que no aplica y escapa notas con comas y comillas", () => {
+  it("leaves blank what does not apply and escapes notes with commas and quotes", () => {
     const { markdown } = buildExport({
       ...base,
       workouts: [
@@ -78,7 +78,7 @@ describe("buildExport", () => {
     ]);
   });
 
-  it("incluye la ultima medida anterior como punto de partida y la edad", () => {
+  it("includes the last earlier measurement as a starting point and the age", () => {
     const { markdown } = buildExport({
       ...base,
       birthDate: "2000-10-10",
@@ -104,7 +104,7 @@ describe("buildExport", () => {
     expect(markdown).toContain("No hay series registradas en este período.");
   });
 
-  it("sin medidas ni nacimiento lo dice en vez de dejar huecos", () => {
+  it("says so instead of leaving gaps without measurements or birth date", () => {
     const { markdown } = buildExport({ ...base, workouts: [] });
 
     expect(markdown).toContain("- Edad: no registrada");

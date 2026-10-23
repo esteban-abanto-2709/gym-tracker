@@ -20,7 +20,7 @@ beforeEach(() => {
 });
 
 describe("LikeButton", () => {
-  it("suma al instante y se queda con lo que dice el servidor", async () => {
+  it("adds instantly and keeps what the server says", async () => {
     let resolve!: (value: unknown) => void;
     vi.mocked(api.put).mockReturnValue(new Promise((r) => (resolve = r)));
     render(<LikeButton {...props} />);
@@ -39,7 +39,7 @@ describe("LikeButton", () => {
     ).toBe("true");
   });
 
-  it("quita el me gusta", async () => {
+  it("removes the like", async () => {
     vi.mocked(api.delete).mockResolvedValue({ likeCount: 3, likedByMe: false });
     render(<LikeButton {...props} likedByMe />);
 
@@ -51,7 +51,7 @@ describe("LikeButton", () => {
     );
   });
 
-  it("vuelve atrás si falla la red", async () => {
+  it("reverts when the network fails", async () => {
     vi.mocked(api.put).mockRejectedValue(new Error("offline"));
     render(<LikeButton {...props} />);
 
@@ -63,7 +63,7 @@ describe("LikeButton", () => {
     expect(screen.getByText("4 me gusta")).toBeTruthy();
   });
 
-  it("en tu publicación solo muestra el número", () => {
+  it("shows only the count on your own publication", () => {
     render(<LikeButton {...props} isMine />);
 
     expect(screen.getByText("4 me gusta")).toBeTruthy();

@@ -51,7 +51,7 @@ beforeEach(() => {
 });
 
 describe("ExploreBrowser", () => {
-  it("lista programas con autor, rutinas y contadores", async () => {
+  it("lists programs with author, routines and counters", async () => {
     render(<ExploreBrowser initialTab="programs" />);
 
     const card = (await screen.findByText("Upper/Lower")).closest("a")!;
@@ -64,7 +64,7 @@ describe("ExploreBrowser", () => {
     expect(api.get).toHaveBeenCalledWith("/explore/programs?sort=likes");
   });
 
-  it("cambia a rutinas y marca las tuyas", async () => {
+  it("switches to routines and marks yours", async () => {
     render(<ExploreBrowser initialTab="programs" />);
     await screen.findByText("Upper/Lower");
 
@@ -79,7 +79,7 @@ describe("ExploreBrowser", () => {
     });
   });
 
-  it("pide el orden elegido", async () => {
+  it("requests the chosen sort", async () => {
     render(<ExploreBrowser initialTab="programs" />);
     await screen.findByText("Upper/Lower");
 
@@ -90,7 +90,7 @@ describe("ExploreBrowser", () => {
     );
   });
 
-  it("la pestaña Mías trae tus publicaciones sin el orden", async () => {
+  it("the Mine tab loads your publications without the sort", async () => {
     render(<ExploreBrowser initialTab="mine" />);
 
     expect(await screen.findByText("Espalda Cbum")).toBeTruthy();
@@ -98,7 +98,7 @@ describe("ExploreBrowser", () => {
     expect(screen.queryByRole("button", { name: "Populares" })).toBeNull();
   });
 
-  it("sin publicaciones propias no muestra la pestaña Mías", async () => {
+  it("hides the Mine tab without publications of your own", async () => {
     vi.mocked(api.get).mockImplementation(async (url: string) =>
       url === "/publications/mine" ? [] : [item({})],
     );
@@ -113,7 +113,7 @@ describe("ExploreBrowser", () => {
     ).toBe("true");
   });
 
-  it("al eliminar tu última publicación vuelve a Programas sin la pestaña Mías", async () => {
+  it("deleting your last publication goes back to Programs without the Mine tab", async () => {
     vi.mocked(api.delete).mockResolvedValue({ id: "r-1" });
     render(<ExploreBrowser initialTab="mine" />);
     await screen.findByText("Espalda Cbum");

@@ -1,5 +1,3 @@
-// Tipos centralizados del dominio Gym Tracker
-
 export type Locale = "es" | "en";
 
 export type Theme = "system" | "light" | "dark";

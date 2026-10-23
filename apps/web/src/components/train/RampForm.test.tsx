@@ -38,7 +38,7 @@ const props = {
 };
 
 describe("RampForm", () => {
-  it("muestra todos los escalones con el peso de la ultima vez o el porcentaje", async () => {
+  it("shows every step with last time's weight or the percentage", async () => {
     get.mockImplementation(async (url: string) =>
       url.includes("step=2")
         ? rec({ lastWeight: 45, workingWeight: 60 })
@@ -50,7 +50,7 @@ describe("RampForm", () => {
     await waitFor(() => expect(weights()).toEqual(["30", "45", "51"]));
   });
 
-  it("si el efectivo subio, la etiqueta propone el peso y al tocarla lo aplica", async () => {
+  it("when the working weight went up, the tag suggests it and applies it on tap", async () => {
     get.mockImplementation(async (url: string) =>
       url.includes("step=1")
         ? rec({ lastWeight: 30, workingWeight: 70 })
@@ -67,7 +67,7 @@ describe("RampForm", () => {
     expect(screen.queryByRole("button", { name: /^Sube a/ })).toBeNull();
   });
 
-  it("un toque registra todos los escalones como rampa", async () => {
+  it("one tap logs every step as a ramp", async () => {
     get.mockResolvedValue(rec({ workingWeight: 100 }));
     const onLog = vi.fn().mockResolvedValue(undefined);
 

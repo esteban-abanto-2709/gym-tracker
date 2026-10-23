@@ -15,13 +15,13 @@ const saveSession = (startedAt: string) =>
   );
 
 describe("ContinueRoutineBanner", () => {
-  it("sin sesion activa no se muestra", () => {
+  it("is hidden without an active session", () => {
     const { container } = render(<ContinueRoutineBanner />);
 
     expect(container.innerHTML).toBe("");
   });
 
-  it("con sesion de hoy invita a continuar la rutina", () => {
+  it("invites to continue the routine with a session from today", () => {
     saveSession(new Date().toISOString());
 
     render(<ContinueRoutineBanner />);
@@ -30,7 +30,7 @@ describe("ContinueRoutineBanner", () => {
     expect(screen.getByRole("link").getAttribute("href")).toBe("/train");
   });
 
-  it("con sesion de otro dia no se muestra", () => {
+  it("is hidden with a session from another day", () => {
     saveSession("2020-01-01T10:00:00Z");
 
     const { container } = render(<ContinueRoutineBanner />);

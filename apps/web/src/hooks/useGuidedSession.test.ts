@@ -52,7 +52,7 @@ const saveSession = (overrides: Partial<ActiveSession> = {}) =>
   );
 
 describe("useGuidedSession", () => {
-  it("sin sesion activa termina de cargar sin rutina", async () => {
+  it("finishes loading without a routine when there is no active session", async () => {
     const { result } = renderHook(() => useGuidedSession());
 
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -61,7 +61,7 @@ describe("useGuidedSession", () => {
     expect(api.get).not.toHaveBeenCalled();
   });
 
-  it("retoma la sesion guardada donde se dejo", async () => {
+  it("resumes the saved session where it was left", async () => {
     saveSession();
     vi.mocked(api.get).mockResolvedValue(routine);
 
@@ -79,7 +79,7 @@ describe("useGuidedSession", () => {
     expect(result.current.totalCount).toBe(2);
   });
 
-  it("registrar una serie guarda la hora para contar el descanso", async () => {
+  it("logging a set stores the time to count the rest", async () => {
     saveSession();
     vi.mocked(api.get).mockResolvedValue(routine);
     vi.mocked(api.post).mockResolvedValue(undefined);
@@ -96,7 +96,7 @@ describe("useGuidedSession", () => {
     expect(result.current.session?.lastSetAt).toBe(lastSetAt);
   });
 
-  describe("siguiente ejercicio", () => {
+  describe("next exercise", () => {
     const item = (id: string, position: number, sets: number) => ({
       exerciseId: id,
       exercise: { id, name: id },
@@ -123,26 +123,26 @@ describe("useGuidedSession", () => {
       return result.current.nextItem?.exerciseId ?? null;
     };
 
-    it("vuelve al pendiente de atras si ya no queda nada adelante", async () => {
+    it("goes back to an earlier pending one when nothing is left ahead", async () => {
       const twoItems = { ...legs, items: legs.items.slice(0, 2) };
       expect(
         await nextFor(twoItems, { currentIndex: 1, progress: { 1: 3 } }),
       ).toBe("hack");
     });
 
-    it("no recomienda un ejercicio ya terminado", async () => {
+    it("does not recommend a finished exercise", async () => {
       expect(
         await nextFor(legs, { currentIndex: 0, progress: { 0: 3, 1: 3 } }),
       ).toBe("leg-extension");
     });
 
-    it("sigue hacia adelante antes de volver al que se dejo atras", async () => {
+    it("moves forward before going back to the one left behind", async () => {
       expect(await nextFor(legs, { currentIndex: 1, progress: { 1: 3 } })).toBe(
         "leg-extension",
       );
     });
 
-    it("cuenta los ejercicios que faltan, sin los saltados", async () => {
+    it("counts the remaining exercises, without the skipped ones", async () => {
       saveSession({
         currentIndex: 1,
         progress: { 0: 1, 1: 3 },
@@ -154,7 +154,7 @@ describe("useGuidedSession", () => {
       expect(result.current.remainingCount).toBe(1);
     });
 
-    it("un ejercicio a medias sigue pendiente", async () => {
+    it("a half-done exercise stays pending", async () => {
       expect(
         await nextFor(legs, {
           currentIndex: 2,
@@ -163,7 +163,7 @@ describe("useGuidedSession", () => {
       ).toBe("hack");
     });
 
-    it("no recomienda los saltados y sin pendientes no hay siguiente", async () => {
+    it("does not recommend skipped ones and has no next without pending ones", async () => {
       expect(
         await nextFor(legs, {
           currentIndex: 1,
@@ -173,7 +173,7 @@ describe("useGuidedSession", () => {
       ).toBeNull();
     });
 
-    it("un ejercicio libre cuenta como hecho con una serie", async () => {
+    it("a free exercise counts as done with one set", async () => {
       const withFree = {
         ...legs,
         items: [item("free", 0, 0), ...legs.items.slice(1)],
@@ -192,7 +192,7 @@ describe("useGuidedSession", () => {
       ).toBe("free");
     });
 
-    describe("al registrar", () => {
+    describe("on logging", () => {
       const start = async (r: Routine, overrides: Partial<ActiveSession>) => {
         saveSession(overrides);
         vi.mocked(api.get).mockResolvedValue(r);
@@ -203,7 +203,7 @@ describe("useGuidedSession", () => {
       };
       const set = { weightKg: 60, reps: 8 };
 
-      it("se queda en el ejercicio si le faltan series", async () => {
+      it("stays on the exercise while it has sets left", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         await act(() => result.current.logSet(set));
         expect(result.current.currentIndex).toBe(0);
@@ -212,7 +212,7 @@ describe("useGuidedSession", () => {
         expect(result.current.flash).toBeNull();
       });
 
-      it("con la ultima serie pasa solo al siguiente pendiente", async () => {
+      it("moves on to the next pending one after the last set", async () => {
         const result = await start(legs, {
           currentIndex: 0,
           progress: { 0: 2, 1: 3 },
@@ -222,7 +222,7 @@ describe("useGuidedSession", () => {
         expect(result.current.phase).toBe("logging");
       });
 
-      it("un ejercicio libre se queda para seguir registrando", async () => {
+      it("a free exercise stays to keep logging", async () => {
         const withFree = {
           ...legs,
           items: [item("free", 0, 0), ...legs.items.slice(1)],
@@ -233,7 +233,7 @@ describe("useGuidedSession", () => {
         expect(result.current.nextItem?.exerciseId).toBe("hip-thrust");
       });
 
-      it("sin pendientes termina en la pantalla final", async () => {
+      it("ends on the final screen without pending ones", async () => {
         const result = await start(legs, {
           currentIndex: 2,
           progress: { 0: 3, 1: 3, 2: 2 },
@@ -242,7 +242,7 @@ describe("useGuidedSession", () => {
         expect(result.current.phase).toBe("done");
       });
 
-      it("dos toques seguidos guardan una sola serie", async () => {
+      it("two quick taps save a single set", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         vi.mocked(api.post).mockClear();
         await act(() =>
@@ -252,7 +252,7 @@ describe("useGuidedSession", () => {
         expect(result.current.setsDoneForCurrent).toBe(1);
       });
 
-      it("avanza sin esperar a que responda el servidor", async () => {
+      it("advances without waiting for the server", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         let answer: (v: unknown) => void = () => {};
         vi.mocked(api.post).mockReturnValueOnce(
@@ -265,7 +265,7 @@ describe("useGuidedSession", () => {
         await waitFor(() => expect(readPendingSets()).toHaveLength(0));
       });
 
-      it("si falla el envio avanza igual y la serie queda pendiente", async () => {
+      it("advances anyway when sending fails and the set stays pending", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         vi.mocked(api.post).mockRejectedValueOnce(new Error("offline"));
         await act(() => result.current.logSet(set));
@@ -274,7 +274,7 @@ describe("useGuidedSession", () => {
         expect(readPendingSets()).toHaveLength(1);
       });
 
-      it("al terminar con pendientes ofrece reintentar con el mismo clientId", async () => {
+      it("finishing with pending sets offers a retry with the same clientId", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         vi.mocked(api.post).mockClear();
         vi.mocked(api.post).mockRejectedValueOnce(new Error("offline"));
@@ -298,7 +298,7 @@ describe("useGuidedSession", () => {
         expect(sent).toEqual([clientId, clientId, clientId]);
       });
 
-      it("descartar borra las pendientes y cierra la sesion", async () => {
+      it("discarding drops the pending sets and closes the session", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         vi.mocked(api.post).mockRejectedValue(new Error("offline"));
         await act(() => result.current.logSet(set));
@@ -310,7 +310,7 @@ describe("useGuidedSession", () => {
         expect(readActiveSession()).toBeNull();
       });
 
-      it("al abrir envia lo que quedo pendiente de antes", async () => {
+      it("sends what was left pending on open", async () => {
         addPendingSets([
           {
             clientId: "c-1",
@@ -338,7 +338,7 @@ describe("useGuidedSession", () => {
     });
   });
 
-  it("una sesion de otro dia no se retoma", async () => {
+  it("does not resume a session from another day", async () => {
     saveSession({ startedAt: "2020-01-01T10:00:00Z" });
 
     const { result } = renderHook(() => useGuidedSession());
@@ -348,7 +348,7 @@ describe("useGuidedSession", () => {
     expect(readActiveSession()).toBeNull();
   });
 
-  it("si la rutina ya no existe descarta la sesion", async () => {
+  it("discards the session when the routine no longer exists", async () => {
     saveSession();
     vi.mocked(api.get).mockRejectedValue(new Error("Not found"));
 

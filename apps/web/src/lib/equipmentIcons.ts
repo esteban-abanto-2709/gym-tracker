@@ -7,7 +7,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-// Iconos por id fijo de Equipment (los ids vienen sembrados en la migración).
+// Keyed by the fixed Equipment ids seeded in the migration.
 const ICONS: Record<string, LucideIcon> = {
   barra: Dumbbell,
   polea: Cable,

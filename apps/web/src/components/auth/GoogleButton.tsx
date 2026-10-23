@@ -24,7 +24,6 @@ export function GoogleButton() {
             setError(null);
             try {
               if (res.credential) await loginWithGoogle(res.credential);
-              // El guard de AuthProvider redirige al home al haber sesión.
             } catch (err) {
               setError(
                 err instanceof Error

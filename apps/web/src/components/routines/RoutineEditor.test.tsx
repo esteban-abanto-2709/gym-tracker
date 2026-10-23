@@ -33,7 +33,7 @@ const nameInput = () => screen.getByLabelText("Nombre de la rutina");
 const warning = "Ya tienes una rutina con ese nombre.";
 
 describe("RoutineEditor", () => {
-  it("avisa si el nombre ya es de otra rutina tuya", async () => {
+  it("warns when the name belongs to another routine of yours", async () => {
     render(<RoutineEditor />);
     await screen.findByLabelText("Nombre de la rutina");
 
@@ -42,7 +42,7 @@ describe("RoutineEditor", () => {
     expect(await screen.findByText(warning)).toBeTruthy();
   });
 
-  it("no avisa al editar una rutina que conserva su nombre", async () => {
+  it("does not warn when editing a routine that keeps its name", async () => {
     render(<RoutineEditor routineId="r-torso" />);
 
     expect(await screen.findByDisplayValue("Torso A")).toBeTruthy();

@@ -46,7 +46,7 @@ const loadHistory = async () => {
 };
 
 describe("useWorkoutHistory", () => {
-  it("abre en el dia mas reciente", async () => {
+  it("opens on the most recent day", async () => {
     const { result } = await loadHistory();
 
     expect(result.current.dates).toEqual(["2026-10-05", "2026-10-03"]);
@@ -54,7 +54,7 @@ describe("useWorkoutHistory", () => {
     expect(result.current.currentWorkouts).toEqual([newest]);
   });
 
-  it("al borrar el ultimo set del dia elegido salta a un dia que exista", async () => {
+  it("deleting the last set of the chosen day jumps to a day that exists", async () => {
     const { result } = await loadHistory();
 
     act(() => result.current.setDeletingWorkout(newest));
@@ -67,7 +67,7 @@ describe("useWorkoutHistory", () => {
     );
   });
 
-  it("al tocar otro dia pide solo ese dia", async () => {
+  it("tapping another day requests only that day", async () => {
     const { result } = await loadHistory();
 
     act(() => result.current.setSelectedDate("2026-10-03"));
@@ -78,7 +78,7 @@ describe("useWorkoutHistory", () => {
     expect(vi.mocked(api.get).mock.lastCall?.[0]).toMatch(/^\/workouts\?from=/);
   });
 
-  it("al borrar un set de otro dia mantiene el dia elegido", async () => {
+  it("deleting a set from another day keeps the chosen day", async () => {
     const { result } = await loadHistory();
 
     act(() => result.current.setDeletingWorkout(older));
@@ -87,7 +87,7 @@ describe("useWorkoutHistory", () => {
     expect(result.current.selectedDate).toBe("2026-10-05");
   });
 
-  it("sin historial no elige dia", async () => {
+  it("picks no day without history", async () => {
     mockApi([], {});
     const { result } = renderHook(() => useWorkoutHistory());
     await waitFor(() => expect(result.current.loading).toBe(false));

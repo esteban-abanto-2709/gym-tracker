@@ -28,8 +28,6 @@ interface SessionMapProps {
   onClose: () => void;
 }
 
-// Punto de estado (estilo del mock): rojo = actual, lima = hecho, ámbar = a
-// medias, tenue = pendiente, borde = saltado.
 function StatusDot({ item }: { item: SessionMapItem }) {
   const color =
     item.status === "skipped"

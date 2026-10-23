@@ -1,6 +1,4 @@
-// Recuerda el último equipo usado por ejercicio (opción B: default = último uso).
-// Vive solo en el cliente; un dispositivo nuevo arranca en blanco (null = "sin
-// especificar") hasta el primer registro. ponytail: localStorage, no DB.
+// ponytail: last equipment per exercise lives in localStorage, so a new device starts blank.
 const KEY = "gymtrack-equipment-by-exercise";
 
 function readMap(): Record<string, string> {

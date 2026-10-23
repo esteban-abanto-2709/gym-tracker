@@ -29,7 +29,6 @@ export function EquipmentSelector({
             <button
               key={eq.id}
               type="button"
-              // Tocar el seleccionado lo deselecciona (queda "sin especificar").
               onClick={() => onChange(selected ? null : eq.id)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-bold transition-all ${
                 selected

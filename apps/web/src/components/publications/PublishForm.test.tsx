@@ -46,7 +46,7 @@ beforeEach(() => {
 });
 
 describe("PublishForm", () => {
-  it("sugiere el slug desde el nombre y publica la rutina", async () => {
+  it("suggests the slug from the name and publishes the routine", async () => {
     serve();
     vi.mocked(api.post).mockResolvedValue({});
     render(<PublishForm kind="ROUTINE" sourceId="r-back" />);
@@ -69,7 +69,7 @@ describe("PublishForm", () => {
     });
   });
 
-  it("avisa si el slug ya está en uso y no deja publicar", async () => {
+  it("warns when the slug is taken and blocks publishing", async () => {
     serve(["espalda-cbum"]);
     render(<PublishForm kind="ROUTINE" sourceId="r-back" />);
 
@@ -79,7 +79,7 @@ describe("PublishForm", () => {
     expect(publishButton().disabled).toBe(true);
   });
 
-  it("rechaza un slug inválido sin consultar a la API", async () => {
+  it("rejects an invalid slug without calling the API", async () => {
     serve();
     render(<PublishForm kind="ROUTINE" sourceId="r-back" />);
     await screen.findByDisplayValue("espalda-cbum");

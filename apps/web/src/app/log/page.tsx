@@ -17,7 +17,6 @@ import { convertWeight } from "@/lib/units";
 import { Check, Loader2 } from "lucide-react";
 
 function LogContent() {
-  // --- Hooks de negocio ---
   const {
     exercises,
     loadingExercises,
@@ -111,7 +110,6 @@ function LogContent() {
             <MeasureSelector value={measure} onChange={changeMeasure} />
           )}
 
-          {/* Equipo (aparece al elegir ejercicio; default = tu último uso) */}
           {selectedExercise && measure !== "time" && (
             <EquipmentSelector
               equipment={equipment}
@@ -142,7 +140,6 @@ function LogContent() {
               />
             </div>
           ) : (
-            /* Peso (si aplica) y Reps en una fila */
             <div
               className={`grid gap-4 ${
                 measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1"

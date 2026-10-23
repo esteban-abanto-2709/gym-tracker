@@ -5,8 +5,6 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 
-// Oswald: display condensado (títulos, números, botones). Space Grotesk:
-// cuerpo/UI. Space Mono: etiquetas "kicker". Ver globals.css (@theme inline).
 const oswald = localFont({
   src: "./fonts/oswald.woff2",
   variable: "--font-oswald",
