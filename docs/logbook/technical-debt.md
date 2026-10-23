@@ -22,14 +22,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** decidirlo al hacer TD-091 / RM-090, que ya tocan esa tabla: o se migran los ids a inglés en el mismo paso, o se acepta que los ids existentes quedan y los nuevos van en inglés.
 - **Fecha:** 2026-10-23 · **Estado:** Abierto
 
-## [TD-129] Los errores de la API llegan en inglés a la interfaz
-- **Ubicación:** `apps/web/src/app/login/page.tsx:27`, `app/register/page.tsx:32`, `components/auth/GoogleButton.tsx:31`, `components/profile/DeleteAccountDialog.tsx:51`, `components/profile/PasswordRow.tsx:58` (muestran `err.message` tal cual); mensajes en `apps/api/src/modules/*/*.service.ts`.
-- **Riesgo:** 4/10
-- **Problema:** la interfaz muestra el mensaje que devuelve la API, que está en inglés (`Invalid credentials`, `Email already registered`, `Current password does not match`…), salvo `Cuenta de Google no verificada` en `auth.service.ts:66`, que está en español. Quien se equivoca de contraseña ve un error en inglés en una app en español.
-- **Impacto futuro:** confunde justo a quien entra por primera vez y bloquea pasar a inglés la excepción de Google (TD-088) sin cambiar lo que ve el usuario.
-- **Sugerencia:** que la API devuelva un código estable por error (como ya pasa con `Slug already taken` en `PublishForm`) y que el web lo traduzca a un texto en español; encaja después con RM-093.
-- **Fecha:** 2026-10-23 · **Estado:** En progreso (2026-10-23)
-
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
 - **Riesgo:** 4/10

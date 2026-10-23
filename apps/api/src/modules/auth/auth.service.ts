@@ -63,7 +63,7 @@ export class AuthService {
     });
     const payload = ticket.getPayload();
     if (!payload?.email || !payload.email_verified) {
-      throw new UnauthorizedException('Cuenta de Google no verificada');
+      throw new UnauthorizedException('Google account not verified');
     }
     const email = payload.email.trim().toLowerCase();
 

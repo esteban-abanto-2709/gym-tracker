@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-129] Los errores de la API llegan en inglés a la interfaz (2026-10-23 10:55)
+Login, registro, Google, cambiar contraseña y borrar cuenta muestran un texto en español según el código HTTP, ya no el mensaje de la API; suma aviso de demasiados intentos (429). La excepción de Google de la API queda en inglés.
+
 ## [TD-088] Código con partes en español (2026-10-23 10:13)
 Nombres de tests y datos de prueba de la API y el web pasados a inglés; los comentarios en español se borraron salvo cuatro que explican algo que el código no dice, ahora en inglés. Quedan fuera las migraciones aplicadas, el texto de la interfaz (TD-129) y los ids de los equipos (TD-130).
 
