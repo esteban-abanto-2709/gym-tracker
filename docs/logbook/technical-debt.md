@@ -28,7 +28,7 @@ changelog y se borra de aquí.
 - **Problema:** la interfaz muestra el mensaje que devuelve la API, que está en inglés (`Invalid credentials`, `Email already registered`, `Current password does not match`…), salvo `Cuenta de Google no verificada` en `auth.service.ts:66`, que está en español. Quien se equivoca de contraseña ve un error en inglés en una app en español.
 - **Impacto futuro:** confunde justo a quien entra por primera vez y bloquea pasar a inglés la excepción de Google (TD-088) sin cambiar lo que ve el usuario.
 - **Sugerencia:** que la API devuelva un código estable por error (como ya pasa con `Slug already taken` en `PublishForm`) y que el web lo traduzca a un texto en español; encaja después con RM-093.
-- **Fecha:** 2026-10-23 · **Estado:** Abierto
+- **Fecha:** 2026-10-23 · **Estado:** En progreso (2026-10-23)
 
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)

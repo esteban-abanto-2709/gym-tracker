@@ -49,18 +49,28 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 // Bare fetch for the auth endpoints: a 401 here means "logged out / bad
 // credentials", not "redirect", so it must bypass the ApiClient 401 handler.
-async function authFetch<T>(endpoint: string, body?: unknown): Promise<T> {
+async function authFetch<T>(
+  endpoint: string,
+  body?: unknown,
+  copy?: ErrorCopy,
+): Promise<T> {
   const res = await fetch(`/api${endpoint}`, {
     method: body ? "POST" : "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: body ? JSON.stringify(body) : undefined,
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: "Error" }));
-    throw new Error(err.message || "Request failed");
-  }
+  if (!res.ok) throw authError(res.status, copy);
   return res.json();
+}
+
+type ErrorCopy = { fallback: string } & Partial<Record<number, string>>;
+
+const TOO_MANY_ATTEMPTS =
+  "Demasiados intentos. Espera un minuto y vuelve a probar.";
+
+function authError(status: number, copy?: ErrorCopy) {
+  return new Error(copy?.[status] ?? copy?.fallback ?? "Request failed");
 }
 
 function FullScreenLoader() {
@@ -87,18 +97,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     setUser(
-      await authFetch<AuthUser>(routes.api.auth.login(), { email, password }),
+      await authFetch<AuthUser>(
+        routes.api.auth.login(),
+        { email, password },
+        {
+          401: "Correo o contraseña incorrectos.",
+          429: TOO_MANY_ATTEMPTS,
+          fallback: "No se pudo ingresar.",
+        },
+      ),
     );
   }, []);
 
   const register = useCallback(
     async (email: string, username: string, password: string) => {
       setUser(
-        await authFetch<AuthUser>(routes.api.auth.register(), {
-          email,
-          username,
-          password,
-        }),
+        await authFetch<AuthUser>(
+          routes.api.auth.register(),
+          { email, username, password },
+          {
+            400: "Revisa los datos e inténtalo de nuevo.",
+            409: "Ese correo ya tiene una cuenta.",
+            429: TOO_MANY_ATTEMPTS,
+            fallback: "No se pudo registrar.",
+          },
+        ),
       );
     },
     [],
@@ -106,7 +129,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithGoogle = useCallback(async (credential: string) => {
     setUser(
-      await authFetch<AuthUser>(routes.api.auth.google(), { credential }),
+      await authFetch<AuthUser>(
+        routes.api.auth.google(),
+        { credential },
+        {
+          401: "Tu cuenta de Google no tiene el correo verificado.",
+          fallback: "No se pudo ingresar con Google.",
+        },
+      ),
     );
   }, []);
 
@@ -125,12 +155,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(
-          res.status === 403
-            ? "La contraseña actual no es correcta."
-            : err.message || "No se pudo cambiar la contraseña",
-        );
+        throw authError(res.status, {
+          403: "La contraseña actual no es correcta.",
+          429: TOO_MANY_ATTEMPTS,
+          fallback: "No se pudo cambiar la contraseña.",
+        });
       }
       setUser(await res.json());
     },
@@ -146,12 +175,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify(confirmation),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(
-          res.status === 403
-            ? "No coincide. Revisa lo que escribiste."
-            : err.message || "No se pudo borrar la cuenta",
-        );
+        throw authError(res.status, {
+          403: "No coincide. Revisa lo que escribiste.",
+          429: TOO_MANY_ATTEMPTS,
+          fallback: "No se pudo borrar la cuenta.",
+        });
       }
       setUser(null);
       router.replace(routes.login());
