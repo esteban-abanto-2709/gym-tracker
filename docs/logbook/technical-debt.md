@@ -70,13 +70,13 @@ changelog y se borra de aquí.
 - **Sugerencia:** compactar las tarjetas o agrupar por programa, dejando los accesos arriba.
 - **Fecha:** 2026-10-09 · **Estado:** Abierto
 
-## [TD-070] TikTok en Android sin probar
+## [TD-135] TikTok en Android sin la app instalada, sin probar
 - **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama Android de `openTikTok`)
-- **Riesgo:** 4/10
-- **Problema:** en Android el botón de TikTok usa un `intent://` con el paquete de TikTok y `browser_fallback_url`, pero no se probó en ningún dispositivo. Faltan dos pruebas: con TikTok instalado debe abrir la app con la búsqueda; sin TikTok debe abrir la búsqueda en el navegador del sistema, no dentro de la PWA.
-- **Impacto futuro:** quien use Android puede tocar el botón y no pasar nada, o terminar en TikTok web dentro de la PWA.
-- **Sugerencia:** probar ambos casos desde la PWA instalada; si la app no acepta la ruta `/search`, buscar el esquema propio de TikTok en Android.
-- **Fecha:** 2026-10-07 · **Estado:** Abierto
+- **Riesgo:** 3/10
+- **Problema:** en Android el botón abre `intent://search?keyword=…` con el esquema `snssdk1233` y el paquete de TikTok, sin respaldo web; probado solo con TikTok instalado. Sin la app, lo esperable es que Android abra TikTok en la Play Store, fuera de la PWA.
+- **Impacto futuro:** si Android no hace eso, quien no tenga TikTok toca el botón y no obtiene nada o termina en una pantalla rara.
+- **Sugerencia:** probar desde la PWA instalada en un Android sin TikTok; no volver a `browser_fallback_url`, que carga la web dentro de la PWA.
+- **Fecha:** 2026-10-24 · **Estado:** Abierto
 
 ## [TD-069] TikTok en iOS sin la app instalada, sin probar
 - **Ubicación:** `apps/web/src/lib/tiktok.ts` (rama iOS de `openTikTok`)

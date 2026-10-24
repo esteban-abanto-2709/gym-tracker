@@ -18,8 +18,7 @@ export function openTikTok(query: string) {
   }
 
   if (/Android/i.test(navigator.userAgent)) {
-    const path = web.replace("https://", "");
-    window.location.href = `intent://${path}#Intent;scheme=https;package=com.zhiliaoapp.musically;S.browser_fallback_url=${encodeURIComponent(web)};end`;
+    window.location.href = `intent://search?keyword=${encodeURIComponent(query)}#Intent;scheme=snssdk1233;package=com.zhiliaoapp.musically;end`;
     return;
   }
 

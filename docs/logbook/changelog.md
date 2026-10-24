@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-070] TikTok en Android con la app (2026-10-24 13:06)
+La rama Android abre TikTok con su esquema propio (`intent://search` con `scheme=snssdk1233` y el paquete), sin respaldo web: el link `https` con respaldo cargaba TikTok web dentro de la PWA. Probado con la app instalada; sin la app queda en `TD-135`.
+
 ## [RM-134] Sesiones de entrenamiento (2026-10-24 11:05)
 Un entrenamiento es una `Session`: la web manda en cada serie su sesión, la hora real y la zona horaria, una sesión se cierra tras 3 horas sin series y la migración agrupó las series anteriores. La racha y el historial van por sesión, con `/sessions` paginado; en el benchmark la API pasa de 74 a ~995 peticiones/s.
 
