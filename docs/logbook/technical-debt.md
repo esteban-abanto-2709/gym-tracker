@@ -110,12 +110,12 @@ changelog y se borra de aquí.
 - **Sugerencia:** montar/inicializar GSI una sola vez (p. ej. un único punto de init a nivel layout, o memoizar), o asumirlo como artefacto dev-only de StrictMode.
 - **Fecha:** 2026-07-30 · **Estado:** Abierto
 
-## [TD-014] El "Reintentar" del toast puede duplicar un set o guardar datos viejos
-- **Ubicación:** `apps/web/src/hooks/useWorkoutForm.ts` (handleSubmit), `apps/web/src/components/routines/RoutineEditor.tsx` (handleSave). La sesión guiada ya no usa este reintento (RM-114).
+## [TD-014] El "Reintentar" del editor de rutinas puede guardar datos viejos
+- **Ubicación:** `apps/web/src/components/routines/RoutineEditor.tsx` (handleSave). El registro libre y la sesión guiada ya no usan este reintento: van por la cola de series con `clientId`.
 - **Riesgo:** 3/10
-- **Problema:** Los closures `run` que se pasan a `notifyError` (fix de TD-006) no re-arman el flag de loading al reintentar (sin spinner, y el botón de submit queda habilitado) y capturan el estado del momento del fallo. Durante los 6s del toast: si el usuario reenvía manualmente con éxito y luego toca "Reintentar", el set se registra dos veces; en el editor de rutinas, el retry guarda el payload capturado antes del fallo, descartando ediciones posteriores.
-- **Impacto futuro:** Sets duplicados esporádicos en el historial (difíciles de correlacionar con la causa) y ediciones de rutina perdidas tras un reintento.
-- **Sugerencia:** en el registro libre, mandar un `clientId` por serie como la sesión guiada (RM-114); en RoutineEditor, construir el payload dentro de `run`.
+- **Problema:** El closure `run` que se pasa a `notifyError` (fix de TD-006) no re-arma el flag de loading al reintentar (sin spinner, y el botón queda habilitado) y captura el estado del momento del fallo: durante los 6s del toast, el retry guarda el payload capturado antes del fallo y descarta las ediciones posteriores.
+- **Impacto futuro:** ediciones de rutina perdidas tras un reintento.
+- **Sugerencia:** construir el payload dentro de `run`.
 - **Fecha:** 2026-07-23 · **Estado:** Abierto
 
 ## [TD-012] Botón X del combobox enfoca el primer input de la página

@@ -39,6 +39,7 @@ const saveSession = (overrides: Partial<ActiveSession> = {}) =>
   localStorage.setItem(
     "gymtrack-active-routine",
     JSON.stringify({
+      sessionId: "s-upper",
       routineId: "r-upper",
       routineName: "Upper A",
       startedAt: new Date().toISOString(),
@@ -203,6 +204,21 @@ describe("useGuidedSession", () => {
       };
       const set = { weightKg: 60, reps: 8 };
 
+      it("each set carries its session, its time and the timezone", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockClear();
+        await act(() => result.current.logSet(set));
+        expect(api.post).toHaveBeenCalledWith(
+          "/workouts",
+          expect.objectContaining({
+            sessionId: "s-upper",
+            routineId: "r-upper",
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            performedAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
+          }),
+        );
+      });
+
       it("stays on the exercise while it has sets left", async () => {
         const result = await start(legs, { currentIndex: 0, progress: {} });
         await act(() => result.current.logSet(set));
@@ -318,6 +334,9 @@ describe("useGuidedSession", () => {
             body: {
               exerciseId: "ex-bench",
               routineId: "r-upper",
+              sessionId: "s-1",
+              performedAt: "2026-10-24T10:00:00.000Z",
+              timeZone: "America/Lima",
               reps: 8,
               weight: 60,
               durationSec: null,
@@ -338,7 +357,7 @@ describe("useGuidedSession", () => {
     });
   });
 
-  it("does not resume a session from another day", async () => {
+  it("does not resume a session idle for more than 3 hours", async () => {
     saveSession({ startedAt: "2020-01-01T10:00:00Z" });
 
     const { result } = renderHook(() => useGuidedSession());

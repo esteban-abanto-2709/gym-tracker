@@ -42,3 +42,8 @@ export function setMetrics(set: DisplayableSet): SetMetric[] {
       return [{ value: String(set.weight), unit: "kg" }, reps];
   }
 }
+
+export const describeSet = (set: DisplayableSet): string =>
+  setMetrics(set)
+    .map((m) => `${m.value} ${m.unit}`)
+    .join(" × ");

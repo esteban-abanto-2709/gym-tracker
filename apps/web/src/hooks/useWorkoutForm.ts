@@ -5,8 +5,15 @@ import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment, rememberEquipment } from "@/lib/equipmentMemory";
-import { notifyError } from "@/lib/notify";
-import type { SetMeasure } from "@/lib/setDisplay";
+import { describeSet, type SetMeasure } from "@/lib/setDisplay";
+import { freeSessionId } from "@/lib/activeSession";
+import {
+  type PendingSet,
+  addPendingSets,
+  flushPendingSets,
+  newClientId,
+  setMoment,
+} from "@/lib/pendingSets";
 
 const STORAGE_KEY = "gymtrack-last-set";
 
@@ -54,6 +61,13 @@ export function useWorkoutForm(
   const [measureLocked, setMeasureLocked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [repeatChecked, setRepeatChecked] = useState(false);
+
+  useEffect(() => {
+    const sync = () => void flushPendingSets();
+    sync();
+    window.addEventListener("online", sync);
+    return () => window.removeEventListener("online", sync);
+  }, []);
 
   const selectExercise = useCallback(
     (exercise: Exercise | null, repeatedMeasure?: SetMeasure) => {
@@ -123,7 +137,7 @@ export function useWorkoutForm(
 
   // Submit workout set
   const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
+    (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!selectedExercise) {
         alert("Por favor selecciona un ejercicio antes de guardar.");
@@ -136,46 +150,43 @@ export function useWorkoutForm(
       const weightKg =
         measure === "weight_reps" ? toKg(Number(weight), unit) : null;
 
-      const data =
-        measure === "time"
-          ? {
-              exerciseId: selectedExercise.id,
-              durationSec: Number(seconds),
-            }
-          : {
-              exerciseId: selectedExercise.id,
-              reps: Number(reps),
-              weight: weightKg,
-              equipmentId,
-            };
-
-      const run = async () => {
-        try {
-          await api.post(routes.api.workouts.create(), data);
-          if (measure !== "time")
-            rememberEquipment(selectedExercise.id, equipmentId);
-
-          // Save for "Repeat" flow from Success page (always in kg)
-          sessionStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({
-              exerciseId: selectedExercise.id,
-              weight: weightKg == null ? "" : String(weightKg),
-              reps: measure === "time" ? "1" : reps,
-              durationSec: measure === "time" ? seconds : "",
-              measure,
-            }),
-          );
-
-          router.push(routes.success());
-        } catch (error) {
-          console.error("Error saving workout:", error);
-          setLoading(false);
-          notifyError("No se pudo guardar el set", run);
-        }
+      const timed = measure === "time";
+      const metrics = {
+        weight: weightKg,
+        reps: timed ? null : Number(reps),
+        durationSec: timed ? Number(seconds) : null,
       };
+      const set: PendingSet = {
+        clientId: newClientId(),
+        label: `${selectedExercise.name} · ${describeSet(metrics)}`,
+        body: {
+          ...metrics,
+          exerciseId: selectedExercise.id,
+          routineId: null,
+          sessionId: freeSessionId(),
+          ...setMoment(),
+          equipmentId: timed ? null : equipmentId,
+          setType: "WORKING",
+          step: null,
+        },
+      };
+      addPendingSets([set]);
+      void flushPendingSets();
+      if (!timed) rememberEquipment(selectedExercise.id, equipmentId);
 
-      await run();
+      // Save for "Repeat" flow from Success page (always in kg)
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          exerciseId: selectedExercise.id,
+          weight: weightKg == null ? "" : String(weightKg),
+          reps: timed ? "1" : reps,
+          durationSec: timed ? seconds : "",
+          measure,
+        }),
+      );
+
+      router.push(routes.success());
     },
     [
       selectedExercise,

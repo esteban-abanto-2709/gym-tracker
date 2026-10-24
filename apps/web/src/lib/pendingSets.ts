@@ -8,7 +8,10 @@ export interface PendingSet {
   label: string;
   body: {
     exerciseId: string;
-    routineId: string;
+    routineId: string | null;
+    sessionId: string;
+    performedAt: string;
+    timeZone: string;
     reps: number | null;
     weight: number | null;
     durationSec: number | null;
@@ -26,6 +29,11 @@ export const newClientId = (): string =>
       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (Number(c) / 4)))
     ).toString(16),
   );
+
+export const setMoment = () => ({
+  performedAt: new Date().toISOString(),
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+});
 
 export function readPendingSets(): PendingSet[] {
   if (typeof window === "undefined") return [];
@@ -67,10 +75,19 @@ async function drain(): Promise<number> {
 }
 
 let flushing: Promise<number> | null = null;
+let requested = false;
 
 export function flushPendingSets(): Promise<number> {
+  requested = true;
   if (!flushing) {
-    flushing = drain().finally(() => {
+    flushing = (async () => {
+      let left = 0;
+      while (requested) {
+        requested = false;
+        left = await drain();
+      }
+      return left;
+    })().finally(() => {
       flushing = null;
     });
   }

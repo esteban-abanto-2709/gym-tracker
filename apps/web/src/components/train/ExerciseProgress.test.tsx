@@ -43,6 +43,9 @@ describe("ExerciseProgress", () => {
         body: {
           exerciseId: "ex",
           routineId: "r",
+          sessionId: "s-1",
+          performedAt: "2026-10-24T10:00:00.000Z",
+          timeZone: "America/Lima",
           reps: 8,
           weight: 50,
           durationSec: null,

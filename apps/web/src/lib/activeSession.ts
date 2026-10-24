@@ -1,6 +1,10 @@
 import type { Routine } from "@/lib/types";
+import { newClientId } from "@/lib/pendingSets";
 
 const KEY = "gymtrack-active-routine";
+const FREE_KEY = "gymtrack-free-session";
+
+export const SESSION_GAP_MS = 3 * 60 * 60 * 1000;
 
 export interface ActiveExtra {
   exerciseId: string;
@@ -8,6 +12,7 @@ export interface ActiveExtra {
 }
 
 export interface ActiveSession {
+  sessionId: string;
   routineId: string;
   routineName: string;
   startedAt: string; // ISO
@@ -19,14 +24,8 @@ export interface ActiveSession {
   lastSetAt?: string;
 }
 
-function isSameLocalDay(iso: string): boolean {
-  const d = new Date(iso);
-  const now = new Date();
-  return (
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate()
-  );
+function isStillOpen(lastActivity: string): boolean {
+  return Date.now() - new Date(lastActivity).getTime() <= SESSION_GAP_MS;
 }
 
 export function readActiveSession(): ActiveSession | null {
@@ -35,13 +34,13 @@ export function readActiveSession(): ActiveSession | null {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as ActiveSession;
-    // Auto-expire a session started on a previous day
-    if (!isSameLocalDay(parsed.startedAt)) {
+    if (!isStillOpen(parsed.lastSetAt ?? parsed.startedAt)) {
       window.localStorage.removeItem(KEY);
       return null;
     }
     return {
       ...parsed,
+      sessionId: parsed.sessionId ?? newClientId(),
       extras: parsed.extras ?? [],
       skipped: parsed.skipped ?? {},
       replacedBy: parsed.replacedBy ?? {},
@@ -63,6 +62,7 @@ export function clearActiveSession(): void {
 
 export function startSession(routine: Routine): ActiveSession {
   const session: ActiveSession = {
+    sessionId: newClientId(),
     routineId: routine.id,
     routineName: routine.name,
     startedAt: new Date().toISOString(),
@@ -78,4 +78,23 @@ export function startSession(routine: Routine): ActiveSession {
 
 export function totalSetsDone(progress: Record<number, number>): number {
   return Object.values(progress).reduce((sum, n) => sum + n, 0);
+}
+
+export function freeSessionId(): string {
+  const active = readActiveSession();
+  if (active) return active.sessionId;
+  try {
+    const raw = window.localStorage.getItem(FREE_KEY);
+    const free = raw
+      ? (JSON.parse(raw) as { id: string; lastSetAt: string })
+      : null;
+    const id = free && isStillOpen(free.lastSetAt) ? free.id : newClientId();
+    window.localStorage.setItem(
+      FREE_KEY,
+      JSON.stringify({ id, lastSetAt: new Date().toISOString() }),
+    );
+    return id;
+  } catch {
+    return newClientId();
+  }
 }

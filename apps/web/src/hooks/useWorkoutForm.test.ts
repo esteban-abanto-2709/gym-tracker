@@ -163,3 +163,45 @@ describe("useWorkoutForm: picking an exercise", () => {
     expect(result.current.measure).toBe("weight_reps");
   });
 });
+
+describe("useWorkoutForm: saving a free set", () => {
+  const submit = async () => {
+    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    act(() => result.current.setSelectedExercise(squat));
+    act(() => {
+      result.current.setWeight("60");
+      result.current.setReps("8");
+    });
+    vi.mocked(api.post).mockResolvedValue(undefined);
+    act(() =>
+      result.current.handleSubmit({
+        preventDefault: () => {},
+      } as React.FormEvent<HTMLFormElement>),
+    );
+    await waitFor(() => expect(api.post).toHaveBeenCalled());
+    return vi.mocked(api.post).mock.calls.at(-1)?.[1] as Record<
+      string,
+      unknown
+    >;
+  };
+
+  it("goes through the queue with a free session and its time", async () => {
+    const body = await submit();
+    expect(body).toMatchObject({
+      exerciseId: "ex-squat",
+      routineId: null,
+      reps: 8,
+      weight: 60,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    });
+    expect(body.sessionId).toEqual(expect.any(String));
+    expect(body.clientId).toEqual(expect.any(String));
+  });
+
+  it("two free sets in a row land in the same session", async () => {
+    const first = await submit();
+    const second = await submit();
+    expect(second.sessionId).toBe(first.sessionId);
+    expect(second.clientId).not.toBe(first.clientId);
+  });
+});

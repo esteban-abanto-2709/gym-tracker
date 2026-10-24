@@ -20,8 +20,9 @@ import {
   flushPendingSets,
   newClientId,
   readPendingSets,
+  setMoment,
 } from "@/lib/pendingSets";
-import { setMetrics } from "@/lib/setDisplay";
+import { describeSet } from "@/lib/setDisplay";
 
 type Phase = "logging" | "done";
 
@@ -48,23 +49,23 @@ const FLASH_MS = 1000;
 const FADE_MS = 250;
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const describeSet = ({ weightKg, reps, durationSec }: LogSetInput) =>
-  setMetrics({ weight: weightKg, reps, durationSec })
-    .map((m) => `${m.value} ${m.unit}`)
-    .join(" × ");
+const describeInput = ({ weightKg, reps, durationSec }: LogSetInput) =>
+  describeSet({ weight: weightKg, reps, durationSec });
 
 function pendingSet(
   exercise: { id: string; name: string },
-  routineId: string,
+  session: ActiveSession,
   input: LogSetInput,
 ): PendingSet {
   const { weightKg, reps, durationSec, equipmentId, setType, step } = input;
   return {
     clientId: newClientId(),
-    label: `${exercise.name} · ${describeSet(input)}`,
+    label: `${exercise.name} · ${describeInput(input)}`,
     body: {
       exerciseId: exercise.id,
-      routineId,
+      routineId: session.routineId,
+      sessionId: session.sessionId,
+      ...setMoment(),
       reps: reps ?? null,
       weight: weightKg ?? null,
       durationSec: durationSec ?? null,
@@ -236,8 +237,8 @@ export function useGuidedSession() {
       rememberEquipment(currentItem.exerciseId, input.equipmentId ?? null);
       await saveWithFlash(
         `Serie ${setNumber}`,
-        `${currentItem.exercise.name} · ${describeSet(input)}`,
-        [pendingSet(currentItem.exercise, session.routineId, input)],
+        `${currentItem.exercise.name} · ${describeInput(input)}`,
+        [pendingSet(currentItem.exercise, session, input)],
       );
     },
     [session, currentItem, progress, currentIndex, saveWithFlash],
@@ -253,9 +254,7 @@ export function useGuidedSession() {
       await saveWithFlash(
         "Rampa",
         `${currentItem.exercise.name} · ${sets.length} series`,
-        sets.map((set) =>
-          pendingSet(currentItem.exercise, session.routineId, set),
-        ),
+        sets.map((set) => pendingSet(currentItem.exercise, session, set)),
       );
     },
     [session, currentItem, saveWithFlash],
