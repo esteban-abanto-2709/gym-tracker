@@ -2,11 +2,13 @@ import { SetType } from '@prisma/client';
 import {
   IsEnum,
   IsInt,
+  IsISO8601,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
   IsUUID,
+  MaxLength,
   Min,
   ValidateBy,
   ValidateIf,
@@ -66,4 +68,17 @@ export class CreateWorkoutDto {
   @IsOptional()
   @IsUUID()
   clientId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  sessionId?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  performedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  timeZone?: string;
 }

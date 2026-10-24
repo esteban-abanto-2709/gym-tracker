@@ -3,7 +3,12 @@ import { Prisma, SetType } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
-import { FALLBACK_TIMEZONE, toLocalDateString } from '@/common/timezone.util';
+import {
+  FALLBACK_TIMEZONE,
+  isValidTimeZone,
+  toLocalDateString,
+} from '@/common/timezone.util';
+import { continuesSession, setTime } from './session-rules';
 import { normalizeBlock, type BlockInput } from '../routines/blocks';
 import { computeStreak, groupSessions, type StreakTarget } from './streak';
 
@@ -48,30 +53,120 @@ export class WorkoutsService {
     ) {
       throw new NotFoundException('Routine not found');
     }
-    try {
-      return await this.insert(userId, createWorkoutDto, clientId);
-    } catch (e) {
-      if (
-        clientId &&
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === 'P2002'
-      ) {
-        return this.prisma.workout.findUniqueOrThrow({
+    for (let attempt = 0; ; attempt++) {
+      if (clientId) {
+        const existing = await this.prisma.workout.findUnique({
           where: { userId_clientId: { userId, clientId } },
         });
+        if (existing) return existing;
       }
-      throw e;
+      try {
+        return await this.prisma.$transaction(async (tx) => {
+          const createdAt = setTime(createWorkoutDto.performedAt, new Date());
+          const sessionId = await this.sessionFor(
+            tx,
+            userId,
+            createWorkoutDto,
+            createdAt,
+          );
+          return this.insert(
+            tx,
+            userId,
+            createWorkoutDto,
+            clientId,
+            sessionId,
+            createdAt,
+          );
+        });
+      } catch (e) {
+        const conflict =
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === 'P2002';
+        if (!conflict || attempt > 0) throw e;
+      }
+    }
+  }
+
+  private async sessionFor(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    dto: CreateWorkoutDto,
+    setAt: Date,
+  ) {
+    const timeZone =
+      dto.timeZone && isValidTimeZone(dto.timeZone)
+        ? dto.timeZone
+        : FALLBACK_TIMEZONE;
+    const session = dto.sessionId
+      ? await tx.session.findUnique({
+          where: { userId_clientId: { userId, clientId: dto.sessionId } },
+        })
+      : await tx.session.findFirst({
+          where: { userId },
+          orderBy: { startedAt: 'desc' },
+        });
+
+    if (
+      !session ||
+      (!dto.sessionId && !continuesSession(session.endedAt, setAt))
+    ) {
+      const created = await tx.session.create({
+        data: {
+          userId,
+          clientId: dto.sessionId ?? null,
+          routineId: dto.routineId ?? null,
+          startedAt: setAt,
+          endedAt: setAt,
+          timeZone,
+        },
+      });
+      return created.id;
+    }
+
+    if (setAt < session.startedAt || setAt > session.endedAt) {
+      await tx.session.update({
+        where: { id: session.id },
+        data: {
+          startedAt: setAt < session.startedAt ? setAt : session.startedAt,
+          endedAt: setAt > session.endedAt ? setAt : session.endedAt,
+        },
+      });
+    }
+    return session.id;
+  }
+
+  private async refreshSession(
+    tx: Prisma.TransactionClient,
+    sessionId: string,
+  ) {
+    const { _min, _max } = await tx.workout.aggregate({
+      where: { sessionId },
+      _min: { createdAt: true },
+      _max: { createdAt: true },
+    });
+    if (!_min.createdAt || !_max.createdAt) {
+      await tx.session.delete({ where: { id: sessionId } });
+    } else {
+      await tx.session.update({
+        where: { id: sessionId },
+        data: { startedAt: _min.createdAt, endedAt: _max.createdAt },
+      });
     }
   }
 
   private insert(
+    tx: Prisma.TransactionClient,
     userId: string,
     createWorkoutDto: CreateWorkoutDto,
     clientId: string | null,
+    sessionId: string,
+    createdAt: Date,
   ) {
-    return this.prisma.workout.create({
+    return tx.workout.create({
       data: {
         clientId,
+        sessionId,
+        createdAt,
         userId,
         exerciseId: createWorkoutDto.exerciseId,
         reps:
@@ -228,8 +323,10 @@ export class WorkoutsService {
 
   async remove(id: string, userId: string) {
     await this.ensureOwned(id, userId);
-    return this.prisma.workout.delete({
-      where: { id },
+    return this.prisma.$transaction(async (tx) => {
+      const removed = await tx.workout.delete({ where: { id } });
+      if (removed.sessionId) await this.refreshSession(tx, removed.sessionId);
+      return removed;
     });
   }
 

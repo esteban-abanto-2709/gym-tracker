@@ -15,6 +15,7 @@ model User {
   googleId        String?           @unique
   tokenVersion    Int               @default(0)
   workouts        Workout[]
+  sessions        Session[]
   routines        Routine[]
   programs        Program[]         @relation("UserPrograms")
   activeProgramId String?
@@ -149,11 +150,31 @@ model Workout {
   setType     SetType    @default(WORKING)
   step        Int?
   clientId    String?
+  sessionId   String?
+  session     Session?   @relation(fields: [sessionId], references: [id])
   createdAt   DateTime   @default(now())
 
   @@unique([userId, clientId])
   @@index([userId, exerciseId, createdAt])
   @@index([userId, createdAt])
+  @@index([sessionId])
+}
+
+model Session {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientId  String?
+  routineId String?
+  routine   Routine?  @relation(fields: [routineId], references: [id], onDelete: SetNull)
+  startedAt DateTime
+  endedAt   DateTime
+  timeZone  String
+  workouts  Workout[]
+  createdAt DateTime  @default(now())
+
+  @@unique([userId, clientId])
+  @@index([userId, startedAt])
 }
 
 enum SetType {
@@ -172,6 +193,7 @@ model Routine {
   programPosition Int?
   items           RoutineItem[]
   workouts        Workout[]
+  sessions        Session[]
   createdAt       DateTime      @default(now())
 
   @@unique([userId, name])

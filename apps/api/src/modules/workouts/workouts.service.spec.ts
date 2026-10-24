@@ -233,9 +233,15 @@ describe('WorkoutsService set types', () => {
     const create = jest
       .fn<Promise<object>, [{ data: Record<string, unknown> }]>()
       .mockResolvedValue({});
-    const service = new WorkoutsService({
+    const prisma = {
       workout: { findFirst, create },
-    } as unknown as PrismaService);
+      session: {
+        findFirst: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockResolvedValue({ id: 's1' }),
+      },
+      $transaction: (fn: (tx: unknown) => unknown) => fn(prisma),
+    };
+    const service = new WorkoutsService(prisma as unknown as PrismaService);
     return { service, findFirst, create };
   };
 
@@ -305,6 +311,16 @@ describe('WorkoutsService set types', () => {
       durationSec: 45,
     });
   });
+
+  it('a set is saved in its session, at the time it was done', async () => {
+    const { service, create } = setup();
+    const performedAt = new Date(Date.now() - 60_000).toISOString();
+    await service.create('u1', { exerciseId: 'e1', reps: 8, performedAt });
+    expect(create.mock.calls[0][0].data).toMatchObject({
+      sessionId: 's1',
+      createdAt: new Date(performedAt),
+    });
+  });
 });
 
 describe('CreateWorkoutDto', () => {
@@ -355,6 +371,22 @@ describe('CreateWorkoutDto', () => {
   it('rejects a set without reps or duration', async () => {
     const errors = await errorsFor({ exerciseId: base.exerciseId });
     expect(errors.map((e) => e.property)).toContain('reps');
+  });
+
+  it('accepts the session, the set time and the timezone', async () => {
+    expect(
+      await errorsFor({
+        ...base,
+        sessionId: '7c1d2e3f-4a5b-4c6d-8e9f-0a1b2c3d4e5f',
+        performedAt: '2026-10-24T03:30:00.000Z',
+        timeZone: 'Europe/Madrid',
+      }),
+    ).toHaveLength(0);
+  });
+
+  it('rejects a set time that is not a date', async () => {
+    const errors = await errorsFor({ ...base, performedAt: 'yesterday' });
+    expect(errors.map((e) => e.property)).toContain('performedAt');
   });
 });
 

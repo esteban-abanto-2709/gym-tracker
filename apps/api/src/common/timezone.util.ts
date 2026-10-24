@@ -3,6 +3,15 @@ export const FALLBACK_TIMEZONE = 'America/Lima';
 
 const formatters = new Map<string, Intl.DateTimeFormat>();
 
+export function isValidTimeZone(timeZone: string): boolean {
+  try {
+    new Intl.DateTimeFormat('en', { timeZone });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function toLocalDateString(
   date: Date,
   timeZone: string = FALLBACK_TIMEZONE,
