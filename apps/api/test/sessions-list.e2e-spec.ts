@@ -13,7 +13,11 @@ const DAY = 24 * 60 * MIN;
 
 type Agent = ReturnType<typeof request.agent>;
 type SessionRow = { id: string; startedAt: string; sets: number };
-type Page = { sessions: SessionRow[]; next: string | null };
+type Page = {
+  sessions: SessionRow[];
+  next: string | null;
+  first: string | null;
+};
 
 describe('GET /sessions (e2e)', () => {
   let app: INestApplication<App>;
@@ -130,6 +134,8 @@ describe('GET /sessions (e2e)', () => {
     ).body as Page;
     expect(second.sessions).toHaveLength(1);
     expect(second.next).toBeNull();
+    expect(first.first).toBe(second.sessions[0].startedAt);
+    expect(second.first).toBeNull();
     expect(new Date(second.sessions[0].startedAt).getTime()).toBeLessThan(
       new Date(first.sessions[1].startedAt).getTime(),
     );
@@ -157,6 +163,7 @@ describe('GET /sessions (e2e)', () => {
     const theirs = (await users[1].agent.get('/sessions').expect(200))
       .body as Page;
     expect(theirs.sessions).toHaveLength(0);
+    expect(theirs.first).toBeNull();
   });
 
   it('rejects a page size out of range', async () => {

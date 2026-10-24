@@ -13,6 +13,17 @@ Al terminar una tarea se mueve al changelog y se borra de aquí.
 > Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
 > de cada tarea está en [`../product-vision.md`](../product-vision.md).
 
+## [RM-134] Sesiones de entrenamiento
+- **Objetivo:** que un entrenamiento sea una entidad propia y no "las series de un mismo día local", para que una sesión que cruza la medianoche no se parta (TD-133) y el historial no pida todo de una vez (TD-132).
+- **Alcance:** cinco pasos con expand/contract, porque hay usuarios reales en prod:
+  1. Tabla `Session` con `sessionId` en cada serie y una migración que agrupa las series existentes (nueva sesión tras más de 3 horas sin series).
+  2. La API lee por sesiones: `GET /sessions` paginado por cursor, `GET /sessions/:id` con sus series, y la racha agrupada por sesión.
+  3. La web manda en cada serie su sesión, la hora real y la zona horaria; la sesión guiada se cierra tras 3 horas sin series y no a medianoche; el registro libre usa la cola offline.
+  4. El historial muestra una pastilla por sesión y carga más al llegar al final.
+  5. Se borra lo viejo: `/workouts/days`, `getDays` y la agrupación por día.
+- **Hecho cuando:** un entrenamiento de 23:00 a 01:00 queda en una sesión en el historial y en la racha, y el historial carga por páginas sin que su respuesta crezca con el historial.
+- **Fecha:** 2026-10-24 · **Estado:** En progreso (2026-10-24)
+
 ## [RM-054] Calculadora de discos
 - **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
 - **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).

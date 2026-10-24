@@ -31,7 +31,15 @@ export class SessionsService {
       _count: true,
     });
     const setsOf = new Map(counts.map((c) => [c.sessionId, c._count]));
+    const first = before
+      ? null
+      : await this.prisma.session.findFirst({
+          where: { userId },
+          orderBy: { startedAt: 'asc' },
+          select: { startedAt: true },
+        });
     return {
+      first: first?.startedAt ?? null,
       sessions: page.map((session) => ({
         ...session,
         sets: setsOf.get(session.id) ?? 0,
