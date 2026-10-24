@@ -52,6 +52,16 @@ corridas iguales los números varían un 5-7%, así que una diferencia menor al
 | Antes (TD-107, TD-108) | 10       | 139-148 ms           | 214-228 ms | 74-79        |
 | Última serie (TD-107)  | 1        | 3.8 ms               | 23 ms      | 81           |
 | Última serie (TD-107)  | 10       | 110 ms               | 184-186 ms | 101          |
+| Índices (TD-108)       | 1        | 2.6 ms               | 22 ms      | 88           |
+| Índices (TD-108)       | 10       | 111-113 ms           | 186 ms     | 102          |
+
+Tiempo de Postgres solo (`EXPLAIN ANALYZE`, usuario `bench`):
+
+| Consulta                         | Sin índices | Con índices |
+| -------------------------------- | ----------- | ----------- |
+| Última serie (`LIMIT 1`)         | 1.37 ms     | 0.05 ms     |
+| Días (`createdAt` del usuario)   | 2.08 ms     | 1.16 ms     |
+| Progreso (`LIMIT 300` del ejer.) | 1.09 ms     | 0.66 ms     |
 
 - **La API se satura en unas 75-80 peticiones/s.** De 1 a 10 usuarios el total
   casi no sube y la latencia se multiplica por 15: el resto es cola.
@@ -63,3 +73,8 @@ corridas iguales los números varían un 5-7%, así que una diferencia menor al
 - **TD-107 lo confirma.** Traer solo la última serie baja `recommendation` de 9
   a 3.8 ms y sube la capacidad un 30%, porque le quita trabajo justo a la API.
   Ahora `days` es casi todo el tiempo de cada vuelta (TD-131).
+- **TD-108 acelera la base, no la capacidad.** Con el índice, la última serie
+  lee una fila (recorre el índice hacia atrás) en vez de 2 013, y los días se
+  leen del índice sin ordenar. Con 1 usuario `recommendation` baja de 3.8 a 2.6
+  ms; con 10 la capacidad no cambia, porque el límite sigue siendo el CPU de la
+  API. El índice importa cuando la tabla deje de caber en memoria.

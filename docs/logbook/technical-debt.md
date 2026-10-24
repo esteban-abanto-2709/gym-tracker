@@ -30,14 +30,6 @@ changelog y se borra de aquí.
 - **Sugerencia:** decidirlo al hacer TD-091 / RM-090, que ya tocan esa tabla: o se migran los ids a inglés en el mismo paso, o se acepta que los ids existentes quedan y los nuevos van en inglés.
 - **Fecha:** 2026-10-23 · **Estado:** Abierto
 
-## [TD-108] La tabla de series no tiene índices
-- **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
-- **Riesgo:** 4/10
-- **Problema:** Postgres no indexa solo las llaves foráneas, y `Workout` no declara ningún `@@index`. El filtro por `userId` se apoya en el índice único `(userId, clientId)` (medido con `EXPLAIN` en `apps/api/bench/`), pero nada cubre `exerciseId` ni el orden por `createdAt`: cada consulta lee todas las series del usuario y las ordena en memoria.
-- **Impacto futuro:** la pantalla de entrenar se vuelve más lenta con cada serie del usuario; hoy no se nota con unas miles de filas.
-- **Sugerencia:** `@@index([userId, exerciseId, createdAt])` y `@@index([userId, createdAt])`; la migración es segura sobre datos reales.
-- **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-23)
-
 ## [TD-104] Los ejercicios "extra" de la sesión son código muerto
 - **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:104`, `apps/web/src/lib/activeSession.ts:16`
 - **Riesgo:** 2/10

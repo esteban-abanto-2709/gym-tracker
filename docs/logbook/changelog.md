@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-108] La tabla de series tiene índices (2026-10-23 19:26)
+`Workout` suma `(userId, exerciseId, createdAt)` y `(userId, createdAt)`. En Postgres la última serie pasa de 1.37 a 0.05 ms y los días se leen del índice sin ordenar; la capacidad del benchmark no cambia porque el límite es el CPU de la API.
+
 ## [TD-107] "Última serie" trae solo la última serie (2026-10-23 19:21)
 `getRecommendation` usa `findFirst` con `select` en vez de cargar todo el historial del ejercicio. En el benchmark de `apps/api/bench/` baja de 9 a 3.8 ms con un usuario y la API despacha un 30% más; `getDays` queda aparte en TD-131.
 

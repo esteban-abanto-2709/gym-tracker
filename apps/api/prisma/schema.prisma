@@ -152,6 +152,8 @@ model Workout {
   createdAt   DateTime   @default(now())
 
   @@unique([userId, clientId])
+  @@index([userId, exerciseId, createdAt])
+  @@index([userId, createdAt])
 }
 
 enum SetType {
