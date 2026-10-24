@@ -96,8 +96,8 @@ export class WorkoutsService {
     setType: SetType = SetType.WORKING,
     step?: number,
   ) {
-    const [sets, latestAny, working] = await Promise.all([
-      this.prisma.workout.findMany({
+    const [last, latestAny, working] = await Promise.all([
+      this.prisma.workout.findFirst({
         where: {
           userId,
           exerciseId,
@@ -106,6 +106,7 @@ export class WorkoutsService {
           ...(step != null ? { step } : {}),
         },
         orderBy: { createdAt: 'desc' },
+        select: { weight: true, reps: true, durationSec: true },
       }),
       this.prisma.workout.findFirst({
         where: { userId, exerciseId },
@@ -129,21 +130,10 @@ export class WorkoutsService {
     const lastMeasure = latestAny ? measureOf(latestAny) : null;
     const workingWeight = working?.weight ?? null;
 
-    if (sets.length === 0) {
-      return {
-        lastWeight: null,
-        lastReps: null,
-        lastDurationSec: null,
-        lastMeasure,
-        workingWeight,
-      };
-    }
-
-    const last = sets[0];
     return {
-      lastWeight: last.weight,
-      lastReps: last.reps,
-      lastDurationSec: last.durationSec,
+      lastWeight: last?.weight ?? null,
+      lastReps: last?.reps ?? null,
+      lastDurationSec: last?.durationSec ?? null,
       lastMeasure,
       workingWeight,
     };

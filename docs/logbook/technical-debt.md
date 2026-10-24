@@ -14,6 +14,14 @@ changelog y se borra de aquí.
 
 ---
 
+## [TD-131] Los días entrenados leen todas las series del usuario en cada llamada
+- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts` (`getDays`)
+- **Riesgo:** 4/10
+- **Problema:** `GET /workouts/days` trae el `createdAt` de todas las series del usuario para sacar los días únicos en JavaScript. Con 10 000 series tarda 23 ms con un solo usuario y es la ruta más lenta del benchmark (`apps/api/bench/`).
+- **Impacto futuro:** crece con cada serie que registras; con TD-107 resuelto es lo que más CPU gasta la API por vuelta.
+- **Sugerencia:** agrupar los días en SQL (`DISTINCT` sobre la fecha local con `AT TIME ZONE`) en vez de traer las filas.
+- **Fecha:** 2026-10-23 · **Estado:** Abierto
+
 ## [TD-130] Los ids de los equipos están en español
 - **Ubicación:** tabla `Equipment` (ids `barra`, `polea`, `mancuerna`, `maquina`, `otro`… sembrados en la migración `equipo_tabla_y_slug`); `apps/web/src/lib/equipmentIcons.ts`.
 - **Riesgo:** 2/10
@@ -28,14 +36,6 @@ changelog y se borra de aquí.
 - **Problema:** Postgres no indexa solo las llaves foráneas, y `Workout` no declara ningún `@@index`. El filtro por `userId` se apoya en el índice único `(userId, clientId)` (medido con `EXPLAIN` en `apps/api/bench/`), pero nada cubre `exerciseId` ni el orden por `createdAt`: cada consulta lee todas las series del usuario y las ordena en memoria.
 - **Impacto futuro:** la pantalla de entrenar se vuelve más lenta con cada serie del usuario; hoy no se nota con unas miles de filas.
 - **Sugerencia:** `@@index([userId, exerciseId, createdAt])` y `@@index([userId, createdAt])`; la migración es segura sobre datos reales.
-- **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-23)
-
-## [TD-107] "Última serie" trae todo el historial del ejercicio para usar una fila
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:70` (`getRecommendation`)
-- **Riesgo:** 4/10
-- **Problema:** la consulta principal es un `findMany` sin `take` que carga todas las series del ejercicio con ese equipo, y solo se usa `sets[0]`. Corre cada vez que se abre el formulario de una serie. `getDays` (`:129`) también lee todas las fechas del usuario en cada llamada.
-- **Impacto futuro:** el formulario tarda más en precargarse cuanto más entrenas un ejercicio: justo lo contrario de "no pensar".
-- **Sugerencia:** `findFirst` (o `take: 1`) en `getRecommendation`; `getDays` puede esperar a que se note.
 - **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-23)
 
 ## [TD-104] Los ejercicios "extra" de la sesión son código muerto

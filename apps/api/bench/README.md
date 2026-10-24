@@ -50,6 +50,8 @@ corridas iguales los números varían un 5-7%, así que una diferencia menor al
 | ---------------------- | -------- | -------------------- | ---------- | ------------ |
 | Antes (TD-107, TD-108) | 1        | 9 ms                 | 23 ms      | 68           |
 | Antes (TD-107, TD-108) | 10       | 139-148 ms           | 214-228 ms | 74-79        |
+| Última serie (TD-107)  | 1        | 3.8 ms               | 23 ms      | 81           |
+| Última serie (TD-107)  | 10       | 110 ms               | 184-186 ms | 101          |
 
 - **La API se satura en unas 75-80 peticiones/s.** De 1 a 10 usuarios el total
   casi no sube y la latencia se multiplica por 15: el resto es cola.
@@ -58,3 +60,6 @@ corridas iguales los números varían un 5-7%, así que una diferencia menor al
   ms: Postgres ya filtra por `userId` con el índice único `(userId, clientId)`
   y no recorre la tabla entera. El costo está en que la API convierte las 2 013
   series del ejercicio para usar una sola.
+- **TD-107 lo confirma.** Traer solo la última serie baja `recommendation` de 9
+  a 3.8 ms y sube la capacidad un 30%, porque le quita trabajo justo a la API.
+  Ahora `days` es casi todo el tiempo de cada vuelta (TD-131).

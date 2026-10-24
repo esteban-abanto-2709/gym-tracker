@@ -8,7 +8,6 @@ import { PrismaService } from '@/providers/prisma/prisma.service';
 const serviceWithSets = (sets: unknown[]) =>
   new WorkoutsService({
     workout: {
-      findMany: jest.fn().mockResolvedValue(sets),
       findFirst: jest.fn().mockResolvedValue(sets[0] ?? null),
     },
   } as unknown as PrismaService);
@@ -58,6 +57,39 @@ describe('WorkoutsService.getRecommendation', () => {
 
     expect(rec.lastReps).toBe(15);
     expect(rec.lastWeight).toBeNull();
+  });
+
+  it('fetches only the latest matching set, not the whole history', async () => {
+    const findMany = jest.fn();
+    const findFirst = jest.fn().mockResolvedValue(null);
+    const service = new WorkoutsService({
+      workout: { findMany, findFirst },
+    } as unknown as PrismaService);
+
+    await service.getRecommendation('u1', 'e1', 'barra');
+
+    expect(findMany).not.toHaveBeenCalled();
+    expect(findFirst).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          userId: 'u1',
+          exerciseId: 'e1',
+          equipmentId: 'barra',
+        }) as unknown,
+        orderBy: { createdAt: 'desc' },
+      }),
+    );
+  });
+
+  it('with no matching set it returns nulls', async () => {
+    const rec = await serviceWithSets([]).getRecommendation('u1', 'e1');
+
+    expect(rec).toMatchObject({
+      lastWeight: null,
+      lastReps: null,
+      lastDurationSec: null,
+    });
   });
 });
 
@@ -156,8 +188,10 @@ describe('WorkoutsService lastMeasure', () => {
   const recWithLatest = async (latest: unknown) =>
     new WorkoutsService({
       workout: {
-        findMany: jest.fn().mockResolvedValue([]),
-        findFirst: jest.fn().mockResolvedValue(latest),
+        findFirst: jest
+          .fn()
+          .mockResolvedValueOnce(null)
+          .mockResolvedValueOnce(latest),
       },
     } as unknown as PrismaService).getRecommendation('u1', 'e1');
 
@@ -175,54 +209,54 @@ describe('WorkoutsService lastMeasure', () => {
 });
 
 describe('WorkoutsService set types', () => {
-  type FindMany = jest.Mock<
-    Promise<unknown[]>,
+  type FindFirst = jest.Mock<
+    Promise<unknown>,
     [{ where: Record<string, unknown> }]
   >;
 
   const setup = () => {
-    const findMany: FindMany = jest
-      .fn<Promise<unknown[]>, [{ where: Record<string, unknown> }]>()
-      .mockResolvedValue([]);
-    const findFirst = jest.fn().mockResolvedValue(null);
+    const findFirst: FindFirst = jest
+      .fn<Promise<unknown>, [{ where: Record<string, unknown> }]>()
+      .mockResolvedValue(null);
     const create = jest
       .fn<Promise<object>, [{ data: Record<string, unknown> }]>()
       .mockResolvedValue({});
     const service = new WorkoutsService({
-      workout: { findMany, findFirst, create },
+      workout: { findFirst, create },
     } as unknown as PrismaService);
-    return { service, findMany, findFirst, create };
+    return { service, findFirst, create };
   };
 
-  const whereOf = (findMany: FindMany) => findMany.mock.calls[0][0].where;
+  const whereOf = (findFirst: FindFirst) => findFirst.mock.calls[0][0].where;
 
   it('the recommendation uses only working sets by default', async () => {
-    const { service, findMany } = setup();
+    const { service, findFirst } = setup();
     await service.getRecommendation('u1', 'e1');
-    expect(whereOf(findMany).setType).toBe('WORKING');
+    expect(whereOf(findFirst).setType).toBe('WORKING');
   });
 
   it('the warmup recommendation uses only warmups', async () => {
-    const { service, findMany } = setup();
+    const { service, findFirst } = setup();
     await service.getRecommendation('u1', 'e1', undefined, 'WARMUP');
-    expect(whereOf(findMany).setType).toBe('WARMUP');
+    expect(whereOf(findFirst).setType).toBe('WARMUP');
   });
 
   it('the ramp recommendation filters by step', async () => {
-    const { service, findMany } = setup();
+    const { service, findFirst } = setup();
     await service.getRecommendation('u1', 'e1', undefined, 'RAMP', 2);
-    expect(whereOf(findMany)).toMatchObject({ setType: 'RAMP', step: 2 });
+    expect(whereOf(findFirst)).toMatchObject({ setType: 'RAMP', step: 2 });
   });
 
   it('the working recommendation does not filter by step', async () => {
-    const { service, findMany } = setup();
+    const { service, findFirst } = setup();
     await service.getRecommendation('u1', 'e1');
-    expect(whereOf(findMany)).not.toHaveProperty('step');
+    expect(whereOf(findFirst)).not.toHaveProperty('step');
   });
 
   it('the ramp returns the working weight of the exercise', async () => {
     const { service, findFirst } = setup();
     findFirst
+      .mockResolvedValueOnce(null)
       .mockResolvedValueOnce({ weight: 58.5, durationSec: null })
       .mockResolvedValueOnce({ weight: 58.5 });
     const rec = await service.getRecommendation(
@@ -238,7 +272,7 @@ describe('WorkoutsService set types', () => {
   it('outside the ramp the working weight is not queried', async () => {
     const { service, findFirst } = setup();
     await service.getRecommendation('u1', 'e1');
-    expect(findFirst).toHaveBeenCalledTimes(1);
+    expect(findFirst).toHaveBeenCalledTimes(2);
   });
 
   it('a set without a type is saved as a working set', async () => {

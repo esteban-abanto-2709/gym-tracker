@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-107] "Última serie" trae solo la última serie (2026-10-23 19:21)
+`getRecommendation` usa `findFirst` con `select` en vez de cargar todo el historial del ejercicio. En el benchmark de `apps/api/bench/` baja de 9 a 3.8 ms con un usuario y la API despacha un 30% más; `getDays` queda aparte en TD-131.
+
 ## [TD-129] Los errores de la API llegan en inglés a la interfaz (2026-10-23 10:55)
 Login, registro, Google, cambiar contraseña y borrar cuenta muestran un texto en español según el código HTTP, ya no el mensaje de la API; suma aviso de demasiados intentos (429). La excepción de Google de la API queda en inglés.
 
