@@ -96,7 +96,7 @@ UX; si un test falla, la traza queda en `e2e-results/` y el reporte en
 | `/explore`                                             | Publicaciones por pestaña (`?tab=programs\|routines\|mine`) y orden (populares, más copiados, recientes); "Mías" deja renombrar y eliminar lo tuyo |
 | `/explore/programs/[slug]`, `/explore/routines/[slug]` | Una publicación: copiarla entera o, en un programa, solo una rutina                                                                                |
 | `/routines/[id]/publish`, `/programs/[id]/publish`     | Publicar una rutina o un programa con su slug                                                                                                      |
-| `/history`                                             | Historial por día: repetir, editar y borrar series; exportar un rango para tu IA (`.md`)                                                           |
+| `/history`                                             | Historial por sesión, cargado por páginas: repetir, editar y borrar series; exportar un rango para tu IA (`.md`)                                   |
 | `/perfil`                                              | Cuenta, idioma de los ejercicios, fecha de nacimiento, medidas corporales y cierre de sesión                                                       |
 | `/login`, `/register`                                  | Acceso con email o Google                                                                                                                          |
 
@@ -134,8 +134,10 @@ src/
   series planificadas, `units.ts` convierte kg/lb (todo se guarda en kg),
   `setDisplay.ts` formatea series.
 - **Estado local del navegador** (`localStorage`):
-  - `lib/activeSession.ts`: la sesión guiada en curso; caduca al cambiar de día.
-  - `lib/pendingSets.ts`: las series registradas que aún no llegaron a la API.
+  - `lib/activeSession.ts`: la sesión guiada en curso y la sesión libre; caducan
+    tras 3 horas sin series.
+  - `lib/pendingSets.ts`: las series registradas que aún no llegaron a la API,
+    con su sesión, la hora en que se hicieron y la zona horaria.
   - `lib/equipmentMemory.ts`: el último equipo usado por ejercicio.
 - **`components/ui/` no se edita a mano**: se ajusta con Tailwind desde el
   componente padre o envolviendo el primitivo.

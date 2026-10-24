@@ -60,11 +60,6 @@ export class WorkoutsController {
     return this.workoutsService.getProgress(user.id, exerciseId, routineId, tz);
   }
 
-  @Get('days')
-  async getDays(@CurrentUser() user: AuthUser, @Query('tz') tz?: string) {
-    return this.workoutsService.getDays(user.id, tz);
-  }
-
   @Get()
   async findAll(
     @CurrentUser() user: AuthUser,

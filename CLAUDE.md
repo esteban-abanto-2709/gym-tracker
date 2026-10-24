@@ -100,11 +100,17 @@ browser ──/api/*──▶ web (Next server, rewrite proxy) ──▶ api (Ne
 
 Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 
-- **A `Workout` row is one set**, not a session. There is no session entity;
-  grouping by day happens on the client using the user's timezone.
+- **A `Workout` row is one set**; sets belong to a **`Session`** (`sessionId`).
+  The browser creates the session id (a UUID, like the set's `clientId`) and
+  sends it with each set, plus `performedAt` (when the set was done, so offline
+  sets keep their real time) and its timezone. A session closes after 3 hours
+  without sets (`session-rules.ts`); a set without a session id joins the last
+  session under that same rule. History pages through sessions
+  (`GET /sessions`), never through every day at once.
 - **The guided session lives in the browser** (`apps/web/src/lib/activeSession.ts`,
-  localStorage) and expires at the end of the local day. It does not sync
-  across devices.
+  localStorage) and expires after 3 hours without sets, not at midnight. It
+  does not sync across devices. Free sets join the open guided session, or a
+  free session with the same 3-hour rule.
 - **`RoutineItem.blocks`** is a JSON list of typed blocks (`weight_reps`,
   `reps`, `time`, `warmup`, `ramp`). Free-form JSON in the DB; its shape is
   enforced by `apps/api/src/modules/routines/blocks.ts` + `dto/routine-block.dto.ts`
@@ -117,8 +123,9 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
   routine" by rotating from the last logged set.
 - **Last set** (`GET /workouts/recommendation`) only prefills the set form; it
   never suggests a weight.
-- **Streak** (`GET /workouts/progress`): sessions in a row with every planned
-  set at the top of the routine's rep range, same weight and equipment. Counts
+- **Streak** (`GET /workouts/progress`): sessions (by `sessionId`) in a row
+  with every planned set at the top of the routine's rep range, same weight and
+  equipment. Counts
   routine sets from any routine; free-day sets never add or break it. Logic in
   `apps/api/src/modules/workouts/streak.ts`.
 - Weights are stored in **kg**; the UI lets you enter lb and converts.

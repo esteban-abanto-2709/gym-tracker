@@ -10,7 +10,7 @@ export const options = {
   duration: '30s',
   thresholds: {
     'http_req_duration{name:recommendation}': ['p(95)>=0'],
-    'http_req_duration{name:days}': ['p(95)>=0'],
+    'http_req_duration{name:sessions}': ['p(95)>=0'],
     checks: ['rate==1'],
   },
 };
@@ -38,7 +38,7 @@ export default function ({ token }) {
     `${API}/workouts/recommendation?exerciseId=${EXERCISE_ID}&equipmentId=${EQUIPMENT_ID}`,
     params('recommendation'),
   );
-  const days = http.get(`${API}/workouts/days?tz=America/Lima`, params('days'));
+  const sessions = http.get(`${API}/sessions`, params('sessions'));
   check(recommendation, { 'recommendation 200': (r) => r.status === 200 });
-  check(days, { 'days 200': (r) => r.status === 200 });
+  check(sessions, { 'sessions 200': (r) => r.status === 200 });
 }

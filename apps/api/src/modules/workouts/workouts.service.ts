@@ -286,25 +286,6 @@ export class WorkoutsService {
     });
   }
 
-  async getDays(userId: string, tz: string = FALLBACK_TIMEZONE) {
-    const rows = await this.prisma.$queryRaw<{ day: string; start: Date }[]>`
-      SELECT to_char(("createdAt" AT TIME ZONE 'UTC') AT TIME ZONE ${tz}, 'YYYY-MM-DD') AS day,
-             min("createdAt") AS start
-      FROM "Workout"
-      WHERE "userId" = ${userId}
-      GROUP BY day
-      ORDER BY day DESC`;
-    const days = rows.map((r) => r.day);
-    if (days.length === 0) return { days, sets: [] };
-
-    const sets = await this.prisma.workout.findMany({
-      where: { userId, createdAt: { gte: rows[0].start } },
-      include: WORKOUT_INCLUDE,
-      orderBy: { createdAt: 'desc' },
-    });
-    return { days, sets };
-  }
-
   async update(id: string, userId: string, updateWorkoutDto: UpdateWorkoutDto) {
     await this.ensureOwned(id, userId);
     return this.prisma.workout.update({

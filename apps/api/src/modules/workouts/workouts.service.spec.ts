@@ -142,60 +142,6 @@ describe('WorkoutsService.findAll', () => {
   });
 });
 
-describe('WorkoutsService.getDays', () => {
-  it('returns the local days and the sets since the start of the last day', async () => {
-    const queryRaw = jest.fn().mockResolvedValue([
-      { day: '2026-10-08', start: day('2026-10-08T13:00:00Z') },
-      { day: '2026-10-06', start: day('2026-10-06T15:00:00Z') },
-    ]);
-    const findMany = jest.fn().mockResolvedValue([{ id: 's1' }]);
-    const service = new WorkoutsService({
-      $queryRaw: queryRaw,
-      workout: { findMany },
-    } as unknown as PrismaService);
-
-    const result = await service.getDays('u1', 'America/Lima');
-
-    expect(result).toEqual({
-      days: ['2026-10-08', '2026-10-06'],
-      sets: [{ id: 's1' }],
-    });
-    expect(queryRaw.mock.calls[0]).toEqual(
-      expect.arrayContaining(['America/Lima', 'u1']),
-    );
-    expect(findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: {
-          userId: 'u1',
-          createdAt: { gte: day('2026-10-08T13:00:00Z') },
-        },
-      }),
-    );
-  });
-
-  it('without a timezone it groups by the fallback one', async () => {
-    const queryRaw = jest.fn().mockResolvedValue([]);
-    const service = new WorkoutsService({
-      $queryRaw: queryRaw,
-    } as unknown as PrismaService);
-
-    await service.getDays('u1');
-
-    expect(queryRaw.mock.calls[0]).toContain('America/Lima');
-  });
-
-  it('with no sets it queries nothing else', async () => {
-    const findMany = jest.fn();
-    const service = new WorkoutsService({
-      $queryRaw: jest.fn().mockResolvedValue([]),
-      workout: { findMany },
-    } as unknown as PrismaService);
-
-    expect(await service.getDays('u1')).toEqual({ days: [], sets: [] });
-    expect(findMany).not.toHaveBeenCalled();
-  });
-});
-
 describe('WorkoutsService lastMeasure', () => {
   const recWithLatest = async (latest: unknown) =>
     new WorkoutsService({

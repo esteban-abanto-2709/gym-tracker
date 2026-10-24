@@ -49,7 +49,6 @@ export const routes = {
     },
     workouts: {
       create: () => "/workouts",
-      days: (tz: string) => `/workouts/days?tz=${encodeURIComponent(tz)}`,
       range: (fromDay: string, toDay: string) =>
         `/workouts?from=${encodeURIComponent(dayStart(fromDay))}&to=${encodeURIComponent(dayStart(toDay, 1))}`,
       recommendation: (

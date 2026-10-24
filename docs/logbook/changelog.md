@@ -10,6 +10,15 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [RM-134] Sesiones de entrenamiento (2026-10-24 11:05)
+Un entrenamiento es una `Session`: la web manda en cada serie su sesión, la hora real y la zona horaria, una sesión se cierra tras 3 horas sin series y la migración agrupó las series anteriores. La racha y el historial van por sesión, con `/sessions` paginado; en el benchmark la API pasa de 74 a ~995 peticiones/s.
+
+## [TD-133] Un entrenamiento que cruza la medianoche se parte en dos (2026-10-24 11:05)
+Resuelto con RM-134: la sesión guiada caduca tras 3 horas sin series y no a medianoche, y la racha y el historial agrupan por sesión; un e2e fija que una rutina de 23:00 a 00:20 cuenta una vez en la racha.
+
+## [TD-132] El historial pide todos los días entrenados de una vez (2026-10-24 11:05)
+Resuelto con RM-134: el historial pide 20 sesiones por página (`GET /sessions`, cursor `before`) y sus series al tocarlas; se borró `GET /workouts/days`. El `_count` de Prisma contaba toda la tabla y se cambió por un conteo de la página.
+
 ## [TD-131] Los días entrenados se agrupan en Postgres (2026-10-24 09:07)
 `getDays` agrupa por fecha local con `AT TIME ZONE` y `GROUP BY` en vez de convertir cada serie en JavaScript; un e2e fija el corte de día entre Lima y UTC. En el benchmark la API pasa de ~100 a ~720 peticiones/s con 10 usuarios.
 

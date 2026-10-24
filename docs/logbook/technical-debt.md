@@ -14,22 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-133] Un entrenamiento que cruza la medianoche se parte en dos
-- **Ubicación:** `apps/web/src/lib/activeSession.ts:38` (`isSameLocalDay`), `apps/api/src/modules/workouts/streak.ts:44` (`groupSessions`), `apps/api/src/modules/workouts/workouts.service.ts` (`getDays`)
-- **Riesgo:** 5/10
-- **Problema:** no existe la sesión como entidad: una sesión es "las series de un mismo día local". Quien entrena de 23:00 a 01:00 pierde la sesión guiada a medianoche (se borra al cambiar el día), la racha la cuenta como dos sesiones incompletas y el historial la muestra en dos días.
-- **Impacto futuro:** afecta a quien entrena de noche o en casa; con más usuarios es un caso seguro, y cualquier función nueva sobre "entrenamientos" (paginar el historial, TD-132) hereda el mismo corte.
-- **Sugerencia:** decidir el modelo antes de TD-132: corte del día a las 4:00 (barato, sin migración) o una tabla de sesiones con `sessionId` en cada serie, creada al registrar la primera y cerrada por inactividad.
-- **Fecha:** 2026-10-24 · **Estado:** En progreso (2026-10-24)
-
-## [TD-132] El historial pide todos los días entrenados de una vez
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts` (`getDays`), `apps/web/src/hooks/useWorkoutHistory.ts`, `apps/web/src/app/history/page.tsx`
-- **Riesgo:** 3/10
-- **Problema:** al entrar al historial, `GET /workouts/days` agrupa todas las series del usuario para devolver todos sus días (731 con 10 000 series), y la web los pinta todos como pastillas aunque solo se miren los últimos. La respuesta no tiene tope: crece con todo el historial. La exportación solo usa el día más antiguo.
-- **Impacto futuro:** cada visita al historial cuesta más con cada serie registrada (7.6 ms en Postgres con 10 000 series), en un servidor de 2 vCPU que comparten la API, la web y la base.
-- **Sugerencia:** paginar por ventanas de tiempo (`?before=`), cada página leyendo solo su tramo del índice `(userId, createdAt)` y devolviendo el cursor de la página siguiente (la serie más reciente antes de la ventana, para saltar los huecos sin páginas vacías). La web carga más al llegar al final de las pastillas; el día más antiguo para exportar va aparte, con una sola lectura del índice. Mantener la respuesta actual cuando no viene `before`, para no romper una PWA vieja.
-- **Fecha:** 2026-10-24 · **Estado:** Abierto
-
 ## [TD-130] Los ids de los equipos están en español
 - **Ubicación:** tabla `Equipment` (ids `barra`, `polea`, `mancuerna`, `maquina`, `otro`… sembrados en la migración `equipo_tabla_y_slug`); `apps/web/src/lib/equipmentIcons.ts`.
 - **Riesgo:** 2/10

@@ -1,10 +1,11 @@
 # Benchmark de las series
 
-Mide dos consultas que crecen con las series del usuario: la última serie
+Mide dos consultas que crecían con las series del usuario: la última serie
 (`GET /workouts/recommendation`), que corre cada vez que se abre el formulario
-de una serie, y los días entrenados (`GET /workouts/days`), que corre al entrar
-al historial. El benchmark las pide por igual, así que `days` pesa mucho más
-que en el uso real. Solo contra dev.
+de una serie, y el historial, que corre al entrar a esa pantalla. El historial
+fue `GET /workouts/days` hasta RM-134 y ahora es `GET /sessions`. El benchmark
+las pide por igual, así que el historial pesa mucho más que en el uso real.
+Solo contra dev.
 
 ## Datos
 
@@ -43,13 +44,6 @@ rutas sin pausa: mide la capacidad de la API. Con `--vus 1` después de `run`
 mide lo que tarda una petición sola, sin cola. Con `docker stats` en otra
 terminal se ve quién gasta el CPU.
 
-`history.k6.js` mide una sola ruta del historial, elegida con `ROUTE` (`days` o
-`sessions`), para comparar las dos:
-
-```bash
-docker run --rm -i --network gym-tracker-dev_gym-tracker-dev-network -e ROUTE=sessions grafana/k6:1.3.0 run --quiet - < bench/history.k6.js
-```
-
 ## Resultados
 
 Medido en la PC de desarrollo con Docker Desktop: los números absolutos no son
@@ -57,16 +51,18 @@ los del servidor de prod; sirven para comparar un cambio contra otro. Entre dos
 corridas iguales los números varían un 5-7%, así que una diferencia menor al
 10% no prueba nada.
 
-| Versión                | Usuarios | `recommendation` p95 | `days` p95 | Peticiones/s |
-| ---------------------- | -------- | -------------------- | ---------- | ------------ |
-| Antes (TD-107, TD-108) | 1        | 9 ms                 | 23 ms      | 68           |
-| Antes (TD-107, TD-108) | 10       | 139-148 ms           | 214-228 ms | 74-79        |
-| Última serie (TD-107)  | 1        | 3.8 ms               | 23 ms      | 81           |
-| Última serie (TD-107)  | 10       | 110 ms               | 184-186 ms | 101          |
-| Índices (TD-108)       | 1        | 2.6 ms               | 22 ms      | 88           |
-| Índices (TD-108)       | 10       | 111-113 ms           | 186 ms     | 102          |
-| Días en SQL (TD-131)   | 1        | 2.1 ms               | 11 ms      | 174          |
-| Días en SQL (TD-131)   | 10       | 9.8 ms               | 24 ms      | 718-720      |
+| Versión                | Usuarios | `recommendation` p95 | historial p95 | Peticiones/s |
+| ---------------------- | -------- | -------------------- | ------------- | ------------ |
+| Antes (TD-107, TD-108) | 1        | 9 ms                 | 23 ms         | 68           |
+| Antes (TD-107, TD-108) | 10       | 139-148 ms           | 214-228 ms    | 74-79        |
+| Última serie (TD-107)  | 1        | 3.8 ms               | 23 ms         | 81           |
+| Última serie (TD-107)  | 10       | 110 ms               | 184-186 ms    | 101          |
+| Índices (TD-108)       | 1        | 2.6 ms               | 22 ms         | 88           |
+| Índices (TD-108)       | 10       | 111-113 ms           | 186 ms        | 102          |
+| Días en SQL (TD-131)   | 1        | 2.1 ms               | 11 ms         | 174          |
+| Días en SQL (TD-131)   | 10       | 9.8 ms               | 24 ms         | 718-720      |
+| Sesiones (RM-134)      | 1        | 1.7 ms               | 2.8 ms        | 573          |
+| Sesiones (RM-134)      | 10       | 9.7 ms               | 15 ms         | 995          |
 
 Tiempo de Postgres solo (`EXPLAIN ANALYZE`, usuario `bench`):
 
@@ -100,12 +96,17 @@ local): tarda 7.6 ms, más que leer las fechas, pero devuelve 731 filas en vez d
   usuarios. El trabajo pasó a Postgres, que lo reparte entre varios núcleos
   (316% de CPU); la API, con un solo hilo, vuelve a estar cerca de su techo
   (115%), ahora con 7 veces más peticiones.
+- **RM-134 cambia el diseño, no la consulta.** El historial pasa de `days`
+  (todos los días de una vez) a `/sessions` (una página de 20 sesiones). Con 1
+  usuario el historial baja de 11 a 2.8 ms, y con 10 la API despacha ~995
+  peticiones/s: 13 veces lo del principio. La respuesta ya no crece con el
+  historial.
 
 ## Historial: días contra sesiones
 
-`history.k6.js` con el usuario `bench` (500 sesiones). `/workouts/days` devuelve
-todos los días de una vez; `/sessions` devuelve una página de 20 sesiones con
-su número de series.
+Cada ruta del historial sola, con el usuario `bench` (500 sesiones), medida
+antes de borrar `/workouts/days`. `/workouts/days` devolvía todos los días de
+una vez; `/sessions` devuelve una página de 20 sesiones con su número de series.
 
 | Ruta                                 | Usuarios | p95     | Peticiones/s | Por respuesta |
 | ------------------------------------ | -------- | ------- | ------------ | ------------- |

@@ -83,12 +83,13 @@ src/
 │   ├── date-only.ts      # fechas sin hora (YYYY-MM-DD) y su validador
 │   ├── locale.ts         # elegir el nombre por idioma y normalizar búsquedas
 │   ├── slugify.ts        # slugs de ejercicios y usuarios
-│   └── timezone.util.ts  # agrupar por día local según la tz del cliente
+│   └── timezone.util.ts  # fecha local según la tz del cliente y validar zonas horarias
 ├── modules/
 │   ├── auth/             # registro, login, Google, logout, /me
 │   ├── exercises/        # catálogo global de ejercicios y los oficiales (official-exercises.ts)
 │   ├── equipment/        # catálogo global de equipos
 │   ├── workouts/         # series registradas, última serie y racha
+│   ├── sessions/         # sesiones de entrenamiento, paginadas por cursor
 │   ├── routines/         # rutinas y sus bloques tipados
 │   ├── programs/         # programas y programa activo
 │   ├── measurements/     # medidas corporales opcionales con fecha
@@ -140,8 +141,9 @@ controllers no tienen lógica: validan con DTOs y delegan en el service.
 | POST        | `/exercises`                               | Crea un ejercicio propio, con el nombre en el idioma del usuario                                                                                       |
 | GET         | `/equipment`                               | Catálogo de equipos                                                                                                                                    |
 | GET         | `/workouts?from=&to=`                      | Las series de un rango de fechas, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente)                                 |
-| GET         | `/workouts/days?tz=`                       | Los días con series (en la zona horaria del cliente) y las series del día más reciente                                                                 |
-| POST        | `/workouts`                                | Registra una serie. Con `clientId`, repetir el envío devuelve la misma serie en vez de duplicarla                                                      |
+| POST        | `/workouts`                                | Registra una serie en su sesión (`sessionId`, `performedAt` y `timeZone` del cliente). Con `clientId`, repetir el envío no la duplica                  |
+| GET         | `/sessions?before=&limit=`                 | Sesiones del usuario, la más nueva primero (20 por página, 50 como máximo), con su número de series, el cursor `next` y `first`                        |
+| GET         | `/sessions/:id`                            | Una sesión con sus series                                                                                                                              |
 | PATCH       | `/workouts/:id`                            | Edita una serie                                                                                                                                        |
 | DELETE      | `/workouts/:id`                            | Borra una serie                                                                                                                                        |
 | GET         | `/workouts/recommendation`                 | Última serie, para precargar el formulario (ver abajo)                                                                                                 |
@@ -182,7 +184,15 @@ no se deduce a simple vista:
   equipo, `setType` (`WORKING`, `WARMUP`, `RAMP`) y `step` (el escalón de la
   rampa). Sin `weight` ni `durationSec` es una serie de solo reps. `clientId`
   es opcional y único por usuario: la web lo genera para reintentar un envío
-  sin duplicar la serie.
+  sin duplicar la serie. `createdAt` es la hora en que se hizo la serie:
+  la manda el cliente (`performedAt`) y se acepta si no tiene más de 7 días ni
+  está en el futuro.
+- **`Session`** agrupa las series de un entrenamiento, con `startedAt`,
+  `endedAt`, `timeZone` y la rutina si la hubo. Su `clientId` es el id que
+  genera la web; una serie sin él se une a la última sesión si su última serie
+  tiene menos de 3 horas, o abre otra (`modules/workouts/session-rules.ts`).
+  Al borrar la última serie de una sesión, la sesión se borra. La migración
+  `sessions` agrupó con esa regla las series anteriores.
 - **`RoutineItem.blocks`** es una lista JSON de bloques tipados por `kind`:
   `weight_reps`, `reps`, `time`, `warmup` y `ramp`. En la base es JSON libre;
   la forma la garantizan `modules/routines/blocks.ts` y
@@ -222,15 +232,17 @@ no se deduce a simple vista:
 
 `GET /workouts/progress?exerciseId=&routineId=&tz=`
 
-- **Sesión:** las series efectivas (`WORKING`) de un día local (`tz`) con el
-  mismo equipo, separando las hechas en rutina de las del día libre.
+- **Sesión:** las series efectivas (`WORKING`) de una misma sesión
+  (`sessionId`) con el mismo equipo, separando las hechas en rutina de las del
+  día libre. Su fecha es la de su primera serie en la zona `tz`.
 - **Meta:** el primer bloque `weight_reps` del ejercicio en `routineId`. Sin
   rutina o sin ese bloque, `streak` es `null` (no hay racha).
 - **Racha:** sesiones con rutina seguidas, de la más reciente hacia atrás, con
   todas las series que pide la meta, todas en el tope (`repsMax`, o `reps` si no
   hay rango) y con el mismo peso y equipo. Cuenta series de cualquier rutina;
-  el día libre no suma ni rompe. Una sesión de hoy aún incompleta y al tope no
-  rompe la racha.
+  el día libre no suma ni rompe. Una sesión abierta (con una serie hace menos
+  de 3 horas) aún incompleta y al tope no rompe la racha, aunque haya empezado
+  antes de medianoche.
 - **Sugerencia:** `down` si alguna serie de la última sesión quedó bajo el piso
   (mínimo del rango menos 2); si no, `up` con racha. El cliente decide cómo
   mostrarla; nunca propone un peso.
