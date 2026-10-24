@@ -14,17 +14,22 @@ import { ExportSheet } from "@/components/history/ExportSheet";
 import { routes } from "@/lib/routes";
 import { setMeasure } from "@/lib/setDisplay";
 import { todayLocal } from "@/lib/measurements";
-import { Calendar, Share } from "lucide-react";
+import { Calendar, ChevronRight, Share } from "lucide-react";
 
 export default function HistoryPage() {
   const [exportOpen, setExportOpen] = useState(false);
   const {
-    dates,
-    selectedDate,
-    setSelectedDate,
+    sessions,
+    currentSession,
+    setSelectedSession,
     currentWorkouts,
     loading,
-    getDisplayDate,
+    hasMore,
+    loadMore,
+    loadingMore,
+    firstDay,
+    sessionLabel,
+    sessionTitle,
     handleRepeat,
     editingWorkout,
     setEditingWorkout,
@@ -51,7 +56,7 @@ export default function HistoryPage() {
           <button
             type="button"
             onClick={() => setExportOpen(true)}
-            disabled={dates.length === 0}
+            disabled={sessions.length === 0}
             aria-label="Exportar para tu IA"
             title="Exportar para tu IA"
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
@@ -63,22 +68,34 @@ export default function HistoryPage() {
         {/* Date Selector Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
           <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
-          {!loading && dates.length === 0 && (
+          {!loading && sessions.length === 0 && (
             <span className="text-sm text-muted-foreground">Sin registros</span>
           )}
-          {dates.map((date) => (
+          {sessions.map((session) => (
             <button
-              key={date}
-              onClick={() => setSelectedDate(date)}
+              key={session.id}
+              onClick={() => setSelectedSession(session.id)}
               className={`flex-none px-4 py-2 rounded-xl kicker text-[0.65rem] transition-all border-2 ${
-                selectedDate === date
+                currentSession?.id === session.id
                   ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
                   : "bg-card border-input text-muted-foreground hover:border-border"
               }`}
             >
-              {getDisplayDate(date)}
+              {sessionLabel(session)}
             </button>
           ))}
+          {hasMore && (
+            <button
+              type="button"
+              onClick={() => void loadMore()}
+              disabled={loadingMore}
+              aria-label="Cargar sesiones anteriores"
+              className="flex-none flex items-center gap-1 px-4 py-2 rounded-xl kicker text-[0.65rem] border-2 bg-card border-input text-muted-foreground hover:border-border disabled:opacity-50"
+            >
+              Más
+              <ChevronRight className="w-3 h-3" />
+            </button>
+          )}
         </div>
       </AppHeader>
 
@@ -91,7 +108,7 @@ export default function HistoryPage() {
               Cargando historial...
             </p>
           </div>
-        ) : dates.length === 0 ? (
+        ) : !currentSession ? (
           <div className="flex flex-col items-center justify-center h-64 space-y-6 text-center animate-fade-in-up">
             <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center">
               <Calendar className="w-10 h-10 text-muted-foreground/50" />
@@ -115,13 +132,13 @@ export default function HistoryPage() {
           <div className="space-y-10">
             <section className="animate-fade-in-up">
               <h2 className="kicker text-[0.65rem] text-muted-foreground mb-4 px-1">
-                {getDisplayDate(selectedDate)}
+                {sessionTitle(currentSession)}
               </h2>
 
               <div className="space-y-3">
                 {currentWorkouts.length === 0 ? (
                   <p className="text-sm text-muted-foreground opacity-70">
-                    No hay entrenamientos este día.
+                    No hay series en esta sesión.
                   </p>
                 ) : (
                   currentWorkouts.map((workout, idx) => (
@@ -166,13 +183,13 @@ export default function HistoryPage() {
 
       {exportOpen && (
         <ExportSheet
-          firstDay={dates.at(-1) ?? todayLocal()}
+          firstDay={firstDay ?? todayLocal()}
           onClose={() => setExportOpen(false)}
         />
       )}
 
       <Suspense>
-        <QueryExportSheet firstDay={dates.at(-1) ?? todayLocal()} />
+        <QueryExportSheet firstDay={firstDay ?? todayLocal()} />
       </Suspense>
 
       <BottomNav />

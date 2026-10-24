@@ -64,6 +64,11 @@ export const routes = {
       update: (id: string) => `/workouts/${id}`,
       delete: (id: string) => `/workouts/${id}`,
     },
+    sessions: {
+      list: (before: string | null = null) =>
+        before ? `/sessions?before=${encodeURIComponent(before)}` : "/sessions",
+      one: (id: string) => `/sessions/${id}`,
+    },
     exercises: {
       create: () => "/exercises",
       list: () => "/exercises",

@@ -2,22 +2,57 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { Workout } from "@/lib/types";
+import type { SessionPage, SessionSummary, Workout } from "@/lib/types";
 import { notifyError } from "@/lib/notify";
 import { setMeasure } from "@/lib/setDisplay";
 
-// Local day (browser tz) as YYYY-MM-DD. en-CA formats ISO-like.
-function localDay(date: string): string {
-  return new Date(date).toLocaleDateString("en-CA");
+const localDay = (iso: string, timeZone?: string) =>
+  new Date(iso).toLocaleDateString("en-CA", { timeZone });
+
+function displayDate(dateStr: string): string {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const [y, m, d] = dateStr.split("-");
+  if (!y || !m || !d) return dateStr;
+  const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
+
+  if (dateObj.toDateString() === today.toDateString()) return "Hoy";
+  if (dateObj.toDateString() === yesterday.toDateString()) return "Ayer";
+
+  return new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "2-digit",
+    month: "short",
+  })
+    .format(dateObj)
+    .replace(/^\w/, (c) => c.toUpperCase());
 }
+
+const sessionDay = (session: SessionSummary) =>
+  localDay(session.startedAt, session.timeZone);
+
+const sessionTime = (session: SessionSummary) =>
+  new Date(session.startedAt).toLocaleTimeString("es-PE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: session.timeZone,
+  });
 
 export function useWorkoutHistory() {
   const router = useRouter();
 
-  const [dates, setDates] = useState<string[]>([]);
-  const [byDay, setByDay] = useState<Record<string, Workout[]>>({});
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [sessions, setSessions] = useState<SessionSummary[]>([]);
+  const [next, setNext] = useState<string | null>(null);
+  const [first, setFirst] = useState<string | null>(null);
+  const [setsBySession, setSetsBySession] = useState<Record<string, Workout[]>>(
+    {},
+  );
+  const [selectedId, setSelectedSession] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Edit and Delete state
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
@@ -28,59 +63,70 @@ export function useWorkoutHistory() {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     api
-      .get<{ days: string[]; sets: Workout[] }>(routes.api.workouts.days(tz))
-      .then(({ days, sets }) => {
-        setDates(days);
-        if (days[0]) setByDay({ [days[0]]: sets });
+      .get<SessionPage>(routes.api.sessions.list())
+      .then((page) => {
+        setSessions(page.sessions);
+        setNext(page.next);
+        setFirst(page.first);
       })
-      .catch((error) => console.error("Error fetching workouts:", error))
+      .catch((error) => console.error("Error fetching sessions:", error))
       .finally(() => setLoading(false));
   }, []);
 
-  const activeDate = dates.includes(selectedDate)
-    ? selectedDate
-    : (dates[0] ?? "");
-  const dayLoaded = !activeDate || activeDate in byDay;
+  const loadMore = useCallback(async () => {
+    if (!next || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const page = await api.get<SessionPage>(routes.api.sessions.list(next));
+      setSessions((prev) => [...prev, ...page.sessions]);
+      setNext(page.next);
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+      notifyError("No se pudieron cargar más sesiones");
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [next, loadingMore]);
+
+  const currentSession =
+    sessions.find((s) => s.id === selectedId) ?? sessions[0] ?? null;
+  const activeId = currentSession?.id ?? "";
+  const sessionLoaded = !activeId || activeId in setsBySession;
 
   useEffect(() => {
-    if (dayLoaded) return;
+    if (sessionLoaded) return;
     api
-      .get<Workout[]>(routes.api.workouts.range(activeDate, activeDate))
-      .then((sets) => setByDay((prev) => ({ ...prev, [activeDate]: sets })))
+      .get<{ sets: Workout[] }>(routes.api.sessions.one(activeId))
+      .then(({ sets }) =>
+        setSetsBySession((prev) => ({ ...prev, [activeId]: sets })),
+      )
       .catch((error) => {
-        console.error("Error fetching day:", error);
-        notifyError("No se pudo cargar el día");
+        console.error("Error fetching session:", error);
+        notifyError("No se pudo cargar la sesión");
       });
-  }, [activeDate, dayLoaded]);
+  }, [activeId, sessionLoaded]);
 
   const currentWorkouts = useMemo(
-    () => byDay[activeDate] ?? [],
-    [byDay, activeDate],
+    () => setsBySession[activeId] ?? [],
+    [setsBySession, activeId],
   );
 
-  // Format date string to human-readable
-  const getDisplayDate = useCallback((dateStr: string) => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  const sessionLabel = useCallback(
+    (session: SessionSummary) => {
+      const day = sessionDay(session);
+      const sameDay = sessions.filter((s) => sessionDay(s) === day).length;
+      const label = displayDate(day);
+      return sameDay > 1 ? `${label} · ${sessionTime(session)}` : label;
+    },
+    [sessions],
+  );
 
-    const [y, m, d] = dateStr.split("-");
-    if (!y || !m || !d) return dateStr;
-    const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
-
-    if (dateObj.toDateString() === today.toDateString()) return "Hoy";
-    if (dateObj.toDateString() === yesterday.toDateString()) return "Ayer";
-
-    return new Intl.DateTimeFormat("es-ES", {
-      weekday: "long",
-      day: "2-digit",
-      month: "short",
-    })
-      .format(dateObj)
-      .replace(/^\w/, (c) => c.toUpperCase());
-  }, []);
+  const sessionTitle = useCallback(
+    (session: SessionSummary) =>
+      `${sessionLabel(session)} · ${session.routine?.name ?? "Día libre"}`,
+    [sessionLabel],
+  );
 
   // Repeat a workout set
   const handleRepeat = useCallback(
@@ -127,10 +173,9 @@ export function useWorkoutHistory() {
 
         await api.patch(routes.api.workouts.update(editingWorkout.id), changes);
 
-        const day = localDay(editingWorkout.createdAt);
-        setByDay((prev) => ({
+        setSetsBySession((prev) => ({
           ...prev,
-          [day]: (prev[day] ?? []).map((w) =>
+          [activeId]: (prev[activeId] ?? []).map((w) =>
             w.id === editingWorkout.id ? { ...w, ...changes } : w,
           ),
         }));
@@ -143,7 +188,7 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [editingWorkout, editReps, editWeight, editDuration]);
+  }, [editingWorkout, editReps, editWeight, editDuration, activeId]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {
@@ -152,14 +197,17 @@ export function useWorkoutHistory() {
     const run = async () => {
       try {
         await api.delete(routes.api.workouts.delete(deletingWorkout.id));
-        const day = localDay(deletingWorkout.createdAt);
-        const left = (byDay[day] ?? []).filter(
+        const left = (setsBySession[activeId] ?? []).filter(
           (w) => w.id !== deletingWorkout.id,
         );
-        setByDay((prev) => ({ ...prev, [day]: left }));
-        if (left.length === 0) {
-          setDates((prev) => prev.filter((d) => d !== day));
-        }
+        setSetsBySession((prev) => ({ ...prev, [activeId]: left }));
+        setSessions((prev) =>
+          left.length === 0
+            ? prev.filter((s) => s.id !== activeId)
+            : prev.map((s) =>
+                s.id === activeId ? { ...s, sets: left.length } : s,
+              ),
+        );
         setDeletingWorkout(null);
       } catch (e) {
         console.error(e);
@@ -169,18 +217,23 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [deletingWorkout, byDay]);
+  }, [deletingWorkout, setsBySession, activeId]);
 
   return {
     // Data
-    dates,
-    selectedDate: activeDate,
-    setSelectedDate,
+    sessions,
+    currentSession,
+    setSelectedSession,
     currentWorkouts,
-    loading: loading || !dayLoaded,
+    loading: loading || !sessionLoaded,
+    hasMore: next != null,
+    loadMore,
+    loadingMore,
+    firstDay: first ? localDay(first) : null,
 
     // Helpers
-    getDisplayDate,
+    sessionLabel,
+    sessionTitle,
     handleRepeat,
 
     // Edit

@@ -57,6 +57,21 @@ export interface Workout {
   createdAt: string;
 }
 
+export interface SessionSummary {
+  id: string;
+  startedAt: string;
+  endedAt: string;
+  timeZone: string;
+  routine: { id: string; name: string } | null;
+  sets: number;
+}
+
+export interface SessionPage {
+  sessions: SessionSummary[];
+  next: string | null;
+  first: string | null;
+}
+
 export interface WeightRepsBlock {
   kind: "weight_reps";
   sets: number | null;
