@@ -1,8 +1,10 @@
-# Benchmark de la pantalla de entrenar
+# Benchmark de las series
 
-Mide las dos consultas que corren cada vez que se abre el formulario de una
-serie: la última serie (`GET /workouts/recommendation`) y los días entrenados
-(`GET /workouts/days`). Solo contra dev.
+Mide dos consultas que crecen con las series del usuario: la última serie
+(`GET /workouts/recommendation`), que corre cada vez que se abre el formulario
+de una serie, y los días entrenados (`GET /workouts/days`), que corre al entrar
+al historial. El benchmark las pide por igual, así que `days` pesa mucho más
+que en el uso real. Solo contra dev.
 
 ## Datos
 
@@ -54,6 +56,8 @@ corridas iguales los números varían un 5-7%, así que una diferencia menor al
 | Última serie (TD-107)  | 10       | 110 ms               | 184-186 ms | 101          |
 | Índices (TD-108)       | 1        | 2.6 ms               | 22 ms      | 88           |
 | Índices (TD-108)       | 10       | 111-113 ms           | 186 ms     | 102          |
+| Días en SQL (TD-131)   | 1        | 2.1 ms               | 11 ms      | 174          |
+| Días en SQL (TD-131)   | 10       | 9.8 ms               | 24 ms      | 718-720      |
 
 Tiempo de Postgres solo (`EXPLAIN ANALYZE`, usuario `bench`):
 
@@ -62,6 +66,10 @@ Tiempo de Postgres solo (`EXPLAIN ANALYZE`, usuario `bench`):
 | Última serie (`LIMIT 1`)         | 1.37 ms     | 0.05 ms     |
 | Días (`createdAt` del usuario)   | 2.08 ms     | 1.16 ms     |
 | Progreso (`LIMIT 300` del ejer.) | 1.09 ms     | 0.66 ms     |
+
+Con TD-131 la consulta de días agrupa en Postgres (`GROUP BY` sobre la fecha
+local): tarda 7.6 ms, más que leer las fechas, pero devuelve 731 filas en vez de
+10 000 y la API ya no las convierte.
 
 - **La API se satura en unas 75-80 peticiones/s.** De 1 a 10 usuarios el total
   casi no sube y la latencia se multiplica por 15: el resto es cola.
@@ -78,3 +86,8 @@ Tiempo de Postgres solo (`EXPLAIN ANALYZE`, usuario `bench`):
   leen del índice sin ordenar. Con 1 usuario `recommendation` baja de 3.8 a 2.6
   ms; con 10 la capacidad no cambia, porque el límite sigue siendo el CPU de la
   API. El índice importa cuando la tabla deje de caber en memoria.
+- **TD-131 multiplica la capacidad por 7.** Con los días agrupados en SQL la API
+  pasa de ~100 a ~720 peticiones/s y `days` baja de 186 a 24 ms con 10
+  usuarios. El trabajo pasó a Postgres, que lo reparte entre varios núcleos
+  (316% de CPU); la API, con un solo hilo, vuelve a estar cerca de su techo
+  (115%), ahora con 7 veces más peticiones.

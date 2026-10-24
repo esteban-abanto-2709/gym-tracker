@@ -3,7 +3,7 @@ import { Prisma, SetType } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
-import { toLocalDateString } from '@/common/timezone.util';
+import { FALLBACK_TIMEZONE, toLocalDateString } from '@/common/timezone.util';
 import { normalizeBlock, type BlockInput } from '../routines/blocks';
 import { computeStreak, groupSessions, type StreakTarget } from './streak';
 
@@ -196,21 +196,19 @@ export class WorkoutsService {
     });
   }
 
-  async getDays(userId: string, tz?: string) {
-    const all = await this.prisma.workout.findMany({
-      where: { userId },
-      select: { createdAt: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    const local = all.map((w) => toLocalDateString(w.createdAt, tz));
-    const days = [...new Set(local)];
+  async getDays(userId: string, tz: string = FALLBACK_TIMEZONE) {
+    const rows = await this.prisma.$queryRaw<{ day: string; start: Date }[]>`
+      SELECT to_char(("createdAt" AT TIME ZONE 'UTC') AT TIME ZONE ${tz}, 'YYYY-MM-DD') AS day,
+             min("createdAt") AS start
+      FROM "Workout"
+      WHERE "userId" = ${userId}
+      GROUP BY day
+      ORDER BY day DESC`;
+    const days = rows.map((r) => r.day);
     if (days.length === 0) return { days, sets: [] };
 
-    const latestCount = local.findIndex((d) => d !== days[0]);
-    const latestStart =
-      all[(latestCount === -1 ? all.length : latestCount) - 1].createdAt;
     const sets = await this.prisma.workout.findMany({
-      where: { userId, createdAt: { gte: latestStart } },
+      where: { userId, createdAt: { gte: rows[0].start } },
       include: WORKOUT_INCLUDE,
       orderBy: { createdAt: 'desc' },
     });

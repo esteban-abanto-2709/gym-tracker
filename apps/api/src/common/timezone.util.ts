@@ -1,5 +1,5 @@
 // ponytail: fallback when the client sends no tz; the frontend owns the real timezone.
-const FALLBACK_TIMEZONE = 'America/Lima';
+export const FALLBACK_TIMEZONE = 'America/Lima';
 
 const formatters = new Map<string, Intl.DateTimeFormat>();
 

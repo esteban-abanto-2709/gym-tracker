@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-131] Los días entrenados se agrupan en Postgres (2026-10-24 09:07)
+`getDays` agrupa por fecha local con `AT TIME ZONE` y `GROUP BY` en vez de convertir cada serie en JavaScript; un e2e fija el corte de día entre Lima y UTC. En el benchmark la API pasa de ~100 a ~720 peticiones/s con 10 usuarios.
+
 ## [TD-108] La tabla de series tiene índices (2026-10-23 19:26)
 `Workout` suma `(userId, exerciseId, createdAt)` y `(userId, createdAt)`. En Postgres la última serie pasa de 1.37 a 0.05 ms y los días se leen del índice sin ordenar; la capacidad del benchmark no cambia porque el límite es el CPU de la API.
 

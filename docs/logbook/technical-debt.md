@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-131] Los días entrenados leen todas las series del usuario en cada llamada
-- **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts` (`getDays`)
-- **Riesgo:** 4/10
-- **Problema:** `GET /workouts/days` trae el `createdAt` de todas las series del usuario para sacar los días únicos en JavaScript. Con 10 000 series tarda 23 ms con un solo usuario y es la ruta más lenta del benchmark (`apps/api/bench/`).
-- **Impacto futuro:** crece con cada serie que registras; con TD-107 resuelto es lo que más CPU gasta la API por vuelta.
-- **Sugerencia:** agrupar los días en SQL (`DISTINCT` sobre la fecha local con `AT TIME ZONE`) en vez de traer las filas.
-- **Fecha:** 2026-10-23 · **Estado:** Abierto
-
 ## [TD-130] Los ids de los equipos están en español
 - **Ubicación:** tabla `Equipment` (ids `barra`, `polea`, `mancuerna`, `maquina`, `otro`… sembrados en la migración `equipo_tabla_y_slug`); `apps/web/src/lib/equipmentIcons.ts`.
 - **Riesgo:** 2/10
