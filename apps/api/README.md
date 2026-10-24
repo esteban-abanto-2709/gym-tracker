@@ -56,6 +56,7 @@ pnpm run format       # Prettier
 pnpm run test:unit    # Jest, specs junto al código (src/**/*.spec.ts)
 pnpm run test:e2e     # Jest + Supertest (test/*.e2e-spec.ts)
 pnpm run test:cov     # cobertura
+pnpm run seed:bench   # datos de prueba para el benchmark (solo dev, ver bench/)
 ```
 
 ```bash

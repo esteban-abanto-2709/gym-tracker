@@ -25,10 +25,10 @@ changelog y se borra de aquí.
 ## [TD-108] La tabla de series no tiene índices
 - **Ubicación:** `apps/api/prisma/schema.prisma:123` (`model Workout`)
 - **Riesgo:** 4/10
-- **Problema:** Postgres no indexa solo las llaves foráneas, y `Workout` no declara ningún `@@index`. Todas las consultas filtran por `userId` (y casi todas por `exerciseId`) y ordenan por `createdAt`, así que cada una recorre la tabla entera, que suma las series de todos los usuarios.
-- **Impacto futuro:** la pantalla de entrenar se vuelve más lenta con cada serie y cada amigo nuevo; hoy no se nota con unas miles de filas.
+- **Problema:** Postgres no indexa solo las llaves foráneas, y `Workout` no declara ningún `@@index`. El filtro por `userId` se apoya en el índice único `(userId, clientId)` (medido con `EXPLAIN` en `apps/api/bench/`), pero nada cubre `exerciseId` ni el orden por `createdAt`: cada consulta lee todas las series del usuario y las ordena en memoria.
+- **Impacto futuro:** la pantalla de entrenar se vuelve más lenta con cada serie del usuario; hoy no se nota con unas miles de filas.
 - **Sugerencia:** `@@index([userId, exerciseId, createdAt])` y `@@index([userId, createdAt])`; la migración es segura sobre datos reales.
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
+- **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-23)
 
 ## [TD-107] "Última serie" trae todo el historial del ejercicio para usar una fila
 - **Ubicación:** `apps/api/src/modules/workouts/workouts.service.ts:70` (`getRecommendation`)
@@ -36,7 +36,7 @@ changelog y se borra de aquí.
 - **Problema:** la consulta principal es un `findMany` sin `take` que carga todas las series del ejercicio con ese equipo, y solo se usa `sets[0]`. Corre cada vez que se abre el formulario de una serie. `getDays` (`:129`) también lee todas las fechas del usuario en cada llamada.
 - **Impacto futuro:** el formulario tarda más en precargarse cuanto más entrenas un ejercicio: justo lo contrario de "no pensar".
 - **Sugerencia:** `findFirst` (o `take: 1`) en `getRecommendation`; `getDays` puede esperar a que se note.
-- **Fecha:** 2026-10-16 · **Estado:** Abierto
+- **Fecha:** 2026-10-16 · **Estado:** En progreso (2026-10-23)
 
 ## [TD-104] Los ejercicios "extra" de la sesión son código muerto
 - **Ubicación:** `apps/web/src/hooks/useGuidedSession.ts:104`, `apps/web/src/lib/activeSession.ts:16`
