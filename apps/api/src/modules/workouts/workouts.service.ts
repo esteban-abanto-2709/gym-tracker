@@ -3,18 +3,14 @@ import { Prisma, SetType } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
-import {
-  FALLBACK_TIMEZONE,
-  isValidTimeZone,
-  toLocalDateString,
-} from '@/common/timezone.util';
+import { FALLBACK_TIMEZONE, isValidTimeZone } from '@/common/timezone.util';
 import { continuesSession, setTime } from './session-rules';
 import { normalizeBlock, type BlockInput } from '../routines/blocks';
 import { computeStreak, groupSessions, type StreakTarget } from './streak';
 
 const PROGRESS_HISTORY_SETS = 300;
 
-const WORKOUT_INCLUDE = {
+export const WORKOUT_INCLUDE = {
   exercise: { include: { names: true } },
   equipment: true,
   routine: { select: { name: true } },
@@ -250,6 +246,7 @@ export class WorkoutsService {
           reps: true,
           durationSec: true,
           routineId: true,
+          sessionId: true,
           equipmentId: true,
           equipment: { select: { name: true } },
           createdAt: true,
@@ -266,9 +263,7 @@ export class WorkoutsService {
 
     const sessions = groupSessions(sets, tz);
     const target = item ? targetOf(item.blocks) : null;
-    const streak = target
-      ? computeStreak(sessions, target, toLocalDateString(new Date(), tz))
-      : null;
+    const streak = target ? computeStreak(sessions, target, new Date()) : null;
 
     return {
       target,

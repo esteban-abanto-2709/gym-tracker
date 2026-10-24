@@ -6,19 +6,27 @@ const target = { sets: 3, reps: 8, repsMax: 10 };
 const session = (
   date: string,
   reps: number[],
-  opts: { weight?: number; free?: boolean; equipment?: string } = {},
+  opts: {
+    weight?: number;
+    free?: boolean;
+    equipment?: string;
+    sessionId?: string;
+  } = {},
 ): StreakSet[] =>
   reps.map((r, i) => ({
     weight: opts.weight ?? 60,
     reps: r,
     routineId: opts.free ? null : 'lower-a',
+    sessionId: opts.sessionId ?? `session-${date}`,
     equipmentId: opts.equipment ?? 'barra',
     equipment: { name: opts.equipment === 'maquina' ? 'Máquina' : 'Barra' },
     createdAt: new Date(`${date}T10:0${i}:00Z`),
   }));
 
-const streakOf = (sets: StreakSet[], today = '2026-10-20') =>
-  computeStreak(groupSessions(sets, TZ), target, today);
+const at = (iso: string) => new Date(iso);
+
+const streakOf = (sets: StreakSet[], now = at('2026-10-20T12:00:00Z')) =>
+  computeStreak(groupSessions(sets, TZ), target, now);
 
 describe('computeStreak', () => {
   it('two sessions with every set at the top count 2 and suggest going up', () => {
@@ -94,7 +102,7 @@ describe('computeStreak', () => {
           ...session('2026-10-04', [10, 10, 10]),
           ...session('2026-10-20', [10]),
         ],
-        '2026-10-20',
+        at('2026-10-20T12:00:00Z'),
       ).streak,
     ).toBe(2);
   });
@@ -103,7 +111,7 @@ describe('computeStreak', () => {
     expect(
       streakOf(
         [...session('2026-10-04', [10, 10, 10]), ...session('2026-10-20', [9])],
-        '2026-10-20',
+        at('2026-10-20T12:00:00Z'),
       ).streak,
     ).toBe(0);
   });
@@ -120,9 +128,38 @@ describe('computeStreak', () => {
   it('without a range the top is the reps target', () => {
     const sessions = groupSessions(session('2026-10-04', [8, 8, 8]), TZ);
     expect(
-      computeStreak(sessions, { sets: 3, reps: 8, repsMax: null }, '2026-10-20')
-        .streak,
+      computeStreak(
+        sessions,
+        { sets: 3, reps: 8, repsMax: null },
+        at('2026-10-20T12:00:00Z'),
+      ).streak,
     ).toBe(1);
+  });
+
+  it('an unfinished session that started before midnight is still open', () => {
+    const late: StreakSet = {
+      ...session('2026-10-19', [10])[0],
+      sessionId: 'late',
+      createdAt: at('2026-10-19T23:30:00Z'),
+    };
+    expect(
+      streakOf(
+        [...session('2026-10-04', [10, 10, 10]), late],
+        at('2026-10-20T00:30:00Z'),
+      ).streak,
+    ).toBe(1);
+  });
+
+  it('an unfinished session hours ago is closed and breaks the streak', () => {
+    expect(
+      streakOf(
+        [
+          ...session('2026-10-04', [10, 10, 10]),
+          ...session('2026-10-20', [10]),
+        ],
+        at('2026-10-20T16:00:00Z'),
+      ).streak,
+    ).toBe(0);
   });
 
   it('without routine sessions there is no streak or suggestion', () => {
@@ -150,5 +187,32 @@ describe('groupSessions', () => {
       ['2026-10-01', false, 'Barra', 2],
     ]);
     expect(sessions[2].sets.map((s) => s.reps)).toEqual([10, 9]);
+  });
+
+  it('a session that crosses midnight stays whole, dated by its start', () => {
+    const sets: StreakSet[] = [
+      '2026-10-19T23:40:00Z',
+      '2026-10-19T23:50:00Z',
+      '2026-10-20T00:10:00Z',
+    ].map((iso) => ({
+      ...session('2026-10-19', [10])[0],
+      sessionId: 'night',
+      createdAt: at(iso),
+    }));
+    const sessions = groupSessions(sets, TZ);
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0].date).toBe('2026-10-19');
+    expect(sessions[0].sets).toHaveLength(3);
+  });
+
+  it('two sessions on the same day stay apart', () => {
+    const sessions = groupSessions(
+      [
+        ...session('2026-10-04', [10, 10], { sessionId: 'morning' }),
+        ...session('2026-10-04', [10], { sessionId: 'evening' }),
+      ],
+      TZ,
+    );
+    expect(sessions).toHaveLength(2);
   });
 });

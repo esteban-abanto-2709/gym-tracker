@@ -13,6 +13,7 @@ import { RoutinesModule } from './modules/routines/routines.module';
 import { ProgramsModule } from './modules/programs/programs.module';
 import { MeasurementsModule } from './modules/measurements/measurements.module';
 import { PublicationsModule } from './modules/publications/publications.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PublicationsModule } from './modules/publications/publications.module';
     ProgramsModule,
     MeasurementsModule,
     PublicationsModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [

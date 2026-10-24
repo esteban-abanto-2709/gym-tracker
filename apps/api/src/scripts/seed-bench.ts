@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import { PrismaService } from '../providers/prisma/prisma.service';
 
@@ -5,9 +6,11 @@ const DOMAIN = '@gym-tracker.test';
 const BENCH_EMAIL = `bench${DOMAIN}`;
 const BENCH_PASSWORD = 'bench-password';
 const NOISE_USERS = 99;
-const NOISE_SETS = 1000;
-const BENCH_SETS = 10000;
-const BENCH_TARGET_SETS = 2000;
+const NOISE_SESSIONS = 50;
+const BENCH_SESSIONS = 500;
+const SETS_PER_SESSION = 20;
+const TARGET_SETS_PER_SESSION = 4;
+const SET_SPACING_MS = 4 * 60 * 1000;
 const TARGET_SLUG = 'bench-press';
 const TARGET_EQUIPMENT = 'barra';
 const TWO_YEARS_MS = 2 * 365 * 24 * 3600 * 1000;
@@ -23,22 +26,41 @@ function assertLocalDatabase() {
 const pick = <T>(items: T[]): T =>
   items[Math.floor(Math.random() * items.length)];
 
-function randomSets(
+function randomSessions(
   userId: string,
   count: number,
   exerciseIds: string[],
   equipmentIds: string[],
+  target?: { exerciseId: string; equipmentId: string },
 ) {
   const now = Date.now();
-  return Array.from({ length: count }, () => ({
-    userId,
-    exerciseId: pick(exerciseIds),
-    equipmentId: pick(equipmentIds),
-    weight: 20 + Math.round(Math.random() * 80),
-    reps: 6 + Math.floor(Math.random() * 7),
-    opinion: '',
-    createdAt: new Date(now - Math.random() * TWO_YEARS_MS),
-  }));
+  const sessions = Array.from({ length: count }, () => {
+    const start = now - Math.random() * TWO_YEARS_MS;
+    const end = start + (SETS_PER_SESSION - 1) * SET_SPACING_MS;
+    return {
+      id: randomUUID(),
+      userId,
+      startedAt: new Date(start),
+      endedAt: new Date(end),
+      timeZone: 'America/Lima',
+    };
+  });
+  const sets = sessions.flatMap((session) =>
+    Array.from({ length: SETS_PER_SESSION }, (_, i) => {
+      const onTarget = target && i < TARGET_SETS_PER_SESSION;
+      return {
+        userId,
+        sessionId: session.id,
+        exerciseId: onTarget ? target.exerciseId : pick(exerciseIds),
+        equipmentId: onTarget ? target.equipmentId : pick(equipmentIds),
+        weight: 20 + Math.round(Math.random() * 80),
+        reps: 6 + Math.floor(Math.random() * 7),
+        opinion: '',
+        createdAt: new Date(session.startedAt.getTime() + i * SET_SPACING_MS),
+      };
+    }),
+  );
+  return { sessions, sets };
 }
 
 async function main() {
@@ -81,31 +103,26 @@ async function main() {
       select: { id: true, email: true },
     });
 
-    const sets = created.flatMap((u) =>
+    const generated = created.map((u) =>
       u.email === BENCH_EMAIL
-        ? [
-            ...randomSets(
-              u.id,
-              BENCH_TARGET_SETS,
-              [target.id],
-              [TARGET_EQUIPMENT],
-            ),
-            ...randomSets(
-              u.id,
-              BENCH_SETS - BENCH_TARGET_SETS,
-              exerciseIds,
-              equipmentIds,
-            ),
-          ]
-        : randomSets(u.id, NOISE_SETS, exerciseIds, equipmentIds),
+        ? randomSessions(u.id, BENCH_SESSIONS, exerciseIds, equipmentIds, {
+            exerciseId: target.id,
+            equipmentId: TARGET_EQUIPMENT,
+          })
+        : randomSessions(u.id, NOISE_SESSIONS, exerciseIds, equipmentIds),
     );
+    const sessions = generated.flatMap((g) => g.sessions);
+    const sets = generated.flatMap((g) => g.sets);
+    for (let i = 0; i < sessions.length; i += CHUNK) {
+      await prisma.session.createMany({ data: sessions.slice(i, i + CHUNK) });
+    }
     for (let i = 0; i < sets.length; i += CHUNK) {
       await prisma.workout.createMany({ data: sets.slice(i, i + CHUNK) });
     }
 
     const total = await prisma.workout.count();
     console.log(
-      `seed-bench: ${sets.length} sets for ${created.length} users (${total} in the table)`,
+      `seed-bench: ${sets.length} sets in ${sessions.length} sessions for ${created.length} users (${total} in the table)`,
     );
     console.log(
       `seed-bench: k6 env EXERCISE_ID=${target.id} EQUIPMENT_ID=${TARGET_EQUIPMENT}`,

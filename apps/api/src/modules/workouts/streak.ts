@@ -1,10 +1,12 @@
 import { toLocalDateString } from '@/common/timezone.util';
+import { continuesSession } from './session-rules';
 
 export type StreakSet = {
   weight: number | null;
   reps: number | null;
   durationSec?: number | null;
   routineId: string | null;
+  sessionId?: string | null;
   equipmentId: string | null;
   equipment: { name: string } | null;
   createdAt: Date;
@@ -18,6 +20,7 @@ export type StreakTarget = {
 
 export type ExerciseSession = {
   date: string;
+  lastSetAt: Date;
   free: boolean;
   equipmentId: string | null;
   equipment: string | null;
@@ -43,11 +46,12 @@ export function groupSessions(
   for (const set of ordered) {
     const date = toLocalDateString(set.createdAt, tz);
     const free = set.routineId == null;
-    const key = `${date}|${free}|${set.equipmentId ?? ''}`;
+    const key = `${set.sessionId ?? date}|${free}|${set.equipmentId ?? ''}`;
     let session = byKey.get(key);
     if (!session) {
       session = {
         date,
+        lastSetAt: set.createdAt,
         free,
         equipmentId: set.equipmentId,
         equipment: set.equipment?.name ?? null,
@@ -55,6 +59,7 @@ export function groupSessions(
       };
       byKey.set(key, session);
     }
+    session.date = date;
     session.sets.unshift({
       weight: set.weight,
       reps: set.reps,
@@ -75,7 +80,7 @@ const atTop = (session: ExerciseSession, top: number) =>
 export function computeStreak(
   sessions: ExerciseSession[],
   target: StreakTarget,
-  today: string,
+  now: Date,
 ): { streak: number; suggestion: Suggestion } {
   const top = target.repsMax ?? target.reps;
   const floor = target.reps - FLOOR_GAP;
@@ -83,7 +88,8 @@ export function computeStreak(
 
   const [latest, previous] = routine;
   if (
-    latest?.date === today &&
+    latest &&
+    continuesSession(latest.lastSetAt, now) &&
     latest.sets.length < target.sets &&
     atTop(latest, top) &&
     (!previous || sameLoad(latest, previous))

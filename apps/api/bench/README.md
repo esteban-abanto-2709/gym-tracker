@@ -9,12 +9,14 @@ que en el uso real. Solo contra dev.
 ## Datos
 
 `pnpm run seed:bench` llena la base de dev con 100 usuarios de prueba
-(`@gym-tracker.test`) y 109 000 series repartidas en dos años:
+(`@gym-tracker.test`) y 109 000 series repartidas en dos años, en sesiones de
+20 series separadas por 4 minutos:
 
-- `bench@gym-tracker.test` (contraseña `bench-password`): 10 000 series, 2 000
-  de ellas en press de banca con barra. Unos cinco años de un usuario constante.
-- 99 usuarios más con 1 000 series cada uno, para que la tabla pese como con un
-  centenar de usuarios activos.
+- `bench@gym-tracker.test` (contraseña `bench-password`): 500 sesiones, 10 000
+  series, 2 000 de ellas en press de banca con barra (4 por sesión). Unos cinco
+  años de un usuario constante.
+- 99 usuarios más con 50 sesiones (1 000 series) cada uno, para que la tabla
+  pese como con un centenar de usuarios activos.
 
 Es repetible: cada corrida borra los usuarios de prueba anteriores y los vuelve a
 crear. `pnpm run seed:bench -- --clean` solo los borra. Se niega a correr si
@@ -40,6 +42,13 @@ Por defecto son 10 usuarios virtuales durante 30 s, cada uno pidiendo las dos
 rutas sin pausa: mide la capacidad de la API. Con `--vus 1` después de `run`
 mide lo que tarda una petición sola, sin cola. Con `docker stats` en otra
 terminal se ve quién gasta el CPU.
+
+`history.k6.js` mide una sola ruta del historial, elegida con `ROUTE` (`days` o
+`sessions`), para comparar las dos:
+
+```bash
+docker run --rm -i --network gym-tracker-dev_gym-tracker-dev-network -e ROUTE=sessions grafana/k6:1.3.0 run --quiet - < bench/history.k6.js
+```
 
 ## Resultados
 
@@ -91,3 +100,27 @@ local): tarda 7.6 ms, más que leer las fechas, pero devuelve 731 filas en vez d
   usuarios. El trabajo pasó a Postgres, que lo reparte entre varios núcleos
   (316% de CPU); la API, con un solo hilo, vuelve a estar cerca de su techo
   (115%), ahora con 7 veces más peticiones.
+
+## Historial: días contra sesiones
+
+`history.k6.js` con el usuario `bench` (500 sesiones). `/workouts/days` devuelve
+todos los días de una vez; `/sessions` devuelve una página de 20 sesiones con
+su número de series.
+
+| Ruta                                 | Usuarios | p95     | Peticiones/s | Por respuesta |
+| ------------------------------------ | -------- | ------- | ------------ | ------------- |
+| `/workouts/days`                     | 1        | 10.8 ms | 102          | ~19 KB        |
+| `/workouts/days`                     | 10       | 23 ms   | 507          | ~19 KB        |
+| `/sessions` con `_count` de Prisma   | 1        | 11.9 ms | 88           | ~3.9 KB       |
+| `/sessions` con `_count` de Prisma   | 10       | 18.5 ms | 675          | ~3.9 KB       |
+| `/sessions` con el conteo por página | 1        | 3 ms    | 483          | ~3.9 KB       |
+| `/sessions` con el conteo por página | 10       | 16 ms   | 835          | ~3.9 KB       |
+
+- **El `_count` de Prisma contaba toda la tabla.** Para el número de series de
+  cada sesión, Prisma genera un `COUNT(*) ... GROUP BY "sessionId"` sobre todas
+  las series de todos los usuarios y lo cruza con la página: 9 ms, y crece con
+  cada usuario nuevo. Se ve con `log_min_duration_statement = 0` en el Postgres
+  de dev.
+- **Contar solo la página lo arregla.** Un `groupBy` con `sessionId IN (...)`
+  usa el índice de `sessionId` y lee solo las series de esas 20 sesiones: con un
+  usuario baja de 11.9 a 3 ms.
