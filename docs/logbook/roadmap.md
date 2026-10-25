@@ -1,64 +1,67 @@
 # Roadmap
 
-Trabajo comprometido: lo que sí se va a hacer. Código `RM-###` (nunca se reutiliza).
-Al terminar una tarea se mueve al changelog y se borra de aquí.
+Committed work: what will be done. Code `RM-###` (never reused).
+Ordered by priority, top first. When a task is finished it moves to the
+changelog and is deleted from here.
 
-**Formato de cada entrada:**
-- **Objetivo:** qué se quiere lograr.
-- **Hecho cuando:** criterio claro de finalización.
-- **Fecha** y **Estado** (Abierto / En progreso).
+**Entry format:**
+- **Goal:** what we want to achieve.
+- **Scope:** (optional) what's in and what's out.
+- **Open questions:** (optional) what must be decided when starting.
+- **Done when:** clear completion criterion.
+- **Date** and **Status** (Open / In progress).
 
 ---
 
-> Ordenado por prioridad: de arriba hacia abajo. La lógica de producto detrás
-> de cada tarea está en [`../product-vision.md`](../product-vision.md).
+> The product logic behind each task is in
+> [`../product-vision.md`](../product-vision.md).
 
-## [RM-054] Calculadora de discos
-- **Objetivo:** no hacer cuentas cansado para saber qué discos poner en la barra.
-- **Alcance:** al registrar con barra, mostrar de forma visual la barra (20 kg) con los discos de cada lado para el peso total. Discos disponibles fijos: 20, 10, 5 y 2,5 kg. Personalizar barras y discos por usuario queda en la wishlist (WL-063).
-- **Hecho cuando:** con 90 kg en press de banca se ve "barra 20 + 35 por lado" representado con sus discos (20 + 10 + 5).
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
+## [RM-054] Plate calculator
+- **Goal:** no doing math while tired to know which plates to load on the bar.
+- **Scope:** when logging with a barbell, show the bar (20 kg) visually with the plates on each side for the total weight. Fixed available plates: 20, 10, 5 and 2.5 kg. Customizing bars and plates per user stays in the wishlist (WL-063).
+- **Done when:** with 90 kg on bench press you see "barra 20 + 35 por lado" drawn with its plates (20 + 10 + 5).
+- **Date:** 2026-10-06 · **Status:** Open
 
-## [RM-055] Registro de un toque (demo)
-- **Objetivo:** validar si registrar tocando es más rápido que el formulario actual.
-- **Alcance:** demo aislada, sin cablear a producción. Cada serie es una ficha precargada con peso y meta: un toque la marca como hecha; tocar otra vez resta una rep; una pulsación larga abre la edición.
-- **Hecho cuando:** la demo se usa en una sesión real y se decide si reemplaza a `SetForm` + `SetDoneScreen`.
-- **Fecha:** 2026-10-06 · **Estado:** Abierto
+## [RM-055] One-tap logging (demo)
+- **Goal:** validate whether logging by tapping is faster than the current form.
+- **Scope:** isolated demo, not wired into production. Each set is a card preloaded with weight and target: one tap marks it done; tapping again subtracts a rep; a long press opens editing.
+- **Done when:** the demo is used in a real session and it's decided whether it replaces `SetForm` + `SetDoneScreen`.
+- **Date:** 2026-10-06 · **Status:** Open
 
-## [RM-093] Traducir la interfaz
-- **Objetivo:** que la interfaz (botones, títulos, mensajes) se muestre en el idioma del usuario. Es una preferencia aparte del idioma de los ejercicios (RM-086): hay quien quiere la interfaz en español y los ejercicios en inglés.
-- **Alcance:** instalar una librería de i18n para Next.js (candidata: `next-intl`, verificar su API al empezar) y sacar los textos de cada pantalla a archivos de traducción `es`/`en`. Incluye los nombres de equipo (lista fija), el formato de fechas (hoy fijo en español) y los textos explicativos de la exportación para la IA. Sin preferencia guardada, la interfaz usa el idioma del celular si es `es` o `en`; cualquier otro, `en`. El selector va en el mismo panel de idioma del perfil, debajo de "Nombres de ejercicios".
-- **Hecho cuando:** con el idioma en inglés, la interfaz, los equipos, las fechas y la exportación salen en inglés.
-- **Fecha:** 2026-10-12 · **Estado:** Abierto
+## [RM-093] Translate the interface
+- **Goal:** show the interface (buttons, titles, messages) in the user's language. It's a preference separate from the exercise language (RM-086): some people want the interface in Spanish and the exercises in English.
+- **Scope:** install an i18n library for Next.js (candidate: `next-intl`, verify its API when starting) and move each screen's texts into `es`/`en` translation files. Includes equipment names (fixed list), the date format (fixed to Spanish today) and the explanatory texts of the AI export. With no saved preference, the interface uses the phone's language if it's `es` or `en`; anything else, `en`. The selector goes in the same language panel in the profile, below "Nombres de ejercicios".
+- **Done when:** with the language set to English, the interface, equipment, dates and export come out in English.
+- **Date:** 2026-10-12 · **Status:** Open
 
-## [RM-090] Diccionario de ejercicios: alias y variantes
-- **Objetivo:** encontrar un ejercicio por cualquier nombre con el que se le conozca, incluidos los que llevan el equipo en el nombre. Depende de RM-086.
-- **Alcance:**
-  - **Alias:** otros nombres del mismo ejercicio, cada uno en un idioma ("press plano" → Press de banca).
-  - **Variantes:** un alias puede llevar un equipo. "Smith squat" o "sentadilla en Smith" no es otro ejercicio: es Squat + equipo Smith, y al elegirlo quedan seleccionados los dos. Regla: si cambia el movimiento o los músculos, es otro ejercicio; si solo cambia el equipo, es el mismo ejercicio con otro equipo. Requiere TD-091.
-  - El nombre de una variante se arma solo ("Sentadilla · Smith"), no se guarda a mano; el botón de TikTok busca con ese nombre completo.
-- **A decidir al empezar:** si los usuarios pueden agregar alias y quién los ve. Propuesta: alias oficiales curados para todos y alias personales que solo ve quien los crea, para que nadie ensucie la búsqueda de los demás.
-- **Hecho cuando:** buscar "press plano" encuentra Press de banca, y buscar "smith squat" deja seleccionados Squat y el equipo Smith.
-- **Fecha:** 2026-10-12 · **Estado:** Abierto
+## [RM-090] Exercise dictionary: aliases and variants
+- **Goal:** find an exercise by any name it's known by, including the ones that carry the equipment in the name. Depends on RM-086.
+- **Scope:**
+  - **Aliases:** other names for the same exercise, each in one language ("press plano" → Press de banca).
+  - **Variants:** an alias can carry an equipment. "Smith squat" or "sentadilla en Smith" isn't another exercise: it's Squat + Smith equipment, and choosing it selects both. Rule: if the movement or the muscles change, it's another exercise; if only the equipment changes, it's the same exercise with other equipment. Requires TD-091.
+  - A variant's name is built automatically ("Sentadilla · Smith"), not stored by hand; the TikTok button searches with that full name.
+- **Open questions:** whether users can add aliases and who sees them. Proposal: curated official aliases for everyone and personal aliases only their creator sees, so nobody pollutes other people's search.
+- **Done when:** searching "press plano" finds Press de banca, and searching "smith squat" leaves Squat and the Smith equipment selected.
+- **Date:** 2026-10-12 · **Status:** Open
 
-## [RM-033] Reemplazo con la forma real del ejercicio + editar el slot en sesión
-- **Objetivo:** que reemplazar un ejercicio en el modo guiado deje el slot como **sueles hacer ese ejercicio**, no con los bloques del slot reemplazado, y poder ajustar el slot del día con un lápiz.
-- **Problema:** hoy el sustituto hereda los bloques del slot (regla de RM-020). Al reemplazar Incline Press (`[warmup 2×25] + [weight_reps 3×8]`) por Plank, el mapa cuenta "0/5 series" y la meta dice `Cal. 2 × 25 + 3 × 8` para un ejercicio de tiempo. Detectado probando RM-031 el 2026-09-19.
-- **Regla:** al reemplazar, el slot se reconstruye desde el **último día** en que hiciste el sustituto: sus calentamientos pasan a un bloque `warmup` (series y reps de ese día) y sus series efectivas a un bloque con la medición que usaste (`weight_reps`/`reps`/`time`). Sin historial → slot libre y la medición se elige en el formulario. Los pesos siguen saliendo de "la última vez".
-- **API:** endpoint nuevo que devuelve la forma de la última sesión de un ejercicio (cuántos calentamientos, cuántas efectivas y con qué medición).
-- **Lápiz (editar slot):** disponible en cualquier slot, no solo tras un reemplazo; permite cambiar series, reps o segundos y agregar/quitar el calentamiento. **Afecta solo la sesión de hoy** (se guarda en `ActiveSession`); la rutina guardada no se toca, igual que saltar/reemplazar/agregar. Ofrecer "guardar en la rutina" queda para después.
-- **Pasos:** (1) endpoint + test; (2) el reemplazo lo usa; (3) el lápiz.
-- **Hecho cuando:** reemplazar Incline Press por Plank deja "3 × 40 s" (lo que sueles hacer) en vez de heredar el calentamiento, y desde el lápiz puedo bajarlo a 2 series solo por hoy.
-- **Fecha:** 2026-09-19 · **Estado:** Abierto
+## [RM-033] Replacement with the exercise's real shape + edit the slot in session
+- **Goal:** replacing an exercise in guided mode leaves the slot the way **you usually do that exercise**, not with the replaced slot's blocks, and you can adjust the day's slot with a pencil.
+- **Problem:** today the substitute inherits the slot's blocks (RM-020 rule). When replacing Incline Press (`[warmup 2×25] + [weight_reps 3×8]`) with Plank, the map counts "0/5 series" and the target says `Cal. 2 × 25 + 3 × 8` for a timed exercise. Found while testing RM-031 on 2026-09-19.
+- **Rule:** when replacing, the slot is rebuilt from the **last day** you did the substitute: its warm-ups go into a `warmup` block (sets and reps from that day) and its working sets into a block with the measurement you used (`weight_reps`/`reps`/`time`). No history → free slot and the measurement is chosen in the form. Weights still come from "la última vez".
+- **API:** new endpoint that returns the shape of an exercise's last session (how many warm-ups, how many working sets and with which measurement).
+- **Pencil (edit slot):** available on any slot, not only after a replacement; lets you change sets, reps or seconds and add/remove the warm-up. **Affects only today's session** (stored in `ActiveSession`); the saved routine isn't touched, same as skip/replace/add. Offering "guardar en la rutina" is left for later.
+- **Steps:** (1) endpoint + test; (2) the replacement uses it; (3) the pencil.
+- **Done when:** replacing Incline Press with Plank leaves "3 × 40 s" (what you usually do) instead of inheriting the warm-up, and from the pencil I can lower it to 2 sets just for today.
+- **Date:** 2026-09-19 · **Status:** Open
 
-## [RM-027] Default de equipo desde la BD (último Workout real del ejercicio)
-- **Objetivo:** al comenzar un ejercicio, preseleccionar el equipo consultando de la BD **cómo se hizo la última vez** (el equipo del último `Workout` de ese ejercicio), en vez de depender solo de la memoria localStorage por-navegador de RM-026. Robustez cross-device y ante limpieza de storage/incógnito.
-- **Alcance:** extender `GET /workouts/recommendation` (u otro endpoint ligero) para devolver `lastEquipmentId` del último set de ese ejercicio; el front lo usa como default del selector, con la memoria localStorage como fallback optimista/offline.
-- **Hecho cuando:** al elegir un ejercicio desde cualquier dispositivo, el equipo por default = el del último `Workout` real de ese ejercicio en la BD.
-- **Fecha:** 2026-07-23 · **Estado:** Abierto
+## [RM-027] Equipment default from the DB (the exercise's last real Workout)
+- **Goal:** when starting an exercise, preselect the equipment by asking the DB **how it was done last time** (the equipment of that exercise's last `Workout`), instead of relying only on RM-026's per-browser localStorage memory. Robust across devices and against storage clearing/incognito.
+- **Scope:** extend `GET /workouts/recommendation` (or another lightweight endpoint) to return `lastEquipmentId` from that exercise's last set; the front end uses it as the selector's default, with the localStorage memory as an optimistic/offline fallback.
+- **Done when:** when choosing an exercise from any device, the default equipment = that of the exercise's last real `Workout` in the DB.
+- **Date:** 2026-07-23 · **Status:** Open
 
-## [RM-075] Base de datos administrada
-- **Objetivo:** que los datos de prod no dependan de un solo disco ni de backups hechos a mano: backups automáticos, restauración a cualquier minuto reciente y parches a cargo del proveedor.
-- **Alcance:** mover Postgres del compose de prod a un servicio administrado. Migración con `backup.sh`/`restore.sh` y reversible: si no convence, la base vuelve al compose. La API solo cambia de `DATABASE_URL`/`DIRECT_URL`. Si las migraciones dejan de correr en el arranque de la API, `prisma` vuelve a devDependencies y la imagen se ahorra la CLI (`node_modules` 371 → 136 MB medido); la CLI carga Studio al arrancar, así que no se puede recortar por dentro.
-- **Hecho cuando:** prod corre contra la base administrada con todos los datos, el backup automático del servicio existe y se probó restaurar uno en dev.
-- **Fecha:** 2026-10-08 · **Estado:** Abierto
+## [RM-075] Managed database
+- **Goal:** prod data no longer depends on a single disk or on hand-made backups: automatic backups, restore to any recent minute and patches handled by the provider.
+- **Scope:** move Postgres from the prod compose to a managed service. Migration with `backup.sh`/`restore.sh` and reversible: if it doesn't convince, the database goes back to the compose. The API only changes `DATABASE_URL`/`DIRECT_URL`. If migrations stop running at API startup, `prisma` goes back to devDependencies and the image drops the CLI (`node_modules` 371 → 136 MB measured); the CLI loads Studio at startup, so it can't be trimmed from inside.
+- **Done when:** prod runs against the managed database with all the data, the service's automatic backup exists and restoring one in dev was tested.
+- **Date:** 2026-10-08 · **Status:** Open

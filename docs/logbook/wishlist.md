@@ -1,83 +1,83 @@
 # Wishlist
 
-Ideas y mejoras posibles, sin compromiso (quizá nunca). Código `WL-###` (nunca se reutiliza).
-Si una idea se promueve, se borra de aquí y nace un `RM` nuevo.
+Possible ideas and improvements, no commitment (maybe never). Code `WL-###` (never reused).
+If an idea is promoted, it's deleted from here and a new `RM` is born.
 
-**Formato:** título + idea en 1–2 líneas, sin campos.
+**Format:** title + the idea in 1–2 lines, no fields.
 
 ---
 
-## [WL-124] Recuperar la contraseña por correo
-El "¿Olvidaste tu contraseña?": link de un solo uso por correo que caduca, `POST /auth/forgot` (responde igual exista o no la cuenta) y `POST /auth/reset` (cierra todas las sesiones con TD-120), con límite de intentos. Exige que la app envíe correos: proveedor (candidato Resend) y SPF/DKIM en el DNS. Aplazado: hoy casi todos entran con Google y cambiar la contraseña ya existe (WL-061).
+## [WL-124] Recover the password by email
+The "¿Olvidaste tu contraseña?": a single-use, expiring link by email, `POST /auth/forgot` (answers the same whether the account exists or not) and `POST /auth/reset` (closes every session with TD-120), with an attempt limit. It requires the app to send email: a provider (candidate Resend) and SPF/DKIM in the DNS. Postponed: today almost everyone signs in with Google and changing the password already exists (WL-061).
 
-## [WL-125] Ver una publicación sin cuenta
-Hoy el link de una rutina o un programa publicado pide iniciar sesión, y por eso WhatsApp no muestra una vista previa (título e imagen). Abrir `/explore/{routines|programs}/:slug` en solo lectura sin sesión, con su Open Graph, haría que el link se entienda solo; copiar seguiría pidiendo una cuenta. Antes hay que decidir qué se muestra del autor.
+## [WL-125] View a publication without an account
+Today the link to a published routine or program asks you to sign in, and that's why WhatsApp shows no preview (title and image). Opening `/explore/{routines|programs}/:slug` read-only without a session, with its Open Graph, would make the link self-explanatory; copying would still require an account. First decide what is shown about the author.
 
-## [WL-122] Manual de funcionamiento
-Un documento no técnico que explique cómo funciona la app para cualquier persona, con sus reglas concretas: qué cuenta para la racha, qué pasa con la sesión guiada al terminar el día, que cerrar sesión cierra todos los dispositivos (TD-120), etc. Distinto de `product-vision.md` (el porqué) y de los README (lo técnico).
+## [WL-122] User manual
+A non-technical document that explains how the app works for anyone, with its concrete rules: what counts for the streak, what happens to the guided session at the end of the day, that signing out signs out every device (TD-120), etc. Different from `product-vision.md` (the why) and from the READMEs (the technical side).
 
-## [WL-115] Animación de serie guardada con más movimiento
-Desde RM-114 el check sale al instante, pero el overlay aparece y se va algo de golpe, con una micropausa. Darle una entrada y salida más fluida (transición desde el botón, salida que se funda con la pantalla siguiente). Detalle fino: se ve al usar, no al leer el código.
+## [WL-115] Saved-set animation with more motion
+Since RM-114 the check appears instantly, but the overlay comes and goes somewhat abruptly, with a micro-pause. Give it a smoother entry and exit (transition from the button, exit that blends into the next screen). Fine detail: you see it when using it, not when reading the code.
 
-## [WL-103] ¿Deben existir las series libres?
-Un ejercicio de rutina sin bloques ("Series libres") no tiene meta: la app no sabe cuándo pasar al siguiente ni puede calcular el fuego, y obliga a casos especiales en la sesión guiada. Discutir si quitarlas (exigir al menos un bloque al guardar) o darles un uso claro.
+## [WL-103] Should free sets exist?
+A routine exercise without blocks ("Series libres") has no target: the app doesn't know when to move to the next one or how to compute the fire, and it forces special cases in the guided session. Discuss whether to remove them (require at least one block when saving) or give them a clear use.
 
-## [WL-098] Tutoriales guiados
-Desde una tarjeta de Novedades, un botón "ver tutorial" que oscurece la pantalla e ilumina paso a paso dónde tocar (p. ej. Perfil → Medidas). Opcional: solo lo ve quien lo pide. Con una librería existente (`driver.js` o `react-joyride`, ambas MIT) y solo para las dos o tres funciones que más confunden, porque cada cambio de pantalla puede romper un tutorial.
+## [WL-098] Guided tutorials
+From a Novedades card, a "ver tutorial" button that dims the screen and highlights step by step where to tap (e.g. Perfil → Medidas). Optional: only whoever asks for it sees it. With an existing library (`driver.js` or `react-joyride`, both MIT) and only for the two or three most confusing features, because every screen change can break a tutorial.
 
-## [WL-097] Deslizar para cerrar los paneles
-Bajar con el dedo para cerrar los paneles que suben desde abajo (Novedades, Exportar, Idioma, Medidas, mapa de la sesión), los cinco a la vez para que se comporten igual. Primero elegir librería: `vaul` (la del Drawer de shadcn) parece sin mantenimiento, verificarlo y comparar con alternativas como el drag de `motion`.
+## [WL-097] Swipe to close the panels
+Swipe down to close the panels that slide up from the bottom (Novedades, Exportar, Idioma, Medidas, session map), all five at once so they behave the same. First choose a library: `vaul` (the one behind shadcn's Drawer) looks unmaintained, verify it and compare with alternatives like `motion`'s drag.
 
-## [WL-087] Fusionar y promover ejercicios
-Con ejercicios creados por usuarios aparecen duplicados ("press raro" creado varias veces). Una herramienta para fusionar un ejercicio en otro (mover sus series y rutinas) y para promover uno de usuario a oficial, completándole músculos y tipo. Depende de RM-056.
+## [WL-087] Merge and promote exercises
+With user-created exercises, duplicates appear ("press raro" created several times). A tool to merge one exercise into another (moving its sets and routines) and to promote a user exercise to official, filling in its muscles and type. Depends on RM-056.
 
-## [WL-082] Caché de datos en el navegador
-Cada pantalla pide sus datos al montarse y cada viaje por el túnel cuesta ~250 ms (ver TD-080 en el changelog). Con una librería de caché (TanStack Query o SWR), volver a una pantalla mostraría al instante lo último cargado y refrescaría por detrás.
+## [WL-082] Data cache in the browser
+Every screen fetches its data on mount and each trip through the tunnel costs ~250 ms (see TD-080 in the changelog). With a caching library (TanStack Query or SWR), going back to a screen would instantly show the last loaded data and refresh in the background.
 
-## [WL-078] Exportación para IA, segunda versión
-Mejoras al archivo de RM-021 según la revisión en [`docs/feedback/2026-10-09-export-ia.md`](../feedback/2026-10-09-export-ia.md): identificador de sesión, slug del ejercicio, objetivo de entrenamiento y un resumen calculado encima de las series. Se hacen cuando el uso real muestre que faltan.
+## [WL-078] AI export, second version
+Improvements to the RM-021 file following the review in [`docs/feedback/2026-10-09-export-ia.md`](../feedback/2026-10-09-export-ia.md): session identifier, exercise slug, training goal and a computed summary above the sets. Done when real use shows they're missing.
 
-## [WL-066] Sugerir bajar tras muchas sesiones sin subir
-Si pasan muchas sesiones sin poder completar el tope con el mismo peso, sugerir bajar para retomar. Falta definir cuántas cuentan como "muchas".
+## [WL-066] Suggest going down after many sessions without going up
+If many sessions go by without completing the top of the range at the same weight, suggest going down to build back up. It's still undefined how many count as "many".
 
-## [WL-010] Ocultar el selector de equipo en los sets de solo reps
-En un bloque `reps` (Dead Bug, plancha abdominal) el equipo siempre es "peso corporal", así que el selector solo estorba. Idea: ocultarlo en esa medición, dejando la puerta abierta a mostrarlo si algún día se hace con lastre o asistido.
+## [WL-010] Hide the equipment selector on reps-only sets
+In a `reps` block (Dead Bug, ab plank) the equipment is always "peso corporal", so the selector only gets in the way. Idea: hide it for that measurement, leaving the door open to showing it if it's ever done weighted or assisted.
 
-## [WL-011] Marcar el calentamiento de forma explícita en el modo guiado
-Hoy una serie de calentamiento solo se distingue por la etiqueta chica "Calentamiento · La última vez…" sobre el formulario (`SetForm.tsx`), igual que una efectiva. Idea: un distintivo claro en la tarjeta del ejercicio (badge o color) cuando la serie es de calentamiento, y revisar que el texto de la pantalla de descanso no se corte.
+## [WL-011] Mark the warm-up explicitly in guided mode
+Today a warm-up set is only told apart by the small "Calentamiento · La última vez…" label above the form (`SetForm.tsx`), same as a working set. Idea: a clear marker on the exercise card (badge or color) when the set is a warm-up, and check that the rest screen's text isn't cut off.
 
-## [WL-037] Recargar desde dentro de la app instalada
-En modo pantalla completa no existe el botón de recargar de Safari: si algo se cuelga, hay que cerrar la app. Evaluar un "tira para recargar" o un botón de reintento en los estados de error.
+## [WL-037] Reload from inside the installed app
+In full-screen mode Safari's reload button doesn't exist: if something hangs, you have to close the app. Evaluate a pull-to-refresh or a retry button in the error states.
 
-## [WL-009] Guardar la unidad original del registro
-Columna `unit` en `Workout` para mostrar el peso en la unidad en que se registró (ej. "45 lb" en vez de "20.4 kg"). Conviene evaluarla junto con la exportación (RM-021), para que la IA vea lo que de verdad se cargó. Hoy se convierte todo a kg redondeado a 1 decimal al guardar.
+## [WL-009] Keep the set's original unit
+A `unit` column on `Workout` to show the weight in the unit it was logged in (e.g. "45 lb" instead of "20.4 kg"). Worth evaluating together with the export (RM-021), so the AI sees what was really loaded. Today everything is converted to kg rounded to 1 decimal when saving.
 
-## [WL-058] Versión de escritorio
-Una experiencia cómoda en la computadora para lo que no se hace entre series: revisar tu progreso, exportar tus datos e importar o armar programas. En escritorio, el video del ejercicio puede abrirse en YouTube en vez de TikTok.
+## [WL-058] Desktop version
+A comfortable computer experience for what isn't done between sets: reviewing your progress, exporting your data and importing or building programs. On desktop, the exercise video can open on YouTube instead of TikTok.
 
-## [WL-060] Crear un programa con tu IA
-La app entrega un `.md` con el formato de programas y rutinas, las convenciones de registro y qué preguntarle al usuario. Tu IA de confianza lo usa para armar el programa y devuelve un JSON; al importarlo se crea un programa **nuevo**, nunca se reemplaza uno existente. No incluye historial: si quieres que la IA lo considere, se lo pasas aparte con la exportación (RM-021).
+## [WL-060] Create a program with your AI
+The app hands out a `.md` with the programs and routines format, the logging conventions and what to ask the user. Your AI of choice uses it to build the program and returns a JSON; importing it creates a **new** program, it never replaces an existing one. It doesn't include history: if you want the AI to take it into account, you give it separately with the export (RM-021).
 
-## [WL-047] Análisis por músculo
-Un gráfico de radar con cuánto trabajas cada músculo (bíceps, tríceps, cuádriceps, isquios…), para ver qué sobreentrenas y qué descuidas. Depende de que el catálogo tenga músculos (RM-056). Antes de construir otras gráficas, buscar una librería que calce con el stack.
+## [WL-047] Per-muscle analysis
+A radar chart of how much you work each muscle (biceps, triceps, quads, hamstrings…), to see what you overtrain and what you neglect. Depends on the catalog having muscles (RM-056). Before building other charts, look for a library that fits the stack.
 
-## [WL-065] Sesión de entrenamiento en el servidor
-Hoy cada `Workout` es una serie suelta y la sesión guiada vive en `localStorage`. Una entidad de sesión en la base permitiría continuarla desde otro dispositivo. Registrar sin red y no duplicar al reintentar ya lo resuelve RM-114 sin ella. Las referencias analizadas coinciden en este cambio.
+## [WL-065] Training session on the server
+Today each `Workout` is a standalone set and the guided session lives in `localStorage`. A session entity in the database would let you continue it from another device. Logging offline and not duplicating on retry is already solved by RM-114 without it. The analyzed references agree on this change.
 
-## [WL-003] Compararse con amigos
-Rivalidad sana y opcional: comparar el radar de músculos, la constancia (días por semana) o la carga en un ejercicio. Preferir compartir una imagen o un link por WhatsApp antes que construir perfiles, amistades o chat.
+## [WL-003] Compare yourself with friends
+Healthy, optional rivalry: compare the muscle radar, consistency (days per week) or the load on an exercise. Prefer sharing an image or a link on WhatsApp over building profiles, friendships or chat.
 
-## [WL-064] Analíticas de uso
-Saber cuántos usuarios entran, cuántos entrenan cada semana y cuántos vuelven. Empezar con consultas a la base antes que con una herramienta.
+## [WL-064] Usage analytics
+Know how many users come in, how many train each week and how many come back. Start with database queries before a tool.
 
-## [WL-063] Personalización por usuario y ejercicio
-El ejercicio (nombre, músculos, descripción) es común a todos, pero cada usuario lo hace a su manera: otra barra (la corta para hip thrust), otros discos o las escalas de las máquinas de su gimnasio. Con esa capa, la calculadora de discos se adapta a cada uno y la sugerencia de subir puede proponer un peso concreto con el salto real de su equipo (la prensa sube de a 10 kg por lado; la barra, de a 5 kg en total).
+## [WL-063] Per-user and per-exercise customization
+The exercise (name, muscles, description) is shared by everyone, but each user does it their own way: another bar (the short one for hip thrust), other plates or the machine scales at their gym. With that layer, the plate calculator adapts to each person and the suggestion to go up can propose a concrete weight with their equipment's real step (the leg press goes up 10 kg per side; the barbell, 5 kg in total).
 
-## [WL-062] Temas
-Además de claro y oscuro, temas intercambiables (tipo Dracula) para personalizar la app.
+## [WL-062] Themes
+Besides light and dark, swappable themes (Dracula-style) to customize the app.
 
-## [WL-005] Registro ampliado: cardio y movilidad
-Registrar cardio post-rutina y ejercicios de movilidad/calentamiento antes, sin ensuciar el flujo principal de pesas.
+## [WL-005] Extended logging: cardio and mobility
+Log post-routine cardio and mobility/warm-up exercises before, without cluttering the main weights flow.
 
-## [WL-077] Ocultar en los logs los identificadores del deploy
-Las variables del job `deploy` con el rol a asumir y el servidor de destino no son credenciales, pero las variables de GitHub no se enmascaran y quedan legibles en los logs públicos de Actions. Pasarlas a *Secrets* (`cd.yml` lee `secrets.` en vez de `vars.`) y borrar los logs de las ejecuciones anteriores.
+## [WL-077] Hide the deploy identifiers in the logs
+The `deploy` job's variables with the role to assume and the target server aren't credentials, but GitHub variables aren't masked and stay readable in the public Actions logs. Move them to *Secrets* (`cd.yml` reads `secrets.` instead of `vars.`) and delete the logs of past runs.
