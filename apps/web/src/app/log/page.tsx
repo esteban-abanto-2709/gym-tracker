@@ -6,6 +6,7 @@ import { useEquipment } from "@/hooks/useEquipment";
 import { useWorkoutForm } from "@/hooks/useWorkoutForm";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
+import { DurationField } from "@/components/DurationPicker";
 import { MeasureSelector } from "@/components/MeasureSelector";
 import { UnitToggle } from "@/components/UnitToggle";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
@@ -120,23 +121,13 @@ function LogContent() {
 
           {measure === "time" ? (
             <div className="space-y-2">
-              <label
-                htmlFor="seconds"
-                className="kicker text-muted-foreground text-[0.65rem]"
-              >
-                Segundos <span className="text-primary">*</span>
+              <label className="kicker text-muted-foreground text-[0.65rem]">
+                Tiempo <span className="text-primary">*</span>
               </label>
-              <input
-                id="seconds"
-                name="seconds"
-                type="number"
-                inputMode="numeric"
+              <DurationField
                 value={seconds}
-                onChange={(e) => setSeconds(e.target.value)}
-                className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
-                required
-                autoComplete="off"
-                data-1p-ignore
+                onChange={setSeconds}
+                label="Tiempo"
               />
             </div>
           ) : (
@@ -209,7 +200,11 @@ function LogContent() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading || !selectedExercise}
+            disabled={
+              loading ||
+              !selectedExercise ||
+              (measure === "time" && !(Number(seconds) > 0))
+            }
             className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s] flex items-center justify-center gap-2"
           >
             <Check className="w-6 h-6" strokeWidth={3} />

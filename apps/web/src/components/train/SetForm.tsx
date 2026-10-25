@@ -13,7 +13,8 @@ import {
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
-import { formatDuration, type SetMeasure } from "@/lib/setDisplay";
+import { formatClock, formatDuration, type SetMeasure } from "@/lib/setDisplay";
+import { DurationField } from "@/components/DurationPicker";
 import { MeasureSelector } from "@/components/MeasureSelector";
 import { UnitToggle } from "@/components/UnitToggle";
 import { ArrowUp, Check, Loader2 } from "lucide-react";
@@ -150,7 +151,7 @@ export function SetForm({
 
   const incomplete =
     measure === "time"
-      ? seconds === ""
+      ? !(Number(seconds) > 0)
       : reps === "" || (measure === "weight_reps" && weight === "");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -257,19 +258,12 @@ export function SetForm({
       {measure === "time" && (
         <div className="space-y-2">
           <label className="kicker text-muted-foreground text-[0.6rem]">
-            Segundos
-            {targetDurationSec ? ` · meta ${targetDurationSec}` : ""}
+            Tiempo
+            {targetDurationSec
+              ? ` · meta ${formatClock(targetDurationSec)}`
+              : ""}
           </label>
-          <input
-            type="number"
-            inputMode="numeric"
-            value={seconds}
-            onChange={(e) => setSeconds(e.target.value)}
-            className={inputClass}
-            required
-            autoComplete="off"
-            data-1p-ignore
-          />
+          <DurationField value={seconds} onChange={setSeconds} label="Tiempo" />
         </div>
       )}
 

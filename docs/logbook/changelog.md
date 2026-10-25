@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [WL-137] Elegir el tiempo con ruedas de minutos y segundos (2026-10-25 12:48)
+Los campos de segundos (guiado, día libre, editor de rutinas) muestran el tiempo como reloj (`1:50`) y al tocarlo abren un panel con ruedas (`@ncdai/react-wheel-picker`) que solo aplica con "Listo"; editar en el historial muestra las ruedas en su diálogo. Se sigue guardando `durationSec`.
+
 ## [TD-136] Dependencias con vulnerabilidades conocidas (2026-10-25 09:04)
 Web: Next 16.2.3 → 16.4.3 (RCE en Image Optimization y `next/og`, bypass de middleware, SSRF). API: `@nestjs/*` 11.2.8 y Prisma 7.10.1 dentro de su mayor, `multer` ≥2.5.0 por override; `pnpm audit --prod` queda en cero en la API.
 

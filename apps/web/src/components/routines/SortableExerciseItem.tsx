@@ -4,6 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, X } from "lucide-react";
 import type { RoutineBlock } from "@/lib/types";
+import { DurationField } from "@/components/DurationPicker";
 
 const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
   { value: "weight_reps", label: "Peso × reps" },
@@ -264,22 +265,29 @@ export function SortableExerciseItem({
                 <span className="text-muted-foreground font-bold">×</span>
 
                 <div className="flex items-center gap-1.5">
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    value={usesSeconds(block) ? block.durationSec : block.reps}
-                    onChange={(e) =>
-                      onChangeBlock(
-                        item.key,
-                        block.key,
-                        usesSeconds(block)
-                          ? { durationSec: e.target.value }
-                          : { reps: e.target.value },
-                      )
-                    }
-                    className={numberInputClass}
-                  />
+                  {usesSeconds(block) ? (
+                    <DurationField
+                      value={block.durationSec}
+                      onChange={(durationSec) =>
+                        onChangeBlock(item.key, block.key, { durationSec })
+                      }
+                      label="Meta de tiempo"
+                      size="sm"
+                    />
+                  ) : (
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      value={block.reps}
+                      onChange={(e) =>
+                        onChangeBlock(item.key, block.key, {
+                          reps: e.target.value,
+                        })
+                      }
+                      className={numberInputClass}
+                    />
+                  )}
                   {usesRepRange(block) && (
                     <>
                       <span className="text-muted-foreground font-bold">–</span>
@@ -299,9 +307,11 @@ export function SortableExerciseItem({
                       />
                     </>
                   )}
-                  <span className="text-xs font-bold text-muted-foreground">
-                    {usesSeconds(block) ? "seg" : "reps"}
-                  </span>
+                  {!usesSeconds(block) && (
+                    <span className="text-xs font-bold text-muted-foreground">
+                      reps
+                    </span>
+                  )}
                 </div>
               </div>
             )}

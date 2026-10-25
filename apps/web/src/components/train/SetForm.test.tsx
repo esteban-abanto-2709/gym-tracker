@@ -136,7 +136,9 @@ describe("SetForm", () => {
 
     render(<SetForm {...props} selectable preferLastMeasure />);
 
-    await waitFor(() => expect(values()).toEqual(["45"]));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /0:45/ })).toBeTruthy(),
+    );
   });
 
   it("the last measure used does not override one the user chose", async () => {
@@ -166,7 +168,9 @@ describe("SetForm", () => {
         }}
       />,
     );
-    await waitFor(() => expect(values()).toEqual(["45"]));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /0:45/ })).toBeTruthy(),
+    );
     fireEvent.submit(container.querySelector("form")!);
 
     await waitFor(() => expect(onLog).toHaveBeenCalled());

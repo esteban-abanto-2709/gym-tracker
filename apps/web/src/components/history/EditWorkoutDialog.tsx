@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
 import type { SetMeasure } from "@/lib/setDisplay";
+import { DurationPicker } from "@/components/DurationPicker";
 
 interface EditWorkoutDialogProps {
   open: boolean;
@@ -58,19 +59,10 @@ export function EditWorkoutDialog({
         <div className="grid gap-4 py-4">
           {measure === "time" ? (
             <div className="space-y-2">
-              <label
-                htmlFor="edit-duration"
-                className="kicker text-muted-foreground text-[0.65rem]"
-              >
-                Segundos
+              <label className="kicker text-muted-foreground text-[0.65rem]">
+                Tiempo
               </label>
-              <input
-                id="edit-duration"
-                type="number"
-                value={durationSec}
-                onChange={(e) => onDurationChange(e.target.value)}
-                className="w-full px-4 py-3 bg-muted border-2 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              />
+              <DurationPicker value={durationSec} onChange={onDurationChange} />
             </div>
           ) : (
             <div
@@ -117,7 +109,9 @@ export function EditWorkoutDialog({
         <DialogFooter>
           <button
             onClick={onSave}
-            disabled={loading}
+            disabled={
+              loading || (measure === "time" && !(Number(durationSec) > 0))
+            }
             className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-display uppercase tracking-wide text-xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
           >
             {loading ? "Guardando..." : "Guardar Cambios"}
