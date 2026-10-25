@@ -44,11 +44,7 @@ export type RampBlock = {
 };
 
 export type RoutineBlock =
-  | WeightRepsBlock
-  | RepsBlock
-  | TimeBlock
-  | WarmupBlock
-  | RampBlock;
+  WeightRepsBlock | RepsBlock | TimeBlock | WarmupBlock | RampBlock;
 
 export type BlockInput = {
   kind: BlockKind;

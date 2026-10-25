@@ -14,14 +14,6 @@ changelog y se borra de aquí.
 
 ---
 
-## [TD-136] Dependencias con vulnerabilidades conocidas
-- **Ubicación:** `apps/web/package.json` (`next@16.2.3`), `apps/api/package.json` (`@nestjs/*`, `prisma`)
-- **Riesgo:** 8/10
-- **Problema:** `pnpm audit --prod` marca 46 avisos en web (5 críticos de Next: RCE en Image Optimization y `next/og`; bypass de middleware, SSRF en rewrites) y 40 en la API (`proxy-addr`, `body-parser`, `multer` vía Express; `fast-uri`, `mysql2` vía las herramientas de Prisma).
-- **Impacto futuro:** RCE o DoS explotables en el servidor de prod expuesto a internet.
-- **Sugerencia:** web: Next a la última 16.x; API: actualizar `@nestjs/*` y `prisma` dentro de su mayor.
-- **Fecha:** 2026-10-25 · **Estado:** En progreso (2026-10-25)
-
 ## [TD-130] Los ids de los equipos están en español
 - **Ubicación:** tabla `Equipment` (ids `barra`, `polea`, `mancuerna`, `maquina`, `otro`… sembrados en la migración `equipo_tabla_y_slug`); `apps/web/src/lib/equipmentIcons.ts`.
 - **Riesgo:** 2/10

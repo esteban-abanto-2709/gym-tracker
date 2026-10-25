@@ -4,3 +4,5 @@ allowBuilds:
   '@prisma/engines': true
   'unrs-resolver': false
   '@prisma/client': true
+overrides:
+  'multer@<2.5.0': ^2.5.0

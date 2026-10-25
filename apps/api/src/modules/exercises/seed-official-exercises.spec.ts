@@ -175,7 +175,7 @@ describe('seedOfficialExercises', () => {
     const result = await seedOfficialExercises(prisma, [bench]);
 
     expect(result.skipped).toEqual(['bench-press']);
-    expect(prisma.exercise.upsert).not.toHaveBeenCalled();
-    expect(prisma.exerciseName.upsert).not.toHaveBeenCalled();
+    expect(prisma.exercise.upsert.mock.calls).toHaveLength(0);
+    expect(prisma.exerciseName.upsert.mock.calls).toHaveLength(0);
   });
 });

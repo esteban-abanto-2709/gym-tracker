@@ -10,6 +10,9 @@ Registro permanente de todo el trabajo terminado. Indexado por código de tarea
 Resumen en ≤2 líneas de lo que se hizo.
 ```
 
+## [TD-136] Dependencias con vulnerabilidades conocidas (2026-10-25 09:04)
+Web: Next 16.2.3 → 16.4.3 (RCE en Image Optimization y `next/og`, bypass de middleware, SSRF). API: `@nestjs/*` 11.2.8 y Prisma 7.10.1 dentro de su mayor, `multer` ≥2.5.0 por override; `pnpm audit --prod` queda en cero en la API.
+
 ## [TD-070] TikTok en Android con la app (2026-10-24 13:06)
 La rama Android abre TikTok con su esquema propio (`intent://search` con `scheme=snssdk1233` y el paquete), sin respaldo web: el link `https` con respaldo cargaba TikTok web dentro de la PWA. Probado con la app instalada; sin la app queda en `TD-135`.
 
