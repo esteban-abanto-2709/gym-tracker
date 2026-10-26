@@ -24,6 +24,7 @@ import {
   Timer,
   ArrowRight,
 } from "lucide-react";
+import { buttonVariants } from "@/components/base/button";
 
 export default function TrainPage() {
   const {
@@ -86,7 +87,7 @@ export default function TrainPage() {
           </p>
           <Link
             href={routes.routines()}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
+            className={buttonVariants({ size: "lg" })}
           >
             Ver mis rutinas
           </Link>

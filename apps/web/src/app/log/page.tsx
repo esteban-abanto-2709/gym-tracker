@@ -16,6 +16,7 @@ import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner"
 import { routes } from "@/lib/routes";
 import { convertWeight } from "@/lib/units";
 import { Check, Loader2 } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 function LogContent() {
   const {
@@ -198,19 +199,19 @@ function LogContent() {
           )}
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
             disabled={
               loading ||
               !selectedExercise ||
               (measure === "time" && !(Number(seconds) > 0))
             }
-            className="group relative w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s] flex items-center justify-center gap-2"
+            className="group relative hover:shadow-xl hover:shadow-primary/30 overflow-hidden animate-scale-in [animation-delay:0.6s] flex"
           >
             <Check className="w-6 h-6" strokeWidth={3} />
             Registrar Set
             <div className="absolute inset-0 bg-linear-to-r from-brand-end to-brand-start opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </button>
+          </Button>
 
           {/* Hint */}
           <p className="text-xs text-muted-foreground text-center px-4 opacity-70">

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import type { Exercise } from "@/lib/types";
 import { Search, Plus, Dumbbell, X } from "lucide-react";
 import { TikTokButton } from "./TikTokButton";
+import { Button } from "@/components/base/button";
 
 interface ExerciseComboboxProps {
   exercises: Exercise[];
@@ -67,7 +68,9 @@ export function ExerciseCombobox({
               </span>
             </div>
           </div>
-          <button
+          <Button
+            variant="remove"
+            size="icon-round"
             type="button"
             onClick={(e) => {
               e.stopPropagation();
@@ -75,10 +78,10 @@ export function ExerciseCombobox({
               onSearchChange("");
               setIsOpen(true);
             }}
-            className="p-2 mr-1 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+            className="mr-1"
           >
             <X className="w-5 h-5" />
-          </button>
+          </Button>
           <TikTokButton
             query={selectedExercise.name}
             className="absolute -bottom-4 right-14"

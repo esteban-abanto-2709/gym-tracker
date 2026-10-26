@@ -1,6 +1,7 @@
 "use client";
 
 import { Flag, PartyPopper, Plus } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface SetDoneScreenProps {
   onExtraSet: () => void;
@@ -19,14 +20,10 @@ export function SetDoneScreen({ onExtraSet, onFinish }: SetDoneScreenProps) {
         </div>
 
         <div className="space-y-3 pt-6">
-          <button
-            type="button"
-            onClick={onFinish}
-            className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
+          <Button type="button" onClick={onFinish}>
             <Flag className="w-5 h-5" strokeWidth={2.5} />
             Terminar sesión
-          </button>
+          </Button>
           <button
             type="button"
             onClick={onExtraSet}

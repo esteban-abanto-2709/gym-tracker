@@ -2,9 +2,13 @@ import Link from "next/link";
 import { ArrowUp, Flame, History, TrendingUp, Zap } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { routes } from "@/lib/routes";
+import { buttonVariants } from "@/components/base/button";
+import { cn } from "@/lib/utils";
 
-const primaryCta =
-  "flex items-center justify-center w-full font-display uppercase tracking-wide text-2xl text-primary-foreground rounded-2xl py-4 bg-linear-to-r from-brand-start to-brand-end shadow-lg shadow-primary/30 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const primaryCta = cn(
+  buttonVariants(),
+  "shadow-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+);
 
 const secondaryCta =
   "flex items-center justify-center w-full font-display uppercase tracking-wide text-xl text-foreground rounded-2xl py-3.5 border-2 border-input hover:border-primary/50 active:scale-95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";

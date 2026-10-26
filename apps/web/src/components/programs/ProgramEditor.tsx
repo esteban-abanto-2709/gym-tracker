@@ -10,6 +10,7 @@ import type { Program, Routine } from "@/lib/types";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { ClipboardList, Globe, Loader2, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface ProgramEditorProps {
   programId?: string;
@@ -253,14 +254,14 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
             </div>
           )}
 
-          <button
+          <Button
             type="button"
             onClick={handleSave}
             disabled={!canSave}
-            className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:shadow-xl hover:shadow-primary/30"
           >
             {isEdit ? "Guardar Cambios" : "Crear Programa"}
-          </button>
+          </Button>
         </div>
       </main>
     </PageShell>

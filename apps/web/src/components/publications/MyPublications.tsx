@@ -10,6 +10,7 @@ import { ExploreCard } from "./ExploreCard";
 import { RenamePublicationDialog } from "./RenamePublicationDialog";
 import { DeletePublicationDialog } from "./DeletePublicationDialog";
 import { Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface MyPublicationsProps {
   items: ExploreListItem[];
@@ -68,22 +69,24 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
           showKind
           actions={
             <div className="flex shrink-0 flex-col gap-2">
-              <button
+              <Button
+                variant="muted"
+                size="icon"
                 type="button"
                 onClick={() => setRenaming(item)}
-                className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
                 aria-label={`Renombrar ${item.name}`}
               >
                 <Pencil className="w-4 h-4" />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="danger"
+                size="icon"
                 type="button"
                 onClick={() => setDeleting(item)}
-                className="p-2.5 text-muted-foreground hover:text-destructive transition-colors rounded-xl bg-muted/30 hover:bg-destructive/10"
                 aria-label={`Eliminar ${item.name}`}
               >
                 <Trash2 className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           }
         />

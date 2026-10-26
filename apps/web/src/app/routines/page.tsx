@@ -21,6 +21,7 @@ import {
   Compass,
   Layers,
 } from "lucide-react";
+import { buttonVariants } from "@/components/base/button";
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -120,7 +121,7 @@ export default function RoutinesPage() {
               </p>
               <Link
                 href={routes.routineNew()}
-                className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
+                className={buttonVariants({ size: "lg" })}
               >
                 <Plus className="w-5 h-5" strokeWidth={3} />
                 Nueva Rutina

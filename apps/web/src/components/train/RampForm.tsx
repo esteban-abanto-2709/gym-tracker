@@ -11,6 +11,7 @@ import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { UnitToggle } from "@/components/UnitToggle";
 import type { LogSetInput } from "@/components/train/SetForm";
 import { ArrowUp, Check, Loader2 } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface Recommendation {
   lastWeight: number | null;
@@ -204,11 +205,7 @@ export function RampForm({
         onChange={setEquipmentId}
       />
 
-      <button
-        type="submit"
-        disabled={logging || incomplete}
-        className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-      >
+      <Button type="submit" disabled={logging || incomplete}>
         {logging ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -220,7 +217,7 @@ export function RampForm({
             Rampa hecha
           </>
         )}
-      </button>
+      </Button>
     </form>
   );
 }

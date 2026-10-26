@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import type { Workout } from "@/lib/types";
 import { setMetrics } from "@/lib/setDisplay";
 import { RotateCcw, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface WorkoutCardProps {
   workout: Workout;
@@ -40,14 +41,15 @@ export function WorkoutCard({
             </span>
           </div>
 
-          <button
+          <Button
+            size="icon"
             onClick={() => onRepeat(workout)}
             aria-label="Repetir Set"
             title="Repetir Set"
-            className="flex items-center justify-center p-2.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all"
+            className="flex shadow-md hover:scale-105"
           >
             <RotateCcw className="w-4 h-4" strokeWidth={3} />
-          </button>
+          </Button>
         </div>
 
         <div className="flex items-center justify-between gap-4 mt-2">
@@ -69,20 +71,22 @@ export function WorkoutCard({
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              variant="muted"
+              size="icon"
               onClick={() => onEdit(workout)}
-              className="p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
               title="Editar Set"
             >
               <Pencil className="w-4 h-4" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="danger"
+              size="icon"
               onClick={() => onDelete(workout)}
-              className="p-2.5 text-muted-foreground hover:text-destructive transition-colors rounded-xl bg-muted/30 hover:bg-destructive/10"
               title="Eliminar Set"
             >
               <Trash2 className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

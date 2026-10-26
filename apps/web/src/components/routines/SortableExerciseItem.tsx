@@ -5,6 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, X } from "lucide-react";
 import type { RoutineBlock } from "@/lib/types";
 import { DurationField } from "@/components/DurationPicker";
+import { Button } from "@/components/base/button";
 
 const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
   { value: "weight_reps", label: "Peso × reps" },
@@ -117,14 +118,16 @@ export function SortableExerciseItem({
           </p>
         </div>
 
-        <button
+        <Button
+          variant="remove"
+          size="icon-round"
           type="button"
           onClick={() => onRemove(item.key)}
           aria-label="Quitar ejercicio"
-          className="shrink-0 p-2 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+          className="shrink-0"
         >
           <X className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
 
       <div className="mt-3 pl-7 space-y-2">
@@ -155,14 +158,16 @@ export function SortableExerciseItem({
                 ))}
               </select>
 
-              <button
+              <Button
+                variant="remove"
+                size="icon-round"
                 type="button"
                 onClick={() => onRemoveBlock(item.key, block.key)}
                 aria-label="Quitar bloque"
-                className="shrink-0 p-1.5 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+                className="shrink-0 p-1.5"
               >
                 <X className="w-3.5 h-3.5" />
-              </button>
+              </Button>
             </div>
 
             {block.kind === "ramp" ? (
@@ -211,7 +216,9 @@ export function SortableExerciseItem({
                       </span>
                     </div>
                     {block.steps.length > 1 && (
-                      <button
+                      <Button
+                        variant="remove"
+                        size="icon-round"
                         type="button"
                         onClick={() =>
                           onChangeBlock(item.key, block.key, {
@@ -221,10 +228,10 @@ export function SortableExerciseItem({
                           })
                         }
                         aria-label="Quitar escalón"
-                        className="shrink-0 p-1.5 rounded-full text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition-colors"
+                        className="shrink-0 p-1.5"
                       >
                         <X className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 ))}

@@ -15,6 +15,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
+import { Button } from "@/components/base/button";
 
 const MIN_LENGTH = 8;
 
@@ -116,14 +117,15 @@ export function PasswordRow() {
               <AlertDialogCancel className="rounded-xl" disabled={saving}>
                 Cancelar
               </AlertDialogCancel>
-              <button
+              <Button
+                size="md"
                 type="submit"
                 disabled={saving || !current || !next}
-                className="py-2 px-4 rounded-xl bg-linear-to-r from-brand-start to-brand-end text-primary-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
+                className="py-2 flex disabled:opacity-60"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 Guardar
-              </button>
+              </Button>
             </AlertDialogFooter>
           </form>
         </AlertDialogContent>

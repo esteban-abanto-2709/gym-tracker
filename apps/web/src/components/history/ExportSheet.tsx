@@ -12,6 +12,7 @@ import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
 import { Copy, Download, Share, X } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 const shiftDays = (date: string, days: number) => {
   const [y, m, d] = date.split("-").map(Number);
@@ -213,11 +214,11 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
             )}
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={share}
             disabled={!ready}
-            className="mt-5 w-full py-3.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:active:scale-100"
+            className="mt-5 py-3.5 disabled:opacity-40"
           >
             {shareable ? (
               <Share className="w-5 h-5" strokeWidth={2.5} />
@@ -225,7 +226,7 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
               <Download className="w-5 h-5" strokeWidth={2.5} />
             )}
             {shareable ? "Compartir" : "Descargar"}
-          </button>
+          </Button>
           <button
             type="button"
             onClick={copy}

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { PendingSet } from "@/lib/pendingSets";
 import { Loader2, RotateCcw } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface UnsavedSetsDialogProps {
   sets: PendingSet[] | null;
@@ -55,11 +56,12 @@ export function UnsavedSetsDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <button
+          <Button
+            size="md"
             type="button"
             onClick={onRetry}
             disabled={retrying}
-            className="w-full py-3 rounded-xl bg-linear-to-r from-brand-start to-brand-end text-primary-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
+            className="w-full disabled:opacity-60"
           >
             {retrying ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -67,7 +69,7 @@ export function UnsavedSetsDialog({
               <RotateCcw className="w-5 h-5" strokeWidth={2.5} />
             )}
             Reintentar
-          </button>
+          </Button>
           <button
             type="button"
             onClick={onDiscard}

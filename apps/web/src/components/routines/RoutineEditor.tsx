@@ -39,6 +39,7 @@ import {
 } from "@/components/routines/SortableExerciseItem";
 import Link from "next/link";
 import { Globe, Loader2, Plus } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 interface RoutineEditorProps {
   routineId?: string;
@@ -399,14 +400,14 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             </DndContext>
           )}
 
-          <button
+          <Button
             type="button"
             onClick={handleSave}
             disabled={!canSave}
-            className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="hover:shadow-xl hover:shadow-primary/30"
           >
             {isEdit ? "Guardar Cambios" : "Crear Rutina"}
-          </button>
+          </Button>
         </div>
       </main>
 

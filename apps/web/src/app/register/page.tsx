@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Label } from "@/components/ui/label";
 import { GoogleButton } from "@/components/auth/GoogleButton";
+import { Button } from "@/components/base/button";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -114,13 +115,13 @@ export default function RegisterPage() {
           />
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={submitting}
-          className="w-full font-display uppercase tracking-wide text-2xl text-primary-foreground rounded-2xl py-4 bg-linear-to-r from-brand-start to-brand-end shadow-lg shadow-primary/30 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100"
+          className="shadow-primary/30"
         >
           {submitting ? "Creando…" : "Crear cuenta"}
-        </button>
+        </Button>
 
         <GoogleButton />
 

@@ -6,6 +6,8 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { Check, Compass, Layers, Loader2, Pencil, Plus } from "lucide-react";
+import { buttonVariants } from "@/components/base/button";
+import { cn } from "@/lib/utils";
 
 export default function ProgramsPage() {
   const { programs, activeProgramId, loading, setActive } = usePrograms();
@@ -87,7 +89,10 @@ export default function ProgramsPage() {
                     </button>
                     <Link
                       href={routes.programEdit(program.id)}
-                      className="shrink-0 p-2.5 text-muted-foreground hover:text-primary transition-colors rounded-xl bg-muted/30 hover:bg-muted"
+                      className={cn(
+                        buttonVariants({ variant: "muted", size: "icon" }),
+                        "shrink-0",
+                      )}
                       title="Editar programa"
                       aria-label="Editar programa"
                     >

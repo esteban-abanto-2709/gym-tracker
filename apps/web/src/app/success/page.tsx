@@ -2,6 +2,8 @@ import Link from "next/link";
 import { History } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { buttonVariants } from "@/components/base/button";
+import { cn } from "@/lib/utils";
 
 export default function SuccessPage() {
   return (
@@ -42,7 +44,10 @@ export default function SuccessPage() {
           <div className="space-y-4 pt-8 animate-fade-in-up [animation-delay:0.4s] opacity-0 [animation-fill-mode:forwards]">
             <Link
               href="/log?repeat=true"
-              className="group relative block w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 overflow-hidden"
+              className={cn(
+                buttonVariants(),
+                "group relative block hover:shadow-xl hover:shadow-primary/30 overflow-hidden",
+              )}
             >
               <span className="relative z-10">Repetir ejercicio</span>
               <div className="absolute inset-0 bg-linear-to-r from-brand-end to-brand-start opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

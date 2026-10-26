@@ -11,6 +11,7 @@ import {
 } from "@/lib/measurements";
 import { MeasureSheet } from "./MeasureSheet";
 import { ChevronRight, Loader2, Plus, Ruler } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 const RECENT = 3;
 
@@ -47,14 +48,15 @@ export function MeasurementsSection() {
             Agrega tus medidas cuando quieras. Ayudan a tu IA a entender tu
             progreso.
           </p>
-          <button
+          <Button
+            size="lg"
             type="button"
             onClick={openNew}
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-xl font-display uppercase tracking-wide text-base shadow-lg active:scale-95 transition-all"
+            className="mt-4 py-2.5 rounded-xl text-base"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
             Registrar medida
-          </button>
+          </Button>
         </div>
       ) : (
         <>

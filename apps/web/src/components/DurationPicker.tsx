@@ -10,6 +10,7 @@ import {
 import "@ncdai/react-wheel-picker/style.css";
 import { Check, Pencil, X } from "lucide-react";
 import { formatClock } from "@/lib/setDisplay";
+import { Button } from "@/components/base/button";
 
 const range = (count: number): WheelPickerOption<number>[] =>
   Array.from({ length: count }, (_, i) => ({
@@ -181,15 +182,15 @@ export function DurationField({
                   />
                 </div>
 
-                <button
+                <Button
                   type="button"
                   onClick={confirm}
                   disabled={toSeconds(draft) === 0}
-                  className="mt-5 w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="mt-5"
                 >
                   <Check className="w-6 h-6" strokeWidth={3} />
                   Listo
-                </button>
+                </Button>
               </div>
             </div>
           </>,

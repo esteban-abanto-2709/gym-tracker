@@ -11,6 +11,7 @@ import {
 } from "@/lib/measurements";
 import { notifyError } from "@/lib/notify";
 import { Check, Trash2, X } from "lucide-react";
+import { Button } from "@/components/base/button";
 
 type Values = Record<MeasureField, string>;
 
@@ -188,15 +189,15 @@ export function MeasureSheet({
             </p>
           )}
 
-          <button
+          <Button
             type="button"
             onClick={save}
             disabled={!canSave || busy}
-            className="mt-5 w-full py-3.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:active:scale-100"
+            className="mt-5 py-3.5 disabled:opacity-40"
           >
             <Check className="w-5 h-5" strokeWidth={2.5} />
             {existing ? "Actualizar" : "Guardar"}
-          </button>
+          </Button>
 
           {existing && (
             <button
