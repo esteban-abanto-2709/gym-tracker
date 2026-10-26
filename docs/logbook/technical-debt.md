@@ -14,14 +14,6 @@ and is deleted from here.
 
 ---
 
-## [TD-143] The shadcn CLI is a major version behind its registry
-- **Location:** `apps/web/package.json` (`shadcn` ^3.8.5 in devDependencies)
-- **Risk:** 3/10
-- **Problem:** the registry already serves 4.x components (they import `cn` from the `cn` package), but the installed CLI is 3.8.5 and lacks newer migrations such as `migrate cn`, which had to run through `pnpm dlx shadcn@4.21.4`.
-- **Future impact:** the next `shadcn add` or migration can behave differently from the docs and leave half-applied changes.
-- **Suggestion:** bump `shadcn` to the current 4.x and re-run `shadcn add` for one component to confirm nothing else changes.
-- **Date:** 2026-10-26 · **Status:** Open
-
 ## [TD-142] The offline set queue has no test of its own
 - **Location:** `apps/web/src/lib/pendingSets.ts`
 - **Risk:** 5/10
