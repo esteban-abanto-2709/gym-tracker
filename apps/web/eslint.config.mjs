@@ -69,6 +69,12 @@ const eslintConfig = defineConfig([
           message:
             "Use a theme color token instead of the Tailwind palette; add one to globals.css if it is missing.",
         },
+        {
+          selector:
+            "Literal[value=/(^|[\\s:])(bg-foreground|text-background|(bg|text)-(white|black))(\\/\\d+)?(?=\\s|$)/]",
+          message:
+            "Don't invert or hard-code light and dark: use bg-card, text-foreground, text-primary-foreground… so both themes stay consistent.",
+        },
       ],
     },
   },

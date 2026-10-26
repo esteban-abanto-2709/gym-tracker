@@ -83,6 +83,10 @@ A one-off element (a list row, a radio tile) may stay a plain `<button>` or
 - No small rem or px text sizes (`text-[0.6rem]`, `text-[10px]`); use the
   theme scale, `text-5xs`…`text-7xl`. **(lint)** A one-off display size bigger
   than `1rem` (the landing hero) is the only acceptable arbitrary size.
+- Never invert the theme (`bg-foreground text-background`) or hard-code
+  `bg-white`, `bg-black`, `text-white`, `text-black`: a light screen is light
+  everywhere and a dark one is dark everywhere. Selection uses
+  `border-primary bg-primary/10 text-primary`. **(lint)**
 - Don't edit `components/ui/`. If shadcn's style doesn't fit, wrap it in `base/`.
 - Overriding a base piece: pass `className`; `cn()` lets the later class win.
 - Icons come from `lucide-react`. No emoji anywhere in the UI.

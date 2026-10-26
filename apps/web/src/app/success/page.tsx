@@ -17,7 +17,7 @@ export default function SuccessPage() {
           <div className="space-y-4">
             <div className="mx-auto w-20 h-20 bg-linear-to-br from-brand-start to-brand-end rounded-3xl flex items-center justify-center shadow-xl shadow-primary/20 animate-scale-in">
               <svg
-                className="w-10 h-10 text-white"
+                className="w-10 h-10 text-primary-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

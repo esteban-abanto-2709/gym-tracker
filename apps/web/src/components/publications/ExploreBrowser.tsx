@@ -142,7 +142,7 @@ function PublicList({
             className={cn(
               "shrink-0 rounded-full border-2 px-3 py-1 text-sm font-bold transition-colors",
               sort === s.value
-                ? "border-foreground bg-foreground text-background"
+                ? "border-primary bg-primary/10 text-primary"
                 : "border-input text-muted-foreground hover:text-foreground",
             )}
           >

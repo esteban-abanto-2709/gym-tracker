@@ -12,8 +12,10 @@ import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
 import { surfaceClass } from "@/components/base/surface";
 
-const cardClass =
-  "relative block w-full text-left overflow-hidden rounded-3xl bg-foreground text-background p-6 shadow-lg active:scale-[0.98] transition-all";
+const cardClass = cn(
+  surfaceClass,
+  "relative block w-full text-left overflow-hidden rounded-3xl text-card-foreground p-6 shadow-lg active:scale-[0.98] transition-all",
+);
 
 function Tile({
   href,
