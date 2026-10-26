@@ -7,6 +7,7 @@ import { notifyError } from "@/lib/notify";
 import type { Theme } from "@/lib/types";
 import type { LucideIcon } from "lucide-react";
 import { Check, Monitor, Moon, Sun, X } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 export const THEME_OPTIONS: {
   value: Theme;
@@ -60,7 +61,12 @@ export function ThemeSheet({ onClose }: { onClose: () => void }) {
               <p className="kicker text-primary text-3xs">
                 {"// preferencias"}
               </p>
-              <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
+              <h2
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground leading-none mt-1",
+                })}
+              >
                 Tema
               </h2>
             </div>

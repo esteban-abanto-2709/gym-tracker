@@ -6,6 +6,7 @@ import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
 import type { Exercise } from "@/lib/types";
 import { X } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 interface AddExerciseSheetProps {
   onPick: (exercise: Exercise) => void;
@@ -37,7 +38,7 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background/80 backdrop-blur-md animate-fade-in">
       <div className="shrink-0 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border flex items-center justify-between">
-        <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight">
+        <h2 className={heading({ size: "sm", className: "text-foreground" })}>
           Agregar ejercicio
         </h2>
         <button

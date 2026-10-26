@@ -18,6 +18,7 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
 import { Camera, Check, Globe, Loader2, X } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 type SlugStatus = "invalid" | "checking" | "free" | "taken";
 
@@ -154,7 +155,12 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
             <>
               <div>
                 <p className="kicker text-primary text-3xs">Vista previa</p>
-                <h2 className="font-display font-bold uppercase text-foreground text-4xl leading-[0.9] tracking-tight mt-2 break-words">
+                <h2
+                  className={heading({
+                    size: "md",
+                    className: "text-foreground leading-[0.9] mt-2 break-words",
+                  })}
+                >
                   {name}
                 </h2>
               </div>

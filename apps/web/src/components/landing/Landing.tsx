@@ -4,6 +4,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { routes } from "@/lib/routes";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
+import { heading } from "@/components/base/heading";
 
 const primaryCta = cn(
   buttonVariants(),
@@ -97,7 +98,12 @@ export function Landing() {
               <p className="kicker text-primary text-2xs">
                 {"// entra, entrena, vete"}
               </p>
-              <h1 className="font-display font-bold uppercase text-foreground text-[3.4rem] md:text-7xl leading-[0.86] tracking-tight mt-3">
+              <h1
+                className={heading({
+                  className:
+                    "text-foreground text-[3.4rem] md:text-7xl leading-[0.86] tracking-tight mt-3",
+                })}
+              >
                 Registra
                 <br />
                 entre series.

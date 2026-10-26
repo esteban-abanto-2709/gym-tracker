@@ -25,6 +25,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 export default function TrainPage() {
   const {
@@ -79,7 +80,7 @@ export default function TrainPage() {
         <AppHeader leftAction={<BackAction href={routes.home()} />} />
         <main className="flex-1 flex flex-col items-center justify-center px-6 text-center text-muted-foreground">
           <ClipboardList className="w-12 h-12 mb-3 opacity-40" />
-          <p className="font-display font-bold uppercase text-2xl tracking-tight text-foreground">
+          <p className={heading({ size: "sm", className: "text-foreground" })}>
             No hay una rutina activa
           </p>
           <p className="text-sm opacity-70 mb-6">
@@ -147,7 +148,12 @@ export default function TrainPage() {
                   : `Serie ${setsDoneForCurrent + 1}`}
                 {currentTarget ? ` · Meta ${currentTarget}` : " · Libre"}
               </p>
-              <p className="font-display font-bold uppercase text-4xl text-foreground leading-[0.95] tracking-tight mt-2 text-balance">
+              <p
+                className={heading({
+                  size: "md",
+                  className: "text-foreground leading-[0.95] mt-2 text-balance",
+                })}
+              >
                 {currentItem.exercise.name}
               </p>
               {session && currentPlan.setType === "WORKING" && (

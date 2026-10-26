@@ -2,6 +2,7 @@
 
 import { Flag, PartyPopper, Plus } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 interface SetDoneScreenProps {
   onExtraSet: () => void;
@@ -14,7 +15,12 @@ export function SetDoneScreen({ onExtraSet, onFinish }: SetDoneScreenProps) {
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
           <PartyPopper className="w-12 h-12 text-primary" />
-          <p className="mt-3 font-display font-bold uppercase text-4xl text-foreground tracking-tight">
+          <p
+            className={heading({
+              size: "md",
+              className: "mt-3 text-foreground",
+            })}
+          >
             ¡Rutina completada!
           </p>
         </div>

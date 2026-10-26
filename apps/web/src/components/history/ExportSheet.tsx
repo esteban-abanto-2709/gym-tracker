@@ -13,6 +13,7 @@ import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
 import { Copy, Download, Share, X } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 const shiftDays = (date: string, days: number) => {
   const [y, m, d] = date.split("-").map(Number);
@@ -123,7 +124,12 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
           <div className="flex items-start justify-between">
             <div>
               <p className="kicker text-primary text-3xs">{"// para tu IA"}</p>
-              <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
+              <h2
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground leading-none mt-1",
+                })}
+              >
                 Exportar historial
               </h2>
             </div>
@@ -194,7 +200,12 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
               <p className="py-2 text-sm text-muted-foreground">Cargando…</p>
             ) : stats.sets > 0 ? (
               <>
-                <p className="font-display font-bold uppercase text-3xl leading-none text-foreground tabular-nums">
+                <p
+                  className={heading({
+                    className:
+                      "text-3xl leading-none text-foreground tabular-nums",
+                  })}
+                >
                   {plural(stats.sets, "serie", "series")}
                 </p>
                 <p className="mt-1.5 text-sm text-muted-foreground">

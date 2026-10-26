@@ -22,6 +22,7 @@ import {
   Layers,
 } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -113,7 +114,12 @@ export default function RoutinesPage() {
           ) : routines.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-16 px-6 text-muted-foreground">
               <ClipboardList className="w-12 h-12 mb-3 opacity-40" />
-              <p className="font-display font-bold uppercase text-foreground text-2xl tracking-tight">
+              <p
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground",
+                })}
+              >
                 Aún no tienes rutinas
               </p>
               <p className="text-sm opacity-70 mb-6">

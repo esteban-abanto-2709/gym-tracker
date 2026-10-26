@@ -4,6 +4,7 @@ import { routes } from "@/lib/routes";
 import type { ExploreListItem } from "@/lib/types";
 import { AuthorName } from "./AuthorName";
 import { ChevronRight, Compass, Copy, Heart, Loader2 } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 export function ExploreLoading() {
   return (
@@ -17,7 +18,7 @@ export function ExploreEmpty({ title, hint }: { title: string; hint: string }) {
   return (
     <div className="flex flex-col items-center text-center py-16 px-6 text-muted-foreground">
       <Compass className="w-12 h-12 mb-3 opacity-40" />
-      <p className="font-display font-bold uppercase text-foreground text-2xl tracking-tight">
+      <p className={heading({ size: "sm", className: "text-foreground" })}>
         {title}
       </p>
       <p className="text-sm opacity-70">{hint}</p>

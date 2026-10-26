@@ -15,6 +15,7 @@ import {
   RotateCcw,
   Flag,
 } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 interface SessionMapProps {
   items: SessionMapItem[];
@@ -80,7 +81,9 @@ export function SessionMap({
 
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight">
+            <h2
+              className={heading({ size: "sm", className: "text-foreground" })}
+            >
               Mapa de la sesión
             </h2>
             <p className="kicker text-4xs text-muted-foreground mt-1">

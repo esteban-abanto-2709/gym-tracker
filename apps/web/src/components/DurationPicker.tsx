@@ -11,6 +11,7 @@ import "@ncdai/react-wheel-picker/style.css";
 import { Check, Pencil, X } from "lucide-react";
 import { formatClock } from "@/lib/setDisplay";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 const range = (count: number): WheelPickerOption<number>[] =>
   Array.from({ length: count }, (_, i) => ({
@@ -157,7 +158,12 @@ export function DurationField({
                 <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-3" />
 
                 <div className="flex items-start justify-between">
-                  <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
+                  <h2
+                    className={heading({
+                      size: "sm",
+                      className: "text-foreground leading-none mt-1",
+                    })}
+                  >
                     {label}
                   </h2>
                   <button

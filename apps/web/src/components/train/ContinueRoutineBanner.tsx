@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { routes } from "@/lib/routes";
 import { type ActiveSession, readActiveSession } from "@/lib/activeSession";
+import { heading } from "@/components/base/heading";
 
 export function ContinueRoutineBanner() {
   const [session] = useState<ActiveSession | null>(readActiveSession);
@@ -22,7 +23,11 @@ export function ContinueRoutineBanner() {
           <p className="kicker text-primary text-4xs truncate">
             En curso · {session.routineName}
           </p>
-          <p className="font-display font-bold uppercase text-foreground text-xl leading-none mt-1.5">
+          <p
+            className={heading({
+              className: "text-foreground text-xl leading-none mt-1.5",
+            })}
+          >
             Continuar donde lo dejaste
           </p>
         </div>

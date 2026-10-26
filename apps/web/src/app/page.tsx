@@ -6,6 +6,7 @@ import { HomeActions } from "@/components/train/HomeActions";
 import { NewsButton } from "@/components/news/NewsButton";
 import { LandingGate } from "@/components/landing/LandingGate";
 import { Landing } from "@/components/landing/Landing";
+import { heading } from "@/components/base/heading";
 
 export default async function Home() {
   if (!(await cookies()).has("token")) return <Landing />;
@@ -23,7 +24,12 @@ export default async function Home() {
                 </p>
                 <NewsButton />
               </div>
-              <h2 className="font-display font-bold uppercase text-foreground text-[2.75rem] leading-[0.9] tracking-tight mt-2">
+              <h2
+                className={heading({
+                  className:
+                    "text-foreground text-[2.75rem] leading-[0.9] tracking-tight mt-2",
+                })}
+              >
                 Hoy
                 <br />
                 <span className="text-primary">entrenas.</span>

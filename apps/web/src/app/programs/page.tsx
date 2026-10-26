@@ -8,6 +8,7 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { Check, Compass, Layers, Loader2, Pencil, Plus } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
+import { heading } from "@/components/base/heading";
 
 export default function ProgramsPage() {
   const { programs, activeProgramId, loading, setActive } = usePrograms();
@@ -41,7 +42,12 @@ export default function ProgramsPage() {
               className="flex flex-col items-center text-center py-10 px-6 border-2 border-dashed border-border rounded-2xl text-muted-foreground"
             >
               <Layers className="w-10 h-10 mb-3 opacity-50" />
-              <span className="font-display font-bold uppercase text-foreground text-2xl tracking-tight">
+              <span
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground",
+                })}
+              >
                 Crea tu programa
               </span>
               <span className="text-sm opacity-70">

@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { notifyError } from "@/lib/notify";
 import type { Locale } from "@/lib/types";
 import { Check, Loader2, X } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 const EXERCISE_LANGUAGES: { value: Locale; label: string; example: string }[] =
   [
@@ -54,7 +55,12 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
               <p className="kicker text-primary text-3xs">
                 {"// preferencias"}
               </p>
-              <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
+              <h2
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground leading-none mt-1",
+                })}
+              >
                 Idioma
               </h2>
             </div>
@@ -96,7 +102,12 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
                       : "border-input bg-muted/40 hover:border-primary/50"
                   }`}
                 >
-                  <span className="shrink-0 w-11 font-display font-bold uppercase text-2xl leading-none text-primary">
+                  <span
+                    className={heading({
+                      className:
+                        "shrink-0 w-11 text-2xl leading-none text-primary",
+                    })}
+                  >
                     {value}
                   </span>
                   <span className="min-w-0 flex-1">

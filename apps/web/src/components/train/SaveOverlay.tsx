@@ -1,5 +1,6 @@
 import type { SaveFlash } from "@/hooks/useGuidedSession";
 import { ArrowRight, Check } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 export function SaveOverlay({ flash }: { flash: SaveFlash }) {
   return (
@@ -20,7 +21,12 @@ export function SaveOverlay({ flash }: { flash: SaveFlash }) {
           </div>
         </div>
 
-        <p className="mt-6 font-display font-bold uppercase text-4xl text-foreground leading-tight tracking-tight">
+        <p
+          className={heading({
+            size: "md",
+            className: "mt-6 text-foreground leading-tight",
+          })}
+        >
           {flash.title}
         </p>
         <p className="mt-1 text-sm text-muted-foreground font-mono truncate max-w-full">
@@ -31,7 +37,11 @@ export function SaveOverlay({ flash }: { flash: SaveFlash }) {
           {flash.next && (
             <div className="flex items-center gap-2 animate-rise-in">
               <ArrowRight className="w-5 h-5 text-primary" strokeWidth={2.5} />
-              <span className="font-display font-bold uppercase text-2xl text-primary leading-tight">
+              <span
+                className={heading({
+                  className: "text-2xl text-primary leading-tight",
+                })}
+              >
                 {flash.next}
               </span>
             </div>

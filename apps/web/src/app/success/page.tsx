@@ -4,6 +4,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
+import { heading } from "@/components/base/heading";
 
 export default function SuccessPage() {
   return (
@@ -32,7 +33,12 @@ export default function SuccessPage() {
 
             <div className="space-y-2 animate-fade-in-up [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]">
               <p className="kicker text-primary text-4xs">{"// registrado"}</p>
-              <h1 className="font-display font-bold uppercase text-5xl tracking-tight text-foreground">
+              <h1
+                className={heading({
+                  size: "lg",
+                  className: "text-foreground",
+                })}
+              >
                 ¡Set guardado!
               </h1>
               <p className="text-muted-foreground text-lg">

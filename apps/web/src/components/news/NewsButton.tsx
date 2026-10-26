@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, Sparkles, X } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { NEWS, type NewsItem } from "@/lib/news";
+import { heading } from "@/components/base/heading";
 
 export function NewsButton() {
   const { user, updateMe } = useAuth();
@@ -105,7 +106,12 @@ function NewsSheet({
                 <p className="kicker text-primary text-3xs">
                   {"// lo que puedes hacer"}
                 </p>
-                <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
+                <h2
+                  className={heading({
+                    size: "sm",
+                    className: "text-foreground leading-none mt-1",
+                  })}
+                >
                   Novedades
                 </h2>
               </div>

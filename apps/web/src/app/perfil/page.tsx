@@ -7,6 +7,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
 import { Settings } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 export default function PerfilPage() {
   const { user } = useAuth();
@@ -18,7 +19,12 @@ export default function PerfilPage() {
         <div className="max-w-md mx-auto">
           <p className="kicker text-primary text-2xs">{"// tu cuenta"}</p>
           <div className="mt-2 flex items-end justify-between gap-4">
-            <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.9] tracking-tight">
+            <h1
+              className={heading({
+                size: "lg",
+                className: "text-foreground leading-[0.9]",
+              })}
+            >
               Perfil
             </h1>
             <Link

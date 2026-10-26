@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Label } from "@/components/ui/label";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -39,7 +40,12 @@ export default function RegisterPage() {
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
         <p className="kicker text-primary text-2xs">{"// tu primera serie"}</p>
-        <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.88] tracking-tight mt-3">
+        <h1
+          className={heading({
+            size: "lg",
+            className: "text-foreground leading-[0.88] mt-3",
+          })}
+        >
           Crea tu
           <br />
           <span className="text-primary">cuenta.</span>

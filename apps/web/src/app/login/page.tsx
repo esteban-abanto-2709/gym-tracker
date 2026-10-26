@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Label } from "@/components/ui/label";
 import { GoogleButton } from "@/components/auth/GoogleButton";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -36,7 +37,12 @@ export default function LoginPage() {
         <p className="kicker text-primary text-2xs">
           {"// directo a entrenar"}
         </p>
-        <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.88] tracking-tight mt-3">
+        <h1
+          className={heading({
+            size: "lg",
+            className: "text-foreground leading-[0.88] mt-3",
+          })}
+        >
           Sin vueltas.
           <br />
           <span className="text-primary">A entrenar.</span>

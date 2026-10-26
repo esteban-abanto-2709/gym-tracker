@@ -8,6 +8,7 @@ import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { ActiveProgram, Routine } from "@/lib/types";
 import { readActiveSession, startSession } from "@/lib/activeSession";
+import { heading } from "@/components/base/heading";
 
 const cardClass =
   "relative block w-full text-left overflow-hidden rounded-3xl bg-foreground text-background p-6 shadow-lg active:scale-[0.98] transition-all";
@@ -84,7 +85,11 @@ export function HomeActions() {
         <Link href={routes.explore("programs")} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
           <p className="kicker text-3xs opacity-55 relative">Empieza aquí</p>
-          <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative pr-16">
+          <p
+            className={heading({
+              className: "text-5xl leading-[0.85] mt-3 relative pr-16",
+            })}
+          >
             Explorar
             <br />
             programas
@@ -126,7 +131,12 @@ export function HomeActions() {
           <p className="kicker text-3xs opacity-55 relative pr-16 truncate">
             Hoy toca · {today.programName}
           </p>
-          <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative pr-16 break-words">
+          <p
+            className={heading({
+              className:
+                "text-5xl leading-[0.85] mt-3 relative pr-16 break-words",
+            })}
+          >
             {today.routine.name}
           </p>
           <p className="text-sm mt-3 opacity-60 relative">
@@ -138,7 +148,11 @@ export function HomeActions() {
         <Link href={routes.routines()} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
           <p className="kicker text-3xs opacity-55 relative">Empieza fuerte</p>
-          <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative">
+          <p
+            className={heading({
+              className: "text-5xl leading-[0.85] mt-3 relative",
+            })}
+          >
             Iniciar
             <br />
             rutina

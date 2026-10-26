@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { History, ArrowLeft, ClipboardList } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 interface AppHeaderProps {
   /** Content to render on the left side (e.g. back button) */
@@ -31,11 +32,9 @@ export function AppHeader({
           {leftAction ?? <div className="w-6" />}
 
           {title ? (
-            <h1 className="font-display font-bold uppercase text-2xl tracking-tight">
-              {title}
-            </h1>
+            <h1 className={heading({ size: "sm" })}>{title}</h1>
           ) : (
-            <h1 className="font-display font-bold uppercase text-2xl tracking-tight">
+            <h1 className={heading({ size: "sm" })}>
               <span className="bg-linear-to-r from-brand-start to-brand-end bg-clip-text text-transparent">
                 GYM
               </span>

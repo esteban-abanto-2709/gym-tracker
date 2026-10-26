@@ -15,6 +15,7 @@ import { routes } from "@/lib/routes";
 import { setMeasure } from "@/lib/setDisplay";
 import { todayLocal } from "@/lib/measurements";
 import { Calendar, ChevronRight, Share } from "lucide-react";
+import { heading } from "@/components/base/heading";
 
 export default function HistoryPage() {
   const [exportOpen, setExportOpen] = useState(false);
@@ -114,7 +115,7 @@ export default function HistoryPage() {
               <Calendar className="w-10 h-10 text-muted-foreground/50" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-display font-bold uppercase text-2xl tracking-tight">
+              <h3 className={heading({ size: "sm" })}>
                 Sin entrenamientos aún
               </h3>
               <p className="text-sm text-muted-foreground max-w-[250px]">

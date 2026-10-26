@@ -12,6 +12,7 @@ import {
 import { notifyError } from "@/lib/notify";
 import { Check, Trash2, X } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { heading } from "@/components/base/heading";
 
 type Values = Record<MeasureField, string>;
 
@@ -124,7 +125,12 @@ export function MeasureSheet({
           <div className="flex items-start justify-between">
             <div>
               <p className="kicker text-primary text-3xs">{"// medidas"}</p>
-              <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
+              <h2
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground leading-none mt-1",
+                })}
+              >
                 {existing ? "Editar medida" : "Registrar medida"}
               </h2>
             </div>

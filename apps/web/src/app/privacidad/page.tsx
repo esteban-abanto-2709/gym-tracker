@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { routes } from "@/lib/routes";
+import { heading } from "@/components/base/heading";
 
 export const metadata: Metadata = {
   title: "Privacidad",
@@ -81,7 +82,12 @@ export default function PrivacidadPage() {
           </Link>
 
           <p className="kicker text-primary text-2xs mt-6">{"// tus datos"}</p>
-          <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.9] tracking-tight mt-2">
+          <h1
+            className={heading({
+              size: "lg",
+              className: "text-foreground leading-[0.9] mt-2",
+            })}
+          >
             Privacidad
           </h1>
           <p className="text-sm text-muted-foreground mt-3">

@@ -23,6 +23,7 @@ import { ShareButton } from "./ShareButton";
 import { Copy, Loader2, UserPlus } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
+import { heading } from "@/components/base/heading";
 
 const copyButtonClass = cn(
   buttonVariants(),
@@ -125,7 +126,12 @@ export function PublicationDetail({
                 <p className="kicker text-primary text-3xs">
                   de <AuthorName author={publication.author} />
                 </p>
-                <h1 className="font-display font-bold uppercase text-foreground text-4xl leading-[0.9] tracking-tight mt-2 break-words">
+                <h1
+                  className={heading({
+                    size: "md",
+                    className: "text-foreground leading-[0.9] mt-2 break-words",
+                  })}
+                >
                   {publication.name}
                 </h1>
                 {publication.description && (
