@@ -3,9 +3,11 @@ import { render, screen } from "@testing-library/react";
 import { LandingGate } from "./LandingGate";
 
 let user: { id: string } | null = null;
+let loading = false;
 
 vi.mock("@/lib/auth-context", () => ({
-  useAuth: () => ({ user }),
+  useAuth: () => ({ user, loading }),
+  FullScreenLoader: () => <p>Cargando…</p>,
 }));
 
 describe("LandingGate", () => {
@@ -31,6 +33,20 @@ describe("LandingGate", () => {
     expect(
       screen.getByText("Varias sesiones al tope: toca subir."),
     ).toBeTruthy();
+  });
+
+  it("waits for the session before choosing landing or home", () => {
+    user = null;
+    loading = true;
+    render(
+      <LandingGate>
+        <p>Hoy entrenas</p>
+      </LandingGate>,
+    );
+
+    expect(screen.getByText("Cargando…")).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Crear cuenta" })).toBeNull();
+    loading = false;
   });
 
   it("shows the app home when logged in", () => {

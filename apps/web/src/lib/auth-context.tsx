@@ -15,10 +15,11 @@ import { api } from "@/lib/api";
 import type { AuthUser } from "@/lib/types";
 
 const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
-const OPEN_PATHS = new Set<string>([routes.privacy()]);
+const OPEN_PATHS = new Set<string>([routes.home(), routes.privacy()]);
 
 interface AuthContextValue {
   user: AuthUser | null;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (
     email: string,
@@ -73,7 +74,7 @@ function authError(status: number, copy?: ErrorCopy) {
   return new Error(copy?.[status] ?? copy?.fallback ?? "Request failed");
 }
 
-function FullScreenLoader() {
+export function FullScreenLoader() {
   return (
     <div className="min-h-dvh flex items-center justify-center text-muted-foreground">
       Cargando…
@@ -208,8 +209,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loading, accountTheme]);
 
   const isPublic = PUBLIC_PATHS.has(pathname);
-  const isOpen =
-    OPEN_PATHS.has(pathname) || (!user && pathname === routes.home());
+  const isOpen = OPEN_PATHS.has(pathname);
 
   useEffect(() => {
     if (loading || isOpen) return;
@@ -220,7 +220,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [loading, user, isPublic, isOpen, router]);
 
-  if (loading || (!isOpen && ((!user && !isPublic) || (user && isPublic)))) {
+  if (!isOpen && (loading || (!user && !isPublic) || (user && isPublic))) {
     return <FullScreenLoader />;
   }
 
@@ -228,6 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        loading,
         login,
         register,
         loginWithGoogle,

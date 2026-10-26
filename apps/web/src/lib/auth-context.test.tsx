@@ -62,6 +62,27 @@ describe("AuthProvider guard", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
+  it.each(["/", "/privacidad"])(
+    "renders %s before the session answers, so the server HTML has content",
+    (path) => {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(() => new Promise(() => {})),
+      );
+      renderAt(path);
+      expect(screen.getByText("contenido")).toBeTruthy();
+    },
+  );
+
+  it("waits for the session on a private page", () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => new Promise(() => {})),
+    );
+    renderAt("/perfil");
+    expect(screen.queryByText("contenido")).toBeNull();
+  });
+
   it("still sends a logged-out user from a private page to login", async () => {
     meResponds(false);
     renderAt("/perfil");

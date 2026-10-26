@@ -1,9 +1,10 @@
 "use client";
 
-import { useAuth } from "@/lib/auth-context";
+import { FullScreenLoader, useAuth } from "@/lib/auth-context";
 import { Landing } from "./Landing";
 
 export function LandingGate({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return <FullScreenLoader />;
   return user ? children : <Landing />;
 }

@@ -26,7 +26,7 @@ const spaceMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Gym Tracker",
+  title: { default: "Gym Tracker", template: "%s · Gym Tracker" },
   description: "Registra tus entrenamientos sin fricción.",
   appleWebApp: {
     capable: true,

@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { routes } from "@/lib/routes";
+
+export const metadata: Metadata = {
+  title: "Privacidad",
+  description:
+    "Qué datos guarda Gym Tracker, para qué los usa, quién los ve y cómo borrar tu cuenta.",
+};
 
 const CONTACT_EMAIL = "esteban.abanto.2709@gmail.com";
 
