@@ -12,7 +12,7 @@ const props = {
   slug: "espalda-cbum",
   likeCount: 4,
   likedByMe: false,
-  isMine: false,
+  readOnly: false,
 };
 
 beforeEach(() => {
@@ -64,7 +64,7 @@ describe("LikeButton", () => {
   });
 
   it("shows only the count on your own publication", () => {
-    render(<LikeButton {...props} isMine />);
+    render(<LikeButton {...props} readOnly />);
 
     expect(screen.getByText("4 me gusta")).toBeTruthy();
     expect(screen.queryByRole("button")).toBeNull();

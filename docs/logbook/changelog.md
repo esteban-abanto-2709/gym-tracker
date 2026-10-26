@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [WL-125] View a publication without an account (2026-10-26 12:27)
+Explore (list and detail) opens without a session: the detail is rendered on the server with Open Graph and a generated preview image (`/og/...`), exercise names follow the browser language, and copying or liking sends the guest to sign up and back (`?next=`). Public pages (`/`, `/privacidad`) now ship their content in the server HTML.
+
 ## [WL-137] Pick the time with minute and second wheels (2026-10-25 12:48)
 The seconds fields (guided, free day, routine editor) show the time as a clock (`1:50`) and tapping them opens a panel with wheels (`@ncdai/react-wheel-picker`) that only applies with "Listo"; editing in the history shows the wheels in its dialog. `durationSec` is still what's stored.
 

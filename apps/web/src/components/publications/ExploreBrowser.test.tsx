@@ -13,6 +13,10 @@ vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 vi.mock("@/lib/api", () => ({ api: { get: vi.fn(), delete: vi.fn() } }));
 
+let auth: { user: { id: string } | null; loading: boolean };
+
+vi.mock("@/lib/auth-context", () => ({ useAuth: () => auth }));
+
 const item = (overrides: object) => ({
   id: "p-1",
   kind: "PROGRAM",
@@ -34,6 +38,7 @@ const item = (overrides: object) => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  auth = { user: { id: "u1" }, loading: false };
   vi.mocked(api.get).mockImplementation(async (url: string) =>
     url.startsWith("/explore/programs")
       ? [item({})]
@@ -51,6 +56,15 @@ beforeEach(() => {
 });
 
 describe("ExploreBrowser", () => {
+  it("lists for a guest without asking for their publications", async () => {
+    auth = { user: null, loading: false };
+    render(<ExploreBrowser initialTab="mine" />);
+
+    expect(await screen.findByText("Upper/Lower")).toBeTruthy();
+    expect(screen.queryByRole("tab", { name: "Mías" })).toBeNull();
+    expect(api.get).not.toHaveBeenCalledWith("/publications/mine");
+  });
+
   it("lists programs with author, routines and counters", async () => {
     render(<ExploreBrowser initialTab="programs" />);
 

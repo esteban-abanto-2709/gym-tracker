@@ -34,8 +34,12 @@ export const routes = {
     `/explore/${kindPath[kind]}/${slug}`,
   train: () => "/train",
   log: () => "/log",
-  login: () => "/login",
-  register: () => "/register",
+  login: (next?: string) =>
+    next ? `/login?next=${encodeURIComponent(next)}` : "/login",
+  register: (next?: string) =>
+    next ? `/register?next=${encodeURIComponent(next)}` : "/register",
+  publicationImage: (kind: PublicationKind, slug: string) =>
+    `/og/${kindPath[kind]}/${encodeURIComponent(slug)}`,
   privacy: () => "/privacidad",
 
   api: {

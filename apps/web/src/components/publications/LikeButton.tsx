@@ -12,7 +12,7 @@ interface LikeButtonProps {
   slug: string;
   likeCount: number;
   likedByMe: boolean;
-  isMine: boolean;
+  readOnly: boolean;
 }
 
 type LikeState = { likeCount: number; likedByMe: boolean };
@@ -22,14 +22,14 @@ export function LikeButton({
   slug,
   likeCount,
   likedByMe,
-  isMine,
+  readOnly,
 }: LikeButtonProps) {
   const [state, setState] = useState<LikeState>({ likeCount, likedByMe });
   const [pending, setPending] = useState(false);
 
   const label = `${state.likeCount} me gusta`;
 
-  if (isMine) {
+  if (readOnly) {
     return (
       <span className="inline-flex items-center gap-1.5">
         <Heart className="w-4 h-4" aria-hidden />

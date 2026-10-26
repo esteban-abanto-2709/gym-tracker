@@ -16,6 +16,18 @@ import type { AuthUser } from "@/lib/types";
 
 const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
 const OPEN_PATHS = new Set<string>([routes.home(), routes.privacy()]);
+const OPEN_SECTIONS = [routes.explore()];
+
+const isOpenPath = (pathname: string) =>
+  OPEN_PATHS.has(pathname) ||
+  OPEN_SECTIONS.some(
+    (section) => pathname === section || pathname.startsWith(`${section}/`),
+  );
+
+function nextPath() {
+  const next = new URLSearchParams(window.location.search).get("next");
+  return next && /^\/(?![/\\])/.test(next) ? next : routes.home();
+}
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -209,14 +221,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loading, accountTheme]);
 
   const isPublic = PUBLIC_PATHS.has(pathname);
-  const isOpen = OPEN_PATHS.has(pathname);
+  const isOpen = isOpenPath(pathname);
 
   useEffect(() => {
     if (loading || isOpen) return;
     if (!user && !isPublic) {
       router.replace(routes.login());
     } else if (user && isPublic) {
-      router.replace(routes.home());
+      router.replace(nextPath());
     }
   }, [loading, user, isPublic, isOpen, router]);
 

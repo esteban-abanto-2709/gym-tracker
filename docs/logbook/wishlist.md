@@ -10,9 +10,6 @@ If an idea is promoted, it's deleted from here and a new `RM` is born.
 ## [WL-124] Recover the password by email
 The "¿Olvidaste tu contraseña?": a single-use, expiring link by email, `POST /auth/forgot` (answers the same whether the account exists or not) and `POST /auth/reset` (closes every session with TD-120), with an attempt limit. It requires the app to send email: a provider (candidate Resend) and SPF/DKIM in the DNS. Postponed: today almost everyone signs in with Google and changing the password already exists (WL-061).
 
-## [WL-125] View a publication without an account — In progress (2026-10-26)
-Today the link to a published routine or program asks you to sign in, and that's why WhatsApp shows no preview (title and image). Opening `/explore/{routines|programs}/:slug` read-only without a session, with its Open Graph, would make the link self-explanatory; copying would still require an account. Decided: the author shows as their username, exercise names follow the browser language without a session, and the whole `/explore` opens too.
-
 ## [WL-122] User manual
 A non-technical document that explains how the app works for anyone, with its concrete rules: what counts for the streak, what happens to the guided session at the end of the day, that signing out signs out every device (TD-120), etc. Different from `product-vision.md` (the why) and from the READMEs (the technical side).
 

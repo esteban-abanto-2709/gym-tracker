@@ -14,6 +14,13 @@ and is deleted from here.
 
 ---
 
+## [TD-137] Switching between login and sign-up drops the way back
+- **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`
+- **Risk:** 3/10
+- **Problem:** a guest who comes from a publication lands on `/register?next=…` or `/login?next=…`, but the link between those two pages is plain `routes.register()` / `routes.login()`, so the `next` is lost if they switch.
+- **Future impact:** a guest who already had an account (or not) ends up on the home page instead of the routine they wanted to copy; it gets worse once public profiles also send people to sign up.
+- **Date:** 2026-10-26 · **Status:** Open
+
 ## [TD-130] Equipment ids are in Spanish
 - **Location:** `Equipment` table (ids `barra`, `polea`, `mancuerna`, `maquina`, `otro`… seeded in the `equipo_tabla_y_slug` migration); `apps/web/src/lib/equipmentIcons.ts`.
 - **Risk:** 2/10

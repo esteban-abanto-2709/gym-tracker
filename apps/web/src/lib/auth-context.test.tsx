@@ -83,6 +83,36 @@ describe("AuthProvider guard", () => {
     expect(screen.queryByText("contenido")).toBeNull();
   });
 
+  it.each(["/explore", "/explore/routines/push"])(
+    "lets a logged-out user browse %s",
+    async (path) => {
+      meResponds(false);
+      renderAt(path);
+      expect(await screen.findByText("contenido")).toBeTruthy();
+      expect(replace).not.toHaveBeenCalled();
+    },
+  );
+
+  it("does not open look-alike paths", async () => {
+    meResponds(false);
+    renderAt("/explorer");
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
+  });
+
+  it.each([
+    ["?next=%2Fexplore%2Froutines%2Fpush", "/explore/routines/push"],
+    ["?next=%2F%2Fevil.example", "/"],
+    ["?next=%2F%5Cevil.example", "/"],
+    ["?next=https%3A%2F%2Fevil.example", "/"],
+    ["", "/"],
+  ])("after signing in with %s goes to %s", async (search, target) => {
+    window.history.replaceState(null, "", `/login${search}`);
+    meResponds(true);
+    renderAt("/login");
+    await waitFor(() => expect(replace).toHaveBeenCalledWith(target));
+    window.history.replaceState(null, "", "/");
+  });
+
   it("still sends a logged-out user from a private page to login", async () => {
     meResponds(false);
     renderAt("/perfil");

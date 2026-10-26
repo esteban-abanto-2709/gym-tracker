@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
+import { useAuth } from "@/lib/auth-context";
 import type {
   CopiedProgram,
   CopiedRoutine,
@@ -18,27 +20,27 @@ import { AuthorName } from "./AuthorName";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
 import { LikeButton } from "./LikeButton";
 import { ShareButton } from "./ShareButton";
-import { Copy, Loader2 } from "lucide-react";
+import { Copy, Loader2, UserPlus } from "lucide-react";
+
+const copyButtonClass =
+  "w-full flex items-center justify-center gap-2 py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50";
 
 interface PublicationDetailProps {
   kind: PublicationKind;
   slug: string;
+  publication: ExploreDetail | null;
 }
 
-export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
+export function PublicationDetail({
+  kind,
+  slug,
+  publication,
+}: PublicationDetailProps) {
   const router = useRouter();
+  const { user, loading } = useAuth();
+  const guest = !loading && !user;
   const isProgram = kind === "PROGRAM";
-  const [publication, setPublication] = useState<ExploreDetail | null>(null);
-  const [loading, setLoading] = useState(true);
   const [copying, setCopying] = useState(false);
-
-  useEffect(() => {
-    api
-      .get<ExploreDetail>(routes.api.explore.get(kind, slug))
-      .then(setPublication)
-      .catch((e) => console.error("Error fetching publication:", e))
-      .finally(() => setLoading(false));
-  }, [kind, slug]);
 
   const copyAll = async () => {
     setCopying(true);
@@ -109,11 +111,7 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
 
       <main className="flex-1 px-6 py-8 relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto space-y-6">
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
-            </div>
-          ) : !publication ? (
+          {!publication ? (
             <p className="text-center text-muted-foreground py-16">
               Esta publicación ya no está disponible.
             </p>
@@ -137,7 +135,7 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
                     slug={slug}
                     likeCount={publication.likeCount}
                     likedByMe={publication.likedByMe}
-                    isMine={publication.isMine}
+                    readOnly={publication.isMine || guest}
                   />
                   <span className="inline-flex items-center gap-1.5">
                     <Copy className="w-4 h-4" aria-hidden />
@@ -150,7 +148,7 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
               <RoutineSnapshotList
                 routines={publication.routines}
                 renderAction={
-                  isProgram && publication.routines.length > 1
+                  isProgram && !guest && publication.routines.length > 1
                     ? (routine) => (
                         <button
                           type="button"
@@ -167,20 +165,45 @@ export function PublicationDetail({ kind, slug }: PublicationDetailProps) {
                 }
               />
 
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={copyAll}
-                  disabled={copying}
-                  className="w-full flex items-center justify-center gap-2 py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
-                >
-                  <Copy className="w-5 h-5" strokeWidth={2.5} />
-                  {isProgram ? "Copiar programa" : "Copiar rutina"}
-                </button>
-                <p className="text-xs text-center text-muted-foreground">
-                  Es tu copia: puedes cambiarla sin tocar la original.
-                </p>
-              </div>
+              {guest ? (
+                <div className="space-y-2">
+                  <Link
+                    href={routes.register(
+                      routes.explorePublication(kind, slug),
+                    )}
+                    className={copyButtonClass}
+                  >
+                    <UserPlus className="w-5 h-5" strokeWidth={2.5} />
+                    Crea tu cuenta
+                  </Link>
+                  <p className="text-xs text-center text-muted-foreground">
+                    {isProgram
+                      ? "Con tu cuenta copias este programa y lo cambias a tu gusto."
+                      : "Con tu cuenta copias esta rutina y la cambias a tu gusto."}{" "}
+                    <Link
+                      href={routes.login(routes.explorePublication(kind, slug))}
+                      className="font-semibold text-foreground underline underline-offset-4"
+                    >
+                      Ya tengo cuenta
+                    </Link>
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={copyAll}
+                    disabled={copying}
+                    className={copyButtonClass}
+                  >
+                    <Copy className="w-5 h-5" strokeWidth={2.5} />
+                    {isProgram ? "Copiar programa" : "Copiar rutina"}
+                  </button>
+                  <p className="text-xs text-center text-muted-foreground">
+                    Es tu copia: puedes cambiarla sin tocar la original.
+                  </p>
+                </div>
+              )}
             </>
           )}
         </div>

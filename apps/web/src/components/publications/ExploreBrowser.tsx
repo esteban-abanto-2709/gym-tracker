@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 import { routes } from "@/lib/routes";
 import type {
   ExploreListItem,
@@ -32,9 +33,13 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
   const router = useRouter();
   const [tab, setTab] = useState(initialTab);
   const [sort, setSort] = useState<ExploreSort>("likes");
-  const [mine, setMine] = useState<ExploreListItem[] | null>(null);
+  const [fetchedMine, setMine] = useState<ExploreListItem[] | null>(null);
+  const { user, loading } = useAuth();
+  const userId = user?.id;
+  const mine = !loading && !userId ? [] : fetchedMine;
 
   useEffect(() => {
+    if (loading || !userId) return;
     api
       .get<ExploreListItem[]>(routes.api.publications.mine())
       .then(setMine)
@@ -42,7 +47,7 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
         console.error("Error fetching my publications:", e);
         setMine([]);
       });
-  }, []);
+  }, [loading, userId]);
 
   const changeTab = (value: ExploreTab) => {
     setTab(value);

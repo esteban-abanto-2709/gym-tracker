@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { PublicationDetail } from "./PublicationDetail";
 import { api } from "@/lib/api";
+import type { ExploreDetail } from "@/lib/types";
 
 const push = vi.fn();
 
@@ -11,7 +12,11 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-vi.mock("@/lib/api", () => ({ api: { get: vi.fn(), post: vi.fn() } }));
+vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
+
+let auth: { user: { id: string } | null; loading: boolean };
+
+vi.mock("@/lib/auth-context", () => ({ useAuth: () => auth }));
 
 const routine = (position: number, name: string) => ({
   id: `pr-${position}`,
@@ -41,29 +46,39 @@ const program = {
   likedByMe: false,
   isMine: false,
   routines: [routine(0, "Upper A"), routine(1, "Lower A")],
-};
+} as unknown as ExploreDetail;
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(api.get).mockResolvedValue(program);
+  auth = { user: { id: "u1" }, loading: false };
 });
 
 describe("PublicationDetail", () => {
   it("shows the published program with its author and counters", async () => {
-    render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
+    render(
+      <PublicationDetail
+        kind="PROGRAM"
+        slug="upper-lower"
+        publication={program}
+      />,
+    );
 
-    expect(await screen.findByText("Upper/Lower")).toBeTruthy();
+    expect(screen.getByText("Upper/Lower")).toBeTruthy();
     expect(screen.getByText("miguel")).toBeTruthy();
     expect(screen.getByText("Cuatro días")).toBeTruthy();
     expect(screen.getByText("2 me gusta")).toBeTruthy();
     expect(screen.getByText("1 copia")).toBeTruthy();
-    expect(api.get).toHaveBeenCalledWith("/explore/programs/upper-lower");
   });
 
   it("copies the whole program and goes to Today if it became active", async () => {
     vi.mocked(api.post).mockResolvedValue({ program: {}, activated: true });
-    render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
-    await screen.findByText("Upper/Lower");
+    render(
+      <PublicationDetail
+        kind="PROGRAM"
+        slug="upper-lower"
+        publication={program}
+      />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Copiar programa" }));
 
@@ -76,8 +91,13 @@ describe("PublicationDetail", () => {
 
   it("copies a single routine of the program", async () => {
     vi.mocked(api.post).mockResolvedValue({ routine: {} });
-    render(<PublicationDetail kind="PROGRAM" slug="upper-lower" />);
-    await screen.findByText("Upper/Lower");
+    render(
+      <PublicationDetail
+        kind="PROGRAM"
+        slug="upper-lower"
+        publication={program}
+      />,
+    );
 
     fireEvent.click(
       screen.getByRole("button", { name: "Copiar solo Lower A" }),
@@ -90,12 +110,39 @@ describe("PublicationDetail", () => {
     );
   });
 
-  it("warns when the publication no longer exists", async () => {
-    vi.mocked(api.get).mockRejectedValue(new Error("Not found"));
-    render(<PublicationDetail kind="ROUTINE" slug="borrada" />);
+  it("warns when the publication no longer exists", () => {
+    render(
+      <PublicationDetail kind="ROUTINE" slug="borrada" publication={null} />,
+    );
 
     expect(
-      await screen.findByText("Esta publicación ya no está disponible."),
+      screen.getByText("Esta publicación ya no está disponible."),
     ).toBeTruthy();
+  });
+
+  it("invites a guest to sign up and come back instead of copying", () => {
+    auth = { user: null, loading: false };
+    render(
+      <PublicationDetail
+        kind="PROGRAM"
+        slug="upper-lower"
+        publication={program}
+      />,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Crea tu cuenta" }).getAttribute("href"),
+    ).toBe("/register?next=%2Fexplore%2Fprograms%2Fupper-lower");
+    expect(
+      screen
+        .getByRole("link", { name: "Ya tengo cuenta" })
+        .getAttribute("href"),
+    ).toBe("/login?next=%2Fexplore%2Fprograms%2Fupper-lower");
+    expect(
+      screen.queryByRole("button", { name: "Copiar programa" }),
+    ).toBeNull();
+    expect(screen.queryByRole("button", { name: /Copiar solo/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Me gusta" })).toBeNull();
+    expect(screen.getByText("2 me gusta")).toBeTruthy();
   });
 });
