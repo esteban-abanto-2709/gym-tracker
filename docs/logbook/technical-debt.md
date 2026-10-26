@@ -14,14 +14,6 @@ and is deleted from here.
 
 ---
 
-## [TD-145] Bottom sheets don't behave like modal dialogs
-- **Location:** `apps/web/src/components/base/sheet.tsx:8`
-- **Risk:** 4/10
-- **Problem:** `BottomSheet` is a hand-built `role="dialog"`: Escape doesn't close it, focus isn't moved into it or trapped, there's no `aria-modal`, and the page behind still scrolls and stays reachable by keyboard and screen readers.
-- **Future impact:** keyboard and screen-reader users get lost behind the open sheet; on desktop (WL-058) Escape is the expected way to close it.
-- **Suggestion:** build `BottomSheet` on the Radix Dialog already installed (`radix-ui`), keeping the current styles and `anchor-bottom`; check that the session map, which opens other sheets inline, still stacks correctly.
-- **Date:** 2026-10-26 · **Status:** Open
-
 ## [TD-144] The diagonal background pattern never renders
 - **Location:** `apps/web/src/components/layout/PageShell.tsx:20`
 - **Risk:** 2/10

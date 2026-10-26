@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-145] Bottom sheets don't behave like modal dialogs (2026-10-26 16:55)
+`BottomSheet` is built on Radix Dialog: Escape and a tap outside close it, focus moves in and is trapped, the page behind is locked and hidden from screen readers. The session map hides while its exercise picker is open instead of stacking under it.
+
 ## [TD-143] The shadcn CLI is a major version behind its registry (2026-10-26 14:42)
 `shadcn` is pinned to 4.21.4 in devDependencies; re-adding `spinner` with it leaves `components/ui` and `components.json` unchanged, and `migrate cn` is now available locally.
 

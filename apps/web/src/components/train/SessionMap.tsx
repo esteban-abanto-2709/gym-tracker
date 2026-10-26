@@ -16,7 +16,7 @@ import {
   Flag,
 } from "lucide-react";
 import { heading } from "@/components/base/heading";
-import { BottomSheet, SheetHandle } from "@/components/base/sheet";
+import { BottomSheet, SheetHandle, SheetTitle } from "@/components/base/sheet";
 import { cn } from "@/lib/utils";
 
 interface SessionMapProps {
@@ -71,151 +71,155 @@ export function SessionMap({
 
   return (
     <>
-      <BottomSheet
-        label="Mapa de la sesión"
-        onClose={onClose}
-        inline
-        className="max-h-[80%] pb-[calc(2rem+env(safe-area-inset-bottom))]"
-      >
-        <SheetHandle className="mb-4" />
+      {replacingIndex === null && (
+        <BottomSheet
+          label="Mapa de la sesión"
+          onClose={onClose}
+          className="max-h-[80%] pb-[calc(2rem+env(safe-area-inset-bottom))]"
+        >
+          <SheetHandle className="mb-4" />
 
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2
-              className={heading({ size: "sm", className: "text-foreground" })}
-            >
-              Mapa de la sesión
-            </h2>
-            <p className="kicker text-4xs text-muted-foreground mt-1">
-              Ejercicio {position} de {totalCount}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 grid place-items-center w-9 h-9 rounded-full bg-secondary text-foreground hover:text-primary transition-colors"
-            aria-label="Cerrar"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="max-w-md mx-auto space-y-2">
-          {items.map((mi) => {
-            const isSkipped = mi.status === "skipped";
-            return (
-              <div
-                key={mi.index}
-                className={cn(
-                  "rounded-2xl border-2 transition-all",
-                  mi.isCurrent
-                    ? "border-primary bg-secondary"
-                    : "border-input bg-transparent",
-                )}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <SheetTitle
+                className={heading({
+                  size: "sm",
+                  className: "text-foreground",
+                })}
               >
-                <div className="flex items-center gap-3 p-4">
-                  <button
-                    type="button"
-                    onClick={() => onGoTo(mi.index)}
-                    className="flex items-center gap-3 min-w-0 flex-1 text-left active:scale-[0.99] transition-transform"
-                  >
-                    <span className="shrink-0">
-                      <StatusDot item={mi} />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          "block font-bold leading-tight truncate",
-                          isSkipped
-                            ? "text-muted-foreground line-through"
-                            : "text-foreground",
-                        )}
-                      >
-                        {mi.item.exercise.name}
-                      </span>
-                      <span className="block text-xs text-muted-foreground truncate">
-                        {detailText(mi)}
-                        {mi.replacedFrom && (
-                          <span className="text-primary">
-                            {" · "}
-                            <ArrowLeftRight className="inline w-3 h-3 align-[-2px]" />{" "}
-                            {mi.replacedFrom}
-                          </span>
-                        )}
-                        {mi.isExtra && !mi.replacedFrom && (
-                          <span className="text-primary">{" · añadido"}</span>
-                        )}
-                      </span>
-                    </span>
-                  </button>
+                Mapa de la sesión
+              </SheetTitle>
+              <p className="kicker text-4xs text-muted-foreground mt-1">
+                Ejercicio {position} de {totalCount}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 grid place-items-center w-9 h-9 rounded-full bg-secondary text-foreground hover:text-primary transition-colors"
+              aria-label="Cerrar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setMenuIndex(menuIndex === mi.index ? null : mi.index)
-                    }
-                    className="shrink-0 p-2 -mr-2 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Opciones"
-                  >
-                    <MoreVertical className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {menuIndex === mi.index && (
-                  <div className="flex gap-2 px-4 pb-4 animate-fade-in">
-                    {isSkipped ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onGoTo(mi.index);
-                          setMenuIndex(null);
-                          onClose();
-                        }}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                        Reactivar
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onSkip(mi.index);
-                          setMenuIndex(null);
-                        }}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
-                      >
-                        <SkipForward className="w-4 h-4" />
-                        Saltar
-                      </button>
-                    )}
+          <div className="max-w-md mx-auto space-y-2">
+            {items.map((mi) => {
+              const isSkipped = mi.status === "skipped";
+              return (
+                <div
+                  key={mi.index}
+                  className={cn(
+                    "rounded-2xl border-2 transition-all",
+                    mi.isCurrent
+                      ? "border-primary bg-secondary"
+                      : "border-input bg-transparent",
+                  )}
+                >
+                  <div className="flex items-center gap-3 p-4">
                     <button
                       type="button"
-                      onClick={() => {
-                        setReplacingIndex(mi.index);
-                        setMenuIndex(null);
-                      }}
-                      className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
+                      onClick={() => onGoTo(mi.index)}
+                      className="flex items-center gap-3 min-w-0 flex-1 text-left active:scale-[0.99] transition-transform"
                     >
-                      <Repeat className="w-4 h-4" />
-                      Reemplazar
+                      <span className="shrink-0">
+                        <StatusDot item={mi} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={cn(
+                            "block font-bold leading-tight truncate",
+                            isSkipped
+                              ? "text-muted-foreground line-through"
+                              : "text-foreground",
+                          )}
+                        >
+                          {mi.item.exercise.name}
+                        </span>
+                        <span className="block text-xs text-muted-foreground truncate">
+                          {detailText(mi)}
+                          {mi.replacedFrom && (
+                            <span className="text-primary">
+                              {" · "}
+                              <ArrowLeftRight className="inline w-3 h-3 align-[-2px]" />{" "}
+                              {mi.replacedFrom}
+                            </span>
+                          )}
+                          {mi.isExtra && !mi.replacedFrom && (
+                            <span className="text-primary">{" · añadido"}</span>
+                          )}
+                        </span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMenuIndex(menuIndex === mi.index ? null : mi.index)
+                      }
+                      className="shrink-0 p-2 -mr-2 rounded-full text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label="Opciones"
+                    >
+                      <MoreVertical className="w-5 h-5" />
                     </button>
                   </div>
-                )}
-              </div>
-            );
-          })}
 
-          <button
-            type="button"
-            onClick={() => setFinishOpen(true)}
-            className="w-full mt-6 py-3.5 rounded-2xl bg-destructive/10 text-destructive font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <Flag className="w-5 h-5" strokeWidth={2.5} />
-            Terminar sesión
-          </button>
-        </div>
-      </BottomSheet>
+                  {menuIndex === mi.index && (
+                    <div className="flex gap-2 px-4 pb-4 animate-fade-in">
+                      {isSkipped ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onGoTo(mi.index);
+                            setMenuIndex(null);
+                            onClose();
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                          Reactivar
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSkip(mi.index);
+                            setMenuIndex(null);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
+                        >
+                          <SkipForward className="w-4 h-4" />
+                          Saltar
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReplacingIndex(mi.index);
+                          setMenuIndex(null);
+                        }}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
+                      >
+                        <Repeat className="w-4 h-4" />
+                        Reemplazar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() => setFinishOpen(true)}
+              className="w-full mt-6 py-3.5 rounded-2xl bg-destructive/10 text-destructive font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <Flag className="w-5 h-5" strokeWidth={2.5} />
+              Terminar sesión
+            </button>
+          </div>
+        </BottomSheet>
+      )}
 
       {replacingIndex !== null && (
         <AddExerciseSheet

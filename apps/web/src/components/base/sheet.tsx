@@ -1,45 +1,50 @@
 import * as React from "react";
-import { createPortal } from "react-dom";
+import { Dialog } from "radix-ui";
 import { X } from "lucide-react";
 
 import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
+
+export const SheetTitle = Dialog.Title;
 
 export function BottomSheet({
   label,
   onClose,
   className,
   style,
-  inline = false,
   children,
 }: {
   label: string;
   onClose: () => void;
   className?: string;
   style?: React.CSSProperties;
-  inline?: boolean;
   children: React.ReactNode;
 }) {
-  const sheet = (
-    <>
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/55 animate-fade-in"
-      />
-      <div
-        role="dialog"
-        aria-label={label}
-        style={style}
-        className={cn(
-          "anchor-bottom fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[90dvh] overflow-y-auto animate-sheet-up px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))]",
-          className,
-        )}
-      >
-        {children}
-      </div>
-    </>
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  return (
+    <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/55 animate-fade-in" />
+        <Dialog.Content
+          ref={contentRef}
+          aria-label={label}
+          aria-describedby={undefined}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault();
+            contentRef.current?.focus();
+          }}
+          style={style}
+          className={cn(
+            "anchor-bottom fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[90dvh] overflow-y-auto animate-sheet-up px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))] outline-none",
+            className,
+          )}
+        >
+          {children}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
-  return inline ? sheet : createPortal(sheet, document.body);
 }
 
 export function SheetHandle({ className }: { className?: string }) {
@@ -68,14 +73,14 @@ export function SheetHeader({
       <div className="flex items-start justify-between">
         <div>
           {kicker && <p className="kicker text-primary text-3xs">{kicker}</p>}
-          <h2
+          <SheetTitle
             className={heading({
               size: "sm",
               className: "text-foreground leading-none mt-1",
             })}
           >
             {title}
-          </h2>
+          </SheetTitle>
         </div>
         <button
           type="button"
