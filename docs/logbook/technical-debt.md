@@ -157,9 +157,3 @@ and is deleted from here.
 - **Suggestion:** keep a `ref` to the search input inside the combobox and focus that ref.
 - **Date:** 2026-07-23 · **Status:** Open
 
-## [TD-126] Every bottom sheet copies its own scaffolding
-- **Location:** `apps/web/src/components/profile/ThemeSheet.tsx:30`, `LanguageSheet.tsx:37`, `MeasureSheet.tsx`, `history/ExportSheet.tsx`, `news/NewsButton.tsx`, `train/SessionMap.tsx`
-- **Risk:** 3/10
-- **Problem:** the portal, the dark backdrop, the `anchor-bottom` container with its animation, the handle and the header with the X are repeated almost identically in six components.
-- **Future impact:** a fix to the sheets (accessibility, swipe to close, focus) has to be done six times and one ends up different.
-- **Date:** 2026-10-21 · **Status:** Open

@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-126] Every bottom sheet copies its own scaffolding (2026-10-26 14:25)
+The seven bottom sheets (Tema, Idioma, Medidas, Exportar, Novedades, DurationPicker, session map) now use `BottomSheet` + `SheetHeader` from `components/base/sheet.tsx`; the session map stays inline (no portal) so the sheets it opens keep stacking above it.
+
 ## [TD-094] Tailwind border colors aren't applied (2026-10-26 13:49)
 The global border rule moved into `@layer base` and `kicker`/`hazard-bar` became `@utility`, so colored borders (`border-primary`, `border-transparent`…) now show; kicker labels on `Label` keep their bold with `font-bold`.
 

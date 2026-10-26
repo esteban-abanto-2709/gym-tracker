@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth-context";
 import { useMeasurements } from "@/hooks/useMeasurements";
@@ -11,9 +10,10 @@ import { notifyError } from "@/lib/notify";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Workout } from "@/lib/types";
-import { Copy, Download, Share, X } from "lucide-react";
+import { Copy, Download, Share } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
+import { BottomSheet, SheetHeader } from "@/components/base/sheet";
 
 const shiftDays = (date: string, days: number) => {
   const [y, m, d] = date.split("-").map(Number);
@@ -106,150 +106,116 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
     }
   };
 
-  return createPortal(
-    <>
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/55 animate-fade-in"
-      />
+  return (
+    <BottomSheet label="Exportar historial" onClose={onClose}>
+      <div className="max-w-md mx-auto">
+        <SheetHeader
+          kicker="// para tu IA"
+          title="Exportar historial"
+          onClose={onClose}
+        />
 
-      <div
-        role="dialog"
-        aria-label="Exportar historial"
-        className="anchor-bottom fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[90dvh] overflow-y-auto animate-sheet-up px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
-      >
-        <div className="max-w-md mx-auto">
-          <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-3" />
+        <div className="mt-4 grid grid-cols-4 gap-2">
+          {presets.map((p) => {
+            const active = from === p.from && to === today;
+            return (
+              <button
+                key={p.label}
+                type="button"
+                onClick={() => {
+                  setFrom(p.from);
+                  setTo(today);
+                }}
+                aria-pressed={active}
+                className={`py-2 rounded-xl kicker text-4xs border-2 transition-all active:scale-95 ${
+                  active
+                    ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
+                    : "bg-card border-input text-muted-foreground"
+                }`}
+              >
+                {p.label}
+              </button>
+            );
+          })}
+        </div>
 
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="kicker text-primary text-3xs">{"// para tu IA"}</p>
-              <h2
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <label className="min-w-0 block">
+            <span className="kicker text-4xs text-muted-foreground">Desde</span>
+            <input
+              type="date"
+              value={from}
+              max={to}
+              onChange={(e) => e.target.value && setFrom(e.target.value)}
+              className={dateInput}
+            />
+          </label>
+          <label className="min-w-0 block">
+            <span className="kicker text-4xs text-muted-foreground">Hasta</span>
+            <input
+              type="date"
+              value={to}
+              min={from}
+              max={today}
+              onChange={(e) => e.target.value && setTo(e.target.value)}
+              className={dateInput}
+            />
+          </label>
+        </div>
+
+        <div className="mt-4 rounded-2xl bg-muted/60 px-4 py-3">
+          {workouts === null ? (
+            <p className="py-2 text-sm text-muted-foreground">Cargando…</p>
+          ) : stats.sets > 0 ? (
+            <>
+              <p
                 className={heading({
-                  size: "sm",
-                  className: "text-foreground leading-none mt-1",
+                  className:
+                    "text-3xl leading-none text-foreground tabular-nums",
                 })}
               >
-                Exportar historial
-              </h2>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Cerrar"
-              className="p-2 -mr-2 text-muted-foreground hover:text-foreground active:scale-95 transition-all"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-
-          <div className="mt-4 grid grid-cols-4 gap-2">
-            {presets.map((p) => {
-              const active = from === p.from && to === today;
-              return (
-                <button
-                  key={p.label}
-                  type="button"
-                  onClick={() => {
-                    setFrom(p.from);
-                    setTo(today);
-                  }}
-                  aria-pressed={active}
-                  className={`py-2 rounded-xl kicker text-4xs border-2 transition-all active:scale-95 ${
-                    active
-                      ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
-                      : "bg-card border-input text-muted-foreground"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <label className="min-w-0 block">
-              <span className="kicker text-4xs text-muted-foreground">
-                Desde
-              </span>
-              <input
-                type="date"
-                value={from}
-                max={to}
-                onChange={(e) => e.target.value && setFrom(e.target.value)}
-                className={dateInput}
-              />
-            </label>
-            <label className="min-w-0 block">
-              <span className="kicker text-4xs text-muted-foreground">
-                Hasta
-              </span>
-              <input
-                type="date"
-                value={to}
-                min={from}
-                max={today}
-                onChange={(e) => e.target.value && setTo(e.target.value)}
-                className={dateInput}
-              />
-            </label>
-          </div>
-
-          <div className="mt-4 rounded-2xl bg-muted/60 px-4 py-3">
-            {workouts === null ? (
-              <p className="py-2 text-sm text-muted-foreground">Cargando…</p>
-            ) : stats.sets > 0 ? (
-              <>
-                <p
-                  className={heading({
-                    className:
-                      "text-3xl leading-none text-foreground tabular-nums",
-                  })}
-                >
-                  {plural(stats.sets, "serie", "series")}
-                </p>
-                <p className="mt-1.5 text-sm text-muted-foreground">
-                  {[
-                    plural(stats.days, "día", "días"),
-                    plural(stats.exercises, "ejercicio", "ejercicios"),
-                    measured > 0 && plural(measured, "medida", "medidas"),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-              </>
-            ) : (
-              <p className="py-2 text-sm text-muted-foreground">
-                Sin series en este rango.
+                {plural(stats.sets, "serie", "series")}
               </p>
-            )}
-          </div>
-
-          <Button
-            type="button"
-            onClick={share}
-            disabled={!ready}
-            className="mt-5 py-3.5 disabled:opacity-40"
-          >
-            {shareable ? (
-              <Share className="w-5 h-5" strokeWidth={2.5} />
-            ) : (
-              <Download className="w-5 h-5" strokeWidth={2.5} />
-            )}
-            {shareable ? "Compartir" : "Descargar"}
-          </Button>
-          <button
-            type="button"
-            onClick={copy}
-            disabled={!ready}
-            className="mt-1 w-full py-2.5 text-muted-foreground hover:text-foreground font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
-          >
-            <Copy className="w-4 h-4" />
-            Copiar texto
-          </button>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                {[
+                  plural(stats.days, "día", "días"),
+                  plural(stats.exercises, "ejercicio", "ejercicios"),
+                  measured > 0 && plural(measured, "medida", "medidas"),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </>
+          ) : (
+            <p className="py-2 text-sm text-muted-foreground">
+              Sin series en este rango.
+            </p>
+          )}
         </div>
+
+        <Button
+          type="button"
+          onClick={share}
+          disabled={!ready}
+          className="mt-5 py-3.5 disabled:opacity-40"
+        >
+          {shareable ? (
+            <Share className="w-5 h-5" strokeWidth={2.5} />
+          ) : (
+            <Download className="w-5 h-5" strokeWidth={2.5} />
+          )}
+          {shareable ? "Compartir" : "Descargar"}
+        </Button>
+        <button
+          type="button"
+          onClick={copy}
+          disabled={!ready}
+          className="mt-1 w-full py-2.5 text-muted-foreground hover:text-foreground font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
+        >
+          <Copy className="w-4 h-4" />
+          Copiar texto
+        </button>
       </div>
-    </>,
-    document.body,
+    </BottomSheet>
   );
 }

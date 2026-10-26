@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Sparkles, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { NEWS, type NewsItem } from "@/lib/news";
-import { heading } from "@/components/base/heading";
+import { BottomSheet, SheetHeader } from "@/components/base/sheet";
 
 export function NewsButton() {
   const { user, updateMe } = useAuth();
@@ -85,69 +84,41 @@ function NewsSheet({
     />
   );
 
-  return createPortal(
-    <>
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/55 animate-fade-in"
-      />
-
-      <div
-        role="dialog"
-        aria-label="Novedades"
-        className="anchor-bottom fixed left-0 right-0 bottom-0 z-50 flex flex-col bg-card rounded-t-3xl border-t-2 border-border max-h-[85dvh] animate-sheet-up"
-      >
-        <div className="shrink-0 px-5 pt-3 pb-4 border-b border-border">
-          <div className="max-w-md mx-auto">
-            <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-3" />
-
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="kicker text-primary text-3xs">
-                  {"// lo que puedes hacer"}
-                </p>
-                <h2
-                  className={heading({
-                    size: "sm",
-                    className: "text-foreground leading-none mt-1",
-                  })}
-                >
-                  Novedades
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Cerrar"
-                className="p-2 -mr-2 text-muted-foreground hover:text-foreground active:scale-95 transition-all"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="min-h-0 overflow-y-auto overscroll-contain px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
-          <div className="max-w-md mx-auto">
-            {fresh.length > 0 && (
-              <div className="grid gap-2">{fresh.map(card)}</div>
-            )}
-
-            {old.length > 0 && (
-              <>
-                <p
-                  className={`${fresh.length > 0 ? "mt-6" : ""} mb-2 kicker text-4xs text-muted-foreground`}
-                >
-                  Ya vistas
-                </p>
-                <div className="grid gap-2">{old.map(card)}</div>
-              </>
-            )}
-          </div>
+  return (
+    <BottomSheet
+      label="Novedades"
+      onClose={onClose}
+      className="flex flex-col max-h-[85dvh] overflow-visible p-0"
+    >
+      <div className="shrink-0 px-5 pt-3 pb-4 border-b border-border">
+        <div className="max-w-md mx-auto">
+          <SheetHeader
+            kicker="// lo que puedes hacer"
+            title="Novedades"
+            onClose={onClose}
+          />
         </div>
       </div>
-    </>,
-    document.body,
+
+      <div className="min-h-0 overflow-y-auto overscroll-contain px-5 pt-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+        <div className="max-w-md mx-auto">
+          {fresh.length > 0 && (
+            <div className="grid gap-2">{fresh.map(card)}</div>
+          )}
+
+          {old.length > 0 && (
+            <>
+              <p
+                className={`${fresh.length > 0 ? "mt-6" : ""} mb-2 kicker text-4xs text-muted-foreground`}
+              >
+                Ya vistas
+              </p>
+              <div className="grid gap-2">{old.map(card)}</div>
+            </>
+          )}
+        </div>
+      </div>
+    </BottomSheet>
   );
 }
 

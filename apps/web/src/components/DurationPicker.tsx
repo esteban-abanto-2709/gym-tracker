@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import {
   WheelPicker,
   WheelPickerWrapper,
   type WheelPickerOption,
 } from "@ncdai/react-wheel-picker";
 import "@ncdai/react-wheel-picker/style.css";
-import { Check, Pencil, X } from "lucide-react";
+import { Check, Pencil } from "lucide-react";
 import { formatClock } from "@/lib/setDisplay";
 import { Button } from "@/components/base/button";
-import { heading } from "@/components/base/heading";
+import { BottomSheet, SheetHeader } from "@/components/base/sheet";
 
 const range = (count: number): WheelPickerOption<number>[] =>
   Array.from({ length: count }, (_, i) => ({
@@ -142,66 +141,35 @@ export function DurationField({
         )}
       </button>
 
-      {draft !== null &&
-        createPortal(
-          <>
-            <div
-              onClick={close}
-              className="fixed inset-0 z-50 bg-black/55 animate-fade-in"
-            />
-            <div
-              role="dialog"
-              aria-label={label}
-              className="anchor-bottom fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border animate-sheet-up px-5 pt-3 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
-            >
-              <div className="max-w-md mx-auto">
-                <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-3" />
+      {draft !== null && (
+        <BottomSheet
+          label={label}
+          onClose={close}
+          className="max-h-none overflow-visible"
+        >
+          <div className="max-w-md mx-auto">
+            <SheetHeader title={label} onClose={close} />
 
-                <div className="flex items-start justify-between">
-                  <h2
-                    className={heading({
-                      size: "sm",
-                      className: "text-foreground leading-none mt-1",
-                    })}
-                  >
-                    {label}
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={close}
-                    aria-label="Cerrar"
-                    className="p-2 -mr-2 -mt-1 text-muted-foreground hover:text-foreground active:scale-95 transition-all"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
+            <p className="mt-4 text-center font-display font-bold text-6xl text-primary tabular-nums leading-none">
+              {formatClock(toSeconds(draft))}
+            </p>
 
-                <p className="mt-4 text-center font-display font-bold text-6xl text-primary tabular-nums leading-none">
-                  {formatClock(toSeconds(draft))}
-                </p>
-
-                <div className="mt-4">
-                  <DurationPicker
-                    value={draft}
-                    onChange={setDraft}
-                    label={label}
-                  />
-                </div>
-
-                <Button
-                  type="button"
-                  onClick={confirm}
-                  disabled={toSeconds(draft) === 0}
-                  className="mt-5"
-                >
-                  <Check className="w-6 h-6" strokeWidth={3} />
-                  Listo
-                </Button>
-              </div>
+            <div className="mt-4">
+              <DurationPicker value={draft} onChange={setDraft} label={label} />
             </div>
-          </>,
-          document.body,
-        )}
+
+            <Button
+              type="button"
+              onClick={confirm}
+              disabled={toSeconds(draft) === 0}
+              className="mt-5"
+            >
+              <Check className="w-6 h-6" strokeWidth={3} />
+              Listo
+            </Button>
+          </div>
+        </BottomSheet>
+      )}
     </>
   );
 }

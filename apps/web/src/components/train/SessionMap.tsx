@@ -16,6 +16,7 @@ import {
   Flag,
 } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { BottomSheet, SheetHandle } from "@/components/base/sheet";
 
 interface SessionMapProps {
   items: SessionMapItem[];
@@ -69,15 +70,13 @@ export function SessionMap({
 
   return (
     <>
-      {/* Overlay */}
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/55 animate-fade-in"
-      />
-
-      {/* Bottom sheet */}
-      <div className="anchor-bottom fixed left-0 right-0 bottom-0 z-50 bg-card rounded-t-3xl border-t-2 border-border max-h-[80%] overflow-y-auto animate-sheet-up px-5 pt-3 pb-[calc(2rem+env(safe-area-inset-bottom))]">
-        <div className="w-10 h-1.5 rounded-full bg-border mx-auto mb-4" />
+      <BottomSheet
+        label="Mapa de la sesión"
+        onClose={onClose}
+        inline
+        className="max-h-[80%] pb-[calc(2rem+env(safe-area-inset-bottom))]"
+      >
+        <SheetHandle className="mb-4" />
 
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -213,7 +212,7 @@ export function SessionMap({
             Terminar sesión
           </button>
         </div>
-      </div>
+      </BottomSheet>
 
       {replacingIndex !== null && (
         <AddExerciseSheet
