@@ -38,8 +38,9 @@ import {
   type DraftStep,
 } from "@/components/routines/SortableExerciseItem";
 import Link from "next/link";
-import { Globe, Loader2, Plus } from "lucide-react";
+import { Globe, Plus } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { LoadingOverlay, Spinner } from "@/components/base/spinner";
 
 interface RoutineEditorProps {
   routineId?: string;
@@ -291,7 +292,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
       <PageShell>
         <AppHeader leftAction={<BackAction href={routes.routines()} />} />
         <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <Spinner className="size-10 text-primary" />
         </div>
       </PageShell>
     );
@@ -299,14 +300,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
 
   return (
     <PageShell>
-      {saving && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
-          <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-          <p className="text-lg font-bold text-foreground animate-pulse">
-            Guardando...
-          </p>
-        </div>
-      )}
+      {saving && <LoadingOverlay label="Guardando..." />}
 
       <AppHeader
         leftAction={<BackAction href={routes.routines()} />}

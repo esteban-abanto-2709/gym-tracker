@@ -5,8 +5,9 @@ import { createPortal } from "react-dom";
 import { useAuth } from "@/lib/auth-context";
 import { notifyError } from "@/lib/notify";
 import type { Locale } from "@/lib/types";
-import { Check, Loader2, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { Spinner } from "@/components/base/spinner";
 
 const EXERCISE_LANGUAGES: { value: Locale; label: string; example: string }[] =
   [
@@ -119,7 +120,7 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
                     </span>
                   </span>
                   {saving === value ? (
-                    <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
+                    <Spinner className="size-5 text-primary shrink-0" />
                   ) : (
                     selected && (
                       <Check

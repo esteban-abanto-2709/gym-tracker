@@ -17,8 +17,9 @@ import { formatClock, formatDuration, type SetMeasure } from "@/lib/setDisplay";
 import { DurationField } from "@/components/DurationPicker";
 import { MeasureSelector } from "@/components/MeasureSelector";
 import { UnitToggle } from "@/components/UnitToggle";
-import { ArrowUp, Check, Loader2 } from "lucide-react";
+import { ArrowUp, Check } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { Spinner } from "@/components/base/spinner";
 
 interface Recommendation {
   lastWeight: number | null;
@@ -307,7 +308,7 @@ export function SetForm({
       <Button type="submit" disabled={logging || incomplete}>
         {logging ? (
           <>
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Spinner className="size-5" />
             Guardando...
           </>
         ) : (

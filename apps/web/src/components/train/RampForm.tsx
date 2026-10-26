@@ -10,8 +10,9 @@ import { getLastEquipment } from "@/lib/equipmentMemory";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { UnitToggle } from "@/components/UnitToggle";
 import type { LogSetInput } from "@/components/train/SetForm";
-import { ArrowUp, Check, Loader2 } from "lucide-react";
+import { ArrowUp, Check } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { Spinner } from "@/components/base/spinner";
 
 interface Recommendation {
   lastWeight: number | null;
@@ -208,7 +209,7 @@ export function RampForm({
       <Button type="submit" disabled={logging || incomplete}>
         {logging ? (
           <>
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Spinner className="size-5" />
             Guardando...
           </>
         ) : (

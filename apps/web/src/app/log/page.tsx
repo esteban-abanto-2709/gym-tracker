@@ -15,8 +15,9 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
 import { routes } from "@/lib/routes";
 import { convertWeight } from "@/lib/units";
-import { Check, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { LoadingOverlay } from "@/components/base/spinner";
 
 function LogContent() {
   const {
@@ -68,14 +69,7 @@ function LogContent() {
   return (
     <PageShell>
       {/* Loading Overlay */}
-      {loading && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
-          <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-          <p className="text-lg font-bold text-foreground animate-pulse">
-            Guardando...
-          </p>
-        </div>
-      )}
+      {loading && <LoadingOverlay label="Guardando..." />}
 
       <AppHeader
         leftAction={<BackAction href={routes.home()} />}

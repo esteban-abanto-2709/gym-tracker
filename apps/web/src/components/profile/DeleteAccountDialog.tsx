@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -15,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
+import { Spinner } from "@/components/base/spinner";
 
 interface DeleteAccountDialogProps {
   open: boolean;
@@ -103,7 +103,7 @@ export function DeleteAccountDialog({
               disabled={deleting || !value.trim()}
               className="py-2 px-4 rounded-xl bg-destructive text-destructive-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
             >
-              {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
+              {deleting && <Spinner className="size-4" />}
               Borrar mi cuenta
             </button>
           </AlertDialogFooter>

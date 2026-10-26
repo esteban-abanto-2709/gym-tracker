@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { KeyRound, Loader2, Pencil } from "lucide-react";
+import { KeyRound, Pencil } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/base/button";
+import { Spinner } from "@/components/base/spinner";
 
 const MIN_LENGTH = 8;
 
@@ -123,7 +124,7 @@ export function PasswordRow() {
                 disabled={saving || !current || !next}
                 className="py-2 flex disabled:opacity-60"
               >
-                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                {saving && <Spinner className="size-4" />}
                 Guardar
               </Button>
             </AlertDialogFooter>

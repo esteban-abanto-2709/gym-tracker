@@ -20,10 +20,11 @@ import { AuthorName } from "./AuthorName";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
 import { LikeButton } from "./LikeButton";
 import { ShareButton } from "./ShareButton";
-import { Copy, Loader2, UserPlus } from "lucide-react";
+import { Copy, UserPlus } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
 import { heading } from "@/components/base/heading";
+import { LoadingOverlay } from "@/components/base/spinner";
 
 const copyButtonClass = cn(
   buttonVariants(),
@@ -88,14 +89,7 @@ export function PublicationDetail({
 
   return (
     <PageShell variant="history">
-      {copying && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
-          <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-          <p className="text-lg font-bold text-foreground animate-pulse">
-            Copiando...
-          </p>
-        </div>
-      )}
+      {copying && <LoadingOverlay label="Copiando..." />}
 
       <AppHeader
         leftAction={

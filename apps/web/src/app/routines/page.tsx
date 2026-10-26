@@ -14,7 +14,6 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { RoutineCard } from "@/components/routines/RoutineCard";
 import { DeleteRoutineDialog } from "@/components/routines/DeleteRoutineDialog";
 import {
-  Loader2,
   Plus,
   ClipboardList,
   ChevronDown,
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
+import { Spinner } from "@/components/base/spinner";
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -109,7 +109,7 @@ export default function RoutinesPage() {
         <div className="max-w-md mx-auto space-y-3">
           {loading ? (
             <div className="flex justify-center py-16">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+              <Spinner className="size-10 text-primary" />
             </div>
           ) : routines.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-16 px-6 text-muted-foreground">

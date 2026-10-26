@@ -5,10 +5,11 @@ import { routes } from "@/lib/routes";
 import { usePrograms } from "@/hooks/usePrograms";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
-import { Check, Compass, Layers, Loader2, Pencil, Plus } from "lucide-react";
+import { Check, Compass, Layers, Pencil, Plus } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
 import { heading } from "@/components/base/heading";
+import { Spinner } from "@/components/base/spinner";
 
 export default function ProgramsPage() {
   const { programs, activeProgramId, loading, setActive } = usePrograms();
@@ -34,7 +35,7 @@ export default function ProgramsPage() {
         <div className="max-w-md mx-auto space-y-3">
           {loading ? (
             <div className="flex justify-center py-16">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+              <Spinner className="size-10 text-primary" />
             </div>
           ) : programs.length === 0 ? (
             <Link

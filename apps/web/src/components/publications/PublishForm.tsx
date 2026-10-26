@@ -16,9 +16,10 @@ import type {
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
-import { Camera, Check, Globe, Loader2, X } from "lucide-react";
+import { Camera, Check, Globe, X } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
+import { LoadingOverlay, Spinner } from "@/components/base/spinner";
 
 type SlugStatus = "invalid" | "checking" | "free" | "taken";
 
@@ -131,14 +132,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
 
   return (
     <PageShell variant="history">
-      {publishing && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
-          <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-          <p className="text-lg font-bold text-foreground animate-pulse">
-            Publicando...
-          </p>
-        </div>
-      )}
+      {publishing && <LoadingOverlay label="Publicando..." />}
 
       <AppHeader
         leftAction={<BackAction href={backHref} />}
@@ -149,7 +143,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
         <div className="max-w-md mx-auto space-y-6">
           {loading ? (
             <div className="flex justify-center py-16">
-              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+              <Spinner className="size-10 text-primary" />
             </div>
           ) : (
             <>
@@ -252,7 +246,7 @@ function SlugHint({ status }: { status: SlugStatus }) {
   if (status === "checking") {
     return (
       <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Spinner className="size-4" />
         Revisando...
       </p>
     );

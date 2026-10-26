@@ -8,8 +8,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import type { PendingSet } from "@/lib/pendingSets";
-import { Loader2, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { Spinner } from "@/components/base/spinner";
 
 interface UnsavedSetsDialogProps {
   sets: PendingSet[] | null;
@@ -64,7 +65,7 @@ export function UnsavedSetsDialog({
             className="w-full disabled:opacity-60"
           >
             {retrying ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Spinner className="size-5" />
             ) : (
               <RotateCcw className="w-5 h-5" strokeWidth={2.5} />
             )}

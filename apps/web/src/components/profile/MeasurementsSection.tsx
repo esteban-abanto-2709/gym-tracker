@@ -10,8 +10,9 @@ import {
   todayLocal,
 } from "@/lib/measurements";
 import { MeasureSheet } from "./MeasureSheet";
-import { ChevronRight, Loader2, Plus, Ruler } from "lucide-react";
+import { ChevronRight, Plus, Ruler } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { Spinner } from "@/components/base/spinner";
 
 const RECENT = 3;
 
@@ -39,7 +40,7 @@ export function MeasurementsSection() {
 
       {loading ? (
         <div className="flex justify-center py-8">
-          <Loader2 className="w-6 h-6 text-primary animate-spin" />
+          <Spinner className="size-6 text-primary" />
         </div>
       ) : measurements.length === 0 ? (
         <div className="rounded-2xl border-2 border-dashed border-input p-5 text-center">

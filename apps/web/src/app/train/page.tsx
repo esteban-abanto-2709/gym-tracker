@@ -17,15 +17,10 @@ import { UnsavedSetsDialog } from "@/components/train/UnsavedSetsDialog";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
-import {
-  Loader2,
-  ClipboardList,
-  ListChecks,
-  Timer,
-  ArrowRight,
-} from "lucide-react";
+import { ClipboardList, ListChecks, Timer, ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
+import { Spinner } from "@/components/base/spinner";
 
 export default function TrainPage() {
   const {
@@ -68,7 +63,7 @@ export default function TrainPage() {
       <PageShell>
         <AppHeader leftAction={<BackAction href={routes.home()} />} />
         <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <Spinner className="size-10 text-primary" />
         </div>
       </PageShell>
     );

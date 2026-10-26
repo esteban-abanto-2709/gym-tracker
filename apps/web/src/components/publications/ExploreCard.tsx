@@ -3,13 +3,14 @@ import Link from "next/link";
 import { routes } from "@/lib/routes";
 import type { ExploreListItem } from "@/lib/types";
 import { AuthorName } from "./AuthorName";
-import { ChevronRight, Compass, Copy, Heart, Loader2 } from "lucide-react";
+import { ChevronRight, Compass, Copy, Heart } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { Spinner } from "@/components/base/spinner";
 
 export function ExploreLoading() {
   return (
     <div className="flex justify-center py-16">
-      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <Spinner className="size-10 text-primary" />
     </div>
   );
 }
