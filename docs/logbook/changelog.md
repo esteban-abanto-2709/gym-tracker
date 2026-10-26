@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-144] The diagonal background pattern never renders (2026-10-26 18:04)
+`PageShell` draws its stripes with `themeColors.foreground`, so the gradient is valid and the faint diagonal texture now shows on every screen, in both themes.
+
 ## [TD-145] Bottom sheets don't behave like modal dialogs (2026-10-26 16:55)
 `BottomSheet` is built on Radix Dialog: Escape and a tap outside close it, focus moves in and is trapped, the page behind is locked and hidden from screen readers. The session map hides while its exercise picker is open instead of stacking under it.
 

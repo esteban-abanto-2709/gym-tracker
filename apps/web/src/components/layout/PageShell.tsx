@@ -18,8 +18,8 @@ export function PageShell({ children, variant = "default" }: PageShellProps) {
               45deg,
               transparent,
               transparent 35px,
-              var(--foreground) 35px,
-              var(--foreground) 36px
+              ${themeColors.foreground} 35px,
+              ${themeColors.foreground} 36px
             )`,
           }}
         />
