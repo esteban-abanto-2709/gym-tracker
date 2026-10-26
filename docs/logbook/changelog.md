@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-094] Tailwind border colors aren't applied (2026-10-26 13:49)
+The global border rule moved into `@layer base` and `kicker`/`hazard-bar` became `@utility`, so colored borders (`border-primary`, `border-transparent`…) now show; kicker labels on `Label` keep their bold with `font-bold`.
+
 ## [WL-125] View a publication without an account (2026-10-26 12:27)
 Explore (list and detail) opens without a session: the detail is rendered on the server with Open Graph and a generated preview image (`/og/...`), exercise names follow the browser language, and copying or liking sends the guest to sign up and back (`?next=`). Public pages (`/`, `/privacidad`) now ship their content in the server HTML.
 

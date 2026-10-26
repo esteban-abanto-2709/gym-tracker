@@ -55,7 +55,7 @@ export default function LoginPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="email"
-            className="kicker text-muted-foreground text-2xs"
+            className="kicker font-bold text-muted-foreground text-2xs"
           >
             Correo
           </Label>
@@ -76,7 +76,7 @@ export default function LoginPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="password"
-            className="kicker text-muted-foreground text-2xs"
+            className="kicker font-bold text-muted-foreground text-2xs"
           >
             Contraseña
           </Label>

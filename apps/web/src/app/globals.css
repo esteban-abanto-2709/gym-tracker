@@ -105,8 +105,10 @@
   --font-mono: var(--font-space-mono);
 }
 
-* {
-  border-color: hsl(var(--border));
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
 }
 
 body {
@@ -222,7 +224,7 @@ body {
 /* ---- Motivos de identidad del diseño (Track A) ---- */
 
 /* Etiqueta "kicker": mono, mayúsculas, tracking amplio (ej. "// a entrenar"). */
-.kicker {
+@utility kicker {
   font-family: var(--font-mono), monospace;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -230,7 +232,7 @@ body {
 }
 
 /* Cinta de peligro a rayas diagonales. */
-.hazard-bar {
+@utility hazard-bar {
   background: var(--hazard);
 }
 

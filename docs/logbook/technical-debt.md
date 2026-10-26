@@ -85,14 +85,6 @@ and is deleted from here.
 - **Suggestion:** a help line in the editor ("El peso lo pones al entrenar; la app recuerda el último") and a card in Novedades.
 - **Date:** 2026-10-13 · **Status:** Open
 
-## [TD-094] Tailwind border colors aren't applied
-- **Location:** `apps/web/src/app/globals.css:100`
-- **Risk:** 4/10
-- **Problem:** the global rule `* { border-color: hsl(var(--border)); }` sits outside Tailwind's layers, and in Tailwind 4 unlayered styles beat utilities. That's why `border-primary` and the other border colors are never visible: the "Medir" button and the chosen option in the language panel show the gray border.
-- **Future impact:** any design that relies on a colored border (selection, focus, error) doesn't look as designed, and it's hard to notice.
-- **Suggestion:** move the rule inside `@layer base` and review the screens visually, because several borders will change color at once.
-- **Date:** 2026-10-13 · **Status:** Open
-
 ## [TD-091] The equipment list has no Smith machine
 - **Location:** `Equipment` table (seeded in the `equipo_tabla_y_slug` migration)
 - **Risk:** 3/10

@@ -58,7 +58,7 @@ export default function RegisterPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="username"
-            className="kicker text-muted-foreground text-2xs"
+            className="kicker font-bold text-muted-foreground text-2xs"
           >
             Nombre de usuario
           </Label>
@@ -78,7 +78,7 @@ export default function RegisterPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="email"
-            className="kicker text-muted-foreground text-2xs"
+            className="kicker font-bold text-muted-foreground text-2xs"
           >
             Correo
           </Label>
@@ -99,7 +99,7 @@ export default function RegisterPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="password"
-            className="kicker text-muted-foreground text-2xs"
+            className="kicker font-bold text-muted-foreground text-2xs"
           >
             Contraseña
           </Label>
