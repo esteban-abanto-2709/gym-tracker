@@ -1,5 +1,7 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { exerciseCount, getPublication } from "@/lib/server-api";
+import { countLabel, exerciseCount, getPublication } from "@/lib/server-api";
 import type { PublicationKind } from "@/lib/types";
 
 const KINDS: Record<string, PublicationKind> = {
@@ -8,6 +10,8 @@ const KINDS: Record<string, PublicationKind> = {
 };
 
 const RED = "#ff3b2f";
+
+const oswald = readFile(join(process.cwd(), "src/app/fonts/oswald-700.ttf"));
 
 export async function GET(
   _req: Request,
@@ -21,8 +25,8 @@ export async function GET(
   const isProgram = kind === "PROGRAM";
   const name = publication.name;
   const stats = [
-    isProgram ? `${publication.routines.length} rutinas` : null,
-    `${exerciseCount(publication)} ejercicios`,
+    isProgram ? countLabel(publication.routines.length, "rutina") : null,
+    exerciseCount(publication),
     publication.likeCount > 0 ? `${publication.likeCount} me gusta` : null,
   ].filter(Boolean);
 
@@ -36,6 +40,7 @@ export async function GET(
         background: "#09090b",
         color: "#fafafa",
         padding: "64px 72px",
+        fontFamily: "Oswald",
       }}
     >
       <div
@@ -65,7 +70,7 @@ export async function GET(
           alignItems: "center",
           fontSize: name.length > 28 ? 76 : 104,
           fontWeight: 700,
-          lineHeight: 0.95,
+          lineHeight: 1.1,
           textTransform: "uppercase",
         }}
       >
@@ -86,6 +91,10 @@ export async function GET(
         </div>
       </div>
     </div>,
-    { width: 1200, height: 630 },
+    {
+      width: 1200,
+      height: 630,
+      fonts: [{ name: "Oswald", data: await oswald, weight: 700 }],
+    },
   );
 }

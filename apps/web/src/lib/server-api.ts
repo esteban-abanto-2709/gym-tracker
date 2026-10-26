@@ -33,8 +33,15 @@ export const getPublication = cache((kind: PublicationKind, slug: string) =>
   ),
 );
 
+export function countLabel(n: number, singular: string) {
+  return `${n} ${n === 1 ? singular : `${singular}s`}`;
+}
+
 export function exerciseCount(publication: ExploreDetail) {
-  return publication.routines.reduce((n, r) => n + r.items.length, 0);
+  return countLabel(
+    publication.routines.reduce((n, r) => n + r.items.length, 0),
+    "ejercicio",
+  );
 }
 
 export async function publicationMetadata(
@@ -47,7 +54,7 @@ export async function publicationMetadata(
   const what = kind === "PROGRAM" ? "Programa" : "Rutina";
   const description =
     publication.description ||
-    `${what} de ${publication.author.username} · ${exerciseCount(publication)} ejercicios. ${kind === "PROGRAM" ? "Cópialo" : "Cópiala"} en Gym Tracker.`;
+    `${what} de ${publication.author.username} · ${exerciseCount(publication)}. ${kind === "PROGRAM" ? "Cópialo" : "Cópiala"} en Gym Tracker.`;
   const origin = await siteOrigin();
   return {
     title: publication.name,
