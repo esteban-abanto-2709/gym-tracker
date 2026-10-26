@@ -22,9 +22,13 @@ const orderBy: Record<
   recent: [{ publishedAt: 'desc' }],
 };
 
-const socialInclude = (userId: string) => ({
+const socialInclude = (userId: string | null) => ({
   author: { select: { username: true, slug: true } },
-  likes: { where: { userId }, select: { userId: true } },
+  likes: {
+    where: { userId: userId ?? undefined },
+    take: userId ? 1 : 0,
+    select: { userId: true },
+  },
   _count: { select: { likes: true, copies: true } },
 });
 
@@ -35,7 +39,10 @@ type SocialFields = {
   _count: { likes: number; copies: number };
 };
 
-function withSocial<T extends SocialFields>(publication: T, userId: string) {
+function withSocial<T extends SocialFields>(
+  publication: T,
+  userId: string | null,
+) {
   const { author, authorId, likes, _count, ...rest } = publication;
   return {
     ...rest,
@@ -55,7 +62,7 @@ type SnapshotRoutine = Prisma.PublicationRoutineGetPayload<{
 export class ExploreService {
   constructor(private readonly prisma: PrismaService) {}
 
-  list(userId: string, kind: PublicationKind, sort: ExploreSort) {
+  list(userId: string | null, kind: PublicationKind, sort: ExploreSort) {
     return this.summaries(userId, {
       where: { kind },
       orderBy: orderBy[sort],
@@ -71,7 +78,7 @@ export class ExploreService {
   }
 
   private async summaries(
-    userId: string,
+    userId: string | null,
     query: Pick<Prisma.PublicationFindManyArgs, 'where' | 'orderBy' | 'take'>,
   ) {
     const publications = await this.prisma.publication.findMany({
@@ -96,7 +103,7 @@ export class ExploreService {
     });
   }
 
-  async findOne(userId: string, kind: PublicationKind, slug: string) {
+  async findOne(userId: string | null, kind: PublicationKind, slug: string) {
     const publication = await this.prisma.publication.findUnique({
       where: { kind_slug: { kind, slug } },
       include: { ...publicationInclude, ...socialInclude(userId) },

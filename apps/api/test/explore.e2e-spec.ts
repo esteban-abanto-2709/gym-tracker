@@ -267,6 +267,65 @@ describe('Explore (e2e)', () => {
     await reader.get('/explore/routines').query({ sort: 'best' }).expect(400);
   });
 
+  describe('without a session', () => {
+    const guest = () => request(app.getHttpServer());
+
+    it('lists and shows publications without likedByMe or isMine', async () => {
+      await reader
+        .put(`/explore/routines/${routineSlug}/like`)
+        .set('cf-connecting-ip', ip())
+        .expect(200);
+
+      const list = await guest().get('/explore/routines').expect(200);
+      const item = (list.body as Listed[]).find((p) => p.slug === routineSlug);
+      expect(item).toMatchObject({
+        author: { username: `e2eexpauthor${stamp}` },
+        likeCount: 1,
+        likedByMe: false,
+        isMine: false,
+      });
+
+      const detail = await guest()
+        .get(`/explore/programs/${programSlug}`)
+        .expect(200);
+      expect(detail.body).toMatchObject({ likedByMe: false, isMine: false });
+      expect(
+        (await reader.get(`/explore/routines/${routineSlug}`).expect(200)).body
+          .likedByMe,
+      ).toBe(true);
+    });
+
+    it('names exercises in the browser language', async () => {
+      const names = await prisma.exerciseName.findMany({
+        where: { exerciseId: exerciseIds[0] },
+      });
+      const nameIn = (locale: string) =>
+        names.find((n) => n.locale === locale)?.name;
+      const firstName = async (lang?: string) => {
+        const req = guest().get(`/explore/routines/${routineSlug}`);
+        const res = await (lang ? req.set('accept-language', lang) : req);
+        return res.body.routines[0].items[0].exercise.name as string;
+      };
+
+      expect(await firstName('es-PE,es;q=0.9,en;q=0.8')).toBe(nameIn('es'));
+      expect(await firstName('en-US,en;q=0.9')).toBe(nameIn('en'));
+      expect(await firstName('fr-FR')).toBe(nameIn('en'));
+      expect(await firstName()).toBe(nameIn('en'));
+    });
+
+    it('still asks for an account to copy or like', async () => {
+      await guest()
+        .post(`/explore/routines/${routineSlug}/copy`)
+        .set('cf-connecting-ip', ip())
+        .expect(401);
+      await guest()
+        .put(`/explore/routines/${routineSlug}/like`)
+        .set('cf-connecting-ip', ip())
+        .expect(401);
+      await guest().get('/publications/mine').expect(401);
+    });
+  });
+
   it('no longer copies or lists programs through the old by-id routes', async () => {
     await reader
       .post(`/programs/${programId}/copy`)

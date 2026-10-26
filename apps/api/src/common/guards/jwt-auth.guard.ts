@@ -8,6 +8,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
+import type { AuthUser } from '@/common/decorators/current-user.decorator';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 
 @Injectable()
@@ -23,27 +24,28 @@ export class JwtAuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) return true;
-
     const req = context.switchToHttp().getRequest<Request>();
+    const user = await this.resolveUser(req);
+    if (!user && !isPublic) throw new UnauthorizedException();
+    if (user) req.user = user;
+    return true;
+  }
+
+  private async resolveUser(req: Request): Promise<AuthUser | null> {
     const token = req.cookies?.token as string | undefined;
-    if (!token) throw new UnauthorizedException();
+    if (!token) return null;
 
     let payload: { sub: string; ver?: number };
     try {
       payload = await this.jwt.verifyAsync(token);
     } catch {
-      throw new UnauthorizedException();
+      return null;
     }
-    const userId = payload.sub;
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: payload.sub },
       select: { exerciseLocale: true, tokenVersion: true },
     });
-    if (!user || (payload.ver ?? 0) !== user.tokenVersion) {
-      throw new UnauthorizedException();
-    }
-    req.user = { id: userId, exerciseLocale: user.exerciseLocale };
-    return true;
+    if (!user || (payload.ver ?? 0) !== user.tokenVersion) return null;
+    return { id: payload.sub, exerciseLocale: user.exerciseLocale };
   }
 }

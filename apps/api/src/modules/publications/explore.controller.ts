@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { PublicationKind } from '@prisma/client';
+import { Public } from '@/common/decorators/public.decorator';
 import { ExploreService } from './explore.service';
 import { CopyProgramDto, ExploreQueryDto } from './dto/explore.dto';
 import {
@@ -24,44 +25,56 @@ const LIKE_LIMIT = { default: { limit: 30, ttl: 60_000 } };
 export class ExploreController {
   constructor(private readonly exploreService: ExploreService) {}
 
+  @Public()
   @Get('routines')
   async listRoutines(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: AuthUser | undefined,
     @Query() query: ExploreQueryDto,
   ) {
     return this.exploreService.list(
-      user.id,
+      user?.id ?? null,
       PublicationKind.ROUTINE,
       query.sort,
     );
   }
 
+  @Public()
   @Get('programs')
   async listPrograms(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: AuthUser | undefined,
     @Query() query: ExploreQueryDto,
   ) {
     return this.exploreService.list(
-      user.id,
+      user?.id ?? null,
       PublicationKind.PROGRAM,
       query.sort,
     );
   }
 
+  @Public()
   @Get('routines/:slug')
   async findRoutine(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: AuthUser | undefined,
     @Param('slug') slug: string,
   ) {
-    return this.exploreService.findOne(user.id, PublicationKind.ROUTINE, slug);
+    return this.exploreService.findOne(
+      user?.id ?? null,
+      PublicationKind.ROUTINE,
+      slug,
+    );
   }
 
+  @Public()
   @Get('programs/:slug')
   async findProgram(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: AuthUser | undefined,
     @Param('slug') slug: string,
   ) {
-    return this.exploreService.findOne(user.id, PublicationKind.PROGRAM, slug);
+    return this.exploreService.findOne(
+      user?.id ?? null,
+      PublicationKind.PROGRAM,
+      slug,
+    );
   }
 
   @UseGuards(ThrottlerGuard)
