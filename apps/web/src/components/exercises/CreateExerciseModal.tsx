@@ -38,7 +38,7 @@ export function CreateExerciseModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md rounded-3xl border-2 border-border overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))]" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-brand-start to-brand-end" />
         <DialogHeader className="pt-4">
           <DialogTitle className="flex items-center gap-2 font-display uppercase text-2xl tracking-tight">
             <Dumbbell className="w-5 h-5 text-primary" />
@@ -48,7 +48,7 @@ export function CreateExerciseModal({
 
         <div className="space-y-6 py-4">
           <div className="space-y-3">
-            <label className="kicker text-muted-foreground text-[0.6rem] ml-1">
+            <label className="kicker text-muted-foreground text-4xs ml-1">
               ¿Cómo se llama?
             </label>
             <input

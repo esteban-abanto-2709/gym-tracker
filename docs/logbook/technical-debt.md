@@ -14,6 +14,46 @@ and is deleted from here.
 
 ---
 
+## [TD-142] The offline set queue has no test of its own
+- **Location:** `apps/web/src/lib/pendingSets.ts`
+- **Risk:** 5/10
+- **Problem:** the queue that keeps sets when there's no network (send in order, drop each one only after the API accepts it, a single flush at a time, re-flush when asked mid-flush) is only covered indirectly through `useGuidedSession.test.ts`; there's no `pendingSets.test.ts`. `PendingSet.body.setType` is also typed as `string` instead of `SetType`.
+- **Future impact:** a change to the queue can lose or duplicate real sets without any test going red; it's the piece where a bug costs user data.
+- **Suggestion:** a `pendingSets.test.ts` with a mocked `api.post`: failure mid-queue keeps the rest, two concurrent flushes send each set once, a flush requested mid-flush runs again.
+- **Date:** 2026-10-26 · **Status:** Open
+
+## [TD-141] Icon-only buttons without an accessible name
+- **Location:** `apps/web/src/components/layout/AppHeader.tsx:56` (`BackAction`: neither label nor title), `AppHeader.tsx:67` and `:79` (`HistoryAction`, `RoutinesAction`: `title` only), plus the other header icon buttons
+- **Risk:** 4/10
+- **Problem:** several buttons and links show only a lucide icon and rely on `title` (not read reliably by screen readers, never shown on touch) or have nothing at all; there's no automated accessibility check.
+- **Future impact:** a screen-reader user hears "link" or "button" with no purpose; regressions go unnoticed because nothing checks them.
+- **Suggestion:** `aria-label` on every icon-only control, and an `@axe-core/playwright` check in the existing e2e.
+- **Date:** 2026-10-26 · **Status:** Open
+
+## [TD-140] Route protection and loading states live in the client
+- **Location:** `apps/web/src/lib/auth-context.tsx:224` (redirect effect + `FullScreenLoader`), `apps/web/src/app/` (no `loading.tsx`, `error.tsx` or `not-found.tsx`)
+- **Risk:** 4/10
+- **Problem:** every private page waits for `GET /auth/me` in the browser before rendering, showing "Cargando…" and only then redirecting to `/login`; 51 files are `"use client"`. An exception in a page has no error boundary, and unknown URLs get Next's default 404.
+- **Future impact:** a blank loader on every cold start (~250 ms per trip through the tunnel), a white screen on an unexpected error, and every new page has to remember the auth dance.
+- **Suggestion:** redirect without a `token` cookie in `proxy.ts` (Next 16's name for middleware; verify when starting), as `app/page.tsx` already does, plus root `error.tsx` and `not-found.tsx`.
+- **Date:** 2026-10-26 · **Status:** Open
+
+## [TD-139] Web data fetching fails silently and isn't shared
+- **Location:** `apps/web/src/lib/api.ts` (unused `token` parameter, 401 redirects and then throws anyway), `apps/web/src/lib/auth-context.tsx` (three hand-written `fetch`s next to the client), `apps/web/src/hooks/*` (22 files with `useEffect` + `fetch` + `useState`)
+- **Risk:** 5/10
+- **Problem:** 38 `console.error`s are the only reaction to a failed request (e.g. deleting a routine in `useRoutines.ts` fails with nothing on screen); only `useExplore.ts` and `PublishForm.tsx` guard against an older response arriving after a newer one; every hook repeats the same loading/error state by hand.
+- **Future impact:** the user thinks something was saved or deleted when it wasn't; stale data can overwrite fresh data on fast tab switches; every new screen copies the pattern again.
+- **Suggestion:** surface failures with `notifyError`, drop the dead `token` parameter, and route auth through the same client; the cache library of WL-082 would remove most of these hooks.
+- **Date:** 2026-10-26 · **Status:** Open
+
+## [TD-138] The web has no shared design system
+- **Location:** `apps/web/src/components/**` and `apps/web/src/app/**` (the brand gradient is copied in 29 places; `components/ui/button.tsx` is used in 2 files)
+- **Risk:** 4/10
+- **Problem:** the tokens exist in `globals.css`, but the base components don't. `hsl(var(--brand-…))` appears 66 times, there are 92 hand-written `<button>`s, 37 hand-written display titles, 20 hand-written `Loader2` spinners, the "Guardando…" overlay copied 5 times, the same input class 5 times, 85 arbitrary `text-[…rem]` sizes, and 37 template-literal `className`s instead of `cn()`. Related: TD-126 (sheets) and TD-094 (border colors).
+- **Future impact:** every visual change takes dozens of edits and one ends up different; desktop (WL-058) and translating the UI (RM-093) touch the same files and cost twice as much.
+- **Suggestion:** a `bg-brand` utility via `@utility`, a `Button` with variants (`cva`), `Title`, `Spinner`, `LoadingOverlay`, an input variant and a type scale in `@theme`; migrate one piece per commit.
+- **Date:** 2026-10-26 · **Status:** In progress (2026-10-26)
+
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`
 - **Risk:** 3/10

@@ -86,7 +86,7 @@ export default function TrainPage() {
           </p>
           <Link
             href={routes.routines()}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
           >
             Ver mis rutinas
           </Link>
@@ -140,7 +140,7 @@ export default function TrainPage() {
                   </span>
                 </div>
               )}
-              <p className="kicker text-[0.6rem] text-primary">
+              <p className="kicker text-4xs text-primary">
                 {currentPlan.setType === "RAMP"
                   ? "Rampa"
                   : `Serie ${setsDoneForCurrent + 1}`}

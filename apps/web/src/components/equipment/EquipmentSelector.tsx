@@ -18,9 +18,7 @@ export function EquipmentSelector({
 
   return (
     <div className="space-y-2">
-      <label className="kicker text-muted-foreground text-[0.6rem]">
-        Equipo
-      </label>
+      <label className="kicker text-muted-foreground text-4xs">Equipo</label>
       <div className="flex flex-wrap gap-2">
         {equipment.map((eq) => {
           const Icon = equipmentIcon(eq.id);

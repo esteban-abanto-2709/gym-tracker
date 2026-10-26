@@ -91,7 +91,7 @@ function LogContent() {
           className="max-w-md mx-auto space-y-6"
           autoComplete="off"
         >
-          <p className="kicker text-primary text-[0.7rem] mb-2">
+          <p className="kicker text-primary text-2xs mb-2">
             {"// registra tu set"}
           </p>
 
@@ -121,7 +121,7 @@ function LogContent() {
 
           {measure === "time" ? (
             <div className="space-y-2">
-              <label className="kicker text-muted-foreground text-[0.65rem]">
+              <label className="kicker text-muted-foreground text-3xs">
                 Tiempo <span className="text-primary">*</span>
               </label>
               <DurationField
@@ -141,7 +141,7 @@ function LogContent() {
                   <div className="flex items-center justify-between">
                     <label
                       htmlFor="weight"
-                      className="kicker text-muted-foreground text-[0.65rem]"
+                      className="kicker text-muted-foreground text-3xs"
                     >
                       Peso ({unit}) <span className="text-primary">*</span>
                     </label>
@@ -177,7 +177,7 @@ function LogContent() {
               <div className="space-y-2">
                 <label
                   htmlFor="reps"
-                  className="kicker text-muted-foreground text-[0.65rem]"
+                  className="kicker text-muted-foreground text-3xs"
                 >
                   Repeticiones <span className="text-primary">*</span>
                 </label>
@@ -205,11 +205,11 @@ function LogContent() {
               !selectedExercise ||
               (measure === "time" && !(Number(seconds) > 0))
             }
-            className="group relative w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s] flex items-center justify-center gap-2"
+            className="group relative w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden animate-scale-in [animation-delay:0.6s] flex items-center justify-center gap-2"
           >
             <Check className="w-6 h-6" strokeWidth={3} />
             Registrar Set
-            <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-linear-to-r from-brand-end to-brand-start opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
 
           {/* Hint */}

@@ -51,7 +51,7 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
 
           <div className="flex items-start justify-between">
             <div>
-              <p className="kicker text-primary text-[0.65rem]">
+              <p className="kicker text-primary text-3xs">
                 {"// preferencias"}
               </p>
               <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
@@ -68,7 +68,7 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
             </button>
           </div>
 
-          <p className="mt-5 kicker text-[0.6rem] text-muted-foreground">
+          <p className="mt-5 kicker text-4xs text-muted-foreground">
             Nombres de ejercicios
           </p>
           <p className="mt-1 text-sm text-muted-foreground text-balance">

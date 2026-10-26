@@ -203,7 +203,7 @@ export function SetForm({
 
   const repsInput = (
     <div className="space-y-2">
-      <label className="kicker text-muted-foreground text-[0.6rem]">
+      <label className="kicker text-muted-foreground text-4xs">
         Reps
         {targetReps
           ? ` · meta ${formatRepRange(targetReps, targetRepsMax)}`
@@ -225,7 +225,7 @@ export function SetForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
       <div className="text-center space-y-2">
-        <p className="kicker text-[0.6rem] text-muted-foreground">
+        <p className="kicker text-4xs text-muted-foreground">
           {setType === "WARMUP" && `Calentamiento · `}
           {setType === "RAMP" && `Rampa ${step} · `}
           {lastLabel}
@@ -257,7 +257,7 @@ export function SetForm({
 
       {measure === "time" && (
         <div className="space-y-2">
-          <label className="kicker text-muted-foreground text-[0.6rem]">
+          <label className="kicker text-muted-foreground text-4xs">
             Tiempo
             {targetDurationSec
               ? ` · meta ${formatClock(targetDurationSec)}`
@@ -273,7 +273,7 @@ export function SetForm({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="kicker text-muted-foreground text-[0.6rem]">
+              <label className="kicker text-muted-foreground text-4xs">
                 Peso ({unit})
               </label>
               <UnitToggle unit={unit} onToggle={toggleUnit} />
@@ -306,7 +306,7 @@ export function SetForm({
       <button
         type="submit"
         disabled={logging || incomplete}
-        className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {logging ? (
           <>

@@ -28,7 +28,7 @@ export function BirthDateRow() {
         <Cake className="w-5 h-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="kicker text-[0.6rem] text-muted-foreground">Nacimiento</p>
+        <p className="kicker text-4xs text-muted-foreground">Nacimiento</p>
         <p className="font-bold text-foreground truncate">
           {draft
             ? `${formatShortDate(draft)} · ${ageOn(draft)} años`

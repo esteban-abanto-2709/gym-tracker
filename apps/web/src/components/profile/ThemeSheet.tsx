@@ -57,7 +57,7 @@ export function ThemeSheet({ onClose }: { onClose: () => void }) {
 
           <div className="flex items-start justify-between">
             <div>
-              <p className="kicker text-primary text-[0.65rem]">
+              <p className="kicker text-primary text-3xs">
                 {"// preferencias"}
               </p>
               <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">

@@ -25,7 +25,7 @@ export function RoutineCard({
       className="group relative bg-card border-2 border-input rounded-2xl p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
       style={{ animationDelay: `${index * 0.05}s` }}
     >
-      <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
+      <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-brand-start to-brand-end rounded-r-full" />
 
       <div className="pl-3 flex items-center justify-between gap-3">
         <Link
@@ -34,14 +34,14 @@ export function RoutineCard({
           title="Editar rutina"
         >
           {isNext && (
-            <span className="block kicker text-[0.6rem] text-primary mb-1">
+            <span className="block kicker text-4xs text-primary mb-1">
               Hoy toca
             </span>
           )}
           <h3 className="font-bold text-foreground text-lg leading-tight truncate">
             {routine.name}
           </h3>
-          <span className="inline-flex items-center gap-1.5 kicker text-[0.6rem] text-muted-foreground mt-1.5">
+          <span className="inline-flex items-center gap-1.5 kicker text-4xs text-muted-foreground mt-1.5">
             <ListChecks className="w-3.5 h-3.5" />
             {count} {count === 1 ? "ejercicio" : "ejercicios"}
           </span>
@@ -51,7 +51,7 @@ export function RoutineCard({
           <button
             onClick={() => onStart(routine)}
             disabled={count === 0}
-            className="flex items-center justify-center p-2.5 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="flex items-center justify-center p-2.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             title="Empezar Rutina"
             aria-label="Empezar Rutina"
           >

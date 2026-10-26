@@ -72,9 +72,7 @@ export function PasswordRow() {
           <KeyRound className="w-5 h-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="kicker text-[0.6rem] text-muted-foreground">
-            Contraseña
-          </p>
+          <p className="kicker text-4xs text-muted-foreground">Contraseña</p>
           <p className="font-bold text-foreground truncate">Cambiar</p>
         </div>
         <Pencil className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -121,7 +119,7 @@ export function PasswordRow() {
               <button
                 type="submit"
                 disabled={saving || !current || !next}
-                className="py-2 px-4 rounded-xl bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
+                className="py-2 px-4 rounded-xl bg-linear-to-r from-brand-start to-brand-end text-primary-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                 Guardar

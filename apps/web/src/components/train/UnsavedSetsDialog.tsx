@@ -59,7 +59,7 @@ export function UnsavedSetsDialog({
             type="button"
             onClick={onRetry}
             disabled={retrying}
-            className="w-full py-3 rounded-xl bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
+            className="w-full py-3 rounded-xl bg-linear-to-r from-brand-start to-brand-end text-primary-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
           >
             {retrying ? (
               <Loader2 className="w-5 h-5 animate-spin" />

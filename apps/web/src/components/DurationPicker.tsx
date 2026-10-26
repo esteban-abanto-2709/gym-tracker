@@ -59,7 +59,7 @@ function WheelColumn({
         infinite={infinite}
         classNames={wheelClassNames}
       />
-      <span className="pointer-events-none absolute top-1/2 left-1/2 ml-7 -translate-y-1/2 kicker text-[0.6rem] text-muted-foreground">
+      <span className="pointer-events-none absolute top-1/2 left-1/2 ml-7 -translate-y-1/2 kicker text-4xs text-muted-foreground">
         {unit}
       </span>
     </div>
@@ -185,7 +185,7 @@ export function DurationField({
                   type="button"
                   onClick={confirm}
                   disabled={toSeconds(draft) === 0}
-                  className="mt-5 w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="mt-5 w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Check className="w-6 h-6" strokeWidth={3} />
                   Listo

@@ -152,9 +152,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
           ) : (
             <>
               <div>
-                <p className="kicker text-primary text-[0.65rem]">
-                  Vista previa
-                </p>
+                <p className="kicker text-primary text-3xs">Vista previa</p>
                 <h2 className="font-display font-bold uppercase text-foreground text-4xl leading-[0.9] tracking-tight mt-2 break-words">
                   {name}
                 </h2>
@@ -179,7 +177,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
               <div className="space-y-2">
                 <label
                   htmlFor="publish-slug"
-                  className="kicker text-muted-foreground text-[0.65rem]"
+                  className="kicker text-muted-foreground text-3xs"
                 >
                   Dirección (URL)
                 </label>
@@ -209,7 +207,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
               <div className="space-y-2">
                 <label
                   htmlFor="publish-description"
-                  className="kicker text-muted-foreground text-[0.65rem]"
+                  className="kicker text-muted-foreground text-3xs"
                 >
                   Descripción (opcional)
                 </label>
@@ -231,7 +229,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
                 type="button"
                 onClick={handlePublish}
                 disabled={!canPublish}
-                className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Publicar
               </button>

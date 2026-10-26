@@ -122,9 +122,7 @@ export function MeasureSheet({
 
           <div className="flex items-start justify-between">
             <div>
-              <p className="kicker text-primary text-[0.65rem]">
-                {"// medidas"}
-              </p>
+              <p className="kicker text-primary text-3xs">{"// medidas"}</p>
               <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
                 {existing ? "Editar medida" : "Registrar medida"}
               </h2>
@@ -140,9 +138,7 @@ export function MeasureSheet({
           </div>
 
           <label className="mt-4 block">
-            <span className="kicker text-[0.6rem] text-muted-foreground">
-              Fecha
-            </span>
+            <span className="kicker text-4xs text-muted-foreground">Fecha</span>
             <input
               type="date"
               value={date}
@@ -165,7 +161,7 @@ export function MeasureSheet({
                     : "border-transparent"
                 }`}
               >
-                <span className="kicker text-[0.6rem] text-muted-foreground">
+                <span className="kicker text-4xs text-muted-foreground">
                   {label}
                 </span>
                 <input
@@ -196,7 +192,7 @@ export function MeasureSheet({
             type="button"
             onClick={save}
             disabled={!canSave || busy}
-            className="mt-5 w-full py-3.5 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:active:scale-100"
+            className="mt-5 w-full py-3.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:active:scale-100"
           >
             <Check className="w-5 h-5" strokeWidth={2.5} />
             {existing ? "Actualizar" : "Guardar"}

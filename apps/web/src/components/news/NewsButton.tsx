@@ -102,7 +102,7 @@ function NewsSheet({
 
             <div className="flex items-start justify-between">
               <div>
-                <p className="kicker text-primary text-[0.65rem]">
+                <p className="kicker text-primary text-3xs">
                   {"// lo que puedes hacer"}
                 </p>
                 <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight leading-none mt-1">
@@ -130,7 +130,7 @@ function NewsSheet({
             {old.length > 0 && (
               <>
                 <p
-                  className={`${fresh.length > 0 ? "mt-6" : ""} mb-2 kicker text-[0.6rem] text-muted-foreground`}
+                  className={`${fresh.length > 0 ? "mt-6" : ""} mb-2 kicker text-4xs text-muted-foreground`}
                 >
                   Ya vistas
                 </p>
@@ -183,9 +183,7 @@ function NewsCard({
         </span>
         <span className="min-w-0 flex-1">
           {isNew && (
-            <span className="block kicker text-primary text-[0.55rem]">
-              Nuevo
-            </span>
+            <span className="block kicker text-primary text-5xs">Nuevo</span>
           )}
           <span className="block font-bold text-foreground leading-snug">
             {item.title}

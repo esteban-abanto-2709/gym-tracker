@@ -59,7 +59,7 @@ export function EditWorkoutDialog({
         <div className="grid gap-4 py-4">
           {measure === "time" ? (
             <div className="space-y-2">
-              <label className="kicker text-muted-foreground text-[0.65rem]">
+              <label className="kicker text-muted-foreground text-3xs">
                 Tiempo
               </label>
               <DurationPicker value={durationSec} onChange={onDurationChange} />
@@ -74,7 +74,7 @@ export function EditWorkoutDialog({
                 <div className="space-y-2">
                   <label
                     htmlFor="edit-weight"
-                    className="kicker text-muted-foreground text-[0.65rem]"
+                    className="kicker text-muted-foreground text-3xs"
                   >
                     Peso (kg)
                   </label>
@@ -91,7 +91,7 @@ export function EditWorkoutDialog({
               <div className="space-y-2">
                 <label
                   htmlFor="edit-reps"
-                  className="kicker text-muted-foreground text-[0.65rem]"
+                  className="kicker text-muted-foreground text-3xs"
                 >
                   Repeticiones
                 </label>

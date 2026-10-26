@@ -23,7 +23,7 @@ import { ShareButton } from "./ShareButton";
 import { Copy, Loader2, UserPlus } from "lucide-react";
 
 const copyButtonClass =
-  "w-full flex items-center justify-center gap-2 py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50";
+  "w-full flex items-center justify-center gap-2 py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50";
 
 interface PublicationDetailProps {
   kind: PublicationKind;
@@ -118,7 +118,7 @@ export function PublicationDetail({
           ) : (
             <>
               <div>
-                <p className="kicker text-primary text-[0.65rem]">
+                <p className="kicker text-primary text-3xs">
                   de <AuthorName author={publication.author} />
                 </p>
                 <h1 className="font-display font-bold uppercase text-foreground text-4xl leading-[0.9] tracking-tight mt-2 break-words">

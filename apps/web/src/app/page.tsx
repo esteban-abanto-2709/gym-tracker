@@ -18,7 +18,7 @@ export default async function Home() {
             {/* Hero */}
             <div>
               <div className="flex items-center justify-between">
-                <p className="kicker text-primary text-[0.7rem]">
+                <p className="kicker text-primary text-2xs">
                   {"// listo para entrenar"}
                 </p>
                 <NewsButton />

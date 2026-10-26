@@ -39,7 +39,7 @@ function RowContent({
         <Icon className="w-5 h-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="kicker text-[0.6rem] text-muted-foreground">{label}</p>
+        <p className="kicker text-4xs text-muted-foreground">{label}</p>
         <p className="font-bold text-foreground truncate">{value}</p>
       </div>
       <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -50,7 +50,7 @@ function RowContent({
 function Group({ kicker, children }: { kicker: string; children: ReactNode }) {
   return (
     <section className="mt-6">
-      <p className="kicker text-primary text-[0.7rem] mb-2">{kicker}</p>
+      <p className="kicker text-primary text-2xs mb-2">{kicker}</p>
       <div className="rounded-2xl border-2 border-input bg-card overflow-hidden [&>*:first-child]:border-t-0">
         {children}
       </div>

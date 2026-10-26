@@ -45,7 +45,7 @@ export function ExerciseCombobox({
 
   return (
     <div className="space-y-2 relative" ref={wrapperRef}>
-      <label className="kicker text-muted-foreground text-[0.6rem] ml-1">
+      <label className="kicker text-muted-foreground text-4xs ml-1">
         Ejercicio <span className="text-primary">*</span>
       </label>
 
@@ -58,7 +58,7 @@ export function ExerciseCombobox({
           }}
         >
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-xl text-primary-foreground shadow-lg shadow-primary/20">
+            <div className="p-3 bg-linear-to-br from-brand-start to-brand-end rounded-xl text-primary-foreground shadow-lg shadow-primary/20">
               <Dumbbell className="w-6 h-6" />
             </div>
             <div className="flex flex-col">
@@ -145,7 +145,7 @@ export function ExerciseCombobox({
                   >
                     <span className="truncate pr-2">{ex.name}</span>
                     {ex.createdById && (
-                      <span className="kicker shrink-0 text-[0.6rem] text-muted-foreground">
+                      <span className="kicker shrink-0 text-4xs text-muted-foreground">
                         No oficial
                       </span>
                     )}

@@ -48,12 +48,12 @@ export function ExploreCard({
             {item.name}
           </span>
           {item.isMine && !showKind && (
-            <span className="shrink-0 rounded-md bg-secondary px-1.5 py-0.5 kicker text-[0.55rem] text-muted-foreground">
+            <span className="shrink-0 rounded-md bg-secondary px-1.5 py-0.5 kicker text-5xs text-muted-foreground">
               Tuya
             </span>
           )}
         </span>
-        <span className="block kicker text-[0.6rem] text-muted-foreground mt-1.5">
+        <span className="block kicker text-4xs text-muted-foreground mt-1.5">
           {showKind ? (
             isProgram ? (
               "Programa"

@@ -32,7 +32,7 @@ export default function LoginPage() {
     <main className="min-h-dvh flex flex-col px-6 pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] max-w-md mx-auto w-full">
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
-        <p className="kicker text-primary text-[0.7rem]">
+        <p className="kicker text-primary text-2xs">
           {"// directo a entrenar"}
         </p>
         <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.88] tracking-tight mt-3">
@@ -55,7 +55,7 @@ export default function LoginPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="email"
-            className="kicker text-muted-foreground text-[0.7rem]"
+            className="kicker text-muted-foreground text-2xs"
           >
             Correo
           </Label>
@@ -76,7 +76,7 @@ export default function LoginPage() {
         <div className="space-y-1.5">
           <Label
             htmlFor="password"
-            className="kicker text-muted-foreground text-[0.7rem]"
+            className="kicker text-muted-foreground text-2xs"
           >
             Contraseña
           </Label>
@@ -93,7 +93,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full font-display uppercase tracking-wide text-2xl text-primary-foreground rounded-2xl py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] shadow-lg shadow-primary/30 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100"
+          className="w-full font-display uppercase tracking-wide text-2xl text-primary-foreground rounded-2xl py-4 bg-linear-to-r from-brand-start to-brand-end shadow-lg shadow-primary/30 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100"
         >
           {submitting ? "Ingresando…" : "Ingresar"}
         </button>

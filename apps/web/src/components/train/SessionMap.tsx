@@ -83,7 +83,7 @@ export function SessionMap({
             <h2 className="font-display font-bold uppercase text-2xl text-foreground tracking-tight">
               Mapa de la sesión
             </h2>
-            <p className="kicker text-[0.6rem] text-muted-foreground mt-1">
+            <p className="kicker text-4xs text-muted-foreground mt-1">
               Ejercicio {position} de {totalCount}
             </p>
           </div>

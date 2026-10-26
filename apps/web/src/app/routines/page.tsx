@@ -120,7 +120,7 @@ export default function RoutinesPage() {
               </p>
               <Link
                 href={routes.routineNew()}
-                className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg active:scale-95 transition-all"
               >
                 <Plus className="w-5 h-5" strokeWidth={3} />
                 Nueva Rutina
@@ -130,7 +130,7 @@ export default function RoutinesPage() {
             renderCards(routines)
           ) : (
             <>
-              <p className="kicker text-primary text-[0.65rem]">
+              <p className="kicker text-primary text-3xs">
                 {activeProgram?.name}
               </p>
               {renderCards(activeRoutines)}
@@ -152,7 +152,7 @@ export default function RoutinesPage() {
               {showOthers &&
                 otherGroups.map((group) => (
                   <div key={group.key} className="space-y-3 pt-2">
-                    <p className="kicker text-muted-foreground text-[0.65rem]">
+                    <p className="kicker text-muted-foreground text-3xs">
                       {group.title}
                     </p>
                     {renderCards(group.routines)}

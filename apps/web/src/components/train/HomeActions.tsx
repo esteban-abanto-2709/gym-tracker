@@ -83,9 +83,7 @@ export function HomeActions() {
       <>
         <Link href={routes.explore("programs")} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-          <p className="kicker text-[0.65rem] opacity-55 relative">
-            Empieza aquí
-          </p>
+          <p className="kicker text-3xs opacity-55 relative">Empieza aquí</p>
           <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative pr-16">
             Explorar
             <br />
@@ -125,7 +123,7 @@ export function HomeActions() {
       {today ? (
         <button type="button" onClick={handleStart} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-          <p className="kicker text-[0.65rem] opacity-55 relative pr-16 truncate">
+          <p className="kicker text-3xs opacity-55 relative pr-16 truncate">
             Hoy toca · {today.programName}
           </p>
           <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative pr-16 break-words">
@@ -139,9 +137,7 @@ export function HomeActions() {
       ) : (
         <Link href={routes.routines()} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-          <p className="kicker text-[0.65rem] opacity-55 relative">
-            Empieza fuerte
-          </p>
+          <p className="kicker text-3xs opacity-55 relative">Empieza fuerte</p>
           <p className="font-display font-bold uppercase text-5xl leading-[0.85] mt-3 relative">
             Iniciar
             <br />

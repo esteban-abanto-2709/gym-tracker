@@ -19,7 +19,7 @@ export function ContinueRoutineBanner() {
       <div className="flex items-center gap-3 min-w-0">
         <span className="shrink-0 w-3 h-3 rounded-full bg-primary animate-pulse-red" />
         <div className="min-w-0">
-          <p className="kicker text-primary text-[0.6rem] truncate">
+          <p className="kicker text-primary text-4xs truncate">
             En curso · {session.routineName}
           </p>
           <p className="font-display font-bold uppercase text-foreground text-xl leading-none mt-1.5">

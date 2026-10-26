@@ -23,7 +23,7 @@ export function MeasurementsSection() {
   return (
     <section id="medidas" className="mt-6 scroll-mt-6">
       <div className="flex items-center justify-between mb-2 min-h-9">
-        <p className="kicker text-primary text-[0.7rem]">{"// medidas"}</p>
+        <p className="kicker text-primary text-2xs">{"// medidas"}</p>
         {measurements.length > 0 && (
           <button
             type="button"
@@ -50,7 +50,7 @@ export function MeasurementsSection() {
           <button
             type="button"
             onClick={openNew}
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl font-display uppercase tracking-wide text-base shadow-lg active:scale-95 transition-all"
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-xl font-display uppercase tracking-wide text-base shadow-lg active:scale-95 transition-all"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
             Registrar medida
@@ -66,7 +66,7 @@ export function MeasurementsSection() {
                   key={key}
                   className="rounded-2xl border-2 border-input bg-card px-2 py-3 text-center"
                 >
-                  <p className="kicker text-[0.55rem] text-muted-foreground">
+                  <p className="kicker text-5xs text-muted-foreground">
                     {label}
                   </p>
                   <p className="mt-1.5 font-display font-bold text-2xl leading-none tabular-nums text-foreground">
@@ -77,7 +77,7 @@ export function MeasurementsSection() {
                       </span>
                     )}
                   </p>
-                  <p className="mt-1.5 text-[0.7rem] text-muted-foreground">
+                  <p className="mt-1.5 text-2xs text-muted-foreground">
                     {last ? formatShortDate(last.date) : "sin dato"}
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export function MeasurementsSection() {
                   onClick={() => setSheetDate(m.date)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/50 active:bg-muted transition-colors"
                 >
-                  <span className="kicker text-[0.65rem] text-muted-foreground w-20 shrink-0">
+                  <span className="kicker text-3xs text-muted-foreground w-20 shrink-0">
                     {formatShortDate(m.date)}
                   </span>
                   <span className="flex-1 min-w-0 text-sm font-bold text-foreground tabular-nums truncate">

@@ -24,7 +24,7 @@ export function WorkoutCard({
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       {/* Brand Accent Line */}
-      <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-r-full" />
+      <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-brand-start to-brand-end rounded-r-full" />
 
       <div className="pl-3">
         <div className="flex justify-between items-start gap-2">
@@ -44,7 +44,7 @@ export function WorkoutCard({
             onClick={() => onRepeat(workout)}
             aria-label="Repetir Set"
             title="Repetir Set"
-            className="flex items-center justify-center p-2.5 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center justify-center p-2.5 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-xl shadow-md hover:scale-105 active:scale-95 transition-all"
           >
             <RotateCcw className="w-4 h-4" strokeWidth={3} />
           </button>

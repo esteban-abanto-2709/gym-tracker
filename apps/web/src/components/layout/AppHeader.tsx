@@ -36,7 +36,7 @@ export function AppHeader({
             </h1>
           ) : (
             <h1 className="font-display font-bold uppercase text-2xl tracking-tight">
-              <span className="bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-brand-start to-brand-end bg-clip-text text-transparent">
                 GYM
               </span>
               <span className="text-foreground">TRACK</span>

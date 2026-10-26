@@ -142,7 +142,7 @@ export function RampForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
       <div className="flex items-center justify-between">
-        <p className="kicker text-[0.6rem] text-muted-foreground">
+        <p className="kicker text-4xs text-muted-foreground">
           {steps.length === 1 ? "1 escalón" : `${steps.length} escalones`}
         </p>
         <UnitToggle unit={unit} onToggle={toggleUnit} />
@@ -207,7 +207,7 @@ export function RampForm({
       <button
         type="submit"
         disabled={logging || incomplete}
-        className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {logging ? (
           <>

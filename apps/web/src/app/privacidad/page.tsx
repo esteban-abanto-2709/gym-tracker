@@ -80,9 +80,7 @@ export default function PrivacidadPage() {
             Volver
           </Link>
 
-          <p className="kicker text-primary text-[0.7rem] mt-6">
-            {"// tus datos"}
-          </p>
+          <p className="kicker text-primary text-2xs mt-6">{"// tus datos"}</p>
           <h1 className="font-display font-bold uppercase text-foreground text-5xl leading-[0.9] tracking-tight mt-2">
             Privacidad
           </h1>
@@ -93,7 +91,7 @@ export default function PrivacidadPage() {
           <div className="mt-8 space-y-7">
             {sections.map((section) => (
               <section key={section.title}>
-                <h2 className="kicker text-primary text-[0.7rem]">
+                <h2 className="kicker text-primary text-2xs">
                   {section.title}
                 </h2>
                 <div className="mt-2 space-y-2 text-sm text-muted-foreground leading-relaxed">

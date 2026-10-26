@@ -160,7 +160,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
           <div className="space-y-2">
             <label
               htmlFor="program-name"
-              className="kicker text-muted-foreground text-[0.65rem]"
+              className="kicker text-muted-foreground text-3xs"
             >
               Nombre del programa
             </label>
@@ -180,7 +180,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
           </div>
 
           <div className="space-y-1">
-            <p className="kicker text-muted-foreground text-[0.65rem]">
+            <p className="kicker text-muted-foreground text-3xs">
               Rotación · {selected.length}
             </p>
             <p className="text-sm text-foreground min-h-5">
@@ -257,7 +257,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
             type="button"
             onClick={handleSave}
             disabled={!canSave}
-            className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isEdit ? "Guardar Cambios" : "Crear Programa"}
           </button>

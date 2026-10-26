@@ -12,7 +12,7 @@ export default function SuccessPage() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8 relative z-10 text-center animate-fade-in-up">
         <div className="max-w-md w-full space-y-8">
           <div className="space-y-4">
-            <div className="mx-auto w-20 h-20 bg-linear-to-br from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] rounded-3xl flex items-center justify-center shadow-xl shadow-primary/20 animate-scale-in">
+            <div className="mx-auto w-20 h-20 bg-linear-to-br from-brand-start to-brand-end rounded-3xl flex items-center justify-center shadow-xl shadow-primary/20 animate-scale-in">
               <svg
                 className="w-10 h-10 text-white"
                 fill="none"
@@ -29,9 +29,7 @@ export default function SuccessPage() {
             </div>
 
             <div className="space-y-2 animate-fade-in-up [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]">
-              <p className="kicker text-primary text-[0.6rem]">
-                {"// registrado"}
-              </p>
+              <p className="kicker text-primary text-4xs">{"// registrado"}</p>
               <h1 className="font-display font-bold uppercase text-5xl tracking-tight text-foreground">
                 ¡Set guardado!
               </h1>
@@ -44,10 +42,10 @@ export default function SuccessPage() {
           <div className="space-y-4 pt-8 animate-fade-in-up [animation-delay:0.4s] opacity-0 [animation-fill-mode:forwards]">
             <Link
               href="/log?repeat=true"
-              className="group relative block w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 overflow-hidden"
+              className="group relative block w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 overflow-hidden"
             >
               <span className="relative z-10">Repetir ejercicio</span>
-              <div className="absolute inset-0 bg-linear-to-r from-[hsl(var(--brand-gradient-end))] to-[hsl(var(--brand-gradient-start))] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-linear-to-r from-brand-end to-brand-start opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
 
             <Link

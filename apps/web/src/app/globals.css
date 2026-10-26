@@ -94,6 +94,12 @@
   --color-success-foreground: hsl(var(--success-foreground));
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-brand-start: hsl(var(--brand-gradient-start));
+  --color-brand-end: hsl(var(--brand-gradient-end));
+  --text-2xs: 0.7rem;
+  --text-3xs: 0.65rem;
+  --text-4xs: 0.6rem;
+  --text-5xs: 0.55rem;
   --font-display: var(--font-oswald);
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-space-mono);

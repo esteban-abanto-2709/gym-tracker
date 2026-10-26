@@ -22,7 +22,7 @@ export function SetDoneScreen({ onExtraSet, onFinish }: SetDoneScreenProps) {
           <button
             type="button"
             onClick={onFinish}
-            className="w-full py-4 bg-linear-to-r from-[hsl(var(--brand-gradient-start))] to-[hsl(var(--brand-gradient-end))] text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 bg-linear-to-r from-brand-start to-brand-end text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <Flag className="w-5 h-5" strokeWidth={2.5} />
             Terminar sesión

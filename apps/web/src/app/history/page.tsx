@@ -75,7 +75,7 @@ export default function HistoryPage() {
             <button
               key={session.id}
               onClick={() => setSelectedSession(session.id)}
-              className={`flex-none px-4 py-2 rounded-xl kicker text-[0.65rem] transition-all border-2 ${
+              className={`flex-none px-4 py-2 rounded-xl kicker text-3xs transition-all border-2 ${
                 currentSession?.id === session.id
                   ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
                   : "bg-card border-input text-muted-foreground hover:border-border"
@@ -90,7 +90,7 @@ export default function HistoryPage() {
               onClick={() => void loadMore()}
               disabled={loadingMore}
               aria-label="Cargar sesiones anteriores"
-              className="flex-none flex items-center gap-1 px-4 py-2 rounded-xl kicker text-[0.65rem] border-2 bg-card border-input text-muted-foreground hover:border-border disabled:opacity-50"
+              className="flex-none flex items-center gap-1 px-4 py-2 rounded-xl kicker text-3xs border-2 bg-card border-input text-muted-foreground hover:border-border disabled:opacity-50"
             >
               Más
               <ChevronRight className="w-3 h-3" />
@@ -131,7 +131,7 @@ export default function HistoryPage() {
         ) : (
           <div className="space-y-10">
             <section className="animate-fade-in-up">
-              <h2 className="kicker text-[0.65rem] text-muted-foreground mb-4 px-1">
+              <h2 className="kicker text-3xs text-muted-foreground mb-4 px-1">
                 {sessionTitle(currentSession)}
               </h2>
 

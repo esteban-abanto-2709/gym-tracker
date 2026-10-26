@@ -17,7 +17,7 @@ interface MeasureSelectorProps {
 export function MeasureSelector({ value, onChange }: MeasureSelectorProps) {
   return (
     <div className="space-y-2">
-      <label className="kicker text-muted-foreground text-[0.6rem]">
+      <label className="kicker text-muted-foreground text-4xs">
         Se mide en
       </label>
       <div className="flex flex-wrap gap-2">

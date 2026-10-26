@@ -50,7 +50,7 @@ In full-screen mode Safari's reload button doesn't exist: if something hangs, yo
 A `unit` column on `Workout` to show the weight in the unit it was logged in (e.g. "45 lb" instead of "20.4 kg"). Worth evaluating together with the export (RM-021), so the AI sees what was really loaded. Today everything is converted to kg rounded to 1 decimal when saving.
 
 ## [WL-058] Desktop version
-A comfortable computer experience for what isn't done between sets: reviewing your progress, exporting your data and importing or building programs. On desktop, the exercise video can open on YouTube instead of TikTok.
+A comfortable computer experience for what isn't done between sets: reviewing your progress, exporting your data and importing or building programs. On desktop, the exercise video can open on YouTube instead of TikTok. Today only the landing has breakpoints: 31 files pin `max-w-md` and the bottom nav shows on a monitor; a start would be one shared shell (sidebar from `lg:`) and two columns in History, Routines and Explore. Better after TD-138.
 
 ## [WL-060] Create a program with your AI
 The app hands out a `.md` with the programs and routines format, the logging conventions and what to ask the user. Your AI of choice uses it to build the program and returns a JSON; importing it creates a **new** program, it never replaces an existing one. It doesn't include history: if you want the AI to take it into account, you give it separately with the export (RM-021).

@@ -170,7 +170,7 @@ export function ExerciseProgress({
               Historial · {progress.streak}
             </DialogTitle>
             {target && (
-              <p className="kicker text-[0.6rem] text-muted-foreground">
+              <p className="kicker text-4xs text-muted-foreground">
                 Meta {target.sets} × {target.reps}
                 {target.repsMax != null && target.repsMax !== target.reps
                   ? `-${target.repsMax}`
@@ -207,12 +207,12 @@ export function ExerciseProgress({
                   </span>
                   <span className="flex gap-1.5">
                     {session.free && (
-                      <span className="kicker text-[0.55rem] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                      <span className="kicker text-5xs rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
                         Día libre
                       </span>
                     )}
                     {session.equipment && (
-                      <span className="kicker text-[0.55rem] rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                      <span className="kicker text-5xs rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
                         {session.equipment}
                       </span>
                     )}
