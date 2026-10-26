@@ -13,6 +13,8 @@ import { MeasureSheet } from "./MeasureSheet";
 import { ChevronRight, Plus, Ruler } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { Spinner } from "@/components/base/spinner";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 const RECENT = 3;
 
@@ -67,7 +69,7 @@ export function MeasurementsSection() {
               return (
                 <div
                   key={key}
-                  className="rounded-2xl border-2 border-input bg-card px-2 py-3 text-center"
+                  className={cn(surfaceClass, "px-2 py-3 text-center")}
                 >
                   <p className="kicker text-5xs text-muted-foreground">
                     {label}
@@ -88,7 +90,12 @@ export function MeasurementsSection() {
             })}
           </div>
 
-          <ul className="mt-2 rounded-2xl border-2 border-input bg-card divide-y divide-border overflow-hidden">
+          <ul
+            className={cn(
+              surfaceClass,
+              "mt-2 divide-y divide-border overflow-hidden",
+            )}
+          >
             {measurements.slice(0, RECENT).map((m) => (
               <li key={m.date}>
                 <button

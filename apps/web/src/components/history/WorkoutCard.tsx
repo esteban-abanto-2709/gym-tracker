@@ -3,6 +3,8 @@ import type { Workout } from "@/lib/types";
 import { setMetrics } from "@/lib/setDisplay";
 import { RotateCcw, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/base/button";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 interface WorkoutCardProps {
   workout: Workout;
@@ -21,7 +23,10 @@ export function WorkoutCard({
 }: WorkoutCardProps) {
   return (
     <div
-      className="group relative bg-card border-2 border-input rounded-2xl p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
+      className={cn(
+        surfaceClass,
+        "group relative p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right",
+      )}
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       {/* Brand Accent Line */}
@@ -33,7 +38,7 @@ export function WorkoutCard({
             <h3 className="font-bold text-foreground text-lg leading-tight">
               {workout.exercise.name}
             </h3>
-            <span className="text-[10px] font-mono text-muted-foreground tracking-wide">
+            <span className="text-3xs font-mono text-muted-foreground tracking-wide">
               {new Date(workout.createdAt).toLocaleTimeString("es-ES", {
                 hour: "2-digit",
                 minute: "2-digit",

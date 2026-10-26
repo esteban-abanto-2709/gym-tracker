@@ -13,45 +13,23 @@ import { THEME_OPTIONS, ThemeSheet } from "@/components/profile/ThemeSheet";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { PasswordRow } from "@/components/profile/PasswordRow";
 import {
-  ChevronRight,
-  Languages,
-  LogOut,
-  ShieldCheck,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
-
-const rowClass =
-  "w-full text-left flex items-center gap-4 border-t-2 border-input px-5 py-3 transition-colors active:bg-muted";
-
-function RowContent({
-  Icon,
-  label,
-  value,
-}: {
-  Icon: LucideIcon;
-  label: string;
-  value: ReactNode;
-}) {
-  return (
-    <>
-      <div className="shrink-0 w-14 grid place-items-center text-primary">
-        <Icon className="w-5 h-5" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="kicker text-4xs text-muted-foreground">{label}</p>
-        <p className="font-bold text-foreground truncate">{value}</p>
-      </div>
-      <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-    </>
-  );
-}
+  SettingsRowContent,
+  settingsRowClass,
+} from "@/components/profile/SettingsRow";
+import { Languages, LogOut, ShieldCheck, Trash2 } from "lucide-react";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 function Group({ kicker, children }: { kicker: string; children: ReactNode }) {
   return (
     <section className="mt-6">
       <p className="kicker text-primary text-2xs mb-2">{kicker}</p>
-      <div className="rounded-2xl border-2 border-input bg-card overflow-hidden [&>*:first-child]:border-t-0">
+      <div
+        className={cn(
+          surfaceClass,
+          "overflow-hidden [&>*:first-child]:border-t-0",
+        )}
+      >
         {children}
       </div>
     </section>
@@ -79,9 +57,9 @@ export default function AjustesPage() {
             <button
               type="button"
               onClick={() => setThemeOpen(true)}
-              className={rowClass}
+              className={settingsRowClass}
             >
-              <RowContent
+              <SettingsRowContent
                 Icon={currentTheme.icon}
                 label="Tema"
                 value={currentTheme.label}
@@ -90,9 +68,9 @@ export default function AjustesPage() {
             <button
               type="button"
               onClick={() => setLanguageOpen(true)}
-              className={rowClass}
+              className={settingsRowClass}
             >
-              <RowContent
+              <SettingsRowContent
                 Icon={Languages}
                 label="Nombres de ejercicios"
                 value={user?.exerciseLocale === "es" ? "Español" : "English"}
@@ -103,8 +81,8 @@ export default function AjustesPage() {
           <Group kicker="// cuenta">
             <BirthDateRow />
             {user?.hasPassword && <PasswordRow />}
-            <Link href={routes.privacy()} className={rowClass}>
-              <RowContent
+            <Link href={routes.privacy()} className={settingsRowClass}>
+              <SettingsRowContent
                 Icon={ShieldCheck}
                 label="Privacidad"
                 value="Qué guardamos y quién lo ve"
@@ -112,7 +90,7 @@ export default function AjustesPage() {
             </Link>
           </Group>
 
-          <div className="mt-6 rounded-2xl border-2 border-input bg-card overflow-hidden">
+          <div className={cn(surfaceClass, "mt-6 overflow-hidden")}>
             <button
               type="button"
               onClick={() => logout()}

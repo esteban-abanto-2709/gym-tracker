@@ -17,6 +17,10 @@ import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/base/button";
 import { Spinner } from "@/components/base/spinner";
+import {
+  SettingsRowContent,
+  settingsRowClass,
+} from "@/components/profile/SettingsRow";
 
 const MIN_LENGTH = 8;
 
@@ -68,16 +72,14 @@ export function PasswordRow() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-full text-left flex items-center gap-4 border-t-2 border-input px-5 py-3 transition-colors active:bg-muted"
+        className={settingsRowClass}
       >
-        <div className="shrink-0 w-14 grid place-items-center text-primary">
-          <KeyRound className="w-5 h-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="kicker text-4xs text-muted-foreground">Contraseña</p>
-          <p className="font-bold text-foreground truncate">Cambiar</p>
-        </div>
-        <Pencil className="w-4 h-4 text-muted-foreground shrink-0" />
+        <SettingsRowContent
+          Icon={KeyRound}
+          label="Contraseña"
+          value="Cambiar"
+          Trailing={Pencil}
+        />
       </button>
 
       <AlertDialog open={open} onOpenChange={handleOpenChange}>

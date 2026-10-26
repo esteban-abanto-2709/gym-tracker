@@ -8,6 +8,8 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { MeasurementsSection } from "@/components/profile/MeasurementsSection";
 import { Settings } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 export default function PerfilPage() {
   const { user } = useAuth();
@@ -36,7 +38,7 @@ export default function PerfilPage() {
             </Link>
           </div>
 
-          <div className="mt-6 rounded-2xl border-2 border-input bg-card flex items-center gap-4 p-5">
+          <div className={cn(surfaceClass, "mt-6 flex items-center gap-4 p-5")}>
             <div className="shrink-0 w-14 h-14 rounded-xl bg-secondary grid place-items-center font-display text-2xl text-foreground">
               {initial}
             </div>

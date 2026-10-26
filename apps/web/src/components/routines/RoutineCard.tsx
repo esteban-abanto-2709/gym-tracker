@@ -3,6 +3,8 @@ import type { Routine } from "@/lib/types";
 import { routes } from "@/lib/routes";
 import { ListChecks, Pencil, Trash2, Play } from "lucide-react";
 import { Button, buttonVariants } from "@/components/base/button";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 interface RoutineCardProps {
   routine: Routine;
@@ -23,7 +25,10 @@ export function RoutineCard({
 
   return (
     <div
-      className="group relative bg-card border-2 border-input rounded-2xl p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right"
+      className={cn(
+        surfaceClass,
+        "group relative p-3 overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 animate-slide-in-right",
+      )}
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       <div className="absolute left-0 top-3 bottom-3 w-1 bg-linear-to-b from-brand-start to-brand-end rounded-r-full" />

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { formatBlocks } from "@/lib/blocks";
 import type { RoutineItem } from "@/lib/types";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 interface SnapshotRoutine {
   id: string;
@@ -18,10 +20,7 @@ export function RoutineSnapshotList<T extends SnapshotRoutine>({
   return (
     <div className="space-y-3">
       {routines.map((routine, index) => (
-        <section
-          key={routine.id}
-          className="rounded-2xl border-2 border-input bg-card p-4"
-        >
+        <section key={routine.id} className={cn(surfaceClass, "p-4")}>
           <div className="flex items-center gap-3">
             <span className="shrink-0 w-7 h-7 rounded-lg bg-secondary grid place-items-center font-display text-muted-foreground">
               {index + 1}

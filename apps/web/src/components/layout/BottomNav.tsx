@@ -32,7 +32,7 @@ export function BottomNav() {
               )}
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />
-              <span className="text-[10px] font-semibold tracking-wide">
+              <span className="text-3xs font-semibold tracking-wide">
                 {label}
               </span>
             </Link>

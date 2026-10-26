@@ -64,7 +64,7 @@ export function ExerciseCombobox({
               <Dumbbell className="w-6 h-6" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-[17px] text-foreground leading-tight">
+              <span className="font-bold text-lg text-foreground leading-tight">
                 {selectedExercise.name}
               </span>
             </div>

@@ -20,6 +20,8 @@ import { UnitToggle } from "@/components/UnitToggle";
 import { ArrowUp, Check } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { Spinner } from "@/components/base/spinner";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 interface Recommendation {
   lastWeight: number | null;
@@ -50,8 +52,10 @@ interface SetFormProps {
   onLog: (args: LogSetInput) => Promise<void>;
 }
 
-const inputClass =
-  "w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono";
+const inputClass = cn(
+  surfaceClass,
+  "w-full px-4 py-4 text-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all text-center font-mono",
+);
 
 export function SetForm({
   exerciseId,

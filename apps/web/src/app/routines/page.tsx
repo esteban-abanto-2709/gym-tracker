@@ -24,6 +24,7 @@ import { buttonVariants } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
 import { cn } from "@/lib/utils";
+import { surfaceClass } from "@/components/base/surface";
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -176,7 +177,10 @@ export default function RoutinesPage() {
             <div className="grid grid-cols-2 gap-3 pt-6">
               <Link
                 href={routes.programs()}
-                className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
+                className={cn(
+                  surfaceClass,
+                  "flex flex-col gap-2 min-h-[92px] p-4 hover:border-border active:scale-[0.98] transition-all",
+                )}
               >
                 <Layers
                   className="w-6 h-6 text-muted-foreground"
@@ -191,7 +195,10 @@ export default function RoutinesPage() {
               </Link>
               <Link
                 href={routes.explore("routines")}
-                className="flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all"
+                className={cn(
+                  surfaceClass,
+                  "flex flex-col gap-2 min-h-[92px] p-4 hover:border-border active:scale-[0.98] transition-all",
+                )}
               >
                 <Compass
                   className="w-6 h-6 text-muted-foreground"

@@ -11,6 +11,8 @@ import { Check, Pencil } from "lucide-react";
 import { formatClock } from "@/lib/setDisplay";
 import { Button } from "@/components/base/button";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 const range = (count: number): WheelPickerOption<number>[] =>
   Array.from({ length: count }, (_, i) => ({
@@ -104,7 +106,10 @@ export function DurationPicker({
 }
 
 const FIELD_CLASS = {
-  lg: "relative w-full px-4 py-4 text-2xl bg-card border-2 border-input rounded-2xl text-center font-mono text-foreground hover:border-primary/50 active:scale-[0.98] transition-all",
+  lg: cn(
+    surfaceClass,
+    "relative w-full px-4 py-4 text-2xl text-center font-mono text-foreground hover:border-primary/50 active:scale-[0.98] transition-all",
+  ),
   sm: "min-w-14 px-2 py-2 text-center font-mono bg-muted border-2 border-transparent hover:border-primary/50 rounded-xl transition-all",
 };
 

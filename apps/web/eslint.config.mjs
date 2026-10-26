@@ -31,6 +31,14 @@ const eslintConfig = defineConfig([
               message:
                 "Import cn from @/lib/utils, which knows the theme text sizes.",
             },
+            {
+              name: "@/components/ui/button",
+              message: "Use Button from @/components/base/button.",
+            },
+            {
+              name: "@/components/ui/spinner",
+              message: "Use Spinner from @/components/base/spinner.",
+            },
           ],
         },
       ],
@@ -46,8 +54,10 @@ const eslintConfig = defineConfig([
           message: "Use heading() from @/components/base/heading.",
         },
         {
-          selector: "Literal[value=/text-\\[0?\\.\\d+rem\\]/]",
-          message: "Use the theme text sizes text-2xs to text-5xs.",
+          selector:
+            "Literal[value=/text-\\[(0?\\.\\d+rem|\\d+(\\.\\d+)?px)\\]/]",
+          message:
+            "Use a theme text size (text-5xs…text-7xl) instead of a small rem or px value.",
         },
         {
           selector: "Literal[value=/hsl\\(var\\(--|-\\[(#|rgb|hsl|oklch)/]",

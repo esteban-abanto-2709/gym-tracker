@@ -5,6 +5,11 @@ import { useAuth } from "@/lib/auth-context";
 import { ageOn, formatShortDate, todayLocal } from "@/lib/measurements";
 import { notifyError } from "@/lib/notify";
 import { Cake, Pencil } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  SettingsRowContent,
+  settingsRowClass,
+} from "@/components/profile/SettingsRow";
 
 export function BirthDateRow() {
   const { user, updateMe } = useAuth();
@@ -23,19 +28,20 @@ export function BirthDateRow() {
   };
 
   return (
-    <label className="relative flex items-center gap-4 border-t-2 border-input px-5 py-3 cursor-pointer transition-colors focus-within:bg-muted/50 active:bg-muted">
-      <div className="shrink-0 w-14 grid place-items-center text-primary">
-        <Cake className="w-5 h-5" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="kicker text-4xs text-muted-foreground">Nacimiento</p>
-        <p className="font-bold text-foreground truncate">
-          {draft
-            ? `${formatShortDate(draft)} · ${ageOn(draft)} años`
-            : "Agregar"}
-        </p>
-      </div>
-      <Pencil className="w-4 h-4 text-muted-foreground shrink-0" />
+    <label
+      className={cn(
+        settingsRowClass,
+        "relative cursor-pointer focus-within:bg-muted/50",
+      )}
+    >
+      <SettingsRowContent
+        Icon={Cake}
+        label="Nacimiento"
+        value={
+          draft ? `${formatShortDate(draft)} · ${ageOn(draft)} años` : "Agregar"
+        }
+        Trailing={Pencil}
+      />
       <input
         type="date"
         value={draft}

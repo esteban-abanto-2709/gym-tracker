@@ -5,6 +5,7 @@ import { routes } from "@/lib/routes";
 import { buttonVariants } from "@/components/base/button";
 import { cn } from "@/lib/utils";
 import { heading } from "@/components/base/heading";
+import { surfaceClass } from "@/components/base/surface";
 
 const primaryCta = cn(
   buttonVariants(),
@@ -36,7 +37,7 @@ function SetPreview() {
   return (
     <figure
       aria-label="Así se ve una serie en la app"
-      className="rounded-2xl border-2 border-input bg-card overflow-hidden shadow-2xl shadow-black/40"
+      className={cn(surfaceClass, "overflow-hidden shadow-2xl shadow-black/40")}
     >
       <div className="flex items-start justify-between gap-4 px-5 pt-4">
         <div>

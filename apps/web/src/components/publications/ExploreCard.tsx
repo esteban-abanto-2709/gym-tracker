@@ -7,6 +7,7 @@ import { ChevronRight, Compass, Copy, Heart } from "lucide-react";
 import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
 import { cn } from "@/lib/utils";
+import { surfaceClass } from "@/components/base/surface";
 
 export function ExploreLoading() {
   return (
@@ -41,7 +42,12 @@ export function ExploreCard({
   const exercises = item.routines[0]?.exerciseCount ?? 0;
 
   return (
-    <div className="flex items-center gap-2 rounded-2xl border-2 border-input bg-card pr-3 hover:border-primary/50 transition-all">
+    <div
+      className={cn(
+        surfaceClass,
+        "flex items-center gap-2 pr-3 hover:border-primary/50 transition-all",
+      )}
+    >
       <Link
         href={routes.explorePublication(item.kind, item.slug)}
         className="min-w-0 flex-1 p-4 active:scale-[0.98] transition-transform"

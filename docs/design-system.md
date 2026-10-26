@@ -50,15 +50,17 @@ bottom nav), `anchor-bottom` (keeps sheets on the visible iOS viewport), and the
 
 ## Components and helpers (`components/base/`)
 
-| Piece                                         | When                                                                                                                                                                                                                                          |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Button` / `buttonVariants()`                 | Any repeated button. Variants: `brand` (default), `muted` (edit), `danger` (delete), `remove` (round X). Sizes: `xl` (full-width CTA, default), `lg`, `md`, `icon`, `icon-round`. Use `buttonVariants()` on a `Link` that looks like a button |
-| `heading({ size, className })`                | Every display title: base `font-display font-bold uppercase`; `sm` 2xl, `md` 4xl, `lg` 5xl (with `tracking-tight`). Works on any tag                                                                                                          |
-| `Spinner`                                     | Any loading icon (`className="size-10 text-primary"`)                                                                                                                                                                                         |
-| `LoadingOverlay label="Guardando..."`         | Full-screen blocking save or publish                                                                                                                                                                                                          |
-| `BottomSheet` + `SheetHeader` / `SheetHandle` | Every panel that slides up from the bottom. `inline` only when the sheet opens other sheets next to it                                                                                                                                        |
-| `fieldInputClass`                             | The large auth-style input (login, register)                                                                                                                                                                                                  |
-| `themeColors`                                 | Theme colors as strings for JS: charts, SVG, inline `style`                                                                                                                                                                                   |
+| Piece                                                            | When                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button` / `buttonVariants()`                                    | Any repeated button. Variants: `brand` (default), `muted` (edit), `danger` (delete), `remove` (round X). Sizes: `xl` (full-width CTA, default), `lg`, `md`, `icon`, `icon-round`. Use `buttonVariants()` on a `Link` that looks like a button |
+| `heading({ size, className })`                                   | Every display title: base `font-display font-bold uppercase`; `sm` 2xl, `md` 4xl, `lg` 5xl (with `tracking-tight`). Works on any tag                                                                                                          |
+| `Spinner`                                                        | Any loading icon (`className="size-10 text-primary"`)                                                                                                                                                                                         |
+| `LoadingOverlay label="Guardando..."`                            | Full-screen blocking save or publish                                                                                                                                                                                                          |
+| `BottomSheet` + `SheetHeader` / `SheetHandle`                    | Every panel that slides up from the bottom. `inline` only when the sheet opens other sheets next to it                                                                                                                                        |
+| `surfaceClass`                                                   | The bordered card surface (`rounded-2xl border-2 border-input bg-card`) for panels, lists and tiles; add layout with `cn(surfaceClass, …)`                                                                                                    |
+| `fieldInputClass`                                                | The large auth-style input (login, register)                                                                                                                                                                                                  |
+| `themeColors`                                                    | Theme colors as strings for JS: charts, SVG, inline `style`                                                                                                                                                                                   |
+| `profile/SettingsRow` (`settingsRowClass`, `SettingsRowContent`) | A row in a settings list: icon, kicker label, value and a chevron or pencil                                                                                                                                                                   |
 
 A one-off element (a list row, a radio tile) may stay a plain `<button>` or
 `<div>` with utilities; when a second copy appears, apply the one rule.
@@ -67,15 +69,20 @@ A one-off element (a list row, a radio tile) may stay a plain `<button>` or
 
 - Compose classes with `cn()`, never a template literal. **(lint)**
 - Import `cn` from `@/lib/utils`, not from `cn`. **(lint)**
+  (`@/lib/utils` is built on the `cn` package with our text sizes added;
+  shadcn files in `ui/` import the package directly, which is fine.)
+- Buttons come from `@/components/base/button`. `@/components/ui/button` is
+  shadcn's, used only inside its own dialogs; don't import it elsewhere. **(lint)**
+- The same for spinners: `@/components/base/spinner`, not `@/components/ui/spinner`. **(lint)**
 - Titles use `heading()`, never a hand-written `font-display font-bold uppercase`. **(lint)**
 - Loading icons use `Spinner`, not `Loader2`. **(lint)**
 - Bottom sheets use `BottomSheet`; no `createPortal` outside `base/`. **(lint)**
 - No Tailwind palette colors (`bg-red-500`, `text-amber-400`…) and no raw
   colors (`bg-[#…]`, `hsl(var(--…))` in a class). Use a token; if none fits,
   add one to `globals.css` for both themes. **(lint)**
-- No arbitrary small text sizes (`text-[0.6rem]`); use `text-2xs`…`text-5xs`. **(lint)**
-  Avoid `text-[…px]` too; a one-off display size (the landing hero) is the only
-  acceptable arbitrary size.
+- No small rem or px text sizes (`text-[0.6rem]`, `text-[10px]`); use the
+  theme scale, `text-5xs`…`text-7xl`. **(lint)** A one-off display size bigger
+  than `1rem` (the landing hero) is the only acceptable arbitrary size.
 - Don't edit `components/ui/`. If shadcn's style doesn't fit, wrap it in `base/`.
 - Overriding a base piece: pass `className`; `cn()` lets the later class win.
 - Icons come from `lucide-react`. No emoji anywhere in the UI.

@@ -10,6 +10,7 @@ import type { ActiveProgram, Routine } from "@/lib/types";
 import { readActiveSession, startSession } from "@/lib/activeSession";
 import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
+import { surfaceClass } from "@/components/base/surface";
 
 const cardClass =
   "relative block w-full text-left overflow-hidden rounded-3xl bg-foreground text-background p-6 shadow-lg active:scale-[0.98] transition-all";
@@ -31,7 +32,8 @@ function Tile({
     <Link
       href={href}
       className={cn(
-        "flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all",
+        surfaceClass,
+        "flex flex-col gap-2 min-h-[92px] p-4 hover:border-border active:scale-[0.98] transition-all",
         className,
       )}
     >

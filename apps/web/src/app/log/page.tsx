@@ -19,6 +19,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { LoadingOverlay } from "@/components/base/spinner";
 import { cn } from "@/lib/utils";
+import { surfaceClass } from "@/components/base/surface";
 
 function LogContent() {
   const {
@@ -152,7 +153,10 @@ function LogContent() {
                     inputMode="decimal"
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
-                    className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]"
+                    className={cn(
+                      surfaceClass,
+                      "w-full px-4 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.2s]",
+                    )}
                     required
                     autoComplete="off"
                     data-1p-ignore
@@ -185,7 +189,10 @@ function LogContent() {
                   inputMode="numeric"
                   value={reps}
                   onChange={(e) => setReps(e.target.value)}
-                  className="w-full px-4 py-4 text-lg bg-card border-2 border-input rounded-2xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]"
+                  className={cn(
+                    surfaceClass,
+                    "w-full px-4 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all placeholder:text-muted-foreground text-center font-mono animate-slide-in-right [animation-delay:0.3s]",
+                  )}
                   required
                   autoComplete="off"
                   data-1p-ignore

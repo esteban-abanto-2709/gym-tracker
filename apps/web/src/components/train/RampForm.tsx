@@ -13,6 +13,8 @@ import type { LogSetInput } from "@/components/train/SetForm";
 import { ArrowUp, Check } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { Spinner } from "@/components/base/spinner";
+import { surfaceClass } from "@/components/base/surface";
+import { cn } from "@/lib/utils";
 
 interface Recommendation {
   lastWeight: number | null;
@@ -154,7 +156,7 @@ export function RampForm({
         {rows.map((row, i) => (
           <li
             key={steps[i].step}
-            className="relative rounded-2xl border-2 border-input bg-card px-4 py-3"
+            className={cn(surfaceClass, "relative px-4 py-3")}
           >
             <div className="flex items-center gap-3">
               <input
