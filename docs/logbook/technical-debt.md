@@ -14,6 +14,14 @@ and is deleted from here.
 
 ---
 
+## [TD-144] The diagonal background pattern never renders
+- **Location:** `apps/web/src/components/layout/PageShell.tsx:20`
+- **Risk:** 2/10
+- **Problem:** the stripes use `var(--foreground)` as a color, but that variable holds bare HSL numbers (`45 11% 7%`), so the gradient is invalid and nothing is drawn.
+- **Future impact:** the texture in the design never shows; fixing it changes the background of every screen at once.
+- **Suggestion:** use `themeColors.foreground` and review the opacity (0.03) on a phone in both themes.
+- **Date:** 2026-10-26 · **Status:** Open
+
 ## [TD-142] The offline set queue has no test of its own
 - **Location:** `apps/web/src/lib/pendingSets.ts`
 - **Risk:** 5/10

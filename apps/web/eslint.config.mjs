@@ -2,9 +2,66 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
+const palette =
+  "red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone";
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/components/ui/**", "src/components/base/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "lucide-react",
+              importNames: ["Loader2", "Loader2Icon"],
+              message: "Use Spinner from @/components/base/spinner.",
+            },
+            {
+              name: "react-dom",
+              importNames: ["createPortal"],
+              message: "Use BottomSheet from @/components/base/sheet.",
+            },
+            {
+              name: "cn",
+              message:
+                "Import cn from @/lib/utils, which knows the theme text sizes.",
+            },
+          ],
+        },
+      ],
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "JSXAttribute[name.name='className'] > JSXExpressionContainer > TemplateLiteral",
+          message: "Use cn() instead of a template literal.",
+        },
+        {
+          selector: "Literal[value=/font-display font-bold uppercase/]",
+          message: "Use heading() from @/components/base/heading.",
+        },
+        {
+          selector: "Literal[value=/text-\\[0?\\.\\d+rem\\]/]",
+          message: "Use the theme text sizes text-2xs to text-5xs.",
+        },
+        {
+          selector: "Literal[value=/hsl\\(var\\(--|-\\[(#|rgb|hsl|oklch)/]",
+          message:
+            "Use a theme color token (bg-primary, from-brand-start…) instead of a raw color.",
+        },
+        {
+          selector: `Literal[value=/\\b(bg|text|border|from|via|to|ring|fill|stroke|outline|divide|decoration|shadow)-(${palette})-\\d{2,3}\\b/]`,
+          message:
+            "Use a theme color token instead of the Tailwind palette; add one to globals.css if it is missing.",
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

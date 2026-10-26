@@ -138,6 +138,8 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
   stored in Spanish in seeds.
 - UI copy is **Spanish**, short and direct. Icons come from `lucide-react`;
   `components/ui/` (shadcn) is not edited by hand.
+- Before adding or changing any web UI, read `docs/design-system.md` and
+  follow it; lint enforces its main rules.
 - Schema changes go through `prisma migrate dev`; containers run
   `prisma migrate deploy` on start, so every migration must be safe on real
   data in `prod`.

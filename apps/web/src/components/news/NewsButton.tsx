@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import { NEWS, type NewsItem } from "@/lib/news";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
 import { cn } from "@/lib/utils";
+import { heading } from "@/components/base/heading";
 
 export function NewsButton() {
   const { user, updateMe } = useAuth();
@@ -196,7 +197,10 @@ function NewsCard({
                 href={item.href}
                 onClick={onGo}
                 tabIndex={expanded ? 0 : -1}
-                className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 font-display font-bold uppercase tracking-wide active:scale-[0.98] transition-transform"
+                className={heading({
+                  className:
+                    "mt-3 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 tracking-wide active:scale-[0.98] transition-transform",
+                })}
               >
                 Ir
                 <ArrowRight className="w-5 h-5" strokeWidth={2.5} />

@@ -40,7 +40,7 @@ function StatusDot({ item }: { item: SessionMapItem }) {
         : item.status === "done"
           ? "bg-success"
           : item.status === "partial"
-            ? "bg-amber-400"
+            ? "bg-warning"
             : "bg-muted-foreground/30";
   return <span className={cn("block w-3 h-3 rounded-full", color)} />;
 }

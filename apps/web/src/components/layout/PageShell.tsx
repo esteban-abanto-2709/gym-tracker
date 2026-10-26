@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { themeColors } from "@/components/base/theme-colors";
 
 interface PageShellProps {
   children: ReactNode;
@@ -30,13 +31,13 @@ export function PageShell({ children, variant = "default" }: PageShellProps) {
           <div
             className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-10 blur-3xl pointer-events-none"
             style={{
-              background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), transparent)`,
+              background: `radial-gradient(circle, ${themeColors.brandStart}, transparent)`,
             }}
           />
           <div
             className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-5 blur-3xl pointer-events-none"
             style={{
-              background: `radial-gradient(circle, hsl(var(--brand-gradient-end)), transparent)`,
+              background: `radial-gradient(circle, ${themeColors.brandEnd}, transparent)`,
             }}
           />
         </>
@@ -44,7 +45,7 @@ export function PageShell({ children, variant = "default" }: PageShellProps) {
         <div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl pointer-events-none"
           style={{
-            background: `radial-gradient(circle, hsl(var(--brand-gradient-start)), hsl(var(--brand-gradient-end)))`,
+            background: `radial-gradient(circle, ${themeColors.brandStart}, ${themeColors.brandEnd})`,
           }}
         />
       )}

@@ -13,6 +13,7 @@ import { ClipboardList, Globe, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { LoadingOverlay, Spinner } from "@/components/base/spinner";
 import { cn } from "@/lib/utils";
+import { heading } from "@/components/base/heading";
 
 interface ProgramEditorProps {
   programId?: string;
@@ -165,7 +166,11 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Upper/Lower"
-              className="w-full bg-transparent border-b-2 border-input focus:border-primary text-foreground font-display font-bold uppercase text-4xl tracking-tight px-0 py-2 outline-none transition-colors placeholder:text-muted-foreground/40"
+              className={heading({
+                size: "md",
+                className:
+                  "w-full bg-transparent border-b-2 border-input focus:border-primary text-foreground px-0 py-2 outline-none transition-colors placeholder:text-muted-foreground/40",
+              })}
               autoComplete="off"
             />
             {duplicateName && (

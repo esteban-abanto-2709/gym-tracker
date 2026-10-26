@@ -41,6 +41,7 @@ import Link from "next/link";
 import { Globe, Plus } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { LoadingOverlay, Spinner } from "@/components/base/spinner";
+import { heading } from "@/components/base/heading";
 
 interface RoutineEditorProps {
   routineId?: string;
@@ -333,7 +334,11 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Torso A"
-              className="w-full bg-transparent border-b-2 border-input focus:border-primary text-foreground font-display font-bold uppercase text-4xl tracking-tight px-0 py-2 outline-none transition-colors placeholder:text-muted-foreground/40"
+              className={heading({
+                size: "md",
+                className:
+                  "w-full bg-transparent border-b-2 border-input focus:border-primary text-foreground px-0 py-2 outline-none transition-colors placeholder:text-muted-foreground/40",
+              })}
               autoComplete="off"
             />
             {duplicateName && (
