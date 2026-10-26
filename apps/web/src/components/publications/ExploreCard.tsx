@@ -6,6 +6,7 @@ import { AuthorName } from "./AuthorName";
 import { ChevronRight, Compass, Copy, Heart } from "lucide-react";
 import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
+import { cn } from "@/lib/utils";
 
 export function ExploreLoading() {
   return (
@@ -80,7 +81,10 @@ export function ExploreCard({
         <span className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <Heart
-              className={`w-3.5 h-3.5 ${item.likedByMe ? "fill-primary text-primary" : ""}`}
+              className={cn(
+                "w-3.5 h-3.5",
+                item.likedByMe ? "fill-primary text-primary" : "",
+              )}
               aria-hidden
             />
             <span aria-label="me gusta">{item.likeCount}</span>

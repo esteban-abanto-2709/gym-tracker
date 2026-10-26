@@ -8,6 +8,7 @@ import {
 import { useVisualViewport } from "@/hooks/useVisualViewport";
 import type { SetMeasure } from "@/lib/setDisplay";
 import { DurationPicker } from "@/components/DurationPicker";
+import { cn } from "@/lib/utils";
 
 interface EditWorkoutDialogProps {
   open: boolean;
@@ -66,9 +67,10 @@ export function EditWorkoutDialog({
             </div>
           ) : (
             <div
-              className={`grid gap-4 ${
-                measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1"
-              }`}
+              className={cn(
+                "grid gap-4",
+                measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1",
+              )}
             >
               {measure === "weight_reps" && (
                 <div className="space-y-2">

@@ -6,6 +6,7 @@ import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
 import type { PublicationKind } from "@/lib/types";
 import { Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LikeButtonProps {
   kind: PublicationKind;
@@ -69,15 +70,19 @@ export function LikeButton({
       onClick={toggle}
       aria-pressed={state.likedByMe}
       aria-label={state.likedByMe ? "Quitar me gusta" : "Me gusta"}
-      className={`inline-flex items-center gap-1.5 rounded-full border-2 px-3 py-1 font-bold transition-all active:scale-90 ${
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border-2 px-3 py-1 font-bold transition-all active:scale-90",
         state.likedByMe
           ? "border-primary/40 bg-primary/10 text-primary"
-          : "border-input text-muted-foreground hover:text-foreground"
-      }`}
+          : "border-input text-muted-foreground hover:text-foreground",
+      )}
     >
       <Heart
         key={String(state.likedByMe)}
-        className={`w-4 h-4 ${state.likedByMe ? "fill-current animate-pop" : ""}`}
+        className={cn(
+          "w-4 h-4",
+          state.likedByMe ? "fill-current animate-pop" : "",
+        )}
         aria-hidden
       />
       {label}

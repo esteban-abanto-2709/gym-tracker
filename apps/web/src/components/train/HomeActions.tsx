@@ -9,6 +9,7 @@ import { routes } from "@/lib/routes";
 import type { ActiveProgram, Routine } from "@/lib/types";
 import { readActiveSession, startSession } from "@/lib/activeSession";
 import { heading } from "@/components/base/heading";
+import { cn } from "@/lib/utils";
 
 const cardClass =
   "relative block w-full text-left overflow-hidden rounded-3xl bg-foreground text-background p-6 shadow-lg active:scale-[0.98] transition-all";
@@ -29,7 +30,10 @@ function Tile({
   return (
     <Link
       href={href}
-      className={`flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all ${className}`}
+      className={cn(
+        "flex flex-col gap-2 min-h-[92px] p-4 bg-card border-2 border-input rounded-2xl hover:border-border active:scale-[0.98] transition-all",
+        className,
+      )}
     >
       {icon}
       <span className="font-bold text-foreground leading-tight">{title}</span>

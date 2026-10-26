@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import { History, ArrowLeft, ClipboardList } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { cn } from "@/lib/utils";
 
 interface AppHeaderProps {
   /** Content to render on the left side (e.g. back button) */
@@ -25,7 +26,10 @@ export function AppHeader({
 }: AppHeaderProps) {
   return (
     <header
-      className={`shrink-0 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border z-10 bg-background/50 backdrop-blur-md ${sticky ? "sticky top-0" : "relative"}`}
+      className={cn(
+        "shrink-0 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border z-10 bg-background/50 backdrop-blur-md",
+        sticky ? "sticky top-0" : "relative",
+      )}
     >
       <div className="max-w-md mx-auto space-y-4">
         <div className="flex items-center justify-between">

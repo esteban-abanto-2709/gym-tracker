@@ -62,11 +62,12 @@ export default function ProgramsPage() {
                 return (
                   <div
                     key={program.id}
-                    className={`flex items-center gap-2 rounded-2xl border-2 p-2 transition-all ${
+                    className={cn(
+                      "flex items-center gap-2 rounded-2xl border-2 p-2 transition-all",
                       isActive
                         ? "border-primary bg-primary/5"
-                        : "border-input bg-card"
-                    }`}
+                        : "border-input bg-card",
+                    )}
                   >
                     <button
                       type="button"
@@ -75,11 +76,12 @@ export default function ProgramsPage() {
                       className="min-w-0 flex-1 flex items-center gap-3 p-1 text-left active:scale-[0.98] transition-all"
                     >
                       <span
-                        className={`shrink-0 w-6 h-6 rounded-full border-2 grid place-items-center ${
+                        className={cn(
+                          "shrink-0 w-6 h-6 rounded-full border-2 grid place-items-center",
                           isActive
                             ? "border-primary bg-primary text-primary-foreground"
-                            : "border-input"
-                        }`}
+                            : "border-input",
+                        )}
                       >
                         {isActive && (
                           <Check className="w-3.5 h-3.5" strokeWidth={3} />

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { heading } from "@/components/base/heading";
 import { BottomSheet, SheetHandle } from "@/components/base/sheet";
+import { cn } from "@/lib/utils";
 
 interface SessionMapProps {
   items: SessionMapItem[];
@@ -41,7 +42,7 @@ function StatusDot({ item }: { item: SessionMapItem }) {
           : item.status === "partial"
             ? "bg-amber-400"
             : "bg-muted-foreground/30";
-  return <span className={`block w-3 h-3 rounded-full ${color}`} />;
+  return <span className={cn("block w-3 h-3 rounded-full", color)} />;
 }
 
 function detailText(item: SessionMapItem): string {
@@ -105,11 +106,12 @@ export function SessionMap({
             return (
               <div
                 key={mi.index}
-                className={`rounded-2xl border-2 transition-all ${
+                className={cn(
+                  "rounded-2xl border-2 transition-all",
                   mi.isCurrent
                     ? "border-primary bg-secondary"
-                    : "border-input bg-transparent"
-                }`}
+                    : "border-input bg-transparent",
+                )}
               >
                 <div className="flex items-center gap-3 p-4">
                   <button
@@ -122,11 +124,12 @@ export function SessionMap({
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
-                        className={`block font-bold leading-tight truncate ${
+                        className={cn(
+                          "block font-bold leading-tight truncate",
                           isSkipped
                             ? "text-muted-foreground line-through"
-                            : "text-foreground"
-                        }`}
+                            : "text-foreground",
+                        )}
                       >
                         {mi.item.exercise.name}
                       </span>

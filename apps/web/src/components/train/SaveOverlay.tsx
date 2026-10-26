@@ -1,14 +1,16 @@
 import type { SaveFlash } from "@/hooks/useGuidedSession";
 import { ArrowRight, Check } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { cn } from "@/lib/utils";
 
 export function SaveOverlay({ flash }: { flash: SaveFlash }) {
   return (
     <div
       role="status"
-      className={`fixed inset-0 z-50 flex items-center justify-center px-6 bg-background/90 ${
-        flash.leaving ? "animate-fade-out" : "animate-fade-in"
-      }`}
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center px-6 bg-background/90",
+        flash.leaving ? "animate-fade-out" : "animate-fade-in",
+      )}
     >
       <div className="flex flex-col items-center text-center max-w-md w-full animate-rise-in">
         <div className="relative w-24 h-24">

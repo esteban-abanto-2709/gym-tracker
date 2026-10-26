@@ -6,6 +6,7 @@ import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { NEWS, type NewsItem } from "@/lib/news";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
+import { cn } from "@/lib/utils";
 
 export function NewsButton() {
   const { user, updateMe } = useAuth();
@@ -109,7 +110,10 @@ function NewsSheet({
           {old.length > 0 && (
             <>
               <p
-                className={`${fresh.length > 0 ? "mt-6" : ""} mb-2 kicker text-4xs text-muted-foreground`}
+                className={cn(
+                  fresh.length > 0 ? "mt-6" : "",
+                  "mb-2 kicker text-4xs text-muted-foreground",
+                )}
               >
                 Ya vistas
               </p>
@@ -139,9 +143,10 @@ function NewsCard({
 
   return (
     <div
-      className={`rounded-2xl border-2 transition-colors ${
-        expanded ? "border-primary bg-primary/5" : "border-input bg-muted/40"
-      }`}
+      className={cn(
+        "rounded-2xl border-2 transition-colors",
+        expanded ? "border-primary bg-primary/5" : "border-input bg-muted/40",
+      )}
     >
       <button
         type="button"
@@ -150,11 +155,12 @@ function NewsCard({
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:scale-[0.98] transition-transform"
       >
         <span
-          className={`shrink-0 w-10 h-10 rounded-xl grid place-items-center ${
+          className={cn(
+            "shrink-0 w-10 h-10 rounded-xl grid place-items-center",
             isNew
               ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-muted-foreground"
-          }`}
+              : "bg-secondary text-muted-foreground",
+          )}
         >
           <Icon className="w-5 h-5" strokeWidth={2.5} />
         </span>
@@ -167,16 +173,18 @@ function NewsCard({
           </span>
         </span>
         <ChevronDown
-          className={`shrink-0 w-5 h-5 text-muted-foreground transition-transform ${
-            expanded ? "rotate-180" : ""
-          }`}
+          className={cn(
+            "shrink-0 w-5 h-5 text-muted-foreground transition-transform",
+            expanded ? "rotate-180" : "",
+          )}
         />
       </button>
 
       <div
-        className={`grid transition-[grid-template-rows] duration-200 ease-out ${
-          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
+        className={cn(
+          "grid transition-[grid-template-rows] duration-200 ease-out",
+          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
       >
         <div className="overflow-hidden">
           <div className="px-4 pb-4">

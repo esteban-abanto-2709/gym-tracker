@@ -12,6 +12,7 @@ import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { ClipboardList, Globe, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { LoadingOverlay, Spinner } from "@/components/base/spinner";
+import { cn } from "@/lib/utils";
 
 interface ProgramEditorProps {
   programId?: string;
@@ -215,18 +216,20 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
                     type="button"
                     onClick={() => toggle(routine.id)}
                     aria-pressed={isSelected}
-                    className={`w-full flex items-center gap-3 rounded-2xl border-2 p-3 text-left transition-all active:scale-[0.98] ${
+                    className={cn(
+                      "w-full flex items-center gap-3 rounded-2xl border-2 p-3 text-left transition-all active:scale-[0.98]",
                       isSelected
                         ? "border-primary bg-primary/5"
-                        : "border-input bg-card hover:border-border"
-                    }`}
+                        : "border-input bg-card hover:border-border",
+                    )}
                   >
                     <span
-                      className={`shrink-0 w-8 h-8 rounded-lg grid place-items-center font-display text-lg ${
+                      className={cn(
+                        "shrink-0 w-8 h-8 rounded-lg grid place-items-center font-display text-lg",
                         isSelected
                           ? "bg-primary text-primary-foreground"
-                          : "bg-secondary text-muted-foreground"
-                      }`}
+                          : "bg-secondary text-muted-foreground",
+                      )}
                     >
                       {isSelected ? order + 1 : ""}
                     </span>

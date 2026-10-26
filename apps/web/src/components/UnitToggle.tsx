@@ -1,4 +1,5 @@
 import type { Unit } from "@/lib/units";
+import { cn } from "@/lib/utils";
 
 interface UnitToggleProps {
   unit: Unit;
@@ -16,11 +17,12 @@ export function UnitToggle({ unit, onToggle }: UnitToggleProps) {
       {(["kg", "lb"] as const).map((option) => (
         <span
           key={option}
-          className={`px-2 py-0.5 transition-colors ${
+          className={cn(
+            "px-2 py-0.5 transition-colors",
             unit === option
               ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground"
-          }`}
+              : "text-muted-foreground",
+          )}
         >
           {option}
         </span>

@@ -18,6 +18,7 @@ import { convertWeight } from "@/lib/units";
 import { Check } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { LoadingOverlay } from "@/components/base/spinner";
+import { cn } from "@/lib/utils";
 
 function LogContent() {
   const {
@@ -127,9 +128,10 @@ function LogContent() {
             </div>
           ) : (
             <div
-              className={`grid gap-4 ${
-                measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1"
-              }`}
+              className={cn(
+                "grid gap-4",
+                measure === "weight_reps" ? "grid-cols-2" : "grid-cols-1",
+              )}
             >
               {measure === "weight_reps" && (
                 <div className="space-y-2">

@@ -16,6 +16,7 @@ import { setMeasure } from "@/lib/setDisplay";
 import { todayLocal } from "@/lib/measurements";
 import { Calendar, ChevronRight, Share } from "lucide-react";
 import { heading } from "@/components/base/heading";
+import { cn } from "@/lib/utils";
 
 export default function HistoryPage() {
   const [exportOpen, setExportOpen] = useState(false);
@@ -76,11 +77,12 @@ export default function HistoryPage() {
             <button
               key={session.id}
               onClick={() => setSelectedSession(session.id)}
-              className={`flex-none px-4 py-2 rounded-xl kicker text-3xs transition-all border-2 ${
+              className={cn(
+                "flex-none px-4 py-2 rounded-xl kicker text-3xs transition-all border-2",
                 currentSession?.id === session.id
                   ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
-                  : "bg-card border-input text-muted-foreground hover:border-border"
-              }`}
+                  : "bg-card border-input text-muted-foreground hover:border-border",
+              )}
             >
               {sessionLabel(session)}
             </button>

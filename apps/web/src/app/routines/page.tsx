@@ -23,6 +23,7 @@ import {
 import { buttonVariants } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
+import { cn } from "@/lib/utils";
 
 export default function RoutinesPage() {
   const router = useRouter();
@@ -151,7 +152,10 @@ export default function RoutinesPage() {
                 >
                   Otros programas
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${showOthers ? "rotate-180" : ""}`}
+                    className={cn(
+                      "w-4 h-4 transition-transform",
+                      showOthers ? "rotate-180" : "",
+                    )}
                   />
                 </button>
               )}

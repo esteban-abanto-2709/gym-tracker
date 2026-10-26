@@ -16,6 +16,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { ExploreCard, ExploreEmpty, ExploreLoading } from "./ExploreCard";
 import { MyPublications } from "./MyPublications";
+import { cn } from "@/lib/utils";
 
 const TABS: { value: ExploreTab; label: string }[] = [
   { value: "programs", label: "Programas" },
@@ -72,9 +73,10 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
       >
         <div
           role="tablist"
-          className={`grid gap-1 rounded-xl bg-secondary p-1 ${
-            tabs.length === 3 ? "grid-cols-3" : "grid-cols-2"
-          }`}
+          className={cn(
+            "grid gap-1 rounded-xl bg-secondary p-1",
+            tabs.length === 3 ? "grid-cols-3" : "grid-cols-2",
+          )}
         >
           {tabs.map((t) => (
             <button
@@ -83,11 +85,12 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
               role="tab"
               aria-selected={current === t.value}
               onClick={() => changeTab(t.value)}
-              className={`rounded-lg py-2 font-display uppercase tracking-wide transition-colors ${
+              className={cn(
+                "rounded-lg py-2 font-display uppercase tracking-wide transition-colors",
                 current === t.value
                   ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+                  : "text-muted-foreground hover:text-foreground",
+              )}
             >
               {t.label}
             </button>
@@ -136,11 +139,12 @@ function PublicList({
             type="button"
             aria-pressed={sort === s.value}
             onClick={() => onSort(s.value)}
-            className={`shrink-0 rounded-full border-2 px-3 py-1 text-sm font-bold transition-colors ${
+            className={cn(
+              "shrink-0 rounded-full border-2 px-3 py-1 text-sm font-bold transition-colors",
               sort === s.value
                 ? "border-foreground bg-foreground text-background"
-                : "border-input text-muted-foreground hover:text-foreground"
-            }`}
+                : "border-input text-muted-foreground hover:text-foreground",
+            )}
           >
             {s.label}
           </button>

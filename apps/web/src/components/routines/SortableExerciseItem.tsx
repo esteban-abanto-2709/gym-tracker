@@ -6,6 +6,7 @@ import { GripVertical, Plus, X } from "lucide-react";
 import type { RoutineBlock } from "@/lib/types";
 import { DurationField } from "@/components/DurationPicker";
 import { Button } from "@/components/base/button";
+import { cn } from "@/lib/utils";
 
 const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
   { value: "weight_reps", label: "Peso × reps" },
@@ -91,11 +92,12 @@ export function SortableExerciseItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative bg-card border-2 rounded-2xl p-3 transition-colors ${
+      className={cn(
+        "relative bg-card border-2 rounded-2xl p-3 transition-colors",
         isDragging
           ? "border-primary shadow-lg shadow-primary/10 z-10"
-          : "border-input"
-      }`}
+          : "border-input",
+      )}
     >
       <div className="flex items-center gap-2">
         <button

@@ -12,6 +12,7 @@ import { notifyError } from "@/lib/notify";
 import { Check, Trash2 } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
+import { cn } from "@/lib/utils";
 
 type Values = Record<MeasureField, string>;
 
@@ -136,11 +137,12 @@ export function MeasureSheet({
           {MEASURE_FIELDS.map(({ key, label, unit }) => (
             <label
               key={key}
-              className={`min-w-0 flex flex-col items-center gap-0.5 rounded-2xl border-2 bg-muted/60 px-2 py-2.5 transition-all focus-within:border-primary ${
+              className={cn(
+                "min-w-0 flex flex-col items-center gap-0.5 rounded-2xl border-2 bg-muted/60 px-2 py-2.5 transition-all focus-within:border-primary",
                 invalid.some((f) => f.key === key)
                   ? "border-destructive"
-                  : "border-transparent"
-              }`}
+                  : "border-transparent",
+              )}
             >
               <span className="kicker text-4xs text-muted-foreground">
                 {label}

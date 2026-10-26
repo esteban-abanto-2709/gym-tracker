@@ -8,6 +8,7 @@ import { Check } from "lucide-react";
 import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
+import { cn } from "@/lib/utils";
 
 const EXERCISE_LANGUAGES: { value: Locale; label: string; example: string }[] =
   [
@@ -67,11 +68,12 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
                 role="radio"
                 aria-checked={selected}
                 onClick={() => choose(value)}
-                className={`flex items-center gap-4 rounded-2xl border-2 px-4 py-3.5 text-left transition-all active:scale-[0.98] ${
+                className={cn(
+                  "flex items-center gap-4 rounded-2xl border-2 px-4 py-3.5 text-left transition-all active:scale-[0.98]",
                   selected
                     ? "border-primary bg-primary/10"
-                    : "border-input bg-muted/40 hover:border-primary/50"
-                }`}
+                    : "border-input bg-muted/40 hover:border-primary/50",
+                )}
               >
                 <span
                   className={heading({

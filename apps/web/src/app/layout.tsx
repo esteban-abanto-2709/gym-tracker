@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -47,7 +48,12 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body
-        className={`${oswald.variable} ${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
+        className={cn(
+          oswald.variable,
+          spaceGrotesk.variable,
+          spaceMono.variable,
+          "antialiased",
+        )}
       >
         <ThemeProvider>
           <GoogleOAuthProvider

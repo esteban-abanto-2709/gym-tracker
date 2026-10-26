@@ -110,6 +110,7 @@ src/
 ├── app/            # rutas (App Router), layout raíz, manifest e iconos
 ├── components/
 │   ├── ui/         # primitivos de shadcn/ui
+│   ├── base/       # sistema de diseño propio: Button, heading(), Spinner, BottomSheet
 │   ├── layout/     # PageShell, AppHeader, BottomNav
 │   ├── train/      # flujo de entrenar: SetForm, SaveOverlay, SessionMap, ExerciseProgress…
 │   ├── routines/   # editor de rutinas con drag & drop
@@ -141,6 +142,10 @@ src/
   - `lib/equipmentMemory.ts`: el último equipo usado por ejercicio.
 - **`components/ui/` no se edita a mano**: se ajusta con Tailwind desde el
   componente padre o envolviendo el primitivo.
+- **Sistema de diseño en `components/base/` y `globals.css`**: colores de marca
+  (`from-brand-start`, `to-brand-end`) y tamaños pequeños (`text-2xs`…`text-5xs`)
+  son tokens de `@theme`; un estilo que se repite va a `base/` como variante de
+  `cva`, no copiado en cada componente.
 
 ## Experiencia de app instalada
 

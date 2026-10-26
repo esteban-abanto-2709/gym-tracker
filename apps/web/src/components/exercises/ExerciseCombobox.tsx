@@ -5,6 +5,7 @@ import type { Exercise } from "@/lib/types";
 import { Search, Plus, Dumbbell, X } from "lucide-react";
 import { TikTokButton } from "./TikTokButton";
 import { Button } from "@/components/base/button";
+import { cn } from "@/lib/utils";
 
 interface ExerciseComboboxProps {
   exercises: Exercise[];
@@ -89,10 +90,19 @@ export function ExerciseCombobox({
         </div>
       ) : (
         <div
-          className={`relative flex items-center bg-card border-2 transition-all rounded-2xl ${isOpen ? "border-primary ring-2 ring-primary/20" : "border-input hover:border-primary/50"} animate-slide-in-right [animation-delay:0.1s]`}
+          className={cn(
+            "relative flex items-center bg-card border-2 transition-all rounded-2xl",
+            isOpen
+              ? "border-primary ring-2 ring-primary/20"
+              : "border-input hover:border-primary/50",
+            "animate-slide-in-right [animation-delay:0.1s]",
+          )}
         >
           <Search
-            className={`w-5 h-5 ml-4 shrink-0 transition-colors ${isOpen ? "text-primary" : "text-muted-foreground"}`}
+            className={cn(
+              "w-5 h-5 ml-4 shrink-0 transition-colors",
+              isOpen ? "text-primary" : "text-muted-foreground",
+            )}
           />
           <input
             type="text"

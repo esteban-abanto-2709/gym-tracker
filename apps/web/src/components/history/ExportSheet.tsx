@@ -14,6 +14,7 @@ import { Copy, Download, Share } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
+import { cn } from "@/lib/utils";
 
 const shiftDays = (date: string, days: number) => {
   const [y, m, d] = date.split("-").map(Number);
@@ -127,11 +128,12 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
                   setTo(today);
                 }}
                 aria-pressed={active}
-                className={`py-2 rounded-xl kicker text-4xs border-2 transition-all active:scale-95 ${
+                className={cn(
+                  "py-2 rounded-xl kicker text-4xs border-2 transition-all active:scale-95",
                   active
                     ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
-                    : "bg-card border-input text-muted-foreground"
-                }`}
+                    : "bg-card border-input text-muted-foreground",
+                )}
               >
                 {p.label}
               </button>

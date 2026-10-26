@@ -2,6 +2,7 @@
 
 import type { Equipment } from "@/lib/types";
 import { equipmentIcon } from "@/lib/equipmentIcons";
+import { cn } from "@/lib/utils";
 
 interface EquipmentSelectorProps {
   equipment: Equipment[];
@@ -28,11 +29,12 @@ export function EquipmentSelector({
               key={eq.id}
               type="button"
               onClick={() => onChange(selected ? null : eq.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-bold transition-all ${
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-bold transition-all",
                 selected
                   ? "border-primary bg-primary/10 text-primary"
-                  : "border-input bg-card text-muted-foreground hover:border-primary/50"
-              }`}
+                  : "border-input bg-card text-muted-foreground hover:border-primary/50",
+              )}
             >
               <Icon className="w-4 h-4" />
               {eq.name}

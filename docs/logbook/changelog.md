@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-138] The web has no shared design system (2026-10-26 14:34)
+Brand colors and small text sizes are `@theme` tokens, and `components/base/` holds `Button`, `heading()`, `Spinner`/`LoadingOverlay`, `fieldInputClass` and `BottomSheet`, used by every repeated case; `cn()` comes from the `cn` package and replaces all template-literal `className`s.
+
 ## [TD-126] Every bottom sheet copies its own scaffolding (2026-10-26 14:25)
 The seven bottom sheets (Tema, Idioma, Medidas, Exportar, Novedades, DurationPicker, session map) now use `BottomSheet` + `SheetHeader` from `components/base/sheet.tsx`; the session map stays inline (no portal) so the sheets it opens keep stacking above it.
 

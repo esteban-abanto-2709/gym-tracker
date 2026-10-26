@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { routes } from "@/lib/routes";
 import { Dumbbell, Home, History, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const tabs = [
   { href: routes.home(), label: "Hoy", Icon: Home },
@@ -25,9 +26,10 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={`flex-1 flex flex-col items-center gap-1 transition-colors ${
-                active ? "text-primary" : "text-muted-foreground"
-              }`}
+              className={cn(
+                "flex-1 flex flex-col items-center gap-1 transition-colors",
+                active ? "text-primary" : "text-muted-foreground",
+              )}
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />
               <span className="text-[10px] font-semibold tracking-wide">

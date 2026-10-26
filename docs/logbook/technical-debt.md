@@ -54,14 +54,6 @@ and is deleted from here.
 - **Suggestion:** surface failures with `notifyError`, drop the dead `token` parameter, and route auth through the same client; the cache library of WL-082 would remove most of these hooks.
 - **Date:** 2026-10-26 · **Status:** Open
 
-## [TD-138] The web has no shared design system
-- **Location:** `apps/web/src/components/**` and `apps/web/src/app/**` (the brand gradient is copied in 29 places; `components/ui/button.tsx` is used in 2 files)
-- **Risk:** 4/10
-- **Problem:** the tokens exist in `globals.css`, but the base components don't. `hsl(var(--brand-…))` appears 66 times, there are 92 hand-written `<button>`s, 37 hand-written display titles, 20 hand-written `Loader2` spinners, the "Guardando…" overlay copied 5 times, the same input class 5 times, 85 arbitrary `text-[…rem]` sizes, and 37 template-literal `className`s instead of `cn()`. Related: TD-126 (sheets) and TD-094 (border colors).
-- **Future impact:** every visual change takes dozens of edits and one ends up different; desktop (WL-058) and translating the UI (RM-093) touch the same files and cost twice as much.
-- **Suggestion:** a `bg-brand` utility via `@utility`, a `Button` with variants (`cva`), `Title`, `Spinner`, `LoadingOverlay`, an input variant and a type scale in `@theme`; migrate one piece per commit.
-- **Date:** 2026-10-26 · **Status:** In progress (2026-10-26)
-
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`
 - **Risk:** 3/10
