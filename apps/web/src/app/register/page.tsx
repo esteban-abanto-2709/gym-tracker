@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { routes } from "@/lib/routes";
 import { Input } from "@/components/ui/input";
+import { fieldInputClass } from "@/components/base/field";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { Label } from "@/components/ui/label";
 import { GoogleButton } from "@/components/auth/GoogleButton";
@@ -78,7 +79,7 @@ export default function RegisterPage() {
             required
             minLength={2}
             maxLength={30}
-            className="h-auto rounded-2xl border-2 border-input bg-card px-4 py-4 text-base dark:bg-card"
+            className={fieldInputClass}
           />
         </div>
 
@@ -99,7 +100,7 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="h-auto rounded-2xl border-2 border-input bg-card px-4 py-4 text-base dark:bg-card"
+            className={fieldInputClass}
           />
         </div>
 
@@ -117,7 +118,7 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={8}
-            className="h-auto rounded-2xl border-2 border-input bg-card px-4 py-4 text-base dark:bg-card"
+            className={fieldInputClass}
           />
         </div>
 
