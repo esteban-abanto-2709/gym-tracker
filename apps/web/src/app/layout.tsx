@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { QueryProvider } from "@/lib/query";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 
 const oswald = localFont({
@@ -59,7 +60,9 @@ export default function RootLayout({
           <GoogleOAuthProvider
             clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
           >
-            <AuthProvider>{children}</AuthProvider>
+            <QueryProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </QueryProvider>
           </GoogleOAuthProvider>
         </ThemeProvider>
         <div className="portrait-lock" aria-hidden="true">

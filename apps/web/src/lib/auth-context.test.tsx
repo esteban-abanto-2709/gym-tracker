@@ -8,6 +8,7 @@ import {
   readPendingSets,
   setPendingOwner,
 } from "./pendingSets";
+import { getQueryClient } from "./query";
 
 const replace = vi.fn();
 const setTheme = vi.fn();
@@ -246,6 +247,16 @@ describe("AuthProvider pending sets", () => {
     fireEvent.click(screen.getByText("salir"));
     await waitFor(() => expect(readPendingSets()).toEqual([]));
     expect(ownQueue()).not.toBeNull();
+  });
+
+  it("signing out forgets the account's cached data", async () => {
+    signedIn();
+    await screen.findByText("salir");
+    getQueryClient().setQueryData(["routines"], [{ id: "r-1" }]);
+    fireEvent.click(screen.getByText("salir"));
+    await waitFor(() =>
+      expect(getQueryClient().getQueryData(["routines"])).toBeUndefined(),
+    );
   });
 
   it("deleting the account discards its pending sets", async () => {

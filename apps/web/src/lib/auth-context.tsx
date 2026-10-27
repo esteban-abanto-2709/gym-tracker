@@ -13,6 +13,7 @@ import { useTheme } from "next-themes";
 import { routes } from "@/lib/routes";
 import { api, ApiError } from "@/lib/api";
 import { discardPendingSets, setPendingOwner } from "@/lib/pendingSets";
+import { getQueryClient } from "@/lib/query";
 import type { AuthUser } from "@/lib/types";
 
 const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
@@ -82,8 +83,13 @@ function authError(status: number, copy?: ErrorCopy) {
   return new Error(copy?.[status] ?? copy?.fallback ?? "Request failed");
 }
 
+let cachedFor: string | null = null;
+
 function owning(user: AuthUser | null) {
-  setPendingOwner(user?.id ?? null);
+  const id = user?.id ?? null;
+  setPendingOwner(id);
+  if (id !== cachedFor) getQueryClient().clear();
+  cachedFor = id;
   return user;
 }
 
