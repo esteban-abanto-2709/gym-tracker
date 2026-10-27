@@ -1,86 +1,89 @@
 # Workflows
 
-Dos archivos, uno por responsabilidad: **CI verifica**, **CD publica**.
+Two files, one per responsibility: **CI verifies**, **CD publishes**.
 
-| Archivo | Se dispara con | Qué hace |
+| File | Triggered by | What it does |
 |---|---|---|
-| `ci.yml` | cada pull request a `main`, o cuando otro workflow lo llama | lint, tests unitarios y build de `api` y `web` |
-| `cd.yml` | cada push a `main` | llama a `ci.yml` y, si pasa, publica las imágenes y despliega |
+| `ci.yml` | every pull request to `main`, or when another workflow calls it | lint, unit tests and build of `api` and `web` |
+| `cd.yml` | every push to `main` | calls `ci.yml` and, if it passes, publishes the images and deploys |
 
 ```
-push a main ──▶ cd.yml
+push to main ──▶ cd.yml
                  ├─ CI   (ci.yml: api + web)
-                 ├─ Images (solo si CI pasa)
+                 ├─ Images (only if CI passes)
                  │    ├─ api ─┐
                  │    └─ web ─┴─▶ ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}
-                 └─ Deploy (solo si las dos imágenes se publicaron)
-                      └─▶ servidor de prod: git pull + scripts/update.sh
+                 └─ Deploy (only if both images were published)
+                      └─▶ prod server: git pull + scripts/update.sh
 ```
 
-## Por qué dos archivos
+## Why two files
 
-En el estándar suele haber un solo `ci.yml` que hace todo. Aquí se separan porque
-son cosas distintas: verificar una propuesta no es lo mismo que publicar lo que ya
-está en `main`, y un pull request nunca debe publicar nada.
+The usual setup is a single `ci.yml` that does everything. Here they're split
+because they're different things: verifying a proposal isn't the same as
+publishing what's already on `main`, and a pull request must never publish
+anything.
 
-- **`ci.yml` no se repite en código:** declara `workflow_call`, así que `cd.yml`
-  lo reutiliza como su primer job en vez de copiar sus pasos.
-- **No corre dos veces por push:** `ci.yml` ya no escucha los push a `main`; ahí
-  solo corre `cd.yml`, que lo llama una vez. En un pull request corre solo
-  `ci.yml`.
-- **Lo que se publica es exactamente lo que se verificó:** el CI de `cd.yml` prueba
-  el commit que va a construir, no el del pull request (entre uno y otro pudo
-  entrar otro cambio a `main`).
+- **`ci.yml` isn't duplicated:** it declares `workflow_call`, so `cd.yml`
+  reuses it as its first job instead of copying its steps.
+- **It doesn't run twice per push:** `ci.yml` no longer listens to pushes to
+  `main`; there only `cd.yml` runs, and it calls it once. On a pull request only
+  `ci.yml` runs.
+- **What's published is exactly what was verified:** `cd.yml`'s CI tests the
+  commit it's about to build, not the pull request's (another change could have
+  landed on `main` in between).
 
-## Imágenes
+## Images
 
-- Se construyen en un runner **ARM64** de GitHub (`ubuntu-24.04-arm`), la misma
-  arquitectura del servidor de prod: nada de emulación.
-- Cada imagen lleva dos etiquetas: `latest` (lo que corre prod) y el **SHA del
-  commit** (para volver a una versión concreta).
-- Usan el caché de GitHub Actions (`type=gha`), separado por app.
-- Los paquetes de GHCR son **públicos**: no llevan secretos. El runner construye
-  desde una copia limpia del repo, donde los `.env` no existen; lo único "propio"
-  es el Client ID de Google de la web, que ya es público porque viaja en el
-  JavaScript del navegador.
+- Built on a GitHub **ARM64** runner (`ubuntu-24.04-arm`), the same
+  architecture as the prod server: no emulation.
+- Each image has two tags: `latest` (what prod runs) and the **commit SHA** (to
+  go back to a specific version).
+- They use the GitHub Actions cache (`type=gha`), split per app.
+- The GHCR packages are **public**: they hold no secrets. The runner builds from
+  a clean copy of the repo, where the `.env` files don't exist; the only
+  "custom" value is the web's Google Client ID, which is already public because
+  it travels in the browser's JavaScript.
 
 ## Deploy
 
-- **Sin claves guardadas:** el job pide credenciales temporales por **OIDC**. El
-  proveedor de nube solo las entrega si el token de GitHub viene de este repo y
-  de la rama `main`; duran una hora y existen solo dentro de esa ejecución.
-- **Sin puertos abiertos:** la orden llega al servidor por un agente que se
-  conecta hacia afuera; SSH sigue cerrado a todo salvo a quien lo administra.
-- **Qué ejecuta:** `git pull --ff-only` y luego
-  [`apps/docker/scripts/update.sh`](../../apps/docker/scripts/update.sh), recién
-  bajado: backup previo de la base, `docker compose pull`, `up -d --wait` (que
-  aplica las migraciones pendientes al arrancar la API y espera a que `api` y
-  `web` pasen su healthcheck) y limpieza de imágenes viejas.
-- **Resultado visible:** el job espera a que el servidor termine (máximo 10 min),
-  imprime su salida y falla si el comando falló, incluido el caso en que la app
-  no queda sana (una migración fallida o una API que no arranca).
-- **El backup previo** queda en `apps/docker/backups/` del servidor: si una
-  migración rompe algo, hay una copia de un minuto antes.
+- **No stored keys:** the job requests temporary credentials through **OIDC**.
+  The cloud provider only hands them out if the GitHub token comes from this
+  repo and the `main` branch; they last one hour and exist only inside that run.
+- **No open ports:** the command reaches the server through an agent that
+  connects outwards; SSH stays closed to everyone but whoever administers it.
+- **What it runs:** `git pull --ff-only` and then the freshly pulled
+  [`apps/docker/scripts/update.sh`](../../apps/docker/scripts/update.sh): a
+  database backup first, `docker compose pull`, `up -d --wait` (which applies
+  pending migrations when the API starts and waits for `api` and `web` to pass
+  their healthcheck) and cleanup of old images.
+- **Visible result:** the job waits for the server to finish (10 min max),
+  prints its output and fails if the command failed, including when the app
+  doesn't end up healthy (a failed migration or an API that doesn't start).
+- **The pre-deploy backup** stays in the server's `apps/docker/backups/`: if a
+  migration breaks something, there's a copy from a minute before.
 
-> **Lo que llega a `main` llega a prod.** Quien puede hacer push a `main` puede,
-> en la práctica, ejecutar comandos en el servidor. Mientras haya un solo
-> desarrollador basta con no subir nada a medias; con colaboradores, `main` debe
-> protegerse (solo por pull request, con CI y revisión obligatorios).
+> **Whatever reaches `main` reaches prod.** Whoever can push to `main` can, in
+> practice, run commands on the server. While there's a single developer it's
+> enough not to push anything half-done; with collaborators, `main` must be
+> protected (pull requests only, with required CI and review).
 
-## Configuración del repo
+## Repo configuration
 
-| Variable (Settings → Secrets and variables → Actions → Variables) | Para qué |
+| Variable (Settings → Secrets and variables → Actions → Variables) | Purpose |
 |---|---|
-| `GOOGLE_CLIENT_ID` | Client ID de Google OAuth que se hornea en la imagen de `web` |
+| `GOOGLE_CLIENT_ID` | Google OAuth Client ID baked into the `web` image |
 
-El job `deploy` lee además tres variables con el rol a asumir, la región y el
-servidor de destino (sus nombres están en `cd.yml`). Ninguna es una credencial:
-sin el token OIDC de una ejecución en `main` no dan acceso a nada. Por eso son
-variables y no secrets, y por eso no se escriben en el archivo.
+The `deploy` job also reads three variables with the role to assume, the region
+and the target server (their names are in `cd.yml`). None of them is a
+credential: without the OIDC token of a run on `main` they grant access to
+nothing. That's why they're variables and not secrets, and why they aren't
+written in the file.
 
-## Concurrencia
+## Concurrency
 
-- `cd.yml` usa el grupo `cd` sin cancelar: si llegan dos push seguidos, el segundo
-  espera a que termine el primero en vez de cortarlo a la mitad.
-- `ci.yml` cancela la ejecución anterior de la misma rama: en un pull request solo
-  importa el último commit.
+- `cd.yml` uses the `cd` group without cancelling: if two pushes arrive in a
+  row, the second waits for the first to finish instead of cutting it off
+  halfway.
+- `ci.yml` cancels the previous run on the same branch: on a pull request only
+  the last commit matters.

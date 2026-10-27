@@ -1,260 +1,263 @@
 # Gym Tracker — API
 
-API REST de Gym Tracker. NestJS sobre Express, Prisma como ORM y PostgreSQL.
-Funciona sola: cualquier cliente que hable HTTP + cookies puede usarla.
+Gym Tracker's REST API. NestJS on Express, Prisma as the ORM and PostgreSQL.
+It stands on its own: any client that speaks HTTP + cookies can use it.
 
 ## Stack
 
-| Pieza              | Versión                                                                     |
-| ------------------ | --------------------------------------------------------------------------- |
-| Runtime            | Node.js 22                                                                  |
-| Framework          | NestJS 11 (Express 5)                                                       |
-| ORM                | Prisma 7 con `@prisma/adapter-pg` (pool de `pg`)                            |
-| Base de datos      | PostgreSQL 16                                                               |
-| Auth               | JWT (`@nestjs/jwt`) en cookie httpOnly · `google-auth-library` · `bcryptjs` |
-| Validación         | `class-validator` + `class-transformer`                                     |
-| Tests              | Jest + Supertest                                                            |
-| Gestor de paquetes | pnpm 11 (pineado en `package.json`, vía corepack)                           |
+| Piece           | Version                                                                        |
+| --------------- | ------------------------------------------------------------------------------ |
+| Runtime         | Node.js 22                                                                     |
+| Framework       | NestJS 11 (Express 5)                                                          |
+| ORM             | Prisma 7 with `@prisma/adapter-pg` (`pg` pool)                                 |
+| Database        | PostgreSQL 16                                                                  |
+| Auth            | JWT (`@nestjs/jwt`) in an httpOnly cookie · `google-auth-library` · `bcryptjs` |
+| Validation      | `class-validator` + `class-transformer`                                        |
+| Tests           | Jest + Supertest                                                               |
+| Package manager | pnpm 11 (pinned in `package.json`, via corepack)                               |
 
-## Puesta en marcha
+## Getting started
 
 ```bash
-corepack enable                   # activa el pnpm pineado
+corepack enable                   # enables the pinned pnpm
 pnpm install
-cp .env.example .env              # y completa los valores
-pnpm exec prisma migrate deploy   # aplica las migraciones
+cp .env.example .env              # and fill in the values
+pnpm exec prisma migrate deploy   # applies the migrations
 pnpm run start:dev                # http://localhost:4000
 ```
 
-Para tener un Postgres local sin instalar nada:
-`docker compose up -d postgres` desde `apps/docker/dev/`.
+For a local Postgres without installing anything:
+`docker compose up -d postgres` from `apps/docker/dev/`.
 
-## Variables de entorno
+## Environment variables
 
-| Variable           | Obligatoria     | Para qué                                                |
-| ------------------ | --------------- | ------------------------------------------------------- |
-| `DATABASE_URL`     | Sí              | Conexión en runtime (la usa el pool de `PrismaService`) |
-| `DIRECT_URL`       | Sí              | Conexión para migraciones (la lee `prisma.config.ts`)   |
-| `JWT_SECRET`       | Sí              | Firma de los tokens de sesión                           |
-| `FRONTEND_URL`     | Sí              | Origen permitido por CORS                               |
-| `GOOGLE_CLIENT_ID` | Solo con Google | Audiencia esperada al verificar el ID token de Google   |
-| `PORT`             | No              | Puerto HTTP (por defecto `4000`)                        |
-| `NODE_ENV`         | No              | En `production` la cookie de sesión se marca `secure`   |
+| Variable           | Required         | Purpose                                               |
+| ------------------ | ---------------- | ----------------------------------------------------- |
+| `DATABASE_URL`     | Yes              | Runtime connection (used by the `PrismaService` pool) |
+| `DIRECT_URL`       | Yes              | Migration connection (read by `prisma.config.ts`)     |
+| `JWT_SECRET`       | Yes              | Signs the session tokens                              |
+| `FRONTEND_URL`     | Yes              | Origin allowed by CORS                                |
+| `GOOGLE_CLIENT_ID` | Only with Google | Expected audience when verifying the Google ID token  |
+| `PORT`             | No               | HTTP port (defaults to `4000`)                        |
+| `NODE_ENV`         | No               | In `production` the session cookie is marked `secure` |
 
-`DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma base; Prisma las pide
-por separado para soportar un pooler delante.
+`DATABASE_URL` and `DIRECT_URL` can point to the same database; Prisma asks
+for them separately to support a pooler in front.
 
-## Comandos
+## Commands
 
 ```bash
-pnpm run start:dev    # desarrollo con recarga
-pnpm run build        # prisma generate + compilación a dist/
-pnpm run start:prod   # node dist/main (requiere build)
-pnpm run lint         # ESLint, solo revisa
-pnpm run lint:fix     # ESLint y corrige lo que pueda
+pnpm run start:dev    # development with reload
+pnpm run build        # prisma generate + compile to dist/
+pnpm run start:prod   # node dist/main (requires build)
+pnpm run lint         # ESLint, check only
+pnpm run lint:fix     # ESLint and fix what it can
 pnpm run format       # Prettier
-pnpm run test:unit    # Jest, specs junto al código (src/**/*.spec.ts)
+pnpm run test:unit    # Jest, specs next to the code (src/**/*.spec.ts)
 pnpm run test:e2e     # Jest + Supertest (test/*.e2e-spec.ts)
-pnpm run test:cov     # cobertura
-pnpm run seed:bench   # datos de prueba para el benchmark (solo dev, ver bench/)
+pnpm run test:cov     # coverage
+pnpm run seed:bench   # benchmark test data (dev only, see bench/)
 ```
 
 ```bash
-pnpm exec prisma migrate dev     # crear y aplicar una migración nueva
-pnpm exec prisma migrate deploy  # aplicar las existentes
-pnpm exec prisma generate        # regenerar el cliente
-pnpm exec prisma studio          # explorar la base
+pnpm exec prisma migrate dev     # create and apply a new migration
+pnpm exec prisma migrate deploy  # apply the existing ones
+pnpm exec prisma generate        # regenerate the client
+pnpm exec prisma studio          # browse the database
 ```
 
-En Prisma 7, `migrate dev` ya no regenera el cliente: corre `prisma generate`
-después, o los tests y el editor siguen viendo el schema anterior.
+In Prisma 7, `migrate dev` no longer regenerates the client: run
+`prisma generate` afterwards, or the tests and the editor keep seeing the old
+schema.
 
-## Arquitectura
+## Architecture
 
 ```
 src/
-├── main.ts               # bootstrap: cookie-parser, ValidationPipe, CORS, puerto
-├── app.module.ts         # módulos de dominio + JwtAuthGuard global (APP_GUARD)
+├── main.ts               # bootstrap: cookie-parser, ValidationPipe, CORS, port
+├── app.module.ts         # domain modules + global JwtAuthGuard (APP_GUARD)
 ├── app.controller.ts     # GET /healthz
 ├── common/
-│   ├── decorators/       # @Public() y @CurrentUser()
-│   ├── guards/           # JwtAuthGuard: lee la cookie `token`
-│   ├── interceptors/     # ExerciseNamesInterceptor: nombres en el idioma del usuario
-│   ├── date-only.ts      # fechas sin hora (YYYY-MM-DD) y su validador
-│   ├── locale.ts         # elegir el nombre por idioma y normalizar búsquedas
-│   ├── slugify.ts        # slugs de ejercicios y usuarios
-│   └── timezone.util.ts  # fecha local según la tz del cliente y validar zonas horarias
+│   ├── decorators/       # @Public() and @CurrentUser()
+│   ├── guards/           # JwtAuthGuard: reads the `token` cookie
+│   ├── interceptors/     # ExerciseNamesInterceptor: names in the user's language
+│   ├── date-only.ts      # dates without time (YYYY-MM-DD) and their validator
+│   ├── locale.ts         # picks the name by language and normalizes searches
+│   ├── slugify.ts        # exercise and user slugs
+│   └── timezone.util.ts  # local date from the client's tz and time zone validation
 ├── modules/
-│   ├── auth/             # registro, login, Google, logout, /me
-│   ├── exercises/        # catálogo global de ejercicios y los oficiales (official-exercises.ts)
-│   ├── equipment/        # catálogo global de equipos
-│   ├── workouts/         # series registradas, última serie y racha
-│   ├── sessions/         # sesiones de entrenamiento, paginadas por cursor
-│   ├── routines/         # rutinas y sus bloques tipados
-│   ├── programs/         # programas y programa activo
-│   ├── measurements/     # medidas corporales opcionales con fecha
-│   └── publications/     # publicar rutinas y programas como foto fija
-├── providers/prisma/     # PrismaService sobre un pg.Pool
-├── scripts/seed.ts       # carga o actualiza los ejercicios oficiales
-└── types/                # tipos de Express (req.user)
+│   ├── auth/             # register, login, Google, logout, /me
+│   ├── exercises/        # global exercise catalog and the official ones (official-exercises.ts)
+│   ├── equipment/        # global equipment catalog
+│   ├── workouts/         # logged sets, last set and streak
+│   ├── sessions/         # training sessions, cursor-paginated
+│   ├── routines/         # routines and their typed blocks
+│   ├── programs/         # programs and the active program
+│   ├── measurements/     # optional dated body measurements
+│   └── publications/     # publish routines and programs as a frozen snapshot
+├── providers/prisma/     # PrismaService on top of a pg.Pool
+├── scripts/seed.ts       # loads or updates the official exercises
+└── types/                # Express types (req.user)
 ```
 
-Cada módulo sigue el patrón Nest de `controller` + `service` + `dto/`. Los
-controllers no tienen lógica: validan con DTOs y delegan en el service.
+Each module follows the Nest `controller` + `service` + `dto/` pattern.
+Controllers hold no logic: they validate with DTOs and delegate to the service.
 
-**Reglas transversales:**
+**Cross-cutting rules:**
 
-- **Todo requiere sesión** salvo lo marcado con `@Public()` (registro, login,
-  Google, `/healthz`). El guard es global, así que un endpoint nuevo nace
-  protegido.
-- **Los datos del usuario se filtran siempre por `userId`** (`@CurrentUser()`).
-  Workouts, rutinas y programas son privados; ejercicios y equipos son un
-  catálogo compartido.
-- **Validación estricta:** `ValidationPipe` con `whitelist` y
-  `forbidNonWhitelisted`; un campo que no esté en el DTO devuelve 400.
-- **Conflictos de nombre** (`P2002` de Prisma) en programas se traducen a 409.
-- **Nombres de ejercicio por idioma:** los services devuelven los ejercicios con
-  todos sus nombres, y `ExerciseNamesInterceptor` deja en cada respuesta solo el
-  del idioma de ejercicios del usuario (`User.exerciseLocale`, inglés por
-  defecto). Ningún endpoint elige el idioma por su cuenta.
+- **Everything requires a session** except what's marked `@Public()` (register,
+  login, Google, `/healthz`). The guard is global, so a new endpoint is born
+  protected.
+- **User data is always filtered by `userId`** (`@CurrentUser()`). Workouts,
+  routines and programs are private; exercises and equipment are a shared
+  catalog.
+- **Strict validation:** `ValidationPipe` with `whitelist` and
+  `forbidNonWhitelisted`; a field not in the DTO returns 400.
+- **Name conflicts** (Prisma `P2002`) on programs are translated to 409.
+- **Exercise names by language:** services return exercises with all their
+  names, and `ExerciseNamesInterceptor` leaves in each response only the one in
+  the user's exercise language (`User.exerciseLocale`, English by default). No
+  endpoint picks the language on its own.
 
-## Autenticación
+## Authentication
 
-- Registro y login con email + contraseña (hash con bcrypt), o con un ID token de
-  Google verificado contra `GOOGLE_CLIENT_ID`; si el email ya existe, la cuenta
-  se vincula.
-- La sesión es un JWT (`sub` = id de usuario, 30 días) en la cookie `token`:
-  `httpOnly`, `sameSite=lax`, `secure` en producción.
+- Register and login with email + password (bcrypt hash), or with a Google ID
+  token verified against `GOOGLE_CLIENT_ID`; if the email already exists, the
+  account is linked.
+- The session is a JWT (`sub` = user id, 30 days) in the `token` cookie:
+  `httpOnly`, `sameSite=lax`, `secure` in production.
 
 ## Endpoints
 
-| Método      | Ruta                                       | Descripción                                                                                                                                            |
-| ----------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET         | `/healthz`                                 | Salud del servicio (público)                                                                                                                           |
-| POST        | `/auth/register`                           | Crea la cuenta y abre sesión (público)                                                                                                                 |
-| POST        | `/auth/login`                              | Abre sesión (público)                                                                                                                                  |
-| POST        | `/auth/google`                             | Login o registro con ID token de Google (público)                                                                                                      |
-| POST        | `/auth/logout`                             | Cierra sesión                                                                                                                                          |
-| GET         | `/auth/me`                                 | Usuario actual                                                                                                                                         |
-| PATCH       | `/auth/me`                                 | Cambia la fecha de nacimiento (o la borra con `null`), el idioma de ejercicios, el tema (`system`, `light` o `dark`) y las novedades abiertas o vistas |
-| GET         | `/exercises`                               | Catálogo de ejercicios, con el nombre en el idioma del usuario                                                                                         |
-| POST        | `/exercises`                               | Crea un ejercicio propio, con el nombre en el idioma del usuario                                                                                       |
-| GET         | `/equipment`                               | Catálogo de equipos                                                                                                                                    |
-| GET         | `/workouts?from=&to=`                      | Las series de un rango de fechas, con ejercicio, equipo y nombre de la rutina (el agrupado por día lo hace el cliente)                                 |
-| POST        | `/workouts`                                | Registra una serie en su sesión (`sessionId`, `performedAt` y `timeZone` del cliente). Con `clientId`, repetir el envío no la duplica                  |
-| GET         | `/sessions?before=&limit=`                 | Sesiones del usuario, la más nueva primero (20 por página, 50 como máximo), con su número de series, el cursor `next` y `first`                        |
-| GET         | `/sessions/:id`                            | Una sesión con sus series                                                                                                                              |
-| PATCH       | `/workouts/:id`                            | Edita una serie                                                                                                                                        |
-| DELETE      | `/workouts/:id`                            | Borra una serie                                                                                                                                        |
-| GET         | `/workouts/recommendation`                 | Última serie, para precargar el formulario (ver abajo)                                                                                                 |
-| GET         | `/workouts/progress`                       | Racha e historial de un ejercicio (ver abajo)                                                                                                          |
-| GET         | `/routines`                                | Rutinas del usuario                                                                                                                                    |
-| POST        | `/routines`                                | Crea una rutina                                                                                                                                        |
-| GET         | `/routines/:id`                            | Una rutina con sus ítems                                                                                                                               |
-| PATCH       | `/routines/:id`                            | Edita nombre, ítems y bloques                                                                                                                          |
-| DELETE      | `/routines/:id`                            | Borra una rutina                                                                                                                                       |
-| GET         | `/programs`                                | Programas del usuario                                                                                                                                  |
-| POST        | `/programs`                                | Crea un programa                                                                                                                                       |
-| GET         | `/programs/active`                         | Programa activo y la rutina que toca hoy                                                                                                               |
-| PUT         | `/programs/active`                         | Cambia o quita el programa activo                                                                                                                      |
-| GET         | `/programs/:id`                            | Un programa                                                                                                                                            |
-| PATCH       | `/programs/:id`                            | Edita un programa                                                                                                                                      |
-| DELETE      | `/programs/:id`                            | Borra un programa                                                                                                                                      |
-| GET         | `/measurements`                            | Medidas corporales del usuario, la más nueva primero                                                                                                   |
-| PUT         | `/measurements`                            | Crea o reemplaza la medida de una fecha                                                                                                                |
-| DELETE      | `/measurements/:date`                      | Borra la medida de una fecha                                                                                                                           |
-| POST        | `/routines/:id/publish`                    | Publica una rutina propia con un slug (foto fija)                                                                                                      |
-| POST        | `/programs/:id/publish`                    | Publica un programa propio con sus rutinas (foto fija)                                                                                                 |
-| GET         | `/publications/slug-available`             | `?kind=ROUTINE\|PROGRAM&slug=`: si el slug está libre                                                                                                  |
-| GET         | `/publications/mine`                       | Tus publicaciones de los dos tipos, la más nueva primero, con sus contadores                                                                           |
-| PATCH       | `/publications/:id`                        | Renombra tu publicación (`{ name }`); el slug no cambia                                                                                                |
-| DELETE      | `/publications/:id`                        | Elimina tu publicación con sus me gusta; las copias de los demás se quedan                                                                             |
-| GET         | `/explore/routines`, `/explore/programs`   | Publicaciones (`?sort=likes\|copies\|recent`, 50 como máximo) con autor (`username` y `slug`), me gusta, copias, `likedByMe` e `isMine`                |
-| GET         | `/explore/{routines\|programs}/:slug`      | Una publicación con sus rutinas y ejercicios                                                                                                           |
-| POST        | `/explore/routines/:slug/copy`             | Copia la rutina como rutina suelta                                                                                                                     |
-| PUT, DELETE | `/explore/{routines\|programs}/:slug/like` | Da o quita tu me gusta (idempotente; el tuyo propio da 403). Devuelve `likeCount` y `likedByMe`                                                        |
-| POST        | `/explore/programs/:slug/copy`             | Copia el programa entero (lo activa si no tenías uno) o, con `routinePosition`, solo esa rutina                                                        |
+| Method      | Path                                       | Description                                                                                                                                   |
+| ----------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET         | `/healthz`                                 | Service health (public)                                                                                                                       |
+| POST        | `/auth/register`                           | Creates the account and opens a session (public)                                                                                              |
+| POST        | `/auth/login`                              | Opens a session (public)                                                                                                                      |
+| POST        | `/auth/google`                             | Login or register with a Google ID token (public)                                                                                             |
+| POST        | `/auth/logout`                             | Closes the session                                                                                                                            |
+| GET         | `/auth/me`                                 | Current user                                                                                                                                  |
+| PATCH       | `/auth/me`                                 | Changes the birth date (or clears it with `null`), the exercise language, the theme (`system`, `light` or `dark`) and the opened or seen news |
+| GET         | `/exercises`                               | Exercise catalog, with the name in the user's language                                                                                        |
+| POST        | `/exercises`                               | Creates a custom exercise, with the name in the user's language                                                                               |
+| GET         | `/equipment`                               | Equipment catalog                                                                                                                             |
+| GET         | `/workouts?from=&to=`                      | Sets in a date range, with exercise, equipment and routine name (the client groups them by day)                                               |
+| POST        | `/workouts`                                | Logs a set in its session (`sessionId`, `performedAt` and `timeZone` from the client). With `clientId`, resending doesn't duplicate it        |
+| GET         | `/sessions?before=&limit=`                 | The user's sessions, newest first (20 per page, 50 max), with their set count, the `next` cursor and `first`                                  |
+| GET         | `/sessions/:id`                            | A session with its sets                                                                                                                       |
+| PATCH       | `/workouts/:id`                            | Edits a set                                                                                                                                   |
+| DELETE      | `/workouts/:id`                            | Deletes a set                                                                                                                                 |
+| GET         | `/workouts/recommendation`                 | Last set, to prefill the form (see below)                                                                                                     |
+| GET         | `/workouts/progress`                       | Streak and history of an exercise (see below)                                                                                                 |
+| GET         | `/routines`                                | The user's routines                                                                                                                           |
+| POST        | `/routines`                                | Creates a routine                                                                                                                             |
+| GET         | `/routines/:id`                            | A routine with its items                                                                                                                      |
+| PATCH       | `/routines/:id`                            | Edits name, items and blocks                                                                                                                  |
+| DELETE      | `/routines/:id`                            | Deletes a routine                                                                                                                             |
+| GET         | `/programs`                                | The user's programs                                                                                                                           |
+| POST        | `/programs`                                | Creates a program                                                                                                                             |
+| GET         | `/programs/active`                         | Active program and today's routine                                                                                                            |
+| PUT         | `/programs/active`                         | Changes or clears the active program                                                                                                          |
+| GET         | `/programs/:id`                            | A program                                                                                                                                     |
+| PATCH       | `/programs/:id`                            | Edits a program                                                                                                                               |
+| DELETE      | `/programs/:id`                            | Deletes a program                                                                                                                             |
+| GET         | `/measurements`                            | The user's body measurements, newest first                                                                                                    |
+| PUT         | `/measurements`                            | Creates or replaces the measurement for a date                                                                                                |
+| DELETE      | `/measurements/:date`                      | Deletes the measurement for a date                                                                                                            |
+| POST        | `/routines/:id/publish`                    | Publishes one of your routines with a slug (frozen snapshot)                                                                                  |
+| POST        | `/programs/:id/publish`                    | Publishes one of your programs with its routines (frozen snapshot)                                                                            |
+| GET         | `/publications/slug-available`             | `?kind=ROUTINE\|PROGRAM&slug=`: whether the slug is free                                                                                      |
+| GET         | `/publications/mine`                       | Your publications of both kinds, newest first, with their counters                                                                            |
+| PATCH       | `/publications/:id`                        | Renames your publication (`{ name }`); the slug doesn't change                                                                                |
+| DELETE      | `/publications/:id`                        | Deletes your publication with its likes; other people's copies stay                                                                           |
+| GET         | `/explore/routines`, `/explore/programs`   | Publications (`?sort=likes\|copies\|recent`, 50 max) with author (`username` and `slug`), likes, copies, `likedByMe` and `isMine`             |
+| GET         | `/explore/{routines\|programs}/:slug`      | A publication with its routines and exercises                                                                                                 |
+| POST        | `/explore/routines/:slug/copy`             | Copies the routine as a standalone routine                                                                                                    |
+| PUT, DELETE | `/explore/{routines\|programs}/:slug/like` | Adds or removes your like (idempotent; liking your own returns 403). Returns `likeCount` and `likedByMe`                                      |
+| POST        | `/explore/programs/:slug/copy`             | Copies the whole program (activates it if you had none) or, with `routinePosition`, only that routine                                         |
 
-## Modelo de datos
+## Data model
 
-La fuente de verdad es [`prisma/schema.prisma`](./prisma/schema.prisma). Lo que
-no se deduce a simple vista:
+The source of truth is [`prisma/schema.prisma`](./prisma/schema.prisma). What
+isn't obvious at a glance:
 
-- **`Workout` es una serie**, no una sesión. Lleva peso, reps o duración,
-  equipo, `setType` (`WORKING`, `WARMUP`, `RAMP`) y `step` (el escalón de la
-  rampa). Sin `weight` ni `durationSec` es una serie de solo reps. `clientId`
-  es opcional y único por usuario: la web lo genera para reintentar un envío
-  sin duplicar la serie. `createdAt` es la hora en que se hizo la serie:
-  la manda el cliente (`performedAt`) y se acepta si no tiene más de 7 días ni
-  está en el futuro.
-- **`Session`** agrupa las series de un entrenamiento, con `startedAt`,
-  `endedAt`, `timeZone` y la rutina si la hubo. Su `clientId` es el id que
-  genera la web; una serie sin él se une a la última sesión si su última serie
-  tiene menos de 3 horas, o abre otra (`modules/workouts/session-rules.ts`).
-  Al borrar la última serie de una sesión, la sesión se borra. La migración
-  `sessions` agrupó con esa regla las series anteriores.
-- **`RoutineItem.blocks`** es una lista JSON de bloques tipados por `kind`:
-  `weight_reps`, `reps`, `time`, `warmup` y `ramp`. En la base es JSON libre;
-  la forma la garantizan `modules/routines/blocks.ts` y
+- **`Workout` is one set**, not a session. It holds weight, reps or duration,
+  equipment, `setType` (`WORKING`, `WARMUP`, `RAMP`) and `step` (the ramp
+  step). Without `weight` or `durationSec` it's a reps-only set. `clientId` is
+  optional and unique per user: the web generates it to retry a submission
+  without duplicating the set. `createdAt` is when the set was done: the client
+  sends it (`performedAt`) and it's accepted if it's no more than 7 days old
+  and not in the future.
+- **`Session`** groups the sets of one workout, with `startedAt`, `endedAt`,
+  `timeZone` and the routine if there was one. Its `clientId` is the id the web
+  generates; a set without one joins the last session if that session's last
+  set is less than 3 hours old, or opens a new one
+  (`modules/workouts/session-rules.ts`). Deleting a session's last set deletes
+  the session. The `sessions` migration grouped the earlier sets with that rule.
+- **`RoutineItem.blocks`** is a JSON list of blocks typed by `kind`:
+  `weight_reps`, `reps`, `time`, `warmup` and `ramp`. In the database it's free
+  JSON; its shape is guaranteed by `modules/routines/blocks.ts` and
   `dto/routine-block.dto.ts`.
-- **`Program`** agrupa rutinas en orden (`programPosition`). El usuario tiene un
-  `activeProgram`; la rutina que toca se deriva de la última serie registrada.
-  `copiedFromId` solo existe en copias hechas con el Explorar anterior a las
-  publicaciones; ya no se escribe.
-- **`Publication`** es una foto fija: publicar copia la rutina o el programa a
-  `PublicationRoutine` y `PublicationRoutineItem`, sin enlace al original, así
-  que editarlo o borrarlo no cambia lo publicado. El slug es único por `kind`
-  (`ROUTINE` o `PROGRAM`); `PublicationLike` y `PublicationCopy` llevan un
-  registro por usuario. Borrar la cuenta borra sus publicaciones. Copiar tu
-  propia publicación no se registra en `PublicationCopy`, así que no suma.
-- **`BodyMeasurement`** es una medida corporal opcional: una por usuario y
-  fecha, con peso, % de grasa y altura opcionales. Un `CHECK` en la base exige
-  al menos uno. `User.birthDate` es un valor único; la edad se calcula.
-- **`Exercise`** lleva `slug`, músculos principales y secundarios y `mechanic`
-  (compuesto o aislado). Sus nombres viven en **`ExerciseName`**, uno por idioma
-  (`en`, `es`), con un `searchName` sin tildes ni mayúsculas para el buscador.
-  Los oficiales no tienen `createdById`; los que crea un usuario sí. Cómo se
-  mide un ejercicio vive en el bloque de la rutina, no en el ejercicio.
-- **`User.newsOpened` / `newsSeen`** guardan qué novedades de la app abrió o vio
-  cada usuario.
+- **`Program`** groups routines in order (`programPosition`). The user has an
+  `activeProgram`; today's routine is derived from the last logged set.
+  `copiedFromId` only exists on copies made with the Explore that predates
+  publications; it's no longer written.
+- **`Publication`** is a frozen snapshot: publishing copies the routine or
+  program into `PublicationRoutine` and `PublicationRoutineItem`, with no link
+  to the original, so editing or deleting it doesn't change what was published.
+  The slug is unique per `kind` (`ROUTINE` or `PROGRAM`); `PublicationLike` and
+  `PublicationCopy` hold one row per user. Deleting the account deletes its
+  publications. Copying your own publication isn't recorded in
+  `PublicationCopy`, so it doesn't count.
+- **`BodyMeasurement`** is an optional body measurement: one per user and date,
+  with optional weight, body fat % and height. A `CHECK` in the database
+  requires at least one. `User.birthDate` is a single value; age is computed.
+- **`Exercise`** holds `slug`, primary and secondary muscles and `mechanic`
+  (compound or isolation). Its names live in **`ExerciseName`**, one per
+  language (`en`, `es`), with a `searchName` without accents or uppercase for
+  search. Official exercises have no `createdById`; user-created ones do. How
+  an exercise is measured lives in the routine block, not in the exercise.
+- **`User.newsOpened` / `newsSeen`** store which in-app news each user opened
+  or saw.
 
-## Última serie
+## Last set
 
 `GET /workouts/recommendation?exerciseId=&equipmentId=&setType=&step=`
 
-- Devuelve la última serie del **mismo ejercicio, equipo y `setType`** (el peso
-  no es comparable entre una máquina y una mancuerna) para precargar el
-  formulario. No sugiere pesos.
-- Con `setType=RAMP` y `step` devuelve además `workingWeight`, sobre el que el
-  cliente calcula el peso de cada escalón.
+- Returns the last set of the **same exercise, equipment and `setType`** (weight
+  isn't comparable between a machine and a dumbbell) to prefill the form. It
+  doesn't suggest weights.
+- With `setType=RAMP` and `step` it also returns `workingWeight`, from which the
+  client computes each step's weight.
 
-## Racha e historial del ejercicio
+## Exercise streak and history
 
 `GET /workouts/progress?exerciseId=&routineId=&tz=`
 
-- **Sesión:** las series efectivas (`WORKING`) de una misma sesión
-  (`sessionId`) con el mismo equipo, separando las hechas en rutina de las del
-  día libre. Su fecha es la de su primera serie en la zona `tz`.
-- **Meta:** el primer bloque `weight_reps` del ejercicio en `routineId`. Sin
-  rutina o sin ese bloque, `streak` es `null` (no hay racha).
-- **Racha:** sesiones con rutina seguidas, de la más reciente hacia atrás, con
-  todas las series que pide la meta, todas en el tope (`repsMax`, o `reps` si no
-  hay rango) y con el mismo peso y equipo. Cuenta series de cualquier rutina;
-  el día libre no suma ni rompe. Una sesión abierta (con una serie hace menos
-  de 3 horas) aún incompleta y al tope no rompe la racha, aunque haya empezado
-  antes de medianoche.
-- **Sugerencia:** `down` si alguna serie de la última sesión quedó bajo el piso
-  (mínimo del rango menos 2); si no, `up` con racha. El cliente decide cómo
-  mostrarla; nunca propone un peso.
-- `sessions` trae las sesiones de las últimas 300 series efectivas, incluidas
-  las del día libre, con su equipo. El cliente las pagina. La lógica vive en `modules/workouts/streak.ts`.
+- **Session:** the working sets (`WORKING`) of one session (`sessionId`) with
+  the same equipment, keeping routine sets apart from free-day ones. Its date is
+  that of its first set in the `tz` zone.
+- **Target:** the exercise's first `weight_reps` block in `routineId`. Without a
+  routine or without that block, `streak` is `null` (no streak).
+- **Streak:** consecutive routine sessions, from the most recent backwards, with
+  every set the target asks for, all at the top (`repsMax`, or `reps` if
+  there's no range) and with the same weight and equipment. It counts sets from
+  any routine; the free day neither adds nor breaks it. An open session (with a
+  set less than 3 hours ago) that's still incomplete and at the top doesn't
+  break the streak, even if it started before midnight.
+- **Suggestion:** `down` if any set of the last session fell below the floor
+  (range minimum minus 2); otherwise `up` with a streak. The client decides how
+  to show it; it never proposes a weight.
+- `sessions` returns the sessions of the last 300 working sets, including
+  free-day ones, with their equipment. The client paginates them. The logic
+  lives in `modules/workouts/streak.ts`.
 
 ## Docker
 
-`Dockerfile` multi-stage sobre `node:22-alpine`. Las dependencias de producción
-se instalan en su propia etapa con el store de pnpm en un cache mount, y la
-imagen final copia solo ese `node_modules`, `dist/` y el cliente de Prisma: sin
-pnpm ni store dentro. Al arrancar ejecuta `prisma migrate deploy`, luego el seed
-de ejercicios oficiales (`dist/scripts/seed`; si falla, la API arranca igual) y
-por último `node dist/main`. La orquestación con
-la web y la base vive en [`apps/docker/`](../docker/README.md).
+Multi-stage `Dockerfile` on `node:22-alpine`. Production dependencies are
+installed in their own stage with the pnpm store in a cache mount, and the
+final image copies only that `node_modules`, `dist/` and the Prisma client: no
+pnpm or store inside. On start it runs `prisma migrate deploy`, then the
+official exercise seed (`dist/scripts/seed`; if it fails, the API starts
+anyway) and finally `node dist/main`. The orchestration with the web and the
+database lives in [`apps/docker/`](../docker/README.md).

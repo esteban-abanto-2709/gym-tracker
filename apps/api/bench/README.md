@@ -1,127 +1,125 @@
-# Benchmark de las series
+# Sets benchmark
 
-Mide dos consultas que crecían con las series del usuario: la última serie
-(`GET /workouts/recommendation`), que corre cada vez que se abre el formulario
-de una serie, y el historial, que corre al entrar a esa pantalla. El historial
-fue `GET /workouts/days` hasta RM-134 y ahora es `GET /sessions`. El benchmark
-las pide por igual, así que el historial pesa mucho más que en el uso real.
-Solo contra dev.
+Measures two queries that grew with the user's sets: the last set
+(`GET /workouts/recommendation`), which runs every time a set form opens, and
+the history, which runs when entering that screen. The history was
+`GET /workouts/days` until RM-134 and is now `GET /sessions`. The benchmark
+requests both equally, so the history weighs much more than in real use. Dev
+only.
 
-## Datos
+## Data
 
-`pnpm run seed:bench` llena la base de dev con 100 usuarios de prueba
-(`@gym-tracker.test`) y 109 000 series repartidas en dos años, en sesiones de
-20 series separadas por 4 minutos:
+`pnpm run seed:bench` fills the dev database with 100 test users
+(`@gym-tracker.test`) and 109,000 sets spread over two years, in sessions of
+20 sets 4 minutes apart:
 
-- `bench@gym-tracker.test` (contraseña `bench-password`): 500 sesiones, 10 000
-  series, 2 000 de ellas en press de banca con barra (4 por sesión). Unos cinco
-  años de un usuario constante.
-- 99 usuarios más con 50 sesiones (1 000 series) cada uno, para que la tabla
-  pese como con un centenar de usuarios activos.
+- `bench@gym-tracker.test` (password `bench-password`): 500 sessions, 10,000
+  sets, 2,000 of them barbell bench press (4 per session). About five years of
+  a consistent user.
+- 99 more users with 50 sessions (1,000 sets) each, so the table weighs as it
+  would with a hundred active users.
 
-Es repetible: cada corrida borra los usuarios de prueba anteriores y los vuelve a
-crear. `pnpm run seed:bench -- --clean` solo los borra. Se niega a correr si
-`DATABASE_URL` no apunta a `localhost`.
+It's repeatable: each run deletes the previous test users and creates them
+again. `pnpm run seed:bench -- --clean` only deletes them. It refuses to run
+if `DATABASE_URL` doesn't point to `localhost`.
 
-## Correrlo
+## Running it
 
-Con la API de dev arriba (`docker compose up -d --build api` en
-`apps/docker/dev`), desde `apps/api`:
+With the dev API up (`docker compose up -d --build api` in
+`apps/docker/dev`), from `apps/api`:
 
 ```bash
 pnpm run seed:bench
 ```
 
-El seed imprime el `EXERCISE_ID` del ejercicio medido. k6 corre en un
-contenedor dentro de la red de dev, sin instalar nada:
+The seed prints the `EXERCISE_ID` of the measured exercise. k6 runs in a
+container inside the dev network, without installing anything:
 
 ```bash
 docker run --rm -i --network gym-tracker-dev_gym-tracker-dev-network -e EXERCISE_ID=<id> grafana/k6:1.3.0 run --quiet - < bench/form.k6.js
 ```
 
-Por defecto son 10 usuarios virtuales durante 30 s, cada uno pidiendo las dos
-rutas sin pausa: mide la capacidad de la API. Con `--vus 1` después de `run`
-mide lo que tarda una petición sola, sin cola. Con `docker stats` en otra
-terminal se ve quién gasta el CPU.
+By default it's 10 virtual users for 30 s, each requesting both routes without
+pause: it measures the API's capacity. With `--vus 1` after `run` it measures
+how long a single request takes, with no queue. `docker stats` in another
+terminal shows who's spending the CPU.
 
-## Resultados
+## Results
 
-Medido en la PC de desarrollo con Docker Desktop: los números absolutos no son
-los del servidor de prod; sirven para comparar un cambio contra otro. Entre dos
-corridas iguales los números varían un 5-7%, así que una diferencia menor al
-10% no prueba nada.
+Measured on the development PC with Docker Desktop: the absolute numbers aren't
+the prod server's; they're for comparing one change against another. Between
+two identical runs the numbers vary 5-7%, so a difference under 10% proves
+nothing.
 
-| Versión                | Usuarios | `recommendation` p95 | historial p95 | Peticiones/s |
-| ---------------------- | -------- | -------------------- | ------------- | ------------ |
-| Antes (TD-107, TD-108) | 1        | 9 ms                 | 23 ms         | 68           |
-| Antes (TD-107, TD-108) | 10       | 139-148 ms           | 214-228 ms    | 74-79        |
-| Última serie (TD-107)  | 1        | 3.8 ms               | 23 ms         | 81           |
-| Última serie (TD-107)  | 10       | 110 ms               | 184-186 ms    | 101          |
-| Índices (TD-108)       | 1        | 2.6 ms               | 22 ms         | 88           |
-| Índices (TD-108)       | 10       | 111-113 ms           | 186 ms        | 102          |
-| Días en SQL (TD-131)   | 1        | 2.1 ms               | 11 ms         | 174          |
-| Días en SQL (TD-131)   | 10       | 9.8 ms               | 24 ms         | 718-720      |
-| Sesiones (RM-134)      | 1        | 1.7 ms               | 2.8 ms        | 573          |
-| Sesiones (RM-134)      | 10       | 9.7 ms               | 15 ms         | 995          |
+| Version                 | Users | `recommendation` p95 | history p95 | Requests/s |
+| ----------------------- | ----- | -------------------- | ----------- | ---------- |
+| Before (TD-107, TD-108) | 1     | 9 ms                 | 23 ms       | 68         |
+| Before (TD-107, TD-108) | 10    | 139-148 ms           | 214-228 ms  | 74-79      |
+| Last set (TD-107)       | 1     | 3.8 ms               | 23 ms       | 81         |
+| Last set (TD-107)       | 10    | 110 ms               | 184-186 ms  | 101        |
+| Indexes (TD-108)        | 1     | 2.6 ms               | 22 ms       | 88         |
+| Indexes (TD-108)        | 10    | 111-113 ms           | 186 ms      | 102        |
+| Days in SQL (TD-131)    | 1     | 2.1 ms               | 11 ms       | 174        |
+| Days in SQL (TD-131)    | 10    | 9.8 ms               | 24 ms       | 718-720    |
+| Sessions (RM-134)       | 1     | 1.7 ms               | 2.8 ms      | 573        |
+| Sessions (RM-134)       | 10    | 9.7 ms               | 15 ms       | 995        |
 
-Tiempo de Postgres solo (`EXPLAIN ANALYZE`, usuario `bench`):
+Postgres time alone (`EXPLAIN ANALYZE`, user `bench`):
 
-| Consulta                         | Sin índices | Con índices |
-| -------------------------------- | ----------- | ----------- |
-| Última serie (`LIMIT 1`)         | 1.37 ms     | 0.05 ms     |
-| Días (`createdAt` del usuario)   | 2.08 ms     | 1.16 ms     |
-| Progreso (`LIMIT 300` del ejer.) | 1.09 ms     | 0.66 ms     |
+| Query                             | No indexes | With indexes |
+| --------------------------------- | ---------- | ------------ |
+| Last set (`LIMIT 1`)              | 1.37 ms    | 0.05 ms      |
+| Days (the user's `createdAt`)     | 2.08 ms    | 1.16 ms      |
+| Progress (exercise's `LIMIT 300`) | 1.09 ms    | 0.66 ms      |
 
-Con TD-131 la consulta de días agrupa en Postgres (`GROUP BY` sobre la fecha
-local): tarda 7.6 ms, más que leer las fechas, pero devuelve 731 filas en vez de
-10 000 y la API ya no las convierte.
+With TD-131 the days query groups in Postgres (`GROUP BY` on the local date):
+it takes 7.6 ms, more than reading the dates, but it returns 731 rows instead
+of 10,000 and the API no longer converts them.
 
-- **La API se satura en unas 75-80 peticiones/s.** De 1 a 10 usuarios el total
-  casi no sube y la latencia se multiplica por 15: el resto es cola.
-- **El cuello de botella es la API, no la base.** Con 10 usuarios la API usa
-  133% de CPU y Postgres 42%. `EXPLAIN ANALYZE` de la última serie tarda 3.8
-  ms: Postgres ya filtra por `userId` con el índice único `(userId, clientId)`
-  y no recorre la tabla entera. El costo está en que la API convierte las 2 013
-  series del ejercicio para usar una sola.
-- **TD-107 lo confirma.** Traer solo la última serie baja `recommendation` de 9
-  a 3.8 ms y sube la capacidad un 30%, porque le quita trabajo justo a la API.
-  Ahora `days` es casi todo el tiempo de cada vuelta (TD-131).
-- **TD-108 acelera la base, no la capacidad.** Con el índice, la última serie
-  lee una fila (recorre el índice hacia atrás) en vez de 2 013, y los días se
-  leen del índice sin ordenar. Con 1 usuario `recommendation` baja de 3.8 a 2.6
-  ms; con 10 la capacidad no cambia, porque el límite sigue siendo el CPU de la
-  API. El índice importa cuando la tabla deje de caber en memoria.
-- **TD-131 multiplica la capacidad por 7.** Con los días agrupados en SQL la API
-  pasa de ~100 a ~720 peticiones/s y `days` baja de 186 a 24 ms con 10
-  usuarios. El trabajo pasó a Postgres, que lo reparte entre varios núcleos
-  (316% de CPU); la API, con un solo hilo, vuelve a estar cerca de su techo
-  (115%), ahora con 7 veces más peticiones.
-- **RM-134 cambia el diseño, no la consulta.** El historial pasa de `days`
-  (todos los días de una vez) a `/sessions` (una página de 20 sesiones). Con 1
-  usuario el historial baja de 11 a 2.8 ms, y con 10 la API despacha ~995
-  peticiones/s: 13 veces lo del principio. La respuesta ya no crece con el
-  historial.
+- **The API saturates at about 75-80 requests/s.** From 1 to 10 users the total
+  barely rises and latency multiplies by 15: the rest is queueing.
+- **The bottleneck is the API, not the database.** With 10 users the API uses
+  133% CPU and Postgres 42%. `EXPLAIN ANALYZE` of the last set takes 3.8 ms:
+  Postgres already filters by `userId` with the unique `(userId, clientId)`
+  index and doesn't scan the whole table. The cost is the API converting the
+  exercise's 2,013 sets to use just one.
+- **TD-107 confirms it.** Fetching only the last set brings `recommendation`
+  down from 9 to 3.8 ms and raises capacity 30%, because it removes work from
+  the API itself. Now `days` is almost all of each round's time (TD-131).
+- **TD-108 speeds up the database, not capacity.** With the index, the last set
+  reads one row (walking the index backwards) instead of 2,013, and the days are
+  read from the index without sorting. With 1 user `recommendation` drops from
+  3.8 to 2.6 ms; with 10 capacity doesn't change, because the limit is still the
+  API's CPU. The index matters once the table no longer fits in memory.
+- **TD-131 multiplies capacity by 7.** With days grouped in SQL the API goes
+  from ~100 to ~720 requests/s and `days` drops from 186 to 24 ms with 10
+  users. The work moved to Postgres, which spreads it across several cores
+  (316% CPU); the API, single-threaded, is again close to its ceiling (115%),
+  now with 7 times more requests.
+- **RM-134 changes the design, not the query.** The history moves from `days`
+  (every day at once) to `/sessions` (a page of 20 sessions). With 1 user the
+  history drops from 11 to 2.8 ms, and with 10 the API serves ~995 requests/s:
+  13 times the starting point. The response no longer grows with the history.
 
-## Historial: días contra sesiones
+## History: days versus sessions
 
-Cada ruta del historial sola, con el usuario `bench` (500 sesiones), medida
-antes de borrar `/workouts/days`. `/workouts/days` devolvía todos los días de
-una vez; `/sessions` devuelve una página de 20 sesiones con su número de series.
+Each history route on its own, with the `bench` user (500 sessions), measured
+before removing `/workouts/days`. `/workouts/days` returned every day at once;
+`/sessions` returns a page of 20 sessions with their set count.
 
-| Ruta                                 | Usuarios | p95     | Peticiones/s | Por respuesta |
-| ------------------------------------ | -------- | ------- | ------------ | ------------- |
-| `/workouts/days`                     | 1        | 10.8 ms | 102          | ~19 KB        |
-| `/workouts/days`                     | 10       | 23 ms   | 507          | ~19 KB        |
-| `/sessions` con `_count` de Prisma   | 1        | 11.9 ms | 88           | ~3.9 KB       |
-| `/sessions` con `_count` de Prisma   | 10       | 18.5 ms | 675          | ~3.9 KB       |
-| `/sessions` con el conteo por página | 1        | 3 ms    | 483          | ~3.9 KB       |
-| `/sessions` con el conteo por página | 10       | 16 ms   | 835          | ~3.9 KB       |
+| Route                              | Users | p95     | Requests/s | Per response |
+| ---------------------------------- | ----- | ------- | ---------- | ------------ |
+| `/workouts/days`                   | 1     | 10.8 ms | 102        | ~19 KB       |
+| `/workouts/days`                   | 10    | 23 ms   | 507        | ~19 KB       |
+| `/sessions` with Prisma's `_count` | 1     | 11.9 ms | 88         | ~3.9 KB      |
+| `/sessions` with Prisma's `_count` | 10    | 18.5 ms | 675        | ~3.9 KB      |
+| `/sessions` with per-page count    | 1     | 3 ms    | 483        | ~3.9 KB      |
+| `/sessions` with per-page count    | 10    | 16 ms   | 835        | ~3.9 KB      |
 
-- **El `_count` de Prisma contaba toda la tabla.** Para el número de series de
-  cada sesión, Prisma genera un `COUNT(*) ... GROUP BY "sessionId"` sobre todas
-  las series de todos los usuarios y lo cruza con la página: 9 ms, y crece con
-  cada usuario nuevo. Se ve con `log_min_duration_statement = 0` en el Postgres
-  de dev.
-- **Contar solo la página lo arregla.** Un `groupBy` con `sessionId IN (...)`
-  usa el índice de `sessionId` y lee solo las series de esas 20 sesiones: con un
-  usuario baja de 11.9 a 3 ms.
+- **Prisma's `_count` counted the whole table.** For each session's set count,
+  Prisma generates a `COUNT(*) ... GROUP BY "sessionId"` over every set of
+  every user and joins it with the page: 9 ms, and it grows with each new user.
+  It shows up with `log_min_duration_statement = 0` in the dev Postgres.
+- **Counting only the page fixes it.** A `groupBy` with `sessionId IN (...)`
+  uses the `sessionId` index and reads only the sets of those 20 sessions: with
+  one user it drops from 11.9 to 3 ms.

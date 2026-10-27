@@ -1,13 +1,12 @@
 # Gym Tracker
 
-Un registrador de entrenamiento de fuerza que se usa **entre series, sin
-pensar**.
+A strength-training logger you use **between sets, without thinking**.
 
-Ves lo que levantaste la vez pasada, lo repites o subes el peso, lo anotas en
-dos segundos y sueltas el celular.
+You see what you lifted last time, repeat it or add weight, log it in two
+seconds and put the phone down.
 
 [![CD](https://github.com/esteban-abanto-2709/gym-tracker/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/esteban-abanto-2709/gym-tracker/actions/workflows/cd.yml)
-[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
@@ -20,134 +19,134 @@ dos segundos y sueltas el celular.
 
 ---
 
-## El problema
+## The problem
 
-Las apps de gimnasio hacen que registrar cueste más que entrenar.
+Gym apps make logging harder than training.
 
-Te piden edad, peso, objetivos y hasta lo que comes antes de dejarte anotar la
-primera serie. Guardan lo básico, como crear tus propias rutinas, detrás de una
-suscripción. Y para saber si te toca subir el peso, tienes que revisar el
-historial día por día, entre serie y serie, con el descanso corriendo.
+They ask for your age, weight, goals and even what you eat before letting you
+log your first set. They lock the basics, like creating your own routines,
+behind a subscription. And to know whether it's time to add weight, you have to
+go through your history day by day, between sets, with the rest timer running.
 
-Gym Tracker nace de lo contrario: **la app no debería estorbar**.
+Gym Tracker starts from the opposite idea: **the app should stay out of the
+way**.
 
-## Cómo se siente
+## How it feels
 
-- **No pensar.** Abres, eliges tu rutina y la app te muestra lo de la última
-  vez. Te sugiere cuándo subir; tú decides.
-- **Carácter.** Oscura, enérgica, con identidad. Nada de libreta neutra.
-- **Entra, entrena, vete.** Sin onboarding, sin encuestas, sin datos personales
-  obligatorios.
+- **No thinking.** You open it, pick your routine and the app shows you what
+  you did last time. It suggests when to go up; you decide.
+- **Character.** Dark, energetic, with an identity. Not a neutral notebook.
+- **Get in, train, get out.** No onboarding, no surveys, no required personal
+  data.
 
-## Qué hace hoy
+## What it does today
 
-**Al entrenar**
+**While training**
 
-- **Registro en dos segundos.** El último peso y las últimas reps vienen
-  precargados; confirmas y listo. La serie se guarda al instante, aunque la
-  señal del gimnasio sea mala: si no llega, se reintenta por detrás sin
-  duplicarse.
-- **Rutinas guiadas.** La app te lleva ejercicio por ejercicio, con la meta de
-  cada serie y un mapa de la sesión. Puedes saltar, reemplazar o adelantarte:
-  la estructura ayuda, no obliga.
-- **Racha y sugerencia de carga.** Un fuego cuenta las sesiones seguidas en las
-  que llegaste al tope del rango con el mismo peso. Con racha te propone subir;
-  si te quedas corto, bajar. Nunca te dice cuánto: tú decides. Compara solo con
-  el mismo equipo, porque una máquina y una mancuerna no pesan igual.
-- **Historial del ejercicio** sin salir del entrenamiento: tus últimas sesiones
-  de ese ejercicio, con su equipo.
-- **Tiempo de descanso.** Ves cuánto pasó desde la última serie, sin activar
-  nada.
-- **Ver el ejercicio** en video con un toque, si no recuerdas cómo se hace.
-- **Kilos o libras.** Eliges la unidad al registrar, porque hay máquinas que
-  solo vienen en libras.
+- **Logging in two seconds.** Your last weight and reps come prefilled; you
+  confirm and you're done. The set is saved instantly, even with bad gym
+  signal: if it doesn't get through, it retries in the background without
+  duplicating.
+- **Guided routines.** The app takes you exercise by exercise, with each set's
+  target and a session map. You can skip, replace or jump ahead: the structure
+  helps, it doesn't force.
+- **Streak and load suggestion.** A flame counts the sessions in a row where you
+  hit the top of the range with the same weight. With a streak it suggests going
+  up; if you fall short, going down. It never tells you how much: you decide. It
+  only compares within the same equipment, because a machine and a dumbbell
+  don't weigh the same.
+- **Exercise history** without leaving the workout: your last sessions of that
+  exercise, with their equipment.
+- **Rest time.** You see how long it's been since your last set, without
+  starting anything.
+- **Watch the exercise** on video with one tap, if you don't remember how it's
+  done.
+- **Kilos or pounds.** You pick the unit when logging, because some machines
+  only come in pounds.
 
-**Fuera del gimnasio**
+**Outside the gym**
 
-- **Series de todo tipo.** Peso y reps con rango (3 × 8-10), solo reps
-  (dominadas, fondos), por tiempo (plancha), calentamientos y rampas de
-  aproximación.
-- **Programas.** Agrupa tus rutinas (Push, Pull, Pierna; Upper/Lower) y la app
-  te dice cuál toca hoy. También puedes mirar los programas de otros y
-  copiarlos.
-- **Día libre.** ¿No toca rutina? Registras suelto.
-- **Historial editable** por día, para corregir cualquier serie después.
-- **Exportar para tu IA.** Un rango de fechas en un archivo listo para que tu
-  asistente analice tu progreso.
-- **Medidas corporales** opcionales: peso, % de grasa y altura por fecha.
-- **Ejercicios en inglés o español.** Casi 100 ejercicios oficiales en los dos
-  idiomas; el buscador los encuentra sin importar tildes.
-- **Novedades** dentro de la app, para descubrir lo que puede hacer.
-- **Cuentas propias** con correo o Google, y **se instala en el celular**: abre
-  a pantalla completa, como una app.
+- **All kinds of sets.** Weight and reps with a range (3 × 8-10), reps only
+  (pull-ups, dips), timed (plank), warm-ups and ramp-up sets.
+- **Programs.** Group your routines (Push, Pull, Legs; Upper/Lower) and the app
+  tells you which one is up today. You can also browse other people's programs
+  and copy them.
+- **Free day.** No routine today? Log sets loose.
+- **Editable history** by day, to fix any set afterwards.
+- **Export for your AI.** A date range in a file ready for your assistant to
+  analyze your progress.
+- **Optional body measurements:** weight, body fat % and height by date.
+- **Exercises in English or Spanish.** Almost 100 official exercises in both
+  languages; search finds them regardless of accents.
+- **In-app news**, to discover what it can do.
+- **Your own account** with email or Google, and **it installs on your phone**:
+  it opens full screen, like an app.
 
-## Qué NO es
+## What it is NOT
 
-- **No es todo-en-uno.** Nada de nutrición, hábitos ni fisioterapia.
-- **No es una red social.** Sin feed, sin chat, sin fotos.
-- **No tiene cronómetro que manejar.** El descanso se cuenta solo; no hay nada
-  que iniciar ni detener.
-- **No tiene muro de pago** para lo esencial.
+- **Not all-in-one.** No nutrition, habits or physiotherapy.
+- **Not a social network.** No feed, no chat, no photos.
+- **No timer to manage.** Rest counts itself; there's nothing to start or stop.
+- **No paywall** for the essentials.
 
-## Qué viene
+## What's next
 
-- **Calculadora de discos:** cuánto poner a cada lado de la barra.
-- **Más formas de encontrar un ejercicio:** alias ("press plano") y variantes
-  por equipo.
-- **La interfaz en inglés**, además de los ejercicios.
-- **Registro de un toque:** un experimento para marcar series sin formulario.
+- **Plate calculator:** how much to load on each side of the bar.
+- **More ways to find an exercise:** aliases ("press plano") and variants by
+  equipment.
+- **The interface in English**, not only the exercises.
+- **One-tap logging:** an experiment to mark sets without a form.
 
-El detalle y el orden están en el [roadmap](./docs/logbook/roadmap.md).
+The detail and the order are in the [roadmap](./docs/logbook/roadmap.md).
 
-## Cómo está construido
+## How it's built
 
-Dos aplicaciones independientes y la orquestación que las une:
+Two independent applications and the orchestration that ties them together:
 
 ```
-navegador ──/api/*──▶ web (Next.js) ──▶ api (NestJS) ──▶ PostgreSQL
+browser ──/api/*──▶ web (Next.js) ──▶ api (NestJS) ──▶ PostgreSQL
 ```
 
-| Carpeta | Qué es |
+| Folder | What it is |
 |---|---|
-| [`apps/web`](./apps/web/README.md) | La interfaz: Next.js, React y Tailwind, pensada para el celular |
-| [`apps/api`](./apps/api/README.md) | La API REST: NestJS, Prisma y PostgreSQL |
-| [`apps/docker`](./apps/docker/README.md) | Docker Compose de producción y desarrollo, backups y restauración |
-| [`.github/workflows`](./.github/workflows/README.md) | CI en cada pull request y despliegue automático en cada push a `main` |
+| [`apps/web`](./apps/web/README.md) | The interface: Next.js, React and Tailwind, built for the phone |
+| [`apps/api`](./apps/api/README.md) | The REST API: NestJS, Prisma and PostgreSQL |
+| [`apps/docker`](./apps/docker/README.md) | Production and development Docker Compose, backups and restore |
+| [`.github/workflows`](./.github/workflows/README.md) | CI on every pull request and automatic deploy on every push to `main` |
 
-El navegador solo habla con la web, que hace de proxy hacia la API: la dirección
-de la API nunca llega al cliente. La sesión vive en una cookie httpOnly.
+The browser only talks to the web app, which proxies to the API: the API's
+address never reaches the client. The session lives in an httpOnly cookie.
 
-Cada carpeta tiene su propio README con el detalle técnico: comandos, variables
-de entorno, arquitectura y endpoints.
+Each folder has its own README with the technical detail: commands,
+environment variables, architecture and endpoints.
 
-### Levantarla en tu máquina
+### Run it on your machine
 
-Todo el stack (base de datos, API, web y un túnel de Cloudflare opcional) corre
-con Docker Compose:
+The whole stack (database, API, web and an optional Cloudflare tunnel) runs
+with Docker Compose:
 
 ```bash
 cd apps/docker
-cp .env.example prod/.env   # y completa los valores
+cp .env.example prod/.env   # and fill in the values
 cd prod
 docker compose up -d --build
 ```
 
-Los detalles están en [`apps/docker/README.md`](./apps/docker/README.md).
+The details are in [`apps/docker/README.md`](./apps/docker/README.md).
 
-## Sobre el proyecto
+## About the project
 
-Es una app que uso de verdad, cada semana, en el gimnasio. Nació de una molestia
-propia y se mantiene por la misma razón: las decisiones se toman pensando en si
-mejoran el minuto y medio entre series, no en si suman una función más a la
-lista.
+It's an app I actually use, every week, at the gym. It was born from my own
+annoyance and it's kept going for the same reason: decisions are made based on
+whether they improve the minute and a half between sets, not on whether they
+add one more feature to the list.
 
-Lo difícil no es hacer un CRUD de ejercicios, sino decidir qué no construir.
+The hard part isn't building an exercise CRUD, it's deciding what not to build.
 
-- [Visión de producto](./docs/product-vision.md): qué es, para quién y por qué.
-- [Fundamentos de UI/UX](./docs/ux-foundations.md): los criterios de diseño.
-- [Bitácora](./docs/logbook/): roadmap, deuda técnica, ideas y registro de
-  cambios.
+- [Product vision](./docs/product-vision.md): what it is, who it's for and why.
+- [UI/UX foundations](./docs/ux-foundations.md): the design criteria.
+- [Logbook](./docs/logbook/): roadmap, technical debt, ideas and changelog.
 
-## Licencia
+## License
 
 [MIT](./LICENSE) © Esteban Abanto

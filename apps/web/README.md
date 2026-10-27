@@ -1,162 +1,160 @@
 # Gym Tracker — Web
 
-Interfaz de Gym Tracker. Next.js (App Router) pensado para el celular en
-vertical y una sola mano. Habla con la [API](../api/README.md) a través de un
-proxy en el propio servidor de Next.
+Gym Tracker's interface. Next.js (App Router) built for a phone held upright
+and one hand. It talks to the [API](../api/README.md) through a proxy in the
+Next server itself.
 
 ## Stack
 
-| Pieza              | Versión                                                        |
-| ------------------ | -------------------------------------------------------------- |
-| Runtime            | Node.js 22                                                     |
-| Framework          | Next.js 16 (App Router, salida `standalone`) + React 19        |
-| UI                 | Tailwind CSS 4 · shadcn/ui sobre Radix · iconos `lucide-react` |
-| Interacción        | `@dnd-kit` (reordenar ejercicios) · `sonner` (toasts)          |
-| Auth con Google    | `@react-oauth/google`                                          |
-| Tests              | Vitest + Testing Library sobre jsdom                           |
-| Gestor de paquetes | pnpm (pineado en `package.json`, vía corepack)                 |
+| Piece           | Version                                                    |
+| --------------- | ---------------------------------------------------------- |
+| Runtime         | Node.js 22                                                 |
+| Framework       | Next.js 16 (App Router, `standalone` output) + React 19    |
+| UI              | Tailwind CSS 4 · shadcn/ui on Radix · `lucide-react` icons |
+| Interaction     | `@dnd-kit` (reorder exercises) · `sonner` (toasts)         |
+| Google auth     | `@react-oauth/google`                                      |
+| Tests           | Vitest + Testing Library on jsdom                          |
+| Package manager | pnpm (pinned in `package.json`, via corepack)              |
 
-## Puesta en marcha
+## Getting started
 
 ```bash
 corepack enable
 pnpm install
-cp .env.example .env.local   # opcional si la API está en localhost:4000
+cp .env.example .env.local   # optional if the API is on localhost:4000
 pnpm dev                     # http://localhost:3000
 ```
 
-Necesita la API corriendo (por defecto en `http://localhost:4000`).
+It needs the API running (by default on `http://localhost:4000`).
 
-## Variables de entorno
+## Environment variables
 
-| Variable                       | Cuándo se lee                  | Para qué                                                                               |
-| ------------------------------ | ------------------------------ | -------------------------------------------------------------------------------------- |
-| `API_INTERNAL_URL`             | En el build (`next.config.ts`) | Destino del proxy `/api/*`. Por defecto `http://localhost:4000`. No llega al navegador |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | En el build                    | Se incrusta en el bundle para el botón de Google. Vacía = sin login con Google         |
+| Variable                       | When it's read              | Purpose                                                                                      |
+| ------------------------------ | --------------------------- | -------------------------------------------------------------------------------------------- |
+| `API_INTERNAL_URL`             | At build (`next.config.ts`) | Target of the `/api/*` proxy. Defaults to `http://localhost:4000`. Never reaches the browser |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | At build                    | Embedded in the bundle for the Google button. Empty = no Google login                        |
 
-Las dos se fijan al compilar: cambiarlas exige un build nuevo. En Docker llegan
-como build args.
+Both are fixed at compile time: changing them requires a new build. In Docker
+they arrive as build args.
 
-## Comandos
+## Commands
 
 ```bash
-pnpm dev      # desarrollo
-pnpm build    # build de producción (standalone)
-pnpm start    # sirve el build
+pnpm dev      # development
+pnpm build    # production build (standalone)
+pnpm start    # serves the build
 pnpm lint     # ESLint
-pnpm test     # Vitest, tests junto al código (src/**/*.test.ts[x])
+pnpm test     # Vitest, tests next to the code (src/**/*.test.ts[x])
 pnpm format   # Prettier
-pnpm test:e2e # Playwright (ver abajo)
+pnpm test:e2e # Playwright (see below)
 ```
 
-## Tests end-to-end
+## End-to-end tests
 
-`e2e/` recorre viajes completos en WebKit a tamaño iPhone 13 contra una web ya
-levantada: el stack de `apps/docker/dev` en `http://localhost:3000`, o la URL de
-`E2E_BASE_URL`. Nunca contra prod. Cada corrida registra un usuario desechable
-(`e2e-…@example.test`) y crea su propia rutina por la API.
+`e2e/` runs full journeys in WebKit at iPhone 13 size against a web that's
+already up: the `apps/docker/dev` stack on `http://localhost:3000`, or the URL
+in `E2E_BASE_URL`. Never against prod. Each run registers a throwaway user
+(`e2e-…@example.test`) and creates its own routine through the API.
 
 ```bash
-pnpm exec playwright install webkit   # una vez
+pnpm exec playwright install webkit   # once
 pnpm test:e2e
 ```
 
-Las capturas de los momentos clave quedan en `e2e-screenshots/` para revisar la
-UX; si un test falla, la traza queda en `e2e-results/` y el reporte en
-`e2e-report/`. Las tres carpetas están ignoradas por git.
+Screenshots of the key moments land in `e2e-screenshots/` for reviewing the
+UX; if a test fails, the trace lands in `e2e-results/` and the report in
+`e2e-report/`. All three folders are ignored by git.
 
-## Cómo habla con la API
+## How it talks to the API
 
-- El navegador **solo llama a su propio origen**: `lib/api.ts` pide a `/api/...`
-  y `next.config.ts` reescribe esas rutas hacia `API_INTERNAL_URL`. La URL real
-  de la API nunca aparece en el cliente y no hay CORS que configurar.
-- La sesión es la cookie httpOnly `token` que pone la API; viaja sola en cada
-  petición (`credentials: "include"`).
-- Un `401` en una llamada de datos manda a `/login`. `AuthProvider`
-  (`lib/auth-context.tsx`) consulta `/auth/me` al montar y protege todas las
-  rutas salvo `/login` y `/register`.
-- **Las series no esperan a la red.** En el entrenamiento guiado, cada serie
-  se marca al instante y queda en una cola en `localStorage`
-  (`lib/pendingSets.ts`) con un `clientId` propio; se envía por detrás y, si
-  falla, se reintenta sin duplicarse porque la API reconoce el `clientId`. Al
-  terminar con series pendientes, la app ofrece reintentar o descartar.
-- El resto de escrituras que fallan muestran un toast con "Reintentar"
-  (`lib/notify.ts`).
+- The browser **only calls its own origin**: `lib/api.ts` requests `/api/...`
+  and `next.config.ts` rewrites those routes to `API_INTERNAL_URL`. The API's
+  real URL never shows up in the client and there's no CORS to configure.
+- The session is the httpOnly `token` cookie set by the API; it travels on its
+  own with each request (`credentials: "include"`).
+- A `401` on a data call sends you to `/login`. `AuthProvider`
+  (`lib/auth-context.tsx`) queries `/auth/me` on mount and protects every route
+  except `/login` and `/register`.
+- **Sets don't wait for the network.** In guided training, each set is marked
+  instantly and queued in `localStorage` (`lib/pendingSets.ts`) with its own
+  `clientId`; it's sent in the background and, if it fails, retried without
+  duplicating because the API recognizes the `clientId`. When finishing with
+  pending sets, the app offers to retry or discard.
+- Other failed writes show a toast with "Reintentar" (`lib/notify.ts`).
 
-## Rutas
+## Routes
 
-| Ruta                                                   | Pantalla                                                                                                                                           |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                                                    | **Hoy**: hub para empezar o continuar la rutina, día libre, programa activo y novedades                                                            |
-| `/train`                                               | Entrenamiento guiado: serie a serie, mapa de la sesión, saltar, reemplazar, añadir; racha, historial del ejercicio y tiempo de descanso            |
-| `/log`                                                 | Día libre: registrar una serie suelta                                                                                                              |
-| `/success`                                             | Confirmación tras registrar en día libre                                                                                                           |
-| `/routines`, `/routines/new`, `/routines/[id]`         | Listar, crear y editar rutinas                                                                                                                     |
-| `/programs`, `/programs/new`, `/programs/[id]`         | Listar, crear y editar programas                                                                                                                   |
-| `/explore`                                             | Publicaciones por pestaña (`?tab=programs\|routines\|mine`) y orden (populares, más copiados, recientes); "Mías" deja renombrar y eliminar lo tuyo |
-| `/explore/programs/[slug]`, `/explore/routines/[slug]` | Una publicación: copiarla entera o, en un programa, solo una rutina                                                                                |
-| `/routines/[id]/publish`, `/programs/[id]/publish`     | Publicar una rutina o un programa con su slug                                                                                                      |
-| `/history`                                             | Historial por sesión, cargado por páginas: repetir, editar y borrar series; exportar un rango para tu IA (`.md`)                                   |
-| `/perfil`                                              | Cuenta, idioma de los ejercicios, fecha de nacimiento, medidas corporales y cierre de sesión                                                       |
-| `/login`, `/register`                                  | Acceso con email o Google                                                                                                                          |
+| Route                                                  | Screen                                                                                                                                    |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                                                    | **Hoy** (today): hub to start or continue the routine, free day, active program and news                                                  |
+| `/train`                                               | Guided training: set by set, session map, skip, replace, add; streak, exercise history and rest time                                      |
+| `/log`                                                 | Free day: log a standalone set                                                                                                            |
+| `/success`                                             | Confirmation after logging on a free day                                                                                                  |
+| `/routines`, `/routines/new`, `/routines/[id]`         | List, create and edit routines                                                                                                            |
+| `/programs`, `/programs/new`, `/programs/[id]`         | List, create and edit programs                                                                                                            |
+| `/explore`                                             | Publications by tab (`?tab=programs\|routines\|mine`) and sort (popular, most copied, recent); "Mías" lets you rename and delete your own |
+| `/explore/programs/[slug]`, `/explore/routines/[slug]` | A publication: copy it whole or, in a program, a single routine                                                                           |
+| `/routines/[id]/publish`, `/programs/[id]/publish`     | Publish a routine or a program with its slug                                                                                              |
+| `/history`                                             | History by session, loaded in pages: repeat, edit and delete sets; export a range for your AI (`.md`)                                     |
+| `/perfil`                                              | Account, exercise language, birth date, body measurements and logout                                                                      |
+| `/login`, `/register`                                  | Sign in with email or Google                                                                                                              |
 
-La navegación principal es la barra inferior de cuatro pestañas
+The main navigation is the four-tab bottom bar
 (`components/layout/BottomNav.tsx`): Hoy · Rutinas · Historial · Perfil.
 
-## Arquitectura
+## Architecture
 
 ```
 src/
-├── app/            # rutas (App Router), layout raíz, manifest e iconos
+├── app/            # routes (App Router), root layout, manifest and icons
 ├── components/
-│   ├── ui/         # primitivos de shadcn/ui
-│   ├── base/       # sistema de diseño propio: Button, heading(), Spinner, BottomSheet
+│   ├── ui/         # shadcn/ui primitives
+│   ├── base/       # own design system: Button, heading(), Spinner, BottomSheet
 │   ├── layout/     # PageShell, AppHeader, BottomNav
-│   ├── train/      # flujo de entrenar: SetForm, SaveOverlay, SessionMap, ExerciseProgress…
-│   ├── routines/   # editor de rutinas con drag & drop
-│   ├── programs/   # editor de programas y detalle de explorar
-│   ├── history/    # tarjetas y diálogos del historial, exportar para la IA
-│   ├── profile/    # idioma, fecha de nacimiento y medidas
-│   ├── news/       # botón y panel de novedades
-│   ├── exercises/  # buscador y alta de ejercicios
-│   ├── equipment/  # selector de equipo
-│   └── auth/       # botón de Google, input de contraseña
-├── hooks/          # estado y datos por dominio (useGuidedSession, useWorkoutForm…)
-└── lib/            # cliente HTTP, auth, rutas, tipos y lógica pura
+│   ├── train/      # training flow: SetForm, SaveOverlay, SessionMap, ExerciseProgress…
+│   ├── routines/   # routine editor with drag & drop
+│   ├── programs/   # program editor and explore detail
+│   ├── history/    # history cards and dialogs, export for AI
+│   ├── profile/    # language, birth date and measurements
+│   ├── news/       # news button and panel
+│   ├── exercises/  # exercise search and creation
+│   ├── equipment/  # equipment picker
+│   └── auth/       # Google button, password input
+├── hooks/          # state and data per domain (useGuidedSession, useWorkoutForm…)
+└── lib/            # HTTP client, auth, routes, types and pure logic
 ```
 
-- **Sin librería de estado global.** Cada dominio tiene su hook en `hooks/`, y
-  `lib/api.ts` es el único punto de contacto con la API.
-- **Rutas centralizadas** en `lib/routes.ts`, tanto las de la app como las de la
-  API.
-- **Novedades** en `lib/news.ts`: cada entrada lleva su id, y la API guarda
-  cuáles abrió o vio cada usuario. Cómo agregar una: `docs/news.md`.
-- **Lógica pura en `lib/`**: `blocks.ts` aplana los bloques de una rutina en
-  series planificadas, `units.ts` convierte kg/lb (todo se guarda en kg),
-  `setDisplay.ts` formatea series.
-- **Estado local del navegador** (`localStorage`):
-  - `lib/activeSession.ts`: la sesión guiada en curso y la sesión libre; caducan
-    tras 3 horas sin series.
-  - `lib/pendingSets.ts`: las series registradas que aún no llegaron a la API,
-    con su sesión, la hora en que se hicieron y la zona horaria.
-  - `lib/equipmentMemory.ts`: el último equipo usado por ejercicio.
-- **`components/ui/` no se edita a mano**: se ajusta con Tailwind desde el
-  componente padre o envolviendo el primitivo.
-- **Sistema de diseño en `components/base/` y `globals.css`**: colores de marca
-  (`from-brand-start`, `to-brand-end`) y tamaños pequeños (`text-2xs`…`text-5xs`)
-  son tokens de `@theme`; un estilo que se repite va a `base/` como variante de
-  `cva`, no copiado en cada componente.
+- **No global state library.** Each domain has its hook in `hooks/`, and
+  `lib/api.ts` is the only point of contact with the API.
+- **Centralized routes** in `lib/routes.ts`, both the app's and the API's.
+- **News** in `lib/news.ts`: each entry has its id, and the API stores which
+  ones each user opened or saw. How to add one: `docs/news.md`.
+- **Pure logic in `lib/`**: `blocks.ts` flattens a routine's blocks into
+  planned sets, `units.ts` converts kg/lb (everything is stored in kg),
+  `setDisplay.ts` formats sets.
+- **Local browser state** (`localStorage`):
+  - `lib/activeSession.ts`: the ongoing guided session and the free session;
+    they expire after 3 hours without sets.
+  - `lib/pendingSets.ts`: logged sets that haven't reached the API yet, with
+    their session, the time they were done and the time zone.
+  - `lib/equipmentMemory.ts`: the last equipment used per exercise.
+- **`components/ui/` isn't edited by hand**: it's adjusted with Tailwind from
+  the parent component or by wrapping the primitive.
+- **Design system in `components/base/` and `globals.css`**: brand colors
+  (`from-brand-start`, `to-brand-end`) and small sizes (`text-2xs`…`text-5xs`)
+  are `@theme` tokens; a repeated style goes into `base/` as a `cva` variant,
+  not copied into each component.
 
-## Experiencia de app instalada
+## Installed app experience
 
-`app/manifest.ts` declara `display: standalone` y orientación vertical, así que
-al añadirla a la pantalla de inicio abre a pantalla completa.
-`hooks/useVisualViewport.ts` ajusta el alto al viewport visible de iOS
-(teclado y barras).
+`app/manifest.ts` declares `display: standalone` and portrait orientation, so
+when added to the home screen it opens full screen.
+`hooks/useVisualViewport.ts` fits the height to iOS's visible viewport
+(keyboard and bars).
 
 ## Docker
 
-`Dockerfile` multi-stage sobre `node:22-alpine` que usa la salida `standalone`
-de Next y corre con un usuario sin privilegios. Recibe `API_INTERNAL_URL` y
-`NEXT_PUBLIC_GOOGLE_CLIENT_ID` como build args. La orquestación vive en
+Multi-stage `Dockerfile` on `node:22-alpine` that uses Next's `standalone`
+output and runs as an unprivileged user. It receives `API_INTERNAL_URL` and
+`NEXT_PUBLIC_GOOGLE_CLIENT_ID` as build args. The orchestration lives in
 [`apps/docker/`](../docker/README.md).

@@ -1,24 +1,24 @@
 # Docker
 
-Orquestación del stack con Docker Compose. Hay **dos entornos**, cada uno en su
-carpeta y con **su propia base de datos**:
+Stack orchestration with Docker Compose. There are **two environments**, each
+in its own folder and with **its own database**:
 
-| Carpeta | Para qué | Puertos publicados al host | Volumen de datos |
-|---------|----------|----------------------------|------------------|
-| `prod/` | la app que usas a diario | ninguno (solo sale por el tunnel) | `gym-tracker_postgres_data` |
-| `dev/` | probar cambios antes de pasarlos a prod | `3000` web · `4000` api · `5432` postgres | `gym-tracker-dev_postgres_data_dev` |
+| Folder | Purpose | Ports published to the host | Data volume |
+|--------|---------|-----------------------------|-------------|
+| `prod/` | the app you use every day | none (it only goes out through the tunnel) | `gym-tracker_postgres_data` |
+| `dev/` | trying changes before they reach prod | `3000` web · `4000` api · `5432` postgres | `gym-tracker-dev_postgres_data_dev` |
 
-Los dos levantan lo mismo (`postgres` + `api` + `web` + `cloudflared`) desde el
-mismo código (`apps/api` y `apps/web`). `prod/` vive en el repositorio porque es
-la configuración real con la que corre la app: no hay otro lugar donde se
-despliegue.
+Both bring up the same thing (`postgres` + `api` + `web` + `cloudflared`) from
+the same code (`apps/api` and `apps/web`). `prod/` lives in the repository
+because it's the real configuration the app runs with: there's no other place
+it's deployed from.
 
 ```
 apps/docker/
-├── .env.example      # plantilla ÚNICA: se copia a prod/.env y a dev/.env
-├── .gitignore        # ignora los .env de las dos carpetas y backups/
+├── .env.example      # the ONLY template: copied to prod/.env and dev/.env
+├── .gitignore        # ignores both folders' .env files and backups/
 ├── README.md
-├── backups/          # dumps de prod (ignorada por git)
+├── backups/          # prod dumps (ignored by git)
 ├── scripts/
 │   ├── backup.sh
 │   ├── restore.sh
@@ -29,147 +29,152 @@ apps/docker/
     └── docker-compose.yml
 ```
 
-> Cada `docker compose` se ejecuta **desde su carpeta** (`apps/docker/prod/` o
-> `apps/docker/dev/`): ahí es donde lee su `.env`.
+> Every `docker compose` runs **from its folder** (`apps/docker/prod/` or
+> `apps/docker/dev/`): that's where it reads its `.env`.
 
-## Primer arranque
+## First start
 
-**`.env.example` sirve para los dos entornos.** Prod y dev usan exactamente las
-mismas variables, así que hay una sola plantilla en la raíz de `apps/docker/`.
-Cópiala a la carpeta de cada entorno que vayas a usar y rellena los valores:
+**`.env.example` serves both environments.** Prod and dev use exactly the same
+variables, so there's a single template at the root of `apps/docker/`. Copy it
+into the folder of each environment you'll use and fill in the values:
 
 ```bash
-# desde apps/docker/
+# from apps/docker/
 cp .env.example prod/.env
 cp .env.example dev/.env
 ```
 
 Variables:
 
-| Variable | Para qué |
-|----------|----------|
-| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | credenciales de Postgres |
-| `DATABASE_URL` / `DIRECT_URL` | conexión de la API a Postgres (ambas a la red interna) |
-| `FRONTEND_URL` | origen permitido por CORS en la API |
-| `JWT_SECRET` | secreto con el que se firman las sesiones |
-| `GOOGLE_CLIENT_ID` | Client ID de Google OAuth (API y botón de la web) |
-| `TUNNEL_TOKEN` | token del Cloudflare Tunnel (vacío si usas quick tunnel) |
+| Variable | Purpose |
+|----------|---------|
+| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | Postgres credentials |
+| `DATABASE_URL` / `DIRECT_URL` | the API's connection to Postgres (both on the internal network) |
+| `FRONTEND_URL` | origin allowed by CORS in the API |
+| `JWT_SECRET` | secret the sessions are signed with |
+| `GOOGLE_CLIENT_ID` | Google OAuth Client ID (API and the web's button) |
+| `TUNNEL_TOKEN` | Cloudflare Tunnel token (empty if you use a quick tunnel) |
 
-Qué debe diferir entre `prod/.env` y `dev/.env`:
+What must differ between `prod/.env` and `dev/.env`:
 
-- **`JWT_SECRET`: distinto en cada uno.** Así una sesión de un entorno no sirve en
-  el otro. Al cambiar de entorno tendrás que iniciar sesión; es lo esperado.
-- **`POSTGRES_*`: da igual si coinciden, pero no las cambies después.** Postgres
-  solo las aplica la primera vez que crea el volumen; si luego las cambias en el
-  `.env`, la API ya no podrá conectarse a esa base.
-- **`TUNNEL_TOKEN` y `FRONTEND_URL`: distintos.** Cada entorno sale por su
-  propio tunnel y su propio subdominio (ver [Prod y dev a la vez](#prod-y-dev-a-la-vez)).
-- **`GOOGLE_CLIENT_ID`: puede ser el mismo**, con los dos orígenes autorizados.
+- **`JWT_SECRET`: different in each.** That way a session from one environment
+  doesn't work in the other. When switching environments you'll have to log in;
+  that's expected.
+- **`POSTGRES_*`: it doesn't matter if they match, but don't change them
+  later.** Postgres only applies them the first time it creates the volume; if
+  you change them in the `.env` afterwards, the API can no longer connect to
+  that database.
+- **`TUNNEL_TOKEN` and `FRONTEND_URL`: different.** Each environment goes out
+  through its own tunnel and its own subdomain (see
+  [Prod and dev at the same time](#prod-and-dev-at-the-same-time)).
+- **`GOOGLE_CLIENT_ID`: can be the same**, with both origins authorized.
 
 ## Prod
 
 ```bash
-# desde apps/docker/prod/
-docker compose pull api web          # baja las imágenes publicadas de main
-docker compose up -d                 # levanta con las imágenes que tengas
-docker compose up -d --build         # construye desde tu carpeta de trabajo (ver abajo)
-docker compose logs -f cloudflared   # ver la URL pública del tunnel
-docker compose down                  # detener (conserva los datos)
-docker compose down -v               # detener y BORRAR el volumen de datos
+# from apps/docker/prod/
+docker compose pull api web          # pulls the images published from main
+docker compose up -d                 # starts with the images you have
+docker compose up -d --build         # builds from your working folder (see below)
+docker compose logs -f cloudflared   # see the tunnel's public URL
+docker compose down                  # stop (keeps the data)
+docker compose down -v               # stop and DELETE the data volume
 ```
 
-> **Las imágenes de prod salen de `main`.** En cada push a `main`, el workflow
-> `cd.yml` corre el CI y, si pasa, construye `api` y `web` para ARM64 y las
-> publica en GHCR (`ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}`) con las
-> etiquetas `latest` y el SHA del commit. Un servidor de prod solo necesita
-> `pull` + `up -d`: no construye nada.
+> **Prod images come from `main`.** On every push to `main`, the `cd.yml`
+> workflow runs CI and, if it passes, builds `api` and `web` for ARM64 and
+> publishes them to GHCR (`ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}`)
+> tagged `latest` and with the commit SHA. A prod server only needs `pull` +
+> `up -d`: it builds nothing.
 >
-> **Actualizar un servidor de prod** (lo que hace el CD en cada push a `main`):
+> **Updating a prod server** (what the CD does on every push to `main`):
 >
 > ```bash
-> # desde la raíz del repo
+> # from the repo root
 > git pull --ff-only && sh apps/docker/scripts/update.sh
 > ```
 >
-> `update.sh` hace un backup de la base, baja las imágenes nuevas, recrea los
-> contenedores que cambiaron (la API aplica sus migraciones al arrancar), espera
-> hasta 3 minutos a que `api` y `web` pasen su healthcheck y borra las imágenes
-> viejas. Si no quedan sanas, imprime el estado y los últimos logs y sale con
-> error: el CD queda en rojo y GitHub te avisa por correo. Una migración que
-> falla detiene la API (no arranca sobre un esquema a medias), así que también
-> deja el deploy en rojo. El `git pull` va antes para correr siempre la versión
-> recién bajada del script.
+> `update.sh` backs up the database, pulls the new images, recreates the
+> containers that changed (the API applies its migrations on start), waits up
+> to 3 minutes for `api` and `web` to pass their healthcheck and removes the old
+> images. If they don't end up healthy, it prints the status and the latest logs
+> and exits with an error: the CD goes red and GitHub emails you. A failing
+> migration stops the API (it doesn't start on a half-applied schema), so it
+> also leaves the deploy red. The `git pull` goes first so the freshly pulled
+> version of the script always runs.
 >
-> **Volver a la versión anterior** si un deploy sale en rojo. El SHA bueno es el
-> del último deploy verde (en GitHub Actions o con `git log` en el servidor):
+> **Rolling back to the previous version** if a deploy goes red. The good SHA is
+> the last green deploy's (in GitHub Actions or with `git log` on the server):
 >
-> - **Sin migración de por medio:** `git revert <commit>` y push a `main`; el CD
->   despliega la versión anterior.
-> - **Si falló una migración:** Prisma bloquea las siguientes (`P3009`) hasta
->   limpiar la base, así que el revert solo no basta. En el servidor, desde
->   `apps/docker/prod/`, primero vuelve a las imágenes anteriores y después
->   restaura el backup que `update.sh` hizo justo antes (la línea
->   `backup previo:` del log del CD). El orden importa: `restore.sh` arranca la
->   API al terminar, y debe arrancar la imagen vieja.
+> - **No migration involved:** `git revert <commit>` and push to `main`; the CD
+>   deploys the previous version.
+> - **If a migration failed:** Prisma blocks the following ones (`P3009`) until
+>   the database is cleaned up, so the revert alone isn't enough. On the server,
+>   from `apps/docker/prod/`, first go back to the previous images and then
+>   restore the backup `update.sh` made right before (the `backup previo:` line
+>   in the CD log). The order matters: `restore.sh` starts the API when it
+>   finishes, and it must start the old image.
 >
 >   ```bash
->   sha=<sha-bueno>
+>   sha=<good-sha>
 >   for app in api web; do
 >     docker pull ghcr.io/esteban-abanto-2709/gym-tracker-$app:$sha
 >     docker tag ghcr.io/esteban-abanto-2709/gym-tracker-$app:$sha ghcr.io/esteban-abanto-2709/gym-tracker-$app:latest
 >   done
->   sh ../scripts/restore.sh prod ../backups/gym-prod_<fecha>.sql
+>   sh ../scripts/restore.sh prod ../backups/gym-prod_<date>.sql
 >   docker compose up -d --wait --wait-timeout 180
 >   ```
 >
->   Luego corrige la migración (o revierte el commit) antes del siguiente push.
+>   Then fix the migration (or revert the commit) before the next push.
 >
-> **`--build` construye desde tu carpeta de trabajo** (`apps/api`, `apps/web`) y
-> etiqueta el resultado con esos mismos nombres: sirve para un self-host propio o
-> una máquina sin acceso a GHCR. Ojo: si reconstruyes con un cambio a medias, eso
-> es lo que queda en prod, y la imagen de `web` publicada trae el Client ID de
-> Google del proyecto: con tu propio Client ID, construye tú. Las imágenes de dev
-> llevan otro prefijo (`gym-tracker-dev-*`), así que construir dev nunca pisa las
-> de prod.
+> **`--build` builds from your working folder** (`apps/api`, `apps/web`) and
+> tags the result with those same names: it's for your own self-host or a
+> machine without access to GHCR. Careful: if you rebuild with a half-done
+> change, that's what ends up in prod, and the published `web` image carries the
+> project's Google Client ID: with your own Client ID, build it yourself. Dev
+> images have another prefix (`gym-tracker-dev-*`), so building dev never
+> overwrites prod's.
 
-Servicios:
+Services:
 
-| Servicio | Acceso |
-|----------|--------|
-| `web` | **solo** a través del tunnel (no publica puerto en el host) |
-| `api` | privado en la red `gym-tracker-network` (`http://api:4000`) |
-| `postgres` | privado en la red (`postgres:5432`, **sin** publicar al host) |
-| `cloudflared` | sin puerto; alcanza a `web` por la red interna |
+| Service | Access |
+|---------|--------|
+| `web` | **only** through the tunnel (publishes no port on the host) |
+| `api` | private on the `gym-tracker-network` network (`http://api:4000`) |
+| `postgres` | private on the network (`postgres:5432`, **not** published to the host) |
+| `cloudflared` | no port; reaches `web` over the internal network |
 
-> Por seguridad, prod no publica ningún puerto al host: `web` solo se alcanza por
-> el Cloudflare Tunnel y `postgres` solo desde dentro de la red.
+> For security, prod publishes no port to the host: `web` is only reachable
+> through the Cloudflare Tunnel and `postgres` only from inside the network.
 
 ## Dev
 
-Dev tiene dos usos. Los dos comparten la misma base de datos de dev.
+Dev has two uses. Both share the same dev database.
 
-### Stack completo (probar en el celular)
+### Full stack (testing on the phone)
 
 ```bash
-# desde apps/docker/dev/
+# from apps/docker/dev/
 docker compose up -d --build   # postgres + api + web + cloudflared
-docker compose down            # detener (conserva los datos)
-docker compose down -v         # detener y resetear la BD de dev
+docker compose down            # stop (keeps the data)
+docker compose down -v         # stop and reset the dev DB
 ```
 
-- Todo queda abierto en el host: web en `http://localhost:3000`, API en
-  `http://localhost:4000`, Postgres en `localhost:5432`.
-- La API aplica las migraciones pendientes al arrancar, igual que en prod.
-- Sale a internet por su propio tunnel: ver [Prod y dev a la vez](#prod-y-dev-a-la-vez).
+- Everything is open on the host: web on `http://localhost:3000`, API on
+  `http://localhost:4000`, Postgres on `localhost:5432`.
+- The API applies pending migrations on start, same as in prod.
+- It goes out to the internet through its own tunnel: see
+  [Prod and dev at the same time](#prod-and-dev-at-the-same-time).
 
-### Solo la base (desarrollo nativo con hot reload)
+### Database only (native development with hot reload)
 
 ```bash
-# desde apps/docker/dev/
+# from apps/docker/dev/
 docker compose up -d postgres
 ```
 
-Luego, en tu máquina, apunta `apps/api/.env` a `localhost:5432` y corre la API y la web nativas:
+Then, on your machine, point `apps/api/.env` to `localhost:5432` and run the
+API and the web natively:
 
 ```bash
 # apps/api/
@@ -180,170 +185,179 @@ pnpm run start:dev
 pnpm dev
 ```
 
-> El stack completo de dev ocupa los puertos `3000` y `4000`: no lo tengas
-> levantado mientras corres la API y la web nativas. Es uno u otro.
+> The full dev stack takes ports `3000` and `4000`: don't keep it up while you
+> run the API and the web natively. It's one or the other.
 
-> Prod no publica el `5432`; dev sí. Es a propósito: al desarrollar siempre
-> apuntas a `localhost:5432`, así que si levantaste prod en vez de dev y corres
-> `prisma migrate dev` o la API local, la conexión **falla**: la señal de que
-> levantaste el Docker equivocado.
+> Prod doesn't publish `5432`; dev does. That's on purpose: when developing you
+> always point to `localhost:5432`, so if you brought up prod instead of dev and
+> run `prisma migrate dev` or the local API, the connection **fails**: the sign
+> that you started the wrong Docker.
 
-## Prod y dev a la vez
+## Prod and dev at the same time
 
-Cada entorno tiene **su propio tunnel**: un token y un subdominio para prod
-(`tudominio`) y otros para dev (`dev.tudominio`). Así los dos corren a la vez,
-en la misma máquina o en máquinas distintas, y dev se prueba en el celular sin
-bajar prod.
+Each environment has **its own tunnel**: a token and a subdomain for prod
+(`yourdomain`) and others for dev (`dev.yourdomain`). That way both run at
+once, on the same machine or on different ones, and dev can be tested on the
+phone without taking prod down.
 
-- **Nunca el mismo `TUNNEL_TOKEN` en los dos `.env`.** Con dos conectores en el
-  mismo tunnel, Cloudflare reparte el tráfico al azar entre ambos: series
-  registradas en prod pueden caer en la base de dev sin ningún aviso.
-- **Orígenes separados.** Con dominios distintos, la sesión guiada en curso
-  (`localStorage`) y la cookie de sesión de un entorno no aparecen en el otro.
-- **Google login:** agrega `https://dev.tudominio` a los orígenes autorizados de
-  JavaScript de tu Client ID; el mismo Client ID sirve para los dos.
-- **Todo tiene nombres distintos** (contenedores, volúmenes, redes, imágenes):
-  los dos stacks conviven en la misma máquina sin pisarse. Así se lleva un backup
-  de prod a dev (ver [Restaurar un backup](#restaurar-un-backup-llenar-dev-o-prod)).
+- **Never the same `TUNNEL_TOKEN` in both `.env` files.** With two connectors
+  on the same tunnel, Cloudflare splits traffic randomly between them: sets
+  logged in prod can land in the dev database without any warning.
+- **Separate origins.** With different domains, the ongoing guided session
+  (`localStorage`) and the session cookie from one environment don't show up in
+  the other.
+- **Google login:** add `https://dev.yourdomain` to the authorized JavaScript
+  origins of your Client ID; the same Client ID works for both.
+- **Everything has different names** (containers, volumes, networks, images):
+  both stacks live on the same machine without stepping on each other. That's
+  how a prod backup is brought to dev (see
+  [Restoring a backup](#restoring-a-backup-fill-dev-or-prod)).
 
-### Cloudflare Tunnel (opcional)
+### Cloudflare Tunnel (optional)
 
-El tunnel **solo hace falta si quieres alcanzar tu instancia desde fuera de tu red
-local** (por ejemplo, desde el gimnasio). Sin él la app funciona igual: levantas el
-stack y la usas desde la misma red. Cada quien expone —o no— su propia instancia;
-el repositorio no trae ningún dominio ni token configurado.
+The tunnel **is only needed if you want to reach your instance from outside
+your local network** (for example, from the gym). Without it the app works the
+same: you bring up the stack and use it from the same network. Everyone exposes
+—or doesn't— their own instance; the repository ships no configured domain or
+token.
 
-Hay dos modos, y los dos composes traen el segundo activo:
+There are two modes, and both composes ship with the second one active:
 
-| Modo | `command` | `TUNNEL_TOKEN` | URL |
+| Mode | `command` | `TUNNEL_TOKEN` | URL |
 |------|-----------|----------------|-----|
-| **Quick tunnel** | `tunnel --no-autoupdate --url http://web:3000` | no hace falta | aleatoria de `trycloudflare.com`, **cambia en cada reinicio** |
-| **Named tunnel** | `tunnel --no-autoupdate run` | obligatorio | fija, sobre tu propio dominio |
+| **Quick tunnel** | `tunnel --no-autoupdate --url http://web:3000` | not needed | random `trycloudflare.com` one, **changes on every restart** |
+| **Named tunnel** | `tunnel --no-autoupdate run` | required | fixed, on your own domain |
 
-El **quick tunnel** es el camino de cero configuración: no pide cuenta ni dominio,
-y la URL aparece en los logs (`docker compose logs -f cloudflared`). Sirve para
-probar. En `prod/docker-compose.yml` su línea está comentada justo debajo de la activa.
+The **quick tunnel** is the zero-configuration path: it asks for no account or
+domain, and the URL shows up in the logs (`docker compose logs -f cloudflared`).
+It's for trying things out. In `prod/docker-compose.yml` its line is commented
+right below the active one.
 
-El **named tunnel** es el que conviene si vas a usar la app a diario: necesitas una
-cuenta de Cloudflare y un dominio delegado a ella. Creas el tunnel desde el panel
-de Cloudflare (sección Tunnels), le agregas una ruta (*published application*)
-de tu dominio a `http://web:3000`, y pegas el token que te da en `TUNNEL_TOKEN`
-dentro de tu `.env`. Para dev, repite con un segundo tunnel y otro subdominio
-(ver [Prod y dev a la vez](#prod-y-dev-a-la-vez)).
+The **named tunnel** is the one to use if you'll use the app every day: you need
+a Cloudflare account and a domain delegated to it. You create the tunnel from
+the Cloudflare dashboard (Tunnels section), add a route (*published
+application*) from your domain to `http://web:3000`, and paste the token it
+gives you into `TUNNEL_TOKEN` in your `.env`. For dev, repeat with a second
+tunnel and another subdomain (see
+[Prod and dev at the same time](#prod-and-dev-at-the-same-time)).
 
-> Los `.env` están en `.gitignore`: tu token y tu dominio **nunca** salen de tu
-> máquina. Si no quieres usar tunnel, deja `TUNNEL_TOKEN` vacío y omite el
-> servicio con `docker compose up -d postgres api web`.
+> The `.env` files are in `.gitignore`: your token and your domain **never**
+> leave your machine. If you don't want a tunnel, leave `TUNNEL_TOKEN` empty and
+> skip the service with `docker compose up -d postgres api web`.
 
-## Backups de prod
+## Prod backups
 
-Genera un dump **completo** de la BD de prod en un solo comando: schema, datos y
-la tabla `_prisma_migrations`, sin lista de tablas. Lo que exista en la base
-entra solo, así que una migración nunca obliga a tocar el script. El archivo cae
-en `apps/docker/backups/` (ignorada por git) con nombre
-`gym-prod_YYYY-MM-DD_HHmmss.sql` (hora UTC).
+Generates a **full** dump of the prod DB in a single command: schema, data and
+the `_prisma_migrations` table, with no table list. Whatever exists in the
+database goes in on its own, so a migration never forces a change to the
+script. The file lands in `apps/docker/backups/` (ignored by git) named
+`gym-prod_YYYY-MM-DD_HHmmss.sql` (UTC time).
 
 ```bash
-# desde apps/docker/, en Linux, mac o Git Bash en Windows
+# from apps/docker/, on Linux, mac or Git Bash on Windows
 sh scripts/backup.sh
-sh scripts/backup.sh /otra/carpeta   # guardar en otra carpeta
-CONTAINER=gym-tracker-dev-sql sh scripts/backup.sh   # dumpear dev (pruebas)
+sh scripts/backup.sh /another/folder   # save to another folder
+CONTAINER=gym-tracker-dev-sql sh scripts/backup.sh   # dump dev (testing)
 ```
 
-Corre `pg_dump` dentro del contenedor `gym-tracker-sql` (misma versión que el
-servidor, sin líos de compatibilidad) con las credenciales de las variables del
-propio contenedor, así que no lee ningún `.env` ni necesita `pg_dump` en el host.
-Escribe primero un `.tmp` y lo renombra al terminar: un dump fallido nunca deja un
-archivo que parezca bueno. Al terminar borra de esa carpeta los
-`gym-prod_*.sql` de más de 14 días, para que los dumps no llenen el disco del
-servidor: la copia larga es la que se lleva fuera de la máquina. En stdout
-imprime solo la ruta del archivo, para
-encadenarlo con lo que lo copie fuera de la máquina:
+It runs `pg_dump` inside the `gym-tracker-sql` container (same version as the
+server, no compatibility trouble) with the credentials from the container's own
+variables, so it reads no `.env` and doesn't need `pg_dump` on the host. It
+writes a `.tmp` first and renames it when done: a failed dump never leaves a
+file that looks good. When done it removes from that folder the `gym-prod_*.sql`
+files older than 14 days, so dumps don't fill the server's disk: the long-term
+copy is the one taken off the machine. On stdout it prints only the file's path,
+to chain it with whatever copies it off the machine:
 
 ```bash
-f=$(sh scripts/backup.sh) && echo "backup en $f"
+f=$(sh scripts/backup.sh) && echo "backup at $f"
 ```
 
-**Requisito:** Docker corriendo y el contenedor `gym-tracker-sql` levantado. Basta
-con la base: `docker compose up -d postgres` en `prod/`.
+**Requirement:** Docker running and the `gym-tracker-sql` container up. The
+database alone is enough: `docker compose up -d postgres` in `prod/`.
 
-**En Windows** necesita un `sh`: el de Git Bash sirve. El repo fuerza finales de
-línea LF en los `.sh` (`.gitattributes`); con CRLF, `sh` no puede leerlo.
+**On Windows** it needs an `sh`: Git Bash's works. The repo forces LF line
+endings on `.sh` files (`.gitattributes`); with CRLF, `sh` can't read them.
 
-**Para hacerlo diario** en un servidor, una línea en el `crontab` del usuario que
-corre Docker. `cron` arranca con un `PATH` mínimo: si el comando que sube el
-archivo no vive en `/usr/bin` o `/bin`, decláralo en la cabecera del crontab.
+**To run it daily** on a server, one line in the `crontab` of the user that
+runs Docker. `cron` starts with a minimal `PATH`: if the command that uploads
+the file doesn't live in `/usr/bin` or `/bin`, declare it in the crontab's
+header.
 
-## Restaurar un backup (llenar dev o prod)
+## Restoring a backup (fill dev or prod)
 
-Deja la BD que elijas **exactamente** como estaba al hacer el backup: borra el
-schema `public` entero (tablas, datos, tipos y cualquier tabla que el backup no
-traiga) y carga el dump. Es marcha atrás **total**, no quirúrgica.
+Leaves the DB you choose **exactly** as it was when the backup was taken: it
+drops the whole `public` schema (tables, data, types and any table the backup
+doesn't include) and loads the dump. It's a **full** rollback, not a surgical
+one.
 
 ```bash
-# desde apps/docker/, en Linux, mac o Git Bash en Windows
-sh scripts/restore.sh dev        # llena dev con el backup más reciente de backups/
-sh scripts/restore.sh prod       # ídem, sobre prod
-sh scripts/restore.sh dev /otra/carpeta/gym-prod_2026-06-14_120000.sql   # archivo concreto
+# from apps/docker/, on Linux, mac or Git Bash on Windows
+sh scripts/restore.sh dev        # fills dev with the latest backup in backups/
+sh scripts/restore.sh prod       # same, on prod
+sh scripts/restore.sh dev /another/folder/gym-prod_2026-06-14_120000.sql   # a specific file
 ```
 
-- Mapea el destino a sus contenedores: `dev` → `gym-tracker-dev-sql` y
-  `gym-tracker-dev-api`, `prod` → `gym-tracker-sql` y `gym-tracker-api`. Como
-  `backup.sh`, toma las credenciales del propio contenedor, sin leer ningún `.env`.
-- Si no pasas archivo, toma el `gym-prod_*.sql` más reciente de `apps/docker/backups/`.
-- **Pide confirmación** (hay que escribir `si`) porque borra la base actual.
-- **Detiene la API** mientras restaura y la vuelve a arrancar al terminar (también
-  si falla). Al arrancar, la API corre `prisma migrate deploy`: si el backup es de
-  antes de alguna migración, se aplica sola sobre los datos restaurados. Si la API
-  estaba apagada, queda apagada y las migraciones se aplican cuando la levantes.
-- Va en **una sola transacción**: si cualquier línea del backup falla, se deshace
-  todo, también el borrado, y la base queda como estaba.
-- Solo va **hacia adelante**: un backup hecho con migraciones que el código actual
-  no tiene no se puede usar con ese código.
+- Maps the target to its containers: `dev` → `gym-tracker-dev-sql` and
+  `gym-tracker-dev-api`, `prod` → `gym-tracker-sql` and `gym-tracker-api`. Like
+  `backup.sh`, it takes the credentials from the container itself, without
+  reading any `.env`.
+- If you don't pass a file, it takes the latest `gym-prod_*.sql` from
+  `apps/docker/backups/`.
+- **Asks for confirmation** (you have to type `si`) because it deletes the
+  current database.
+- **Stops the API** while restoring and starts it again when done (also if it
+  fails). On start, the API runs `prisma migrate deploy`: if the backup predates
+  some migration, it's applied on its own over the restored data. If the API was
+  off, it stays off and the migrations are applied when you bring it up.
+- Runs in **a single transaction**: if any line of the backup fails, everything
+  is rolled back, the drop included, and the database stays as it was.
+- Only goes **forward**: a backup taken with migrations the current code doesn't
+  have can't be used with that code.
 
-> El restore corre por `docker exec` (no depende de puertos publicados), así que
-> funciona sobre el contenedor que tengas levantado, sea dev o prod.
+> The restore runs through `docker exec` (it doesn't depend on published ports),
+> so it works on whichever container you have up, dev or prod.
 
-### Backups de solo datos (anteriores a TD-084)
+### Data-only backups (before TD-084)
 
-Hasta TD-084 el backup era de **solo datos** de una lista fija de tablas. Esos
-archivos no traen `CREATE TABLE` y `restore.sh` los rechaza. Para usar uno, sobre
-una BD con todas las migraciones aplicadas, corre la versión anterior del script:
+Until TD-084 the backup was **data only** for a fixed list of tables. Those
+files have no `CREATE TABLE` and `restore.sh` rejects them. To use one, on a DB
+with every migration applied, run the previous version of the script:
 
 ```bash
-git show 5a2be58:apps/docker/scripts/restore.sh > /tmp/restore-datos.sh
-sh /tmp/restore-datos.sh dev backups/gym-prod_2026-10-07_230155.sql
+git show 5a2be58:apps/docker/scripts/restore.sh > /tmp/restore-data.sh
+sh /tmp/restore-data.sh dev backups/gym-prod_2026-10-07_230155.sql
 ```
 
-Los backups anteriores a quitar columnas (RM-031, WL-012) necesitan además los
-pasos manuales que documenta `git show 5a2be58:apps/docker/README.md`.
+Backups from before columns were removed (RM-031, WL-012) also need the manual
+steps documented in `git show 5a2be58:apps/docker/README.md`.
 
-### Llevar los datos reales de prod a dev
+### Bringing prod's real data to dev
 
-Para probar en dev con tus datos de verdad sin arriesgarlos, las dos bases pueden
-estar arriba a la vez (el tunnel no hace falta):
+To test in dev with your real data without risking it, both databases can be
+up at once (the tunnel isn't needed):
 
 ```bash
-# desde apps/docker/, en Git Bash
+# from apps/docker/, in Git Bash
 (cd prod && docker compose up -d postgres)
 (cd dev && docker compose up -d postgres)
 sh scripts/backup.sh
 sh scripts/restore.sh dev
 ```
 
-Si dev va atrasada respecto a prod no importa: el restore la deja igual que prod.
-Si va adelantada (migraciones nuevas aún sin desplegar), la API de dev las aplica
-al arrancar sobre los datos de prod.
+If dev is behind prod it doesn't matter: the restore leaves it the same as
+prod. If it's ahead (new migrations not yet deployed), the dev API applies them
+on start over prod's data.
 
-## Resetear la base de datos
+## Resetting the database
 
-El `-v` elimina el volumen y con él **todos los datos**. Se ejecuta en la carpeta
-del entorno que quieras resetear:
+`-v` removes the volume and with it **all the data**. Run it in the folder of
+the environment you want to reset:
 
 ```bash
-# desde apps/docker/prod/  (BORRA tus datos reales)
+# from apps/docker/prod/  (DELETES your real data)
 docker compose down -v
 
-# desde apps/docker/dev/
+# from apps/docker/dev/
 docker compose down -v
 ```
