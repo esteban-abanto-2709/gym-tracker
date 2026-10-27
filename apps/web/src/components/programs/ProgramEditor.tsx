@@ -77,8 +77,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
         }
         await refetchAll(queryClient, programsQuery);
         router.push(routes.programs());
-      } catch (e) {
-        console.error("Error saving program:", e);
+      } catch {
         setSaving(false);
         notifyError("No se pudo guardar el programa", run);
       }
@@ -99,8 +98,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
       await api.delete(routes.api.programs.delete(programId));
       await refetchAll(queryClient, programsQuery);
       router.push(routes.programs());
-    } catch (e) {
-      console.error("Error deleting program:", e);
+    } catch {
       setSaving(false);
       notifyError("No se pudo eliminar el programa");
     }

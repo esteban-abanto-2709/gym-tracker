@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { routes } from "@/lib/routes";
-import type { Exercise, Routine, RoutineItem } from "@/lib/types";
+import { routineQuery } from "@/lib/queries";
+import type { Exercise, RoutineItem } from "@/lib/types";
 import {
   type ActiveSession,
   type ActiveExtra,
@@ -81,8 +82,6 @@ export function useGuidedSession() {
   const [session, setSession] = useState<ActiveSession | null>(
     readActiveSession,
   );
-  const [routine, setRoutine] = useState<Routine | null>(null);
-  const [loading, setLoading] = useState(session !== null);
   const [logging, setLogging] = useState(false);
   const [phase, setPhase] = useState<Phase>("logging");
   const [flash, setFlash] = useState<SaveFlash | null>(null);
@@ -97,17 +96,15 @@ export function useGuidedSession() {
     return () => window.removeEventListener("online", sync);
   }, []);
 
-  const routineId = session?.routineId;
+  const routineId = session?.routineId ?? "";
+  const source = useQuery(routineQuery(routineId));
+  const routine = source.data ?? null;
+  const loading = session !== null && routineId !== "" && source.isPending;
+  // Routine gone (deleted / 404): drop the zombie session instead of
+  // stranding the user in a loop (see TD-013).
   useEffect(() => {
-    if (!routineId) return;
-    api
-      .get<Routine>(routes.api.routines.get(routineId))
-      .then((r) => setRoutine(r))
-      // Routine gone (deleted / 404): drop the zombie session instead of
-      // stranding the user in a loop (see TD-013).
-      .catch(() => clearActiveSession())
-      .finally(() => setLoading(false));
-  }, [routineId]);
+    if (source.isError) clearActiveSession();
+  }, [source.isError]);
 
   const persist = useCallback((next: ActiveSession) => {
     setSession(next);

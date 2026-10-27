@@ -156,8 +156,7 @@ export function useWorkoutHistory() {
             : prev,
         );
         setEditingWorkout(null);
-      } catch (e) {
-        console.error(e);
+      } catch {
         notifyError("No se pudieron guardar los cambios", run);
       } finally {
         setActionLoading(false);
@@ -201,8 +200,7 @@ export function useWorkoutHistory() {
             : prev,
         );
         setDeletingWorkout(null);
-      } catch (e) {
-        console.error(e);
+      } catch {
         notifyError("No se pudo borrar el set", run);
       } finally {
         setActionLoading(false);

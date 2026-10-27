@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGuidedSession } from "./useGuidedSession";
 import { api } from "@/lib/api";
+import { queryWrapper } from "@/lib/queryTesting";
+import { routineQuery } from "@/lib/queries";
 import { readActiveSession, type ActiveSession } from "@/lib/activeSession";
 import { addPendingSets, readPendingSets } from "@/lib/pendingSets";
 import type { Routine } from "@/lib/types";
@@ -10,7 +12,8 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
   api: { get: vi.fn(), post: vi.fn() },
 }));
 
@@ -54,7 +57,7 @@ const saveSession = (overrides: Partial<ActiveSession> = {}) =>
 
 describe("useGuidedSession", () => {
   it("finishes loading without a routine when there is no active session", async () => {
-    const { result } = renderHook(() => useGuidedSession());
+    const { result } = renderHook(() => useGuidedSession(), queryWrapper());
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.session).toBeNull();
@@ -62,11 +65,23 @@ describe("useGuidedSession", () => {
     expect(api.get).not.toHaveBeenCalled();
   });
 
+  it("starts at once from a routine another screen already loaded", async () => {
+    saveSession();
+    const shared = queryWrapper();
+    shared.client.setQueryData(routineQuery("r-upper").queryKey, routine);
+
+    const { result } = renderHook(() => useGuidedSession(), shared);
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.currentItem?.exerciseId).toBe("ex-row");
+    expect(api.get).not.toHaveBeenCalledWith("/routines/r-upper");
+  });
+
   it("resumes the saved session where it was left", async () => {
     saveSession();
     vi.mocked(api.get).mockResolvedValue(routine);
 
-    const { result } = renderHook(() => useGuidedSession());
+    const { result } = renderHook(() => useGuidedSession(), queryWrapper());
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(api.get).toHaveBeenCalledWith("/routines/r-upper");
@@ -85,7 +100,7 @@ describe("useGuidedSession", () => {
     vi.mocked(api.get).mockResolvedValue(routine);
     vi.mocked(api.post).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useGuidedSession());
+    const { result } = renderHook(() => useGuidedSession(), queryWrapper());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     const before = Date.now();
@@ -119,7 +134,7 @@ describe("useGuidedSession", () => {
     const nextFor = async (r: Routine, overrides: Partial<ActiveSession>) => {
       saveSession(overrides);
       vi.mocked(api.get).mockResolvedValue(r);
-      const { result } = renderHook(() => useGuidedSession());
+      const { result } = renderHook(() => useGuidedSession(), queryWrapper());
       await waitFor(() => expect(result.current.loading).toBe(false));
       return result.current.nextItem?.exerciseId ?? null;
     };
@@ -150,7 +165,7 @@ describe("useGuidedSession", () => {
         skipped: { 2: true },
       });
       vi.mocked(api.get).mockResolvedValue(legs);
-      const { result } = renderHook(() => useGuidedSession());
+      const { result } = renderHook(() => useGuidedSession(), queryWrapper());
       await waitFor(() => expect(result.current.loading).toBe(false));
       expect(result.current.remainingCount).toBe(1);
     });
@@ -198,7 +213,7 @@ describe("useGuidedSession", () => {
         saveSession(overrides);
         vi.mocked(api.get).mockResolvedValue(r);
         vi.mocked(api.post).mockResolvedValue(undefined);
-        const hook = renderHook(() => useGuidedSession());
+        const hook = renderHook(() => useGuidedSession(), queryWrapper());
         await waitFor(() => expect(hook.result.current.loading).toBe(false));
         return hook.result;
       };
@@ -360,7 +375,7 @@ describe("useGuidedSession", () => {
   it("does not resume a session idle for more than 3 hours", async () => {
     saveSession({ startedAt: "2020-01-01T10:00:00Z" });
 
-    const { result } = renderHook(() => useGuidedSession());
+    const { result } = renderHook(() => useGuidedSession(), queryWrapper());
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.session).toBeNull();
@@ -371,7 +386,7 @@ describe("useGuidedSession", () => {
     saveSession();
     vi.mocked(api.get).mockRejectedValue(new Error("Not found"));
 
-    const { result } = renderHook(() => useGuidedSession());
+    const { result } = renderHook(() => useGuidedSession(), queryWrapper());
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.routine).toBeNull();

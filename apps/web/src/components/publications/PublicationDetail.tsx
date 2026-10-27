@@ -8,7 +8,12 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import { programsQuery, refetchAll, routinesQuery } from "@/lib/queries";
+import {
+  exploreKey,
+  programsQuery,
+  refetchAll,
+  routinesQuery,
+} from "@/lib/queries";
 import { useAuth } from "@/lib/auth-context";
 import type {
   CopiedProgram,
@@ -58,7 +63,7 @@ export function PublicationDetail({
       if (isProgram) {
         const { activated } = await api.post<CopiedProgram>(endpoint, {});
         await refetchAll(queryClient, routinesQuery, programsQuery);
-        queryClient.invalidateQueries({ queryKey: ["explore"] });
+        queryClient.invalidateQueries({ queryKey: exploreKey });
         toast.success(
           activated ? "Programa copiado y activado" : "Programa copiado",
         );
@@ -66,12 +71,11 @@ export function PublicationDetail({
       } else {
         await api.post<CopiedRoutine>(endpoint, {});
         await refetchAll(queryClient, routinesQuery);
-        queryClient.invalidateQueries({ queryKey: ["explore"] });
+        queryClient.invalidateQueries({ queryKey: exploreKey });
         toast.success("Rutina copiada");
         router.push(routes.routines());
       }
-    } catch (e) {
-      console.error("Error copying publication:", e);
+    } catch {
       setCopying(false);
       notifyError("No se pudo copiar", copyAll);
     }
@@ -84,11 +88,10 @@ export function PublicationDetail({
         routinePosition,
       });
       await refetchAll(queryClient, routinesQuery);
-      queryClient.invalidateQueries({ queryKey: ["explore"] });
+      queryClient.invalidateQueries({ queryKey: exploreKey });
       toast.success("Rutina copiada");
       router.push(routes.routines());
-    } catch (e) {
-      console.error("Error copying routine:", e);
+    } catch {
       setCopying(false);
       notifyError("No se pudo copiar la rutina", () =>
         copyOne(routinePosition),

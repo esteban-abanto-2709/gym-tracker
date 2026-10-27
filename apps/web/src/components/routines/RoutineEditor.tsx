@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -25,8 +25,13 @@ import {
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import { programsQuery, refetchAll, routinesQuery } from "@/lib/queries";
-import type { Exercise, Routine, RoutineBlock } from "@/lib/types";
+import {
+  programsQuery,
+  refetchAll,
+  routineQuery,
+  routinesQuery,
+} from "@/lib/queries";
+import type { Exercise, RoutineBlock } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
 import { useRoutines } from "@/hooks/useRoutines";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
@@ -147,7 +152,9 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
 
   const [name, setName] = useState("");
   const [items, setItems] = useState<DraftItem[]>([]);
-  const [loadingRoutine, setLoadingRoutine] = useState(isEdit);
+  const source = useQuery(routineQuery(routineId ?? ""));
+  const loadingRoutine = isEdit && source.isPending;
+  const [seeded, setSeeded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -158,30 +165,18 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
     }),
   );
 
-  // Load routine in edit mode
-  useEffect(() => {
-    if (!routineId) return;
-    const fetchRoutine = async () => {
-      try {
-        const data = await api.get<Routine>(routes.api.routines.get(routineId));
-        setName(data.name);
-        setItems(
-          data.items.map((item) => ({
-            key: newKey(),
-            exerciseId: item.exerciseId,
-            exerciseName: item.exercise.name,
-            blocks: item.blocks.map(toDraftBlock),
-          })),
-        );
-      } catch (e) {
-        console.error("Error fetching routine:", e);
-        notifyError("No se pudo cargar la rutina");
-      } finally {
-        setLoadingRoutine(false);
-      }
-    };
-    fetchRoutine();
-  }, [routineId]);
+  if (!seeded && source.data) {
+    setName(source.data.name);
+    setItems(
+      source.data.items.map((item) => ({
+        key: newKey(),
+        exerciseId: item.exerciseId,
+        exerciseName: item.exercise.name,
+        blocks: item.blocks.map(toDraftBlock),
+      })),
+    );
+    setSeeded(true);
+  }
 
   const addItem = (exercise: Exercise) => {
     setItems((prev) => [
@@ -283,8 +278,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         }
         await refetchAll(queryClient, routinesQuery, programsQuery);
         router.push(routes.routines());
-      } catch (e) {
-        console.error("Error saving routine:", e);
+      } catch {
         setSaving(false);
         notifyError("No se pudo guardar la rutina", run);
       }

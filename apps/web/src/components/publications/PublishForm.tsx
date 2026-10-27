@@ -2,18 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
 import { getQueryClient } from "@/lib/query";
+import { exploreKey, programQuery, routineQuery } from "@/lib/queries";
 import { SLUG_MAX, isValidSlug, slugify } from "@/lib/slug";
-import type {
-  Program,
-  Publication,
-  PublicationKind,
-  Routine,
-} from "@/lib/types";
+import type { Publication, PublicationKind, Routine } from "@/lib/types";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { RoutineSnapshotList } from "./RoutineSnapshotList";
@@ -31,6 +28,8 @@ interface PublishFormProps {
   sourceId: string;
 }
 
+const NO_ROUTINES: Routine[] = [];
+
 export function PublishForm({ kind, sourceId }: PublishFormProps) {
   const router = useRouter();
   const isRoutine = kind === "ROUTINE";
@@ -38,48 +37,34 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
     ? routes.routineEdit(sourceId)
     : routes.programEdit(sourceId);
 
-  const [name, setName] = useState("");
-  const [routines, setRoutines] = useState<Routine[]>([]);
-  const [loading, setLoading] = useState(true);
+  const routineSource = useQuery({
+    ...routineQuery(sourceId),
+    enabled: isRoutine,
+  });
+  const programSource = useQuery({
+    ...programQuery(sourceId),
+    enabled: !isRoutine,
+  });
+  const source = isRoutine ? routineSource : programSource;
+  const name = source.data?.name ?? "";
+  const routines = isRoutine
+    ? routineSource.data
+      ? [routineSource.data]
+      : NO_ROUTINES
+    : (programSource.data?.routines ?? NO_ROUTINES);
+  const loading = source.isPending;
   const [slug, setSlug] = useState("");
+  const [seeded, setSeeded] = useState(false);
+  if (!seeded && source.data) {
+    setSlug(slugify(source.data.name));
+    setSeeded(true);
+  }
   const [checked, setChecked] = useState<{
     slug: string;
     available: boolean;
   } | null>(null);
   const [description, setDescription] = useState("");
   const [publishing, setPublishing] = useState(false);
-
-  useEffect(() => {
-    const fetchSource = async () => {
-      try {
-        if (isRoutine) {
-          const routine = await api.get<Routine>(
-            routes.api.routines.get(sourceId),
-          );
-          setName(routine.name);
-          setRoutines([routine]);
-          setSlug(slugify(routine.name));
-        } else {
-          const program = await api.get<Program>(
-            routes.api.programs.get(sourceId),
-          );
-          setName(program.name);
-          setRoutines(program.routines);
-          setSlug(slugify(program.name));
-        }
-      } catch (e) {
-        console.error("Error fetching publish source:", e);
-        notifyError(
-          isRoutine
-            ? "No se pudo cargar la rutina"
-            : "No se pudo cargar el programa",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSource();
-  }, [isRoutine, sourceId]);
 
   useEffect(() => {
     if (!isValidSlug(slug)) return;
@@ -121,11 +106,10 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
         slug,
         description: description.trim() || undefined,
       });
-      getQueryClient().invalidateQueries({ queryKey: ["explore"] });
+      getQueryClient().invalidateQueries({ queryKey: exploreKey });
       toast.success(isRoutine ? "Rutina publicada" : "Programa publicado");
       router.push(backHref);
     } catch (e) {
-      console.error("Error publishing:", e);
       setPublishing(false);
       if (e instanceof Error && e.message === "Slug already taken") {
         setChecked({ slug, available: false });

@@ -38,11 +38,27 @@ export const routinesQuery = queryOptions({
   meta: { errorMessage: "No se pudieron cargar tus rutinas" },
 });
 
+export const routineQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["routines", id],
+    queryFn: () => api.get<Routine>(routes.api.routines.get(id)),
+    enabled: id !== "",
+    meta: { errorMessage: "No se pudo cargar la rutina" },
+  });
+
 export const programsQuery = queryOptions({
   queryKey: ["programs"],
   queryFn: () => api.get<Program[]>(routes.api.programs.list()),
   meta: { errorMessage: "No se pudieron cargar tus programas" },
 });
+
+export const programQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["programs", id],
+    queryFn: () => api.get<Program>(routes.api.programs.get(id)),
+    enabled: id !== "",
+    meta: { errorMessage: "No se pudo cargar el programa" },
+  });
 
 export const activeProgramQuery = queryOptions({
   queryKey: ["programs", "active"],
@@ -56,16 +72,18 @@ export const measurementsQuery = queryOptions({
   meta: { errorMessage: "No se pudieron cargar tus medidas" },
 });
 
+export const exploreKey = ["explore"] as const;
+
 export const exploreQuery = (kind: PublicationKind, sort: ExploreSort) =>
   queryOptions({
-    queryKey: ["explore", kind, sort],
+    queryKey: [...exploreKey, kind, sort],
     queryFn: () =>
       api.get<ExploreListItem[]>(routes.api.explore.list(kind, sort)),
     meta: { errorMessage: "No se pudieron cargar las publicaciones" },
   });
 
 export const myPublicationsQuery = queryOptions({
-  queryKey: ["explore", "mine"],
+  queryKey: [...exploreKey, "mine"],
   queryFn: () => api.get<ExploreListItem[]>(routes.api.publications.mine()),
   meta: { errorMessage: "No se pudieron cargar tus publicaciones" },
 });

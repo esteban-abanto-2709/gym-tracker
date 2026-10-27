@@ -24,8 +24,7 @@ export function usePrograms() {
       });
       try {
         await api.put(routes.api.programs.active(), { programId });
-      } catch (e) {
-        console.error("Error setting active program:", e);
+      } catch {
         queryClient.setQueryData(queryKey, previous);
         notifyError("No se pudo cambiar el programa activo");
       } finally {

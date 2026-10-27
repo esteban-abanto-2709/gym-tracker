@@ -24,8 +24,7 @@ export function useRoutines() {
       );
       refetchAll(queryClient, programsQuery);
       setDeletingRoutine(null);
-    } catch (e) {
-      console.error(e);
+    } catch {
       notifyError("No se pudo eliminar la rutina");
     } finally {
       setActionLoading(false);

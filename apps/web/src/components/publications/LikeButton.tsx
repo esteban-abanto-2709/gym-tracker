@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
 import { getQueryClient } from "@/lib/query";
+import { exploreKey } from "@/lib/queries";
 import type { PublicationKind } from "@/lib/types";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,9 +57,8 @@ export function LikeButton({
           ? await api.put<LikeState>(endpoint)
           : await api.delete<LikeState>(endpoint),
       );
-      getQueryClient().invalidateQueries({ queryKey: ["explore"] });
-    } catch (e) {
-      console.error("Error toggling like:", e);
+      getQueryClient().invalidateQueries({ queryKey: exploreKey });
+    } catch {
       setState(previous);
       notifyError("No se pudo guardar tu me gusta");
     } finally {

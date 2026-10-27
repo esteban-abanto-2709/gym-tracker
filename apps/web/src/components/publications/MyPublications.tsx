@@ -36,8 +36,7 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
         ),
       );
       setRenaming(null);
-    } catch (e) {
-      console.error("Error renaming publication:", e);
+    } catch {
       notifyError("No se pudo cambiar el nombre");
     } finally {
       setBusy(false);
@@ -52,8 +51,7 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
       setDeleting(null);
       onChange(items.filter((p) => p.id !== deleting.id));
       toast.success("Publicación eliminada");
-    } catch (e) {
-      console.error("Error deleting publication:", e);
+    } catch {
       notifyError("No se pudo eliminar la publicación");
     } finally {
       setBusy(false);
