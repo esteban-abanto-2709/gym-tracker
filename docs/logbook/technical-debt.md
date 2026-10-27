@@ -14,12 +14,19 @@ and is deleted from here.
 
 ---
 
-## [TD-147] A set the API rejects for good blocks the offline queue
+## [TD-149] A set the API rejects for good still blocks the offline queue
 - **Location:** `apps/web/src/lib/pendingSets.ts:64`
+- **Risk:** 4/10
+- **Problem:** since TD-147 a deleted routine or equipment no longer blocks the queue, but `drain` still stops at the first failed set whatever the error, so a set the API can never accept (its exercise deleted from the catalog, or a body an older app version saved after the set DTO changed) keeps every set behind it from being sent. The only way out is discarding the whole queue.
+- **Future impact:** one bad set can hold back a whole session of real sets.
+- **Suggestion:** two rules before code: change the set DTO only with expand/contract, and never delete a catalog exercise (hide or redirect it when merging).
+- **Date:** 2026-10-27 · **Status:** Open
+
+## [TD-148] Pending sets are sent with whichever account is signed in
+- **Location:** `apps/web/src/lib/pendingSets.ts:5`
 - **Risk:** 6/10
-- **Problem:** `drain` stops at the first failed post and treats every error the same, so a set the API will never accept (a 4xx such as a deleted exercise or a failed validation) stays at the head of the queue and every set behind it is never sent. The only way out is discarding the whole queue.
-- **Future impact:** one bad set can keep a whole session's real sets from reaching the server, and the user can only drop all of them, losing them.
-- **Suggestion:** tell permanent rejections (4xx) apart from network failures and set those aside on their own instead of retrying them at the head.
+- **Problem:** the offline queue lives in `localStorage` with no link to the account that logged the sets, and signing out does not clear it. If someone signs out and another person signs in on the same device, the first one's pending sets are posted under the second account.
+- **Future impact:** real sets end up in the wrong user's history, mixing two people's data.
 - **Date:** 2026-10-27 · **Status:** Open
 
 ## [TD-141] Icon-only buttons without an accessible name

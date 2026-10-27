@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-147] A set whose routine or equipment is gone blocks the offline queue (2026-10-27 10:01)
+`POST /workouts` now saves a set whose routine was deleted as a free-day set and one whose equipment was deleted without equipment, instead of rejecting it; a routine owned by someone else is still a 404.
+
 ## [TD-142] The offline set queue has no test of its own (2026-10-27 08:32)
 `pendingSets.test.ts` covers send order, drop only after the API accepts, a mid-queue failure keeping the rest, a single flush at a time and re-draining when asked mid-flush.
 `PendingSet.body.setType` is now typed as `SetType`.

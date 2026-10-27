@@ -91,4 +91,34 @@ describe('WorkoutsController routine ownership (e2e)', () => {
       .expect(404);
     expect(await prisma.workout.count({ where: { routineId } })).toBe(1);
   });
+
+  it('saves a set of a deleted routine as a free-day set', async () => {
+    const gone = await owner
+      .post('/routines')
+      .send({
+        name: `E2E gone ${stamp}`,
+        items: [{ exerciseId, position: 0, blocks: [] }],
+      })
+      .expect(201);
+    await owner.delete(`/routines/${gone.body.id}`).expect(200);
+
+    const res = await owner
+      .post('/workouts')
+      .send({ exerciseId, reps: 10, weight: 20, routineId: gone.body.id })
+      .expect(201);
+    expect(res.body.routineId).toBeNull();
+  });
+
+  it('saves a set of a deleted equipment without equipment', async () => {
+    const equipment = await prisma.equipment.create({
+      data: { name: `e2e-gone-${stamp}` },
+    });
+    await prisma.equipment.delete({ where: { id: equipment.id } });
+
+    const res = await owner
+      .post('/workouts')
+      .send({ exerciseId, reps: 10, weight: 20, equipmentId: equipment.id })
+      .expect(201);
+    expect(res.body.equipmentId).toBeNull();
+  });
 });

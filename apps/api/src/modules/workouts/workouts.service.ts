@@ -40,15 +40,13 @@ function targetOf(blocks: unknown): StreakTarget | null {
 export class WorkoutsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(userId: string, createWorkoutDto: CreateWorkoutDto) {
-    const clientId = createWorkoutDto.clientId ?? null;
-    const { routineId } = createWorkoutDto;
-    if (
-      routineId &&
-      !(await this.prisma.routine.count({ where: { id: routineId, userId } }))
-    ) {
-      throw new NotFoundException('Routine not found');
-    }
+  async create(userId: string, dto: CreateWorkoutDto) {
+    const clientId = dto.clientId ?? null;
+    const createWorkoutDto = {
+      ...dto,
+      routineId: await this.liveRoutineId(userId, dto.routineId),
+      equipmentId: await this.liveEquipmentId(dto.equipmentId),
+    };
     for (let attempt = 0; ; attempt++) {
       if (clientId) {
         const existing = await this.prisma.workout.findUnique({
@@ -81,6 +79,27 @@ export class WorkoutsService {
         if (!conflict || attempt > 0) throw e;
       }
     }
+  }
+
+  private async liveRoutineId(userId: string, routineId?: string) {
+    if (!routineId) return undefined;
+    const routine = await this.prisma.routine.findUnique({
+      where: { id: routineId },
+      select: { userId: true },
+    });
+    if (!routine) return undefined;
+    if (routine.userId !== userId) {
+      throw new NotFoundException('Routine not found');
+    }
+    return routineId;
+  }
+
+  private async liveEquipmentId(equipmentId?: string) {
+    if (!equipmentId) return undefined;
+    const found = await this.prisma.equipment.count({
+      where: { id: equipmentId },
+    });
+    return found ? equipmentId : undefined;
   }
 
   private async sessionFor(

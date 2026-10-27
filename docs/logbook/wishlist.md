@@ -7,6 +7,9 @@ If an idea is promoted, it's deleted from here and a new `RM` is born.
 
 ---
 
+## [WL-138] Tell the user their routine no longer exists
+Since TD-147 the sets of a deleted routine are saved as a free day, and opening a guided session whose routine is gone drops it silently. Say so instead: "Esta rutina ya no existe; tus series se guardaron como día libre".
+
 ## [WL-124] Recover the password by email
 The "¿Olvidaste tu contraseña?": a single-use, expiring link by email, `POST /auth/forgot` (answers the same whether the account exists or not) and `POST /auth/reset` (closes every session with TD-120), with an attempt limit. It requires the app to send email: a provider (candidate Resend) and SPF/DKIM in the DNS. Postponed: today almost everyone signs in with Google and changing the password already exists (WL-061).
 

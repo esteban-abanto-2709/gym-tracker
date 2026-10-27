@@ -269,6 +269,75 @@ describe('WorkoutsService set types', () => {
   });
 });
 
+describe('WorkoutsService sets whose routine or equipment is gone', () => {
+  const setup = (
+    routine: { userId: string } | null,
+    equipmentCount: number,
+  ) => {
+    const create = jest
+      .fn<Promise<object>, [{ data: Record<string, unknown> }]>()
+      .mockResolvedValue({});
+    const createSession = jest
+      .fn<Promise<object>, [{ data: Record<string, unknown> }]>()
+      .mockResolvedValue({ id: 's1' });
+    const prisma = {
+      workout: { findUnique: jest.fn().mockResolvedValue(null), create },
+      routine: { findUnique: jest.fn().mockResolvedValue(routine) },
+      equipment: { count: jest.fn().mockResolvedValue(equipmentCount) },
+      session: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        create: createSession,
+      },
+      $transaction: (fn: (tx: unknown) => unknown) => fn(prisma),
+    };
+    const service = new WorkoutsService(prisma as unknown as PrismaService);
+    return { service, create, createSession };
+  };
+
+  const set = {
+    exerciseId: 'e1',
+    reps: 8,
+    weight: 60,
+    routineId: 'r1',
+    equipmentId: 'barra',
+    sessionId: '7f1c2a9e-1b2c-4d3e-8f4a-5b6c7d8e9f00',
+  };
+
+  it('keeps the routine and equipment when they exist', async () => {
+    const { service, create, createSession } = setup({ userId: 'u1' }, 1);
+    await service.create('u1', set);
+    expect(create.mock.calls[0][0].data).toMatchObject({
+      routineId: 'r1',
+      equipmentId: 'barra',
+    });
+    expect(createSession.mock.calls[0][0].data.routineId).toBe('r1');
+  });
+
+  it('saves a set of a deleted routine as a free-day set', async () => {
+    const { service, create, createSession } = setup(null, 1);
+    await service.create('u1', set);
+    expect(create.mock.calls[0][0].data.routineId).toBeNull();
+    expect(createSession.mock.calls[0][0].data.routineId).toBeNull();
+  });
+
+  it('saves a set of a deleted equipment without equipment', async () => {
+    const { service, create } = setup({ userId: 'u1' }, 0);
+    await service.create('u1', set);
+    expect(create.mock.calls[0][0].data).toMatchObject({
+      routineId: 'r1',
+      equipmentId: null,
+    });
+  });
+
+  it('still rejects a set pointing at somebody else routine', async () => {
+    const { service, create } = setup({ userId: 'u2' }, 1);
+    await expect(service.create('u1', set)).rejects.toThrow(
+      'Routine not found',
+    );
+    expect(create).not.toHaveBeenCalled();
+  });
+});
+
 describe('CreateWorkoutDto', () => {
   const base = { exerciseId: '0d8f6d1e-2f3a-4b5c-8d9e-0a1b2c3d4e5f', reps: 8 };
 
