@@ -1,16 +1,6 @@
-name: gym-tracker
-
 services:
-  postgres:
-    container_name: gym-tracker-sql
-
   api:
     image: ghcr.io/esteban-abanto-2709/gym-tracker-api:latest
-    container_name: gym-tracker-api
 
   web:
     image: ghcr.io/esteban-abanto-2709/gym-tracker-web:latest
-    container_name: gym-tracker-web
-
-  cloudflared:
-    container_name: gym-tracker-tunnel

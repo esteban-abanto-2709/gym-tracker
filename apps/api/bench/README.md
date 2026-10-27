@@ -36,7 +36,7 @@ The seed prints the `EXERCISE_ID` of the measured exercise. k6 runs in a
 container inside the dev network, without installing anything:
 
 ```bash
-docker run --rm -i --network gym-tracker-dev_gym-tracker-network -e EXERCISE_ID=<id> grafana/k6:1.3.0 run --quiet - < bench/form.k6.js
+docker run --rm -i --network gym-tracker_gym-tracker-network -e EXERCISE_ID=<id> grafana/k6:1.3.0 run --quiet - < bench/form.k6.js
 ```
 
 By default it's 10 virtual users for 30 s, each requesting both routes without

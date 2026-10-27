@@ -1,20 +1,12 @@
 #!/bin/sh
 set -eu
 
-case "${1:-}" in
-  dev)  CONTAINER=gym-tracker-dev-sql; API=gym-tracker-dev-api ;;
-  prod) CONTAINER=gym-tracker-sql;     API=gym-tracker-api ;;
-  *)
-    echo "Usage: sh restore.sh <dev|prod> [file.sql]" >&2
-    echo "  Leaves the dev or prod DB exactly as in the backup (REPLACES the whole database)." >&2
-    exit 1
-    ;;
-esac
-TARGET=$1
-BACKUP=${2:-}
+CONTAINER=gym-tracker-sql
+API=gym-tracker-api
+BACKUP=${1:-}
 
 if [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER" 2>/dev/null)" != "true" ]; then
-  echo "[ERROR] Container $CONTAINER ($TARGET) is not running. Start it first." >&2
+  echo "[ERROR] Container $CONTAINER is not running. Start it first." >&2
   exit 1
 fi
 
@@ -31,7 +23,7 @@ if ! grep -q '^CREATE TABLE public._prisma_migrations ' "$BACKUP"; then
   exit 1
 fi
 
-echo "RESTORE on $TARGET (container $CONTAINER)"
+echo "RESTORE on $(hostname) (container $CONTAINER)"
 echo "Backup:  $BACKUP"
 echo "This DELETES the whole database and leaves it exactly as in the backup."
 printf "Type 'yes' to continue: "
@@ -51,4 +43,4 @@ fi
   cat "$BACKUP"
 } | docker exec -i "$CONTAINER" sh -c 'psql -q -o /dev/null -U "$POSTGRES_USER" -d "$POSTGRES_DB" --single-transaction -v ON_ERROR_STOP=1 -f -'
 
-echo "Restore complete on $TARGET."
+echo "Restore complete."

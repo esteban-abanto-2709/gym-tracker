@@ -40,13 +40,14 @@ apps/docker/
   so every `docker compose …` typed there is production. `update.sh` sets the
   same files itself, so deploys don't depend on that line.
 
+Names are the same on every machine (project `gym-tracker`, containers
+`gym-tracker-{sql,api,web,tunnel}`, volume `gym-tracker_postgres_data`): the
+machine decides the environment, so the scripts never ask which one.
+
 | | Development | Server |
 |---|---|---|
-| Project | `gym-tracker-dev` | `gym-tracker` |
 | Images | built from `apps/api` and `apps/web` | `ghcr.io/esteban-abanto-2709/gym-tracker-{api,web}` |
 | Ports on the host | `3000` web · `4000` api · `5432` postgres | none (only out through the tunnel) |
-| Containers | `gym-tracker-dev-{sql,api,web,tunnel}` | `gym-tracker-{sql,api,web,tunnel}` |
-| Data volume | `gym-tracker-dev_postgres_data_dev` | `gym-tracker_postgres_data` |
 | Tunnel | only with `COMPOSE_PROFILES=tunnel` | always |
 
 ## Variables
@@ -180,7 +181,7 @@ docker compose logs -f api
     docker pull ghcr.io/esteban-abanto-2709/gym-tracker-$app:$sha
     docker tag ghcr.io/esteban-abanto-2709/gym-tracker-$app:$sha ghcr.io/esteban-abanto-2709/gym-tracker-$app:latest
   done
-  sh scripts/restore.sh prod backups/gym-prod_<date>.sql
+  sh scripts/restore.sh backups/gym-prod_<date>.sql
   docker compose up -d --wait --wait-timeout 180
   ```
 
@@ -201,12 +202,11 @@ to the script. The file lands in `apps/docker/backups/` named
 ```bash
 # from apps/docker/, on Linux, mac or Git Bash on Windows
 sh scripts/backup.sh
-sh scripts/backup.sh /another/folder                 # save to another folder
-CONTAINER=gym-tracker-dev-sql sh scripts/backup.sh   # dump development (testing)
+sh scripts/backup.sh /another/folder   # save to another folder
 ```
 
 It runs `pg_dump` inside the `gym-tracker-sql` container (same version as the
-server, no compatibility trouble) with the credentials from the container's own
+database, no compatibility trouble) with the credentials from the container's own
 variables, so it reads no `.env` and doesn't need `pg_dump` on the host. It
 writes a `.tmp` first and renames it when done: a failed dump never leaves a
 file that looks good. When done it removes from that folder the `gym-prod_*.sql`
@@ -227,22 +227,20 @@ f=$(sh scripts/backup.sh) && echo "backup at $f"
 
 ## Restoring a backup
 
-Leaves the database you choose **exactly** as it was when the backup was taken:
+Leaves this machine's database **exactly** as it was when the backup was taken:
 it drops the whole `public` schema (tables, data, types and any table the
 backup doesn't include) and loads the dump. It's a **full** rollback, not a
 surgical one.
 
 ```bash
 # from apps/docker/, on Linux, mac or Git Bash on Windows
-sh scripts/restore.sh dev        # fills development with the latest backup in backups/
-sh scripts/restore.sh prod       # same, on the server
-sh scripts/restore.sh dev /another/folder/gym-prod_2026-06-14_120000.sql   # a specific file
+sh scripts/restore.sh                                            # the latest backup in backups/
+sh scripts/restore.sh /another/folder/gym-prod_2026-06-14_120000.sql   # a specific file
 ```
 
-- Maps the target to its containers: `dev` → `gym-tracker-dev-sql` and
-  `gym-tracker-dev-api`, `prod` → `gym-tracker-sql` and `gym-tracker-api`. Like
-  `backup.sh`, it takes the credentials from the container itself, without
-  reading any `.env`.
+- Works on `gym-tracker-sql` and `gym-tracker-api`, so it restores whichever
+  machine you run it on. Like `backup.sh`, it takes the credentials from the
+  container itself, without reading any `.env`.
 - If you don't pass a file, it takes the latest `gym-prod_*.sql` from
   `apps/docker/backups/`.
 - **Asks for confirmation** (you have to type `yes`) because it deletes the
@@ -258,7 +256,7 @@ sh scripts/restore.sh dev /another/folder/gym-prod_2026-06-14_120000.sql   # a s
 
 **Real data in development:** copy a server backup into `apps/docker/backups/`
 on your machine, start the development database (`docker compose up -d postgres`)
-and run `sh scripts/restore.sh dev`. If development is ahead (new migrations not
+and run `sh scripts/restore.sh`. If development is ahead (new migrations not
 yet deployed), its API applies them on start over the restored data.
 
 ### Data-only backups (before TD-084)
@@ -269,7 +267,7 @@ database with every migration applied, run the previous version of the script:
 
 ```bash
 git show 5a2be58:apps/docker/scripts/restore.sh > /tmp/restore-data.sh
-sh /tmp/restore-data.sh dev backups/gym-prod_2026-10-07_230155.sql
+sh /tmp/restore-data.sh prod backups/gym-prod_2026-10-07_230155.sql   # that version calls this machine's containers "prod"
 ```
 
 Backups from before columns were removed (RM-031, WL-012) also need the manual

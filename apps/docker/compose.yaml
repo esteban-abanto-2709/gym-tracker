@@ -1,7 +1,10 @@
+name: gym-tracker
+
 services:
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
+    container_name: gym-tracker-sql
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -19,6 +22,7 @@ services:
 
   # NestJS API
   api:
+    container_name: gym-tracker-api
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -43,6 +47,7 @@ services:
 
   # Next.js Frontend
   web:
+    container_name: gym-tracker-web
     restart: unless-stopped
     environment:
       - API_INTERNAL_URL=http://api:4000
@@ -62,6 +67,7 @@ services:
   # Cloudflare Tunnel
   cloudflared:
     image: cloudflare/cloudflared:latest
+    container_name: gym-tracker-tunnel
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:

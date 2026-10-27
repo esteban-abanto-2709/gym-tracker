@@ -149,11 +149,12 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 
 ## Environments
 
-`apps/docker/compose.yaml` holds what both environments share. On the owner's
-machine a plain `docker compose` adds `compose.override.yaml` (dev, its own
-database in `gym-tracker-dev_postgres_data_dev`); on the prod server the `.env`
-sets `COMPOSE_FILE=compose.yaml:compose.prod.yaml`, and that server holds the
-**real training data** (volume `gym-tracker_postgres_data`). Each machine has
+`apps/docker/compose.yaml` holds what both environments share, with the same
+project, container and volume names everywhere: the machine decides the
+environment. On the owner's machine a plain `docker compose` adds
+`compose.override.yaml` (dev); on the prod server the `.env` sets
+`COMPOSE_FILE=compose.yaml:compose.prod.yaml`, and that server's volume
+`gym-tracker_postgres_data` holds the **real training data**. Each machine has
 one `apps/docker/.env` and its own Cloudflare tunnel; never put prod's
 `TUNNEL_TOKEN` on a development machine. Never run destructive commands
 (`down -v`, resets, restores) against prod without the owner asking.
