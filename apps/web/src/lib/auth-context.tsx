@@ -11,7 +11,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { routes } from "@/lib/routes";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { discardPendingSets, setPendingOwner } from "@/lib/pendingSets";
 import type { AuthUser } from "@/lib/types";
 
@@ -61,21 +61,16 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-// Bare fetch for the auth endpoints: a 401 here means "logged out / bad
-// credentials", not "redirect", so it must bypass the ApiClient 401 handler.
-async function authFetch<T>(
-  endpoint: string,
-  body?: unknown,
-  copy?: ErrorCopy,
-): Promise<T> {
-  const res = await fetch(`/api${endpoint}`, {
-    method: body ? "POST" : "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) throw authError(res.status, copy);
-  return res.json();
+const noRedirect = { redirectOn401: false };
+
+// A 401 on the auth endpoints means "logged out / bad credentials", not
+// "redirect", so these calls skip the ApiClient 401 handler.
+async function authCall<T>(call: Promise<T>, copy?: ErrorCopy): Promise<T> {
+  try {
+    return await call;
+  } catch (e) {
+    throw authError(e instanceof ApiError ? e.status : 0, copy);
+  }
 }
 
 type ErrorCopy = { fallback: string } & Partial<Record<number, string>>;
@@ -108,7 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { setTheme } = useTheme();
 
   useEffect(() => {
-    authFetch<AuthUser>(routes.api.auth.me())
+    api
+      .get<AuthUser>(routes.api.auth.me(), noRedirect)
       .then((me) => setUser(owning(me)))
       .catch(() => setUser(owning(null)))
       .finally(() => setLoading(false));
@@ -117,9 +113,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setUser(
       owning(
-        await authFetch<AuthUser>(
-          routes.api.auth.login(),
-          { email, password },
+        await authCall(
+          api.post<AuthUser>(
+            routes.api.auth.login(),
+            { email, password },
+            noRedirect,
+          ),
           {
             401: "Correo o contraseña incorrectos.",
             429: TOO_MANY_ATTEMPTS,
@@ -134,9 +133,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (email: string, username: string, password: string) => {
       setUser(
         owning(
-          await authFetch<AuthUser>(
-            routes.api.auth.register(),
-            { email, username, password },
+          await authCall(
+            api.post<AuthUser>(
+              routes.api.auth.register(),
+              { email, username, password },
+              noRedirect,
+            ),
             {
               400: "Revisa los datos e inténtalo de nuevo.",
               409: "Ese correo ya tiene una cuenta.",
@@ -153,9 +155,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = useCallback(async (credential: string) => {
     setUser(
       owning(
-        await authFetch<AuthUser>(
-          routes.api.auth.google(),
-          { credential },
+        await authCall(
+          api.post<AuthUser>(
+            routes.api.auth.google(),
+            { credential },
+            noRedirect,
+          ),
           {
             401: "Tu cuenta de Google no tiene el correo verificado.",
             fallback: "No se pudo ingresar con Google.",
@@ -166,46 +171,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await authFetch(routes.api.auth.logout(), {});
+    await authCall(api.post(routes.api.auth.logout(), {}, noRedirect));
     setUser(owning(null));
     router.replace(routes.login());
   }, [router]);
 
   const changePassword = useCallback(
     async (currentPassword: string, newPassword: string) => {
-      const res = await fetch(`/api${routes.api.auth.password()}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
-      if (!res.ok) {
-        throw authError(res.status, {
-          403: "La contraseña actual no es correcta.",
-          429: TOO_MANY_ATTEMPTS,
-          fallback: "No se pudo cambiar la contraseña.",
-        });
-      }
-      setUser(await res.json());
+      setUser(
+        await authCall(
+          api.patch<AuthUser>(
+            routes.api.auth.password(),
+            { currentPassword, newPassword },
+            noRedirect,
+          ),
+          {
+            403: "La contraseña actual no es correcta.",
+            429: TOO_MANY_ATTEMPTS,
+            fallback: "No se pudo cambiar la contraseña.",
+          },
+        ),
+      );
     },
     [],
   );
 
   const deleteAccount = useCallback(
     async (confirmation: { password?: string; email?: string }) => {
-      const res = await fetch(`/api${routes.api.auth.me()}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(confirmation),
-      });
-      if (!res.ok) {
-        throw authError(res.status, {
+      await authCall(
+        api.delete(routes.api.auth.me(), confirmation, noRedirect),
+        {
           403: "No coincide. Revisa lo que escribiste.",
           429: TOO_MANY_ATTEMPTS,
           fallback: "No se pudo borrar la cuenta.",
-        });
-      }
+        },
+      );
       discardPendingSets();
       setUser(owning(null));
       router.replace(routes.login());

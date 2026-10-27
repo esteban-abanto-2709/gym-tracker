@@ -44,7 +44,7 @@ and is deleted from here.
 - **Problem:** 38 `console.error`s are the only reaction to a failed request (e.g. deleting a routine in `useRoutines.ts` fails with nothing on screen); only `useExplore.ts` and `PublishForm.tsx` guard against an older response arriving after a newer one; every hook repeats the same loading/error state by hand.
 - **Future impact:** the user thinks something was saved or deleted when it wasn't; stale data can overwrite fresh data on fast tab switches; every new screen copies the pattern again.
 - **Suggestion:** surface failures with `notifyError`, drop the dead `token` parameter, and route auth through the same client; the cache library of WL-082 would remove most of these hooks.
-- **Date:** 2026-10-26 · **Status:** Open
+- **Date:** 2026-10-26 · **Status:** In progress (2026-10-27)
 
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`
