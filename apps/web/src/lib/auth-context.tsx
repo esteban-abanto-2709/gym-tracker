@@ -12,6 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { routes } from "@/lib/routes";
 import { api } from "@/lib/api";
+import { discardPendingSets, setPendingOwner } from "@/lib/pendingSets";
 import type { AuthUser } from "@/lib/types";
 
 const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
@@ -86,6 +87,11 @@ function authError(status: number, copy?: ErrorCopy) {
   return new Error(copy?.[status] ?? copy?.fallback ?? "Request failed");
 }
 
+function owning(user: AuthUser | null) {
+  setPendingOwner(user?.id ?? null);
+  return user;
+}
+
 export function FullScreenLoader() {
   return (
     <div className="min-h-dvh flex items-center justify-center text-muted-foreground">
@@ -103,21 +109,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     authFetch<AuthUser>(routes.api.auth.me())
-      .then(setUser)
-      .catch(() => setUser(null))
+      .then((me) => setUser(owning(me)))
+      .catch(() => setUser(owning(null)))
       .finally(() => setLoading(false));
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     setUser(
-      await authFetch<AuthUser>(
-        routes.api.auth.login(),
-        { email, password },
-        {
-          401: "Correo o contraseña incorrectos.",
-          429: TOO_MANY_ATTEMPTS,
-          fallback: "No se pudo ingresar.",
-        },
+      owning(
+        await authFetch<AuthUser>(
+          routes.api.auth.login(),
+          { email, password },
+          {
+            401: "Correo o contraseña incorrectos.",
+            429: TOO_MANY_ATTEMPTS,
+            fallback: "No se pudo ingresar.",
+          },
+        ),
       ),
     );
   }, []);
@@ -125,15 +133,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = useCallback(
     async (email: string, username: string, password: string) => {
       setUser(
-        await authFetch<AuthUser>(
-          routes.api.auth.register(),
-          { email, username, password },
-          {
-            400: "Revisa los datos e inténtalo de nuevo.",
-            409: "Ese correo ya tiene una cuenta.",
-            429: TOO_MANY_ATTEMPTS,
-            fallback: "No se pudo registrar.",
-          },
+        owning(
+          await authFetch<AuthUser>(
+            routes.api.auth.register(),
+            { email, username, password },
+            {
+              400: "Revisa los datos e inténtalo de nuevo.",
+              409: "Ese correo ya tiene una cuenta.",
+              429: TOO_MANY_ATTEMPTS,
+              fallback: "No se pudo registrar.",
+            },
+          ),
         ),
       );
     },
@@ -142,20 +152,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithGoogle = useCallback(async (credential: string) => {
     setUser(
-      await authFetch<AuthUser>(
-        routes.api.auth.google(),
-        { credential },
-        {
-          401: "Tu cuenta de Google no tiene el correo verificado.",
-          fallback: "No se pudo ingresar con Google.",
-        },
+      owning(
+        await authFetch<AuthUser>(
+          routes.api.auth.google(),
+          { credential },
+          {
+            401: "Tu cuenta de Google no tiene el correo verificado.",
+            fallback: "No se pudo ingresar con Google.",
+          },
+        ),
       ),
     );
   }, []);
 
   const logout = useCallback(async () => {
     await authFetch(routes.api.auth.logout(), {});
-    setUser(null);
+    setUser(owning(null));
     router.replace(routes.login());
   }, [router]);
 
@@ -194,7 +206,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           fallback: "No se pudo borrar la cuenta.",
         });
       }
-      setUser(null);
+      discardPendingSets();
+      setUser(owning(null));
       router.replace(routes.login());
     },
     [router],

@@ -22,13 +22,6 @@ and is deleted from here.
 - **Suggestion:** two rules before code: change the set DTO only with expand/contract, and never delete a catalog exercise (hide or redirect it when merging).
 - **Date:** 2026-10-27 · **Status:** Open
 
-## [TD-148] Pending sets are sent with whichever account is signed in
-- **Location:** `apps/web/src/lib/pendingSets.ts:5`
-- **Risk:** 6/10
-- **Problem:** the offline queue lives in `localStorage` with no link to the account that logged the sets, and signing out does not clear it. If someone signs out and another person signs in on the same device, the first one's pending sets are posted under the second account.
-- **Future impact:** real sets end up in the wrong user's history, mixing two people's data.
-- **Date:** 2026-10-27 · **Status:** Open
-
 ## [TD-141] Icon-only buttons without an accessible name
 - **Location:** `apps/web/src/components/layout/AppHeader.tsx:56` (`BackAction`: neither label nor title), `AppHeader.tsx:67` and `:79` (`HistoryAction`, `RoutinesAction`: `title` only), plus the other header icon buttons
 - **Risk:** 4/10

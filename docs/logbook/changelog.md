@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-148] Pending sets are sent with whichever account is signed in (2026-10-27 10:28)
+The offline queue is now kept per account on the device: only the signed-in account's sets are sent, signing out leaves them waiting for their owner and deleting the account discards them. An older unowned queue goes to the first account that signs in.
+
 ## [TD-147] A set whose routine or equipment is gone blocks the offline queue (2026-10-27 10:01)
 `POST /workouts` now saves a set whose routine was deleted as a free-day set and one whose equipment was deleted without equipment, instead of rejecting it; a routine owned by someone else is still a 404.
 

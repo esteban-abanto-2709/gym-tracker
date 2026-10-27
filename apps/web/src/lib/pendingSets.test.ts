@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import { api } from "@/lib/api";
 import {
   type PendingSet,
@@ -6,6 +6,7 @@ import {
   discardPendingSets,
   flushPendingSets,
   readPendingSets,
+  setPendingOwner,
 } from "@/lib/pendingSets";
 
 vi.mock("@/lib/api", () => ({
@@ -144,5 +145,48 @@ describe("pendingSets", () => {
     discardPendingSets();
     expect(readPendingSets()).toEqual([]);
     expect(localStorage.getItem("gymtrack-pending-sets")).toBeNull();
+  });
+});
+
+describe("pendingSets per account", () => {
+  afterEach(() => setPendingOwner(null));
+
+  it("keeps one account's sets away from the next account on the device", async () => {
+    vi.mocked(api.post).mockResolvedValue(undefined);
+    setPendingOwner("u-ana");
+    addPendingSets([pending("a")]);
+
+    setPendingOwner(null);
+    setPendingOwner("u-ben");
+    expect(readPendingSets()).toEqual([]);
+    expect(await flushPendingSets()).toBe(0);
+    expect(api.post).not.toHaveBeenCalled();
+
+    setPendingOwner("u-ana");
+    expect(queued()).toEqual(["a"]);
+    expect(await flushPendingSets()).toBe(0);
+    expect(sent()).toEqual(["a"]);
+  });
+
+  it("gives a queue saved before accounts to the first one that signs in", () => {
+    addPendingSets([pending("a")]);
+
+    setPendingOwner("u-ana");
+    expect(queued()).toEqual(["a"]);
+    expect(localStorage.getItem("gymtrack-pending-sets")).toBeNull();
+
+    setPendingOwner("u-ben");
+    expect(readPendingSets()).toEqual([]);
+  });
+
+  it("discards only the signed-in account's sets", () => {
+    setPendingOwner("u-ana");
+    addPendingSets([pending("a")]);
+    setPendingOwner("u-ben");
+    addPendingSets([pending("b")]);
+
+    discardPendingSets();
+    setPendingOwner("u-ana");
+    expect(queued()).toEqual(["a"]);
   });
 });

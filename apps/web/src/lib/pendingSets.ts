@@ -4,6 +4,10 @@ import type { SetType } from "@/lib/types";
 
 const KEY = "gymtrack-pending-sets";
 
+let owner: string | null = null;
+
+const key = () => (owner ? `${KEY}:${owner}` : KEY);
+
 export interface PendingSet {
   clientId: string;
   label: string;
@@ -39,15 +43,26 @@ export const setMoment = () => ({
 export function readPendingSets(): PendingSet[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(window.localStorage.getItem(KEY) ?? "[]") as PendingSet[];
+    return JSON.parse(
+      window.localStorage.getItem(key()) ?? "[]",
+    ) as PendingSet[];
   } catch {
     return [];
   }
 }
 
 function writePendingSets(sets: PendingSet[]): void {
-  if (sets.length === 0) window.localStorage.removeItem(KEY);
-  else window.localStorage.setItem(KEY, JSON.stringify(sets));
+  if (sets.length === 0) window.localStorage.removeItem(key());
+  else window.localStorage.setItem(key(), JSON.stringify(sets));
+}
+
+export function setPendingOwner(userId: string | null): void {
+  if (userId === owner) return;
+  const unowned = owner ? [] : readPendingSets();
+  owner = userId;
+  if (!userId || unowned.length === 0) return;
+  writePendingSets([...readPendingSets(), ...unowned]);
+  window.localStorage.removeItem(KEY);
 }
 
 export function addPendingSets(sets: PendingSet[]): void {

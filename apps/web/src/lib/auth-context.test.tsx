@@ -2,6 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useState } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider, useAuth } from "./auth-context";
+import {
+  type PendingSet,
+  addPendingSets,
+  readPendingSets,
+  setPendingOwner,
+} from "./pendingSets";
 
 const replace = vi.fn();
 const setTheme = vi.fn();
@@ -192,4 +198,61 @@ describe("AuthProvider errors", () => {
       expect(await screen.findByText(copy)).toBeTruthy();
     },
   );
+});
+
+describe("AuthProvider pending sets", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    setPendingOwner(null);
+  });
+
+  const set = { clientId: "c-1", label: "Press banca" } as PendingSet;
+  const ownQueue = () => localStorage.getItem("gymtrack-pending-sets:u1");
+
+  function Account() {
+    const { logout, deleteAccount } = useAuth();
+    return (
+      <>
+        <button onClick={() => logout()}>salir</button>
+        <button onClick={() => deleteAccount({ email: "a@b.c" })}>
+          borrar
+        </button>
+      </>
+    );
+  }
+
+  const signedIn = () => {
+    meResponds(true);
+    pathname = "/perfil";
+    render(
+      <AuthProvider>
+        <Account />
+      </AuthProvider>,
+    );
+  };
+
+  it("keeps the queue under the signed-in account", async () => {
+    signedIn();
+    await screen.findByText("salir");
+    addPendingSets([set]);
+    expect(ownQueue()).not.toBeNull();
+    expect(localStorage.getItem("gymtrack-pending-sets")).toBeNull();
+  });
+
+  it("signing out keeps the account's sets but stops reading them", async () => {
+    signedIn();
+    await screen.findByText("salir");
+    addPendingSets([set]);
+    fireEvent.click(screen.getByText("salir"));
+    await waitFor(() => expect(readPendingSets()).toEqual([]));
+    expect(ownQueue()).not.toBeNull();
+  });
+
+  it("deleting the account discards its pending sets", async () => {
+    signedIn();
+    await screen.findByText("borrar");
+    addPendingSets([set]);
+    fireEvent.click(screen.getByText("borrar"));
+    await waitFor(() => expect(ownQueue()).toBeNull());
+  });
 });
