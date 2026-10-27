@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
+import { notifyError } from "@/lib/notify";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
 import { addExercise, matchesSearch } from "@/lib/exercises";
@@ -41,6 +42,9 @@ export function useExercises() {
         setExercises((prev) => addExercise(prev, created));
 
         return created;
+      } catch (e) {
+        notifyError("No se pudo crear el ejercicio");
+        throw e;
       } finally {
         setCreatingExercise(false);
       }

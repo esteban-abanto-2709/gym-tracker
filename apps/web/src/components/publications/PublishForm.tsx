@@ -68,6 +68,11 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
         }
       } catch (e) {
         console.error("Error fetching publish source:", e);
+        notifyError(
+          isRoutine
+            ? "No se pudo cargar la rutina"
+            : "No se pudo cargar el programa",
+        );
       } finally {
         setLoading(false);
       }

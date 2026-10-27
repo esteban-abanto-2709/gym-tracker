@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
+import { notifyError } from "@/lib/notify";
 import { routes } from "@/lib/routes";
 import type { Routine } from "@/lib/types";
 
@@ -32,6 +33,7 @@ export function useRoutines() {
       setDeletingRoutine(null);
     } catch (e) {
       console.error(e);
+      notifyError("No se pudo eliminar la rutina");
     } finally {
       setActionLoading(false);
     }

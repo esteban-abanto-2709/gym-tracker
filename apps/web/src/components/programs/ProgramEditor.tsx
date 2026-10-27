@@ -46,6 +46,11 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
         }
       } catch (e) {
         console.error("Error fetching program data:", e);
+        notifyError(
+          programId
+            ? "No se pudo cargar el programa"
+            : "No se pudieron cargar tus rutinas",
+        );
       } finally {
         setLoading(false);
       }

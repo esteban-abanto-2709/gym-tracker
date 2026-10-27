@@ -172,6 +172,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         );
       } catch (e) {
         console.error("Error fetching routine:", e);
+        notifyError("No se pudo cargar la rutina");
       } finally {
         setLoadingRoutine(false);
       }
