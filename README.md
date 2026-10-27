@@ -111,7 +111,7 @@ browser ──/api/*──▶ web (Next.js) ──▶ api (NestJS) ──▶ Pos
 |---|---|
 | [`apps/web`](./apps/web/README.md) | The interface: Next.js, React and Tailwind, built for the phone |
 | [`apps/api`](./apps/api/README.md) | The REST API: NestJS, Prisma and PostgreSQL |
-| [`apps/docker`](./apps/docker/README.md) | Production and development Docker Compose, backups and restore |
+| [`apps/docker`](./apps/docker/README.md) | Docker Compose for development and the server, backups and restore |
 | [`.github/workflows`](./.github/workflows/README.md) | CI on every pull request and automatic deploy on every push to `main` |
 
 The browser only talks to the web app, which proxies to the API: the API's
@@ -127,10 +127,11 @@ with Docker Compose:
 
 ```bash
 cd apps/docker
-cp .env.example prod/.env   # and fill in the values
-cd prod
+cp .env.example .env   # works as is on your machine
 docker compose up -d --build
 ```
+
+Then open `http://localhost:3000`.
 
 The details are in [`apps/docker/README.md`](./apps/docker/README.md).
 

@@ -1,0 +1,34 @@
+name: gym-tracker-dev
+
+services:
+  postgres:
+    container_name: gym-tracker-dev-sql
+    ports:
+      - "5432:5432"
+
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: gym-tracker-dev-api
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+      args:
+        API_INTERNAL_URL: http://api:4000
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    container_name: gym-tracker-dev-web
+    ports:
+      - "3000:3000"
+
+  cloudflared:
+    container_name: gym-tracker-dev-tunnel
+    profiles: [tunnel]
+
+volumes:
+  postgres_data:
+    name: gym-tracker-dev_postgres_data_dev

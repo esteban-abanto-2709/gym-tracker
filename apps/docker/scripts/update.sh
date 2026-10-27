@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 
 f=$(sh scripts/backup.sh)
 echo "pre-deploy backup: $f"
-cd prod
+export COMPOSE_FILE=compose.yaml:compose.prod.yaml
 docker compose pull api web
 if ! docker compose up -d --wait --wait-timeout 180; then
   docker compose ps

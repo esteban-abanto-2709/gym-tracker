@@ -27,7 +27,7 @@ pnpm run start:dev                # http://localhost:4000
 ```
 
 For a local Postgres without installing anything:
-`docker compose up -d postgres` from `apps/docker/dev/`.
+`docker compose up -d postgres` from `apps/docker/`.
 
 ## Environment variables
 

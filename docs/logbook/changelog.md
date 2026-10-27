@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-146] Dev and prod repeat the same compose (2026-10-27 07:29)
+`apps/docker/dev/` and `prod/` (two near-identical composes) become `compose.yaml` + `compose.override.yaml` (dev, loaded on its own) + `compose.prod.yaml` (server, via `COMPOSE_FILE`), with one `.env` per machine. The tunnel is a dev profile and `.env.example` works as is; prod's resolved config hashes are unchanged, so no container is recreated.
+
 ## [TD-144] The diagonal background pattern never renders (2026-10-26 18:04)
 `PageShell` draws its stripes with `themeColors.foreground`, so the gradient is valid and the faint diagonal texture now shows on every screen, in both themes.
 

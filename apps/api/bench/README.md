@@ -26,7 +26,7 @@ if `DATABASE_URL` doesn't point to `localhost`.
 ## Running it
 
 With the dev API up (`docker compose up -d --build api` in
-`apps/docker/dev`), from `apps/api`:
+`apps/docker`), from `apps/api`:
 
 ```bash
 pnpm run seed:bench
@@ -36,7 +36,7 @@ The seed prints the `EXERCISE_ID` of the measured exercise. k6 runs in a
 container inside the dev network, without installing anything:
 
 ```bash
-docker run --rm -i --network gym-tracker-dev_gym-tracker-dev-network -e EXERCISE_ID=<id> grafana/k6:1.3.0 run --quiet - < bench/form.k6.js
+docker run --rm -i --network gym-tracker-dev_gym-tracker-network -e EXERCISE_ID=<id> grafana/k6:1.3.0 run --quiet - < bench/form.k6.js
 ```
 
 By default it's 10 virtual users for 30 s, each requesting both routes without

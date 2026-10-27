@@ -48,7 +48,7 @@ The full reasoning, including the progression rules, is in
 |---|---|---|
 | `apps/api` | NestJS 11 REST API, Prisma 7, PostgreSQL | [`apps/api/README.md`](./apps/api/README.md) |
 | `apps/web` | Next.js 16 App Router, React 19, Tailwind 4, shadcn/ui | [`apps/web/README.md`](./apps/web/README.md) |
-| `apps/docker` | Compose stacks `prod/` and `dev/`, backup/restore scripts | [`apps/docker/README.md`](./apps/docker/README.md) |
+| `apps/docker` | `compose.yaml` + dev override + `compose.prod.yaml`, backup/restore scripts | [`apps/docker/README.md`](./apps/docker/README.md) |
 | `docs/` | Product vision, UX foundations, in-app news | |
 | `docs/logbook/` | Technical debt, roadmap, wishlist, changelog | |
 
@@ -74,7 +74,7 @@ pnpm build
 pnpm lint
 pnpm test                     # vitest + testing library (src/**/*.test.ts[x])
 
-# apps/docker/dev  (never prod while developing)
+# apps/docker  (dev: compose.yaml + compose.override.yaml)
 docker compose up -d postgres         # only the DB, for native pnpm dev
 docker compose up -d --build          # full stack, ports 3000/4000/5432
 ```
@@ -149,12 +149,14 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 
 ## Environments
 
-`apps/docker/prod/` holds the owner's **real training data** (volume
-`gym-tracker_postgres_data`); `apps/docker/dev/` is the same stack with its own
-database. Each has its own Cloudflare tunnel and subdomain, so both can run at
-once; never put prod's `TUNNEL_TOKEN` in `dev/.env`. Never run
-destructive commands (`down -v`, resets, restores) against prod without the
-owner asking.
+`apps/docker/compose.yaml` holds what both environments share. On the owner's
+machine a plain `docker compose` adds `compose.override.yaml` (dev, its own
+database in `gym-tracker-dev_postgres_data_dev`); on the prod server the `.env`
+sets `COMPOSE_FILE=compose.yaml:compose.prod.yaml`, and that server holds the
+**real training data** (volume `gym-tracker_postgres_data`). Each machine has
+one `apps/docker/.env` and its own Cloudflare tunnel; never put prod's
+`TUNNEL_TOKEN` on a development machine. Never run destructive commands
+(`down -v`, resets, restores) against prod without the owner asking.
 
 <!-- logbook:start — written by the logbook skill (init); replaced whole when it runs again -->
 ## Logbook (`docs/logbook/`)

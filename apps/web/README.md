@@ -52,7 +52,7 @@ pnpm test:e2e # Playwright (see below)
 ## End-to-end tests
 
 `e2e/` runs full journeys in WebKit at iPhone 13 size against a web that's
-already up: the `apps/docker/dev` stack on `http://localhost:3000`, or the URL
+already up: the `apps/docker` stack on `http://localhost:3000`, or the URL
 in `E2E_BASE_URL`. Never against prod. Each run registers a throwaway user
 (`e2e-…@example.test`) and creates its own routine through the API.
 
