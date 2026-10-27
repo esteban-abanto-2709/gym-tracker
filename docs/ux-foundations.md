@@ -1,72 +1,69 @@
-# Gym Tracker — Fundamentos de UI/UX
+# Gym Tracker — UI/UX foundations
 
-> Reglas que toda pantalla debe respetar. Responde a las certezas de la
-> [visión de producto](./product-vision.md): no pensar y tener carácter.
+> Rules every screen must follow. They answer to the certainties in the
+> [product vision](./product-vision.md): no thinking and having character.
 
-## Personalidad
+## Personality
 
-- **Con carácter.** Agresiva, enérgica, con presencia. Las apps de gimnasio se
-  ven calmadas y genéricas (Strong, Hevy); esta tiene que notarse.
-- **Seria.** Motivadora sin ser cursi ni de coach payaso.
-- **Al servicio de la promesa "entra, entrena, vete".** La estética da ganas de
-  abrirla; la interfaz te deja ir rápido.
+- **With character.** Aggressive, energetic, with presence. Gym apps look calm
+  and generic (Strong, Hevy); this one has to stand out.
+- **Serious.** Motivating without being cheesy or a clown coach.
+- **Serving the "get in, train, get out" promise.** The aesthetics make you want
+  to open it; the interface lets you go fast.
 
-## Dirección visual
+## Visual direction
 
-- **Oscuro como base**, con un modo claro igual de cuidado. Más adelante, temas
-  intercambiables (ver la wishlist).
-- **Acento rojo** y tipografía con carácter (Oswald, Space Grotesk, Space Mono).
-  Son la identidad actual, no un dogma: pueden evolucionar.
-- **Contraste alto**, legible de un vistazo.
-- **Vertical.** La app instalada abre a pantalla completa y bloqueada en
-  vertical.
+- **Dark as the base**, with an equally polished light mode. Later on,
+  swappable themes (see the wishlist).
+- **Red accent** and typography with character (Oswald, Space Grotesk, Space
+  Mono). They're the current identity, not dogma: they can evolve.
+- **High contrast**, readable at a glance.
+- **Portrait.** The installed app opens full screen and locked to portrait.
 
-## Contexto de uso
+## Context of use
 
-- **Entre series:** cansado, con prisa y con poca paciencia para pensar. Ese es
-  el momento que manda la ergonomía.
-- **Fuera del gimnasio:** revisar tu progreso, exportar tus datos o armar un
-  programa con calma, en el celular o en la computadora.
+- **Between sets:** tired, in a hurry and with little patience to think. That's
+  the moment that drives the ergonomics.
+- **Outside the gym:** reviewing your progress, exporting your data or building
+  a program calmly, on the phone or on the computer.
 
-Por eso hay **dos densidades**: mínima mientras entrenas, generosa cuando
-revisas.
+That's why there are **two densities**: minimal while you train, generous when
+you review.
 
-## Reglas para toda pantalla
+## Rules for every screen
 
-- **Registrar una serie está a uno o dos toques** desde la pantalla principal.
-- **Lo de la vez pasada siempre está visible**, y repetirlo es el valor por
-  defecto.
-- **Nada obligatorio antes de registrar:** ni configuración ni datos
-  personales.
-- **No salir del entrenamiento para consultar.** El historial de ese ejercicio,
-  cómo se hace o cuántos discos poner se ven desde la misma pantalla.
-- **La app sugiere, el usuario decide.** Subir o bajar el peso es una
-  sugerencia visible, nunca un cambio automático.
-- **La estructura ayuda, nunca obliga.** Siempre se puede saltar, reemplazar o
-  añadir un ejercicio.
-- **Feedback inmediato** al registrar, y claro cuando falla la red: nunca perder
-  una serie en silencio.
-- **Targets táctiles grandes** y texto que se lee sin esfuerzo.
-- **Sin scroll.** Cada pantalla y cada panel caben en un celular (referencia:
-  390×844 contando las zonas seguras de iOS). Si no cabe, se compacta, se
-  muestra lo reciente o se divide; un historial largo vive en su propia vista.
+- **Logging a set is one or two taps** from the main screen.
+- **Last time is always visible**, and repeating it is the default.
+- **Nothing required before logging:** no setup and no personal data.
+- **No leaving the workout to look something up.** That exercise's history, how
+  it's done or which plates to load are seen from the same screen.
+- **The app suggests, the user decides.** Going up or down in weight is a
+  visible suggestion, never an automatic change.
+- **Structure helps, it never forces.** You can always skip, replace or add an
+  exercise.
+- **Immediate feedback** when logging, and clear when the network fails: never
+  lose a set silently.
+- **Large touch targets** and text that reads effortlessly.
+- **No scrolling.** Every screen and every panel fits on a phone (reference:
+  390×844 counting iOS safe areas). If it doesn't fit, it's compacted, shows
+  only the recent part or is split; a long history lives in its own view.
 
-## Cómo se registra el peso
+## How weight is logged
 
-Convención que la interfaz debe respetar y explicar donde haga falta:
+A convention the interface must follow and explain where needed:
 
-| Equipo | Qué se anota |
+| Equipment | What's logged |
 |---|---|
-| Barra | El total: barra + discos |
-| Mancuerna | El peso de **una** mancuerna |
-| Máquina | Lo que marca la máquina |
+| Barbell | The total: bar + plates |
+| Dumbbell | The weight of **one** dumbbell |
+| Machine | What the machine shows |
 
-Internamente todo se guarda en kg; el usuario puede registrar en lb.
+Internally everything is stored in kg; the user can log in lb.
 
-## Tono de voz
+## Tone of voice
 
-- **Frases cortas** que se lean cansado, tras una serie pesada.
-- **Directo y motivador**, nunca condescendiente. Al sugerir bajar el peso, con
-  respeto: nadie quiere bajarlo.
-- **En español.** Los nombres técnicos de ejercicios en inglés se acompañan de
-  cómo se les conoce en el gimnasio.
+- **Short sentences** that read well when tired, after a heavy set.
+- **Direct and motivating**, never condescending. When suggesting lowering the
+  weight, respectfully: nobody wants to lower it.
+- **In Spanish.** English technical exercise names come with how they're known
+  at the gym.

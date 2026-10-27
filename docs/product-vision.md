@@ -1,114 +1,113 @@
-# Gym Tracker — Visión de producto
+# Gym Tracker — Product vision
 
-> Qué es la app, para quién y por qué. El trabajo comprometido vive en el
-> [`roadmap`](./logbook/roadmap.md); cómo se ve y se siente, en
+> What the app is, who it's for and why. Committed work lives in the
+> [`roadmap`](./logbook/roadmap.md); how it looks and feels, in
 > [`ux-foundations.md`](./ux-foundations.md).
 
-## En una frase
+## In one sentence
 
-Un registrador de entrenamiento de fuerza que se usa **entre series, sin
-pensar**: ves lo que hiciste la vez pasada, la app te dice si toca subir, lo
-registras y sueltas el celular.
+A strength-training logger you use **between sets, without thinking**: you see
+what you did last time, the app tells you whether it's time to go up, you log
+it and put the phone down.
 
-## Para quién
+## Who it's for
 
-- **Hoy:** el autor, que la usa cada semana en el gimnasio.
-- **Siguiente:** sus amigos, y los amigos de ellos.
-- **El perfil:** gente joven de nivel **intermedio**. Conoce los ejercicios y
-  sabe hacerlos bien, pero sigue descubriendo matices. No necesita que la app le
-  enseñe a entrenar; necesita que no le estorbe. Los principiantes absolutos no
-  son el objetivo.
+- **Today:** the author, who uses it every week at the gym.
+- **Next:** the author's friends, and their friends.
+- **The profile:** young people at an **intermediate** level. They know the
+  exercises and how to do them well, but they're still discovering nuances.
+  They don't need the app to teach them how to train; they need it to stay out
+  of the way. Absolute beginners aren't the target.
 
-## El problema
+## The problem
 
-> "Estoy en el gimnasio, quiero entrenar ahora. No quiero contarle a una app mi
-> edad, mi peso ni lo que como. Quiero ver qué rutina hago hoy, saber con cuánto
-> peso, registrarlo y seguir con mi vida."
+> "I'm at the gym, I want to train now. I don't want to tell an app my age, my
+> weight or what I eat. I want to see which routine I'm doing today, know how
+> much weight, log it and get on with my life."
 
-Las apps de gimnasio que existen:
+Existing gym apps:
 
-- Piden datos personales y objetivos antes de dejarte registrar la primera serie.
-- Esconden lo básico (crear tus rutinas) detrás de una suscripción.
-- Te obligan a revisar el historial día por día para decidir si subes el peso.
-- Se ven sosas: quieren gustarle a todo el mercado y no tienen carácter.
+- Ask for personal data and goals before letting you log your first set.
+- Hide the basics (creating your routines) behind a subscription.
+- Make you go through your history day by day to decide whether to add weight.
+- Look bland: they want to please the whole market and have no character.
 
-## Las dos certezas
+## The two certainties
 
-Todo lo demás se juzga contra esto.
+Everything else is judged against these.
 
-### 1. No pensar
+### 1. No thinking
 
-- **Cero configuración para empezar.** Entras, eliges una rutina (o copias la de
-  un amigo) y entrenas.
-- **La app hace las cuentas; tú decides.** Te muestra lo de la vez pasada, lleva
-  la racha y te sugiere subir o bajar. La decisión final es tuya.
-- **Nada te saca del entrenamiento.** Lo que necesitas consultar en el momento
-  (tu historial con ese ejercicio, cómo se hace, cuántos discos poner) está a un
-  toque, sin salir de la serie.
+- **Zero setup to start.** You get in, pick a routine (or copy a friend's) and
+  train.
+- **The app does the math; you decide.** It shows you last time, keeps the
+  streak and suggests going up or down. The final call is yours.
+- **Nothing takes you out of the workout.** What you need to check in the
+  moment (your history with that exercise, how it's done, which plates to load)
+  is one tap away, without leaving the set.
 
-### 2. Carácter
+### 2. Character
 
-- La app se ve **agresiva, con identidad**, no como una libreta neutra.
-- La promesa no es que el gimnasio sea tu vida: es **entra, entrena, vete**. El
-  carácter está en la estética, no en exigirte tiempo.
+- The app looks **aggressive, with an identity**, not like a neutral notebook.
+- The promise isn't that the gym is your life: it's **get in, train, get out**.
+  The character is in the aesthetics, not in demanding your time.
 
-## Cómo progresa el entrenamiento
+## How training progresses
 
-La lógica que guía las sugerencias, sin que el usuario la configure:
+The logic behind the suggestions, without the user configuring it:
 
-- **Doble progresión.** Cada ejercicio de una rutina tiene un rango de reps
-  (p. ej. 3 × 8-10). Cuando **todas** las series llegan al tope, toca subir el
-  peso y el objetivo vuelve al mínimo.
-- **Racha.** Cada sesión con todas las series en el tope suma una racha; una
-  serie por debajo la rompe y subir el peso la reinicia. Cuanto más larga, más
-  clara la sugerencia de subir.
-- **Bajar con respeto.** Por debajo del mínimo es aceptable. Por debajo de un
-  piso (por defecto, dos reps menos que el mínimo: 6 en un 8-10) la app sugiere
-  bajar el peso.
-- **Incrementos reales.** El salto depende del equipo: barra, mancuerna o
-  máquina no suben igual.
-- Los ejercicios de solo reps o de tiempo progresan con más reps o más tiempo.
+- **Double progression.** Each exercise in a routine has a rep range (e.g.
+  3 × 8-10). When **every** set reaches the top, it's time to add weight and the
+  target goes back to the minimum.
+- **Streak.** Each session with every set at the top adds to a streak; a set
+  below breaks it and adding weight resets it. The longer it is, the clearer the
+  suggestion to go up.
+- **Going down with respect.** Below the minimum is acceptable. Below a floor
+  (by default, two reps under the minimum: 6 on an 8-10) the app suggests
+  lowering the weight.
+- **Real increments.** The jump depends on the equipment: a barbell, a dumbbell
+  and a machine don't go up the same way.
+- Reps-only or timed exercises progress with more reps or more time.
 
-## Principios
+## Principles
 
-- **Registrar es el corazón.** Todo lo demás le suma o sobra; nunca le da trabajo
-  al usuario.
-- **Los datos personales son opcionales.** Edad, peso corporal o porcentaje de
-  grasa mejoran el análisis, pero se agregan cuando uno quiere, desde el perfil,
-  nunca antes de entrenar ni durante.
-- **Herramientas del gimnasio real.** Lo que sirve entre series cansado: la
-  calculadora de discos, buscar el ejercicio en video, ver tu historial con ese
-  ejercicio.
-- **Si otra app ya lo hace bien, no se copia.** Para hablar con tus amigos está
-  WhatsApp; para la comida, apps de nutrición.
-- **Tus datos son tuyos.** Se pueden exportar para que los analice tu IA de
-  confianza.
-- **Sin muro de pago para lo esencial.**
+- **Logging is the core.** Everything else adds to it or is surplus; it never
+  makes work for the user.
+- **Personal data is optional.** Age, body weight or body fat percentage
+  improve the analysis, but they're added whenever you want, from the profile,
+  never before training or during it.
+- **Tools for the real gym.** What helps between sets when you're tired: the
+  plate calculator, finding the exercise on video, seeing your history with
+  that exercise.
+- **If another app already does it well, it isn't copied.** To talk with your
+  friends there's WhatsApp; for food, nutrition apps.
+- **Your data is yours.** It can be exported for your trusted AI to analyze.
+- **No paywall for the essentials.**
 
-## Qué NO es
+## What it is NOT
 
-- **No es todo-en-uno:** nada de nutrición, hábitos ni fisioterapia.
-- **No es una red social:** sin chat, sin feed, sin fotos. Lo social se limita a
-  copiar programas y, como mucho, compararse con amigos.
-- **No tiene cronómetro.** Como app web, el sistema la congela en segundo plano;
-  se usa el del celular.
-- **No tiene onboarding.** Ni encuestas ni objetivos al registrarse.
+- **Not all-in-one:** no nutrition, habits or physiotherapy.
+- **Not a social network:** no chat, no feed, no photos. The social side is
+  limited to copying programs and, at most, comparing yourself with friends.
+- **No timer.** As a web app, the system freezes it in the background; you use
+  the phone's.
+- **No onboarding.** No surveys or goals when signing up.
 
-## Hacia dónde va
+## Where it's going
 
-- **Siempre disponible:** pasar de un servidor en casa a la nube, para que la app
-  funcione aunque se vaya la luz.
-- **Pulir el momento de entrenar:** historial del ejercicio con racha, buscar el
-  ejercicio en video, calculadora de discos y un registro de un toque.
-- **Abrirla a amigos**, con una versión cómoda en escritorio para
-  revisar tus datos, exportarlos o importar un programa armado con tu IA.
-- **Compartir programas y rutinas sueltas** que otros puedan copiar y adaptar.
+- **Always available:** moving from a home server to the cloud, so the app
+  works even when the power goes out.
+- **Polishing the training moment:** exercise history with streak, finding the
+  exercise on video, plate calculator and one-tap logging.
+- **Opening it to friends**, with a comfortable desktop version to review your
+  data, export it or import a program built with your AI.
+- **Sharing programs and standalone routines** that others can copy and adapt.
 
-El detalle comprometido está en el [`roadmap`](./logbook/roadmap.md) y las ideas
-sin compromiso, en la [`wishlist`](./logbook/wishlist.md).
+The committed detail is in the [`roadmap`](./logbook/roadmap.md) and the
+uncommitted ideas, in the [`wishlist`](./logbook/wishlist.md).
 
-## Restricciones
+## Constraints
 
-- Stack: NestJS + Next.js + PostgreSQL (Prisma), en Docker.
-- Web instalable en el celular (pantalla completa, vertical).
-- Presupuesto mínimo: capas gratuitas y créditos, trabajo en tiempo libre.
+- Stack: NestJS + Next.js + PostgreSQL (Prisma), in Docker.
+- Web app installable on the phone (full screen, portrait).
+- Minimal budget: free tiers and credits, built in spare time.

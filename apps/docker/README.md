@@ -111,7 +111,7 @@ docker compose down -v               # stop and DELETE the data volume
 > - **If a migration failed:** Prisma blocks the following ones (`P3009`) until
 >   the database is cleaned up, so the revert alone isn't enough. On the server,
 >   from `apps/docker/prod/`, first go back to the previous images and then
->   restore the backup `update.sh` made right before (the `backup previo:` line
+>   restore the backup `update.sh` made right before (the `pre-deploy backup:` line
 >   in the CD log). The order matters: `restore.sh` starts the API when it
 >   finishes, and it must start the old image.
 >
@@ -304,7 +304,7 @@ sh scripts/restore.sh dev /another/folder/gym-prod_2026-06-14_120000.sql   # a s
   reading any `.env`.
 - If you don't pass a file, it takes the latest `gym-prod_*.sql` from
   `apps/docker/backups/`.
-- **Asks for confirmation** (you have to type `si`) because it deletes the
+- **Asks for confirmation** (you have to type `yes`) because it deletes the
   current database.
 - **Stops the API** while restoring and starts it again when done (also if it
   fails). On start, the API runs `prisma migrate deploy`: if the backup predates

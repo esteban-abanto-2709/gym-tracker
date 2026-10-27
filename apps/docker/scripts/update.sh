@@ -4,7 +4,7 @@ set -eu
 cd "$(dirname "$0")/.."
 
 f=$(sh scripts/backup.sh)
-echo "backup previo: $f"
+echo "pre-deploy backup: $f"
 cd prod
 docker compose pull api web
 if ! docker compose up -d --wait --wait-timeout 180; then

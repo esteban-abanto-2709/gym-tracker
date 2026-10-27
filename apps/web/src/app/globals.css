@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 /*
- * Light = "papel cálido" (#EDEBE4). Dark = negro cálido (#09090B) con texto
- * blanco cálido (#F4F2EC). El rojo es el acento de acción (unificado con la
- * cinta hazard); la lima (--success) queda solo como acento de logro (PR /
- * completado). Deriva del diseño "Gym Tracker.dc.html".
+ * Light = "warm paper" (#EDEBE4). Dark = warm black (#09090B) with warm white
+ * text (#F4F2EC). Red is the action accent (shared with the hazard stripe);
+ * lime (--success) is only the achievement accent (PR / completed). Derived
+ * from the "Gym Tracker.dc.html" design.
  */
 :root {
   --background: 47 22% 91%;
@@ -36,7 +36,7 @@
   --success-foreground: 0 0% 100%;
   --warning: oklch(82.8% 0.189 84.429);
 
-  /* Cinta "hazard" (rayas de peligro), motivo de identidad del gym. */
+  /* "Hazard" stripe (warning stripes), the gym's identity motif. */
   --hazard: repeating-linear-gradient(
     -45deg,
     hsl(var(--primary)) 0 9px,
@@ -223,9 +223,9 @@ body {
   animation: pulseRing 1.1s ease-out forwards;
 }
 
-/* ---- Motivos de identidad del diseño (Track A) ---- */
+/* ---- Design identity motifs (Track A) ---- */
 
-/* Etiqueta "kicker": mono, mayúsculas, tracking amplio (ej. "// a entrenar"). */
+/* "Kicker" label: mono, uppercase, wide tracking (e.g. "// a entrenar"). */
 @utility kicker {
   font-family: var(--font-mono), monospace;
   text-transform: uppercase;

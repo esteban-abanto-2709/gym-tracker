@@ -1,32 +1,34 @@
-# Gym Tracker — Novedades
+# Gym Tracker — In-app news
 
-> Cómo se registran las novedades: las tarjetas que se abren con el icono de
-> estrellas en Hoy. Le cuentan al usuario lo que puede hacer en la app, sin un
-> tutorial que interrumpa.
+> How in-app news (Novedades) is registered: the cards that open from the stars
+> icon on Hoy. They tell the user what they can do in the app, without a
+> tutorial that interrupts.
 
-## Dónde viven
+## Where they live
 
-| Qué | Dónde |
+| What | Where |
 |---|---|
-| Cuáles novedades existen | [`apps/web/src/lib/news.ts`](../apps/web/src/lib/news.ts), la lista `NEWS` |
-| Qué abrió y qué vio cada usuario | `User.newsOpened` y `User.newsSeen` en la base: solo ids |
+| Which news items exist | [`apps/web/src/lib/news.ts`](../apps/web/src/lib/news.ts), the `NEWS` list |
+| What each user opened and saw | `User.newsOpened` and `User.newsSeen` in the database: ids only |
 
-La base no sabe qué novedades hay. Registrar o quitar una novedad es editar
-`news.ts`; nunca lleva migración.
+The database doesn't know which news items exist. Adding or removing one means
+editing `news.ts`; it never needs a migration.
 
-## Qué entra
+## What gets in
 
-Solo lo que le aporta al usuario, cumpliendo las tres:
+Only what adds something for the user, meeting all three:
 
-1. **Le sirve al entrenar.** Lo técnico (base de datos, deploys, backups) y los
-   arreglos no entran.
-2. **No es obvio.** Si se ve al usarlo (registrar una serie, el selector kg/lb),
-   no necesita tarjeta.
-3. **Funciona bien hoy.** No se anuncia algo con un bug conocido que decepcione.
+1. **It helps while training.** Technical work (database, deploys, backups) and
+   fixes don't get in.
+2. **It isn't obvious.** If it's visible just by using it (logging a set, the
+   kg/lb picker), it doesn't need a card.
+3. **It works well today.** Nothing with a known bug that would disappoint is
+   announced.
 
-Las decide el dueño del proyecto: nunca se agrega una novedad sin que lo pida.
+The project owner decides them: a news item is never added unless they ask for
+it.
 
-## Cada novedad
+## Each news item
 
 ```ts
 {
@@ -38,31 +40,32 @@ Las decide el dueño del proyecto: nunca se agrega una novedad sin que lo pida.
 }
 ```
 
-- **`id`:** en inglés y kebab-case. Es lo que se guarda por usuario: **no se
-  cambia ni se reutiliza**.
-- **`Icon`:** de `lucide-react`.
-- **`title`:** una frase corta que se entienda sola, en lo posible con un verbo
+- **`id`:** English and kebab-case. It's what's stored per user: **it's never
+  changed or reused**.
+- **`Icon`:** from `lucide-react`.
+- **`title`:** a short sentence that stands on its own, ideally with a verb
   ("Registra tus medidas", "Copia el programa de otro").
-- **`body`:** dos o tres líneas: qué hace y por qué le sirve.
-- **`href`:** opcional. La pantalla a la que lleva "Ir"; sin lugar fijo (algo que
-  vive dentro del entrenamiento), se omite. Para abrir un panel o bajar a una
-  sección se usa un parámetro o un ancla que esa pantalla ya entienda
-  (`/history?export=1`, `/perfil#medidas`).
+- **`body`:** two or three lines: what it does and why it helps.
+- **`href`:** optional. The screen "Ir" takes you to; with no fixed place
+  (something that lives inside training), it's omitted. To open a panel or
+  scroll to a section, use a parameter or an anchor that screen already
+  understands (`/history?export=1`, `/perfil#medidas`).
 
-**El orden del archivo es el orden en pantalla.** Una novedad nueva va arriba.
-Las no vistas siempre salen antes que las vistas.
+**The order in the file is the order on screen.** A new item goes at the top.
+Unseen ones always come before seen ones.
 
-## Operaciones
+## Operations
 
-Solo hay dos: **agregar** y **quitar**.
+There are only two: **add** and **remove**.
 
-- **Funcionalidad nueva:** se agrega una tarjeta con un id nuevo, arriba.
-- **Bug en una novedad:** se quita la tarjeta mientras se arregla. Al volver,
-  vuelve con **el mismo id**: quien ya la vio no la ve de nuevo como nueva.
-- **Mejora de una funcionalidad ya anunciada:** se quita la tarjeta vieja y se
-  agrega una nueva con id nuevo (`explore-programs` → `explore-programs-2`),
-  contando lo que mejoró. A todos les vuelve a salir el punto.
-- **Corregir el texto** sin que cambie la funcionalidad (una falta, una palabra):
-  se edita en su lugar con el mismo id; no avisa a nadie.
+- **New feature:** add a card with a new id, at the top.
+- **Bug in a news item:** remove the card while it's being fixed. When it comes
+  back, it comes back with **the same id**: whoever already saw it doesn't see
+  it as new again.
+- **Improvement to an already announced feature:** remove the old card and add
+  a new one with a new id (`explore-programs` → `explore-programs-2`), telling
+  what improved. The dot shows up again for everyone.
+- **Fixing the text** without the feature changing (a typo, a word): edit it in
+  place with the same id; it notifies no one.
 
-Una novedad nueva va en el mismo commit que la funcionalidad que anuncia.
+A new news item goes in the same commit as the feature it announces.
