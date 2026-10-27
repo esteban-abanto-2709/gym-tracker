@@ -58,6 +58,7 @@ export function PublicationDetail({
       if (isProgram) {
         const { activated } = await api.post<CopiedProgram>(endpoint, {});
         await refetchAll(queryClient, routinesQuery, programsQuery);
+        queryClient.invalidateQueries({ queryKey: ["explore"] });
         toast.success(
           activated ? "Programa copiado y activado" : "Programa copiado",
         );
@@ -65,6 +66,7 @@ export function PublicationDetail({
       } else {
         await api.post<CopiedRoutine>(endpoint, {});
         await refetchAll(queryClient, routinesQuery);
+        queryClient.invalidateQueries({ queryKey: ["explore"] });
         toast.success("Rutina copiada");
         router.push(routes.routines());
       }
@@ -82,6 +84,7 @@ export function PublicationDetail({
         routinePosition,
       });
       await refetchAll(queryClient, routinesQuery);
+      queryClient.invalidateQueries({ queryKey: ["explore"] });
       toast.success("Rutina copiada");
       router.push(routes.routines());
     } catch (e) {

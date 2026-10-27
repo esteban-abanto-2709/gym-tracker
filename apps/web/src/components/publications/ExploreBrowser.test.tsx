@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  fireEvent,
+  render as renderPlain,
+  screen,
+} from "@testing-library/react";
 import { ExploreBrowser } from "./ExploreBrowser";
 import { api } from "@/lib/api";
+import { queryWrapper } from "@/lib/queryTesting";
 
 const replace = vi.fn();
 
@@ -11,7 +16,12 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-vi.mock("@/lib/api", () => ({ api: { get: vi.fn(), delete: vi.fn() } }));
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
+  api: { get: vi.fn(), delete: vi.fn() },
+}));
+
+const render = (ui: React.ReactElement) => renderPlain(ui, queryWrapper());
 
 let auth: { user: { id: string } | null; loading: boolean };
 

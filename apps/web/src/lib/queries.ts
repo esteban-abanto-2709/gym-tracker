@@ -1,4 +1,5 @@
 import {
+  infiniteQueryOptions,
   queryOptions,
   type QueryClient,
   type QueryKey,
@@ -10,8 +11,13 @@ import type {
   BodyMeasurement,
   Equipment,
   Exercise,
+  ExploreListItem,
+  ExploreSort,
   Program,
+  PublicationKind,
   Routine,
+  SessionPage,
+  Workout,
 } from "@/lib/types";
 
 export const equipmentQuery = queryOptions({
@@ -49,6 +55,37 @@ export const measurementsQuery = queryOptions({
   queryFn: () => api.get<BodyMeasurement[]>(routes.api.measurements.list()),
   meta: { errorMessage: "No se pudieron cargar tus medidas" },
 });
+
+export const exploreQuery = (kind: PublicationKind, sort: ExploreSort) =>
+  queryOptions({
+    queryKey: ["explore", kind, sort],
+    queryFn: () =>
+      api.get<ExploreListItem[]>(routes.api.explore.list(kind, sort)),
+    meta: { errorMessage: "No se pudieron cargar las publicaciones" },
+  });
+
+export const myPublicationsQuery = queryOptions({
+  queryKey: ["explore", "mine"],
+  queryFn: () => api.get<ExploreListItem[]>(routes.api.publications.mine()),
+  meta: { errorMessage: "No se pudieron cargar tus publicaciones" },
+});
+
+export const sessionsQuery = infiniteQueryOptions({
+  queryKey: ["sessions"],
+  queryFn: ({ pageParam }) =>
+    api.get<SessionPage>(routes.api.sessions.list(pageParam)),
+  initialPageParam: null as string | null,
+  getNextPageParam: (page) => page.next,
+  meta: { errorMessage: "No se pudo cargar el historial" },
+});
+
+export const sessionQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["sessions", id],
+    queryFn: () => api.get<{ sets: Workout[] }>(routes.api.sessions.one(id)),
+    enabled: id !== "",
+    meta: { errorMessage: "No se pudo cargar la sesión" },
+  });
 
 export const refetchAll = (
   client: QueryClient,

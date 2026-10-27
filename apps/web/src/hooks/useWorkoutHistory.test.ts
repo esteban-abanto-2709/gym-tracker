@@ -2,15 +2,20 @@ import { describe, it, expect, vi } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWorkoutHistory } from "./useWorkoutHistory";
 import { api } from "@/lib/api";
+import { queryWrapper } from "@/lib/queryTesting";
+import { notifyError } from "@/lib/notify";
 import type { SessionPage, SessionSummary, Workout } from "@/lib/types";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock("@/lib/api", () => ({
-  api: { get: vi.fn(), delete: vi.fn() },
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
+  api: { get: vi.fn(), delete: vi.fn(), patch: vi.fn() },
 }));
+
+vi.mock("@/lib/notify", () => ({ notifyError: vi.fn() }));
 
 const set = (id: string, createdAt: string): Workout =>
   ({
@@ -65,7 +70,7 @@ const twoPages = {
 const loadHistory = async (pages: Record<string, SessionPage> = twoPages) => {
   mockApi(pages);
   vi.mocked(api.delete).mockResolvedValue(undefined);
-  const hook = renderHook(() => useWorkoutHistory());
+  const hook = renderHook(() => useWorkoutHistory(), queryWrapper());
   await waitFor(() => expect(hook.result.current.loading).toBe(false));
   return hook;
 };
@@ -97,15 +102,41 @@ describe("useWorkoutHistory", () => {
 
     await act(() => result.current.loadMore());
 
-    expect(result.current.sessions.map((s) => s.id)).toEqual([
-      "s-1",
-      "s-2",
-      "s-3",
-    ]);
+    await waitFor(() =>
+      expect(result.current.sessions.map((s) => s.id)).toEqual([
+        "s-1",
+        "s-2",
+        "s-3",
+      ]),
+    );
     expect(result.current.hasMore).toBe(false);
     expect(api.get).toHaveBeenCalledWith(
       `/sessions?before=${encodeURIComponent(s2.startedAt)}`,
     );
+  });
+
+  it("tells the user when the next page fails and keeps what was loaded", async () => {
+    const { result } = await loadHistory();
+    vi.mocked(api.get).mockRejectedValueOnce(new Error("Request failed"));
+
+    await act(() => result.current.loadMore());
+
+    expect(notifyError).toHaveBeenCalledWith(
+      "No se pudieron cargar más sesiones",
+    );
+    expect(result.current.sessions.map((s) => s.id)).toEqual(["s-1", "s-2"]);
+  });
+
+  it("editing a set shows the new numbers", async () => {
+    const { result } = await loadHistory();
+    vi.mocked(api.patch).mockResolvedValue({});
+
+    act(() => result.current.handleEditClick(newest));
+    act(() => result.current.setEditReps("6"));
+    await act(() => result.current.saveEdit());
+
+    await waitFor(() => expect(result.current.currentWorkouts[0].reps).toBe(6));
+    expect(result.current.editingWorkout).toBeNull();
   });
 
   it("the export starts at the first session, even before loading it", async () => {

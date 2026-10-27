@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { LikeButton } from "./LikeButton";
 import { api } from "@/lib/api";
+import { getQueryClient } from "@/lib/query";
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
@@ -20,6 +21,19 @@ beforeEach(() => {
 });
 
 describe("LikeButton", () => {
+  it("marks the explore lists stale so they show the new count", async () => {
+    const listKey = ["explore", "ROUTINE", "likes"];
+    getQueryClient().setQueryData(listKey, []);
+    vi.mocked(api.put).mockResolvedValue({ likeCount: 5, likedByMe: true });
+    render(<LikeButton {...props} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Me gusta" }));
+
+    await waitFor(() =>
+      expect(getQueryClient().getQueryState(listKey)?.isInvalidated).toBe(true),
+    );
+  });
+
   it("adds instantly and keeps what the server says", async () => {
     let resolve!: (value: unknown) => void;
     vi.mocked(api.put).mockReturnValue(new Promise((r) => (resolve = r)));

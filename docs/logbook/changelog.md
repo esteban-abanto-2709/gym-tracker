@@ -12,6 +12,12 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [WL-082] Data cache in the browser (2026-10-27 13:35)
+TanStack Query keeps routines, exercises, equipment, programs, measurements, explore and history between screens, so going back shows the last data at once and refreshes in the background.
+
+## [TD-139] Web data fetching fails silently and isn't shared (2026-10-27 13:35)
+Errors carry their HTTP status, auth goes through the shared client, failed loads and actions show a toast, and the shared cache replaces the per-hook fetch state; the cache is cleared when the account changes.
+
 ## [TD-148] Pending sets are sent with whichever account is signed in (2026-10-27 10:28)
 The offline queue is now kept per account on the device: only the signed-in account's sets are sent, signing out leaves them waiting for their owner and deleting the account discards them. An older unowned queue goes to the first account that signs in.
 

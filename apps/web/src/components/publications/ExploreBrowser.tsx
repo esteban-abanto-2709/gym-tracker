@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { routes } from "@/lib/routes";
+import { myPublicationsQuery } from "@/lib/queries";
 import type {
   ExploreListItem,
   ExploreSort,
@@ -34,21 +35,12 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
   const router = useRouter();
   const [tab, setTab] = useState(initialTab);
   const [sort, setSort] = useState<ExploreSort>("likes");
-  const [fetchedMine, setMine] = useState<ExploreListItem[] | null>(null);
+  const queryClient = useQueryClient();
   const { user, loading } = useAuth();
-  const userId = user?.id;
-  const mine = !loading && !userId ? [] : fetchedMine;
-
-  useEffect(() => {
-    if (loading || !userId) return;
-    api
-      .get<ExploreListItem[]>(routes.api.publications.mine())
-      .then(setMine)
-      .catch((e) => {
-        console.error("Error fetching my publications:", e);
-        setMine([]);
-      });
-  }, [loading, userId]);
+  const signedIn = !loading && Boolean(user);
+  const mineList = useQuery({ ...myPublicationsQuery, enabled: signedIn });
+  const mine =
+    !loading && !user ? [] : mineList.isError ? [] : (mineList.data ?? null);
 
   const changeTab = (value: ExploreTab) => {
     setTab(value);
@@ -61,7 +53,7 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
     tab === "mine" && mine !== null && !hasMine ? "programs" : tab;
 
   const changeMine = (items: ExploreListItem[]) => {
-    setMine(items);
+    queryClient.setQueryData(myPublicationsQuery.queryKey, items);
     if (items.length === 0) changeTab("programs");
   };
 

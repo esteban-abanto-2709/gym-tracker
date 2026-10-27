@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { getQueryClient } from "@/lib/query";
-import { activeProgramQuery } from "@/lib/queries";
+import { activeProgramQuery, sessionsQuery } from "@/lib/queries";
 import type { SetType } from "@/lib/types";
 
 const KEY = "gymtrack-pending-sets";
@@ -92,9 +92,9 @@ async function drain(): Promise<number> {
     console.error("Error sending pending sets:", e);
   }
   if (sent > 0) {
-    getQueryClient().invalidateQueries({
-      queryKey: activeProgramQuery.queryKey,
-    });
+    const client = getQueryClient();
+    client.invalidateQueries({ queryKey: activeProgramQuery.queryKey });
+    client.invalidateQueries({ queryKey: sessionsQuery.queryKey });
   }
   return readPendingSets().length;
 }

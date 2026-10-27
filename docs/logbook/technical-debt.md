@@ -38,14 +38,6 @@ and is deleted from here.
 - **Suggestion:** redirect without a `token` cookie in `proxy.ts` (Next 16's name for middleware; verify when starting), as `app/page.tsx` already does, plus root `error.tsx` and `not-found.tsx`.
 - **Date:** 2026-10-26 · **Status:** Open
 
-## [TD-139] Web data fetching fails silently and isn't shared
-- **Location:** `apps/web/src/lib/api.ts` (unused `token` parameter, 401 redirects and then throws anyway), `apps/web/src/lib/auth-context.tsx` (three hand-written `fetch`s next to the client), `apps/web/src/hooks/*` (22 files with `useEffect` + `fetch` + `useState`)
-- **Risk:** 5/10
-- **Problem:** 38 `console.error`s are the only reaction to a failed request (e.g. deleting a routine in `useRoutines.ts` fails with nothing on screen); only `useExplore.ts` and `PublishForm.tsx` guard against an older response arriving after a newer one; every hook repeats the same loading/error state by hand.
-- **Future impact:** the user thinks something was saved or deleted when it wasn't; stale data can overwrite fresh data on fast tab switches; every new screen copies the pattern again.
-- **Suggestion:** surface failures with `notifyError`, drop the dead `token` parameter, and route auth through the same client; the cache library of WL-082 would remove most of these hooks.
-- **Date:** 2026-10-26 · **Status:** In progress (2026-10-27)
-
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`
 - **Risk:** 3/10

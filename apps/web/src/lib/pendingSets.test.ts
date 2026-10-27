@@ -1,7 +1,7 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { api } from "@/lib/api";
 import { getQueryClient } from "@/lib/query";
-import { activeProgramQuery } from "@/lib/queries";
+import { activeProgramQuery, sessionsQuery } from "@/lib/queries";
 import {
   type PendingSet,
   addPendingSets,
@@ -193,11 +193,15 @@ describe("pendingSets per account", () => {
     expect(queued()).toEqual(["a"]);
   });
 
-  it("marks today's routine stale once a set reaches the API", async () => {
+  it("marks today's routine and the history stale once a set reaches the API", async () => {
     const client = getQueryClient();
     client.setQueryData(activeProgramQuery.queryKey, {
       program: null,
       nextRoutineId: "r-1",
+    });
+    client.setQueryData(sessionsQuery.queryKey, {
+      pages: [],
+      pageParams: [],
     });
     vi.mocked(api.post).mockResolvedValue({});
     addPendingSets([pending("c-today")]);
@@ -207,5 +211,8 @@ describe("pendingSets per account", () => {
     expect(
       client.getQueryState(activeProgramQuery.queryKey)?.isInvalidated,
     ).toBe(true);
+    expect(client.getQueryState(sessionsQuery.queryKey)?.isInvalidated).toBe(
+      true,
+    );
   });
 });

@@ -31,9 +31,6 @@ Swipe down to close the panels that slide up from the bottom (Novedades, Exporta
 ## [WL-087] Merge and promote exercises
 With user-created exercises, duplicates appear ("press raro" created several times). A tool to merge one exercise into another (moving its sets and routines) and to promote a user exercise to official, filling in its muscles and type. Depends on RM-056.
 
-## [WL-082] Data cache in the browser
-Every screen fetches its data on mount and each trip through the tunnel costs ~250 ms (see TD-080 in the changelog). With a caching library (TanStack Query or SWR), going back to a screen would instantly show the last loaded data and refresh in the background.
-
 ## [WL-078] AI export, second version
 Improvements to the RM-021 file following the review in [`docs/feedback/2026-10-09-export-ia.md`](../feedback/2026-10-09-export-ia.md): session identifier, exercise slug, training goal and a computed summary above the sets. Done when real use shows they're missing.
 

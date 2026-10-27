@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
+import { getQueryClient } from "@/lib/query";
 import { SLUG_MAX, isValidSlug, slugify } from "@/lib/slug";
 import type {
   Program,
@@ -120,6 +121,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
         slug,
         description: description.trim() || undefined,
       });
+      getQueryClient().invalidateQueries({ queryKey: ["explore"] });
       toast.success(isRoutine ? "Rutina publicada" : "Programa publicado");
       router.push(backHref);
     } catch (e) {

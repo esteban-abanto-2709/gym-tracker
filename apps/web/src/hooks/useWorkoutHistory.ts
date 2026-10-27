@@ -1,9 +1,15 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { SessionPage, SessionSummary, Workout } from "@/lib/types";
+import type { SessionSummary, Workout } from "@/lib/types";
 import { notifyError } from "@/lib/notify";
+import { sessionQuery, sessionsQuery } from "@/lib/queries";
 import { setMeasure } from "@/lib/setDisplay";
 
 const localDay = (iso: string, timeZone?: string) =>
@@ -30,6 +36,8 @@ function displayDate(dateStr: string): string {
     .replace(/^\w/, (c) => c.toUpperCase());
 }
 
+const NO_SETS: Workout[] = [];
+
 const sessionDay = (session: SessionSummary) =>
   localDay(session.startedAt, session.timeZone);
 
@@ -44,15 +52,9 @@ const sessionTime = (session: SessionSummary) =>
 export function useWorkoutHistory() {
   const router = useRouter();
 
-  const [sessions, setSessions] = useState<SessionSummary[]>([]);
-  const [next, setNext] = useState<string | null>(null);
-  const [first, setFirst] = useState<string | null>(null);
-  const [setsBySession, setSetsBySession] = useState<Record<string, Workout[]>>(
-    {},
-  );
+  const queryClient = useQueryClient();
+  const history = useInfiniteQuery(sessionsQuery);
   const [selectedId, setSelectedSession] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
 
   // Edit and Delete state
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
@@ -62,55 +64,26 @@ export function useWorkoutHistory() {
   const [editDuration, setEditDuration] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
-  useEffect(() => {
-    api
-      .get<SessionPage>(routes.api.sessions.list())
-      .then((page) => {
-        setSessions(page.sessions);
-        setNext(page.next);
-        setFirst(page.first);
-      })
-      .catch((error) => console.error("Error fetching sessions:", error))
-      .finally(() => setLoading(false));
-  }, []);
+  const sessions = useMemo(
+    () => history.data?.pages.flatMap((page) => page.sessions) ?? [],
+    [history.data],
+  );
+  const first = history.data?.pages[0]?.first ?? null;
 
+  const { fetchNextPage, hasNextPage, isFetchingNextPage } = history;
   const loadMore = useCallback(async () => {
-    if (!next || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const page = await api.get<SessionPage>(routes.api.sessions.list(next));
-      setSessions((prev) => [...prev, ...page.sessions]);
-      setNext(page.next);
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
+    if (!hasNextPage || isFetchingNextPage) return;
+    const result = await fetchNextPage();
+    if (result.isFetchNextPageError) {
       notifyError("No se pudieron cargar más sesiones");
-    } finally {
-      setLoadingMore(false);
     }
-  }, [next, loadingMore]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const currentSession =
     sessions.find((s) => s.id === selectedId) ?? sessions[0] ?? null;
   const activeId = currentSession?.id ?? "";
-  const sessionLoaded = !activeId || activeId in setsBySession;
-
-  useEffect(() => {
-    if (sessionLoaded) return;
-    api
-      .get<{ sets: Workout[] }>(routes.api.sessions.one(activeId))
-      .then(({ sets }) =>
-        setSetsBySession((prev) => ({ ...prev, [activeId]: sets })),
-      )
-      .catch((error) => {
-        console.error("Error fetching session:", error);
-        notifyError("No se pudo cargar la sesión");
-      });
-  }, [activeId, sessionLoaded]);
-
-  const currentWorkouts = useMemo(
-    () => setsBySession[activeId] ?? [],
-    [setsBySession, activeId],
-  );
+  const detail = useQuery(sessionQuery(activeId));
+  const currentWorkouts = detail.data?.sets ?? NO_SETS;
 
   const sessionLabel = useCallback(
     (session: SessionSummary) => {
@@ -173,12 +146,15 @@ export function useWorkoutHistory() {
 
         await api.patch(routes.api.workouts.update(editingWorkout.id), changes);
 
-        setSetsBySession((prev) => ({
-          ...prev,
-          [activeId]: (prev[activeId] ?? []).map((w) =>
-            w.id === editingWorkout.id ? { ...w, ...changes } : w,
-          ),
-        }));
+        queryClient.setQueryData(sessionQuery(activeId).queryKey, (prev) =>
+          prev
+            ? {
+                sets: prev.sets.map((w) =>
+                  w.id === editingWorkout.id ? { ...w, ...changes } : w,
+                ),
+              }
+            : prev,
+        );
         setEditingWorkout(null);
       } catch (e) {
         console.error(e);
@@ -188,7 +164,14 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [editingWorkout, editReps, editWeight, editDuration, activeId]);
+  }, [
+    editingWorkout,
+    editReps,
+    editWeight,
+    editDuration,
+    activeId,
+    queryClient,
+  ]);
 
   // Confirm and delete a workout
   const confirmDelete = useCallback(async () => {
@@ -197,16 +180,25 @@ export function useWorkoutHistory() {
     const run = async () => {
       try {
         await api.delete(routes.api.workouts.delete(deletingWorkout.id));
-        const left = (setsBySession[activeId] ?? []).filter(
-          (w) => w.id !== deletingWorkout.id,
-        );
-        setSetsBySession((prev) => ({ ...prev, [activeId]: left }));
-        setSessions((prev) =>
-          left.length === 0
-            ? prev.filter((s) => s.id !== activeId)
-            : prev.map((s) =>
-                s.id === activeId ? { ...s, sets: left.length } : s,
-              ),
+        const left = currentWorkouts.filter((w) => w.id !== deletingWorkout.id);
+        queryClient.setQueryData(sessionQuery(activeId).queryKey, {
+          sets: left,
+        });
+        queryClient.setQueryData(sessionsQuery.queryKey, (prev) =>
+          prev
+            ? {
+                ...prev,
+                pages: prev.pages.map((page) => ({
+                  ...page,
+                  sessions:
+                    left.length === 0
+                      ? page.sessions.filter((s) => s.id !== activeId)
+                      : page.sessions.map((s) =>
+                          s.id === activeId ? { ...s, sets: left.length } : s,
+                        ),
+                })),
+              }
+            : prev,
         );
         setDeletingWorkout(null);
       } catch (e) {
@@ -217,7 +209,7 @@ export function useWorkoutHistory() {
       }
     };
     await run();
-  }, [deletingWorkout, setsBySession, activeId]);
+  }, [deletingWorkout, currentWorkouts, activeId, queryClient]);
 
   return {
     // Data
@@ -225,10 +217,10 @@ export function useWorkoutHistory() {
     currentSession,
     setSelectedSession,
     currentWorkouts,
-    loading: loading || !sessionLoaded,
-    hasMore: next != null,
+    loading: history.isPending || (activeId !== "" && detail.isPending),
+    hasMore: hasNextPage,
     loadMore,
-    loadingMore,
+    loadingMore: isFetchingNextPage,
     firstDay: first ? localDay(first) : null,
 
     // Helpers
