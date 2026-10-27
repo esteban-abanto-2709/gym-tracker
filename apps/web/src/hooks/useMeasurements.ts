@@ -1,38 +1,42 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import { notifyError } from "@/lib/notify";
+import { measurementsQuery } from "@/lib/queries";
 import type { BodyMeasurement } from "@/lib/types";
+
+const NONE: BodyMeasurement[] = [];
 
 const byDateDesc = (a: BodyMeasurement, b: BodyMeasurement) =>
   b.date.localeCompare(a.date);
 
 export function useMeasurements() {
-  const [measurements, setMeasurements] = useState<BodyMeasurement[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: measurements = NONE, isPending: loading } =
+    useQuery(measurementsQuery);
 
-  useEffect(() => {
-    api
-      .get<BodyMeasurement[]>(routes.api.measurements.list())
-      .then(setMeasurements)
-      .catch(() => notifyError("No se pudieron cargar tus medidas"))
-      .finally(() => setLoading(false));
-  }, []);
+  const save = useCallback(
+    async (measurement: BodyMeasurement) => {
+      const saved = await api.put<BodyMeasurement>(
+        routes.api.measurements.upsert(),
+        measurement,
+      );
+      queryClient.setQueryData(measurementsQuery.queryKey, (prev = []) =>
+        [saved, ...prev.filter((m) => m.date !== saved.date)].sort(byDateDesc),
+      );
+    },
+    [queryClient],
+  );
 
-  const save = useCallback(async (measurement: BodyMeasurement) => {
-    const saved = await api.put<BodyMeasurement>(
-      routes.api.measurements.upsert(),
-      measurement,
-    );
-    setMeasurements((prev) =>
-      [saved, ...prev.filter((m) => m.date !== saved.date)].sort(byDateDesc),
-    );
-  }, []);
-
-  const remove = useCallback(async (date: string) => {
-    await api.delete(routes.api.measurements.delete(date));
-    setMeasurements((prev) => prev.filter((m) => m.date !== date));
-  }, []);
+  const remove = useCallback(
+    async (date: string) => {
+      await api.delete(routes.api.measurements.delete(date));
+      queryClient.setQueryData(measurementsQuery.queryKey, (prev = []) =>
+        prev.filter((m) => m.date !== date),
+      );
+    },
+    [queryClient],
+  );
 
   return { measurements, loading, save, remove };
 }

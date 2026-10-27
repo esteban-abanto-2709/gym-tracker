@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Compass, Play, Plus, Zap } from "lucide-react";
-import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
-import type { ActiveProgram, Routine } from "@/lib/types";
+import { activeProgramQuery, routinesQuery } from "@/lib/queries";
 import { readActiveSession, startSession } from "@/lib/activeSession";
 import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
@@ -48,38 +48,16 @@ function Tile({
 
 export function HomeActions() {
   const router = useRouter();
-  const [today, setToday] = useState<{
-    routine: Routine;
-    programName: string;
-  } | null>(null);
-  const [isNewUser, setIsNewUser] = useState(false);
+  const { data: active } = useQuery(activeProgramQuery);
+  const { data: routines } = useQuery(routinesQuery);
 
-  useEffect(() => {
-    const fetchToday = async () => {
-      try {
-        const [{ program, nextRoutineId }, routines] = await Promise.all([
-          api.get<ActiveProgram>(routes.api.programs.active()),
-          api.get<Routine[]>(routes.api.routines.list()),
-        ]);
-        if (routines.length === 0) {
-          setIsNewUser(true);
-          return;
-        }
-        const routine = program?.routines.find((r) => r.id === nextRoutineId);
-        if (
-          program &&
-          routine &&
-          routine.items.length > 0 &&
-          !readActiveSession()
-        ) {
-          setToday({ routine, programName: program.name });
-        }
-      } catch (e) {
-        console.error("Error fetching today's routine:", e);
-      }
-    };
-    fetchToday();
-  }, []);
+  const isNewUser = routines?.length === 0;
+  const program = active?.program;
+  const routine = program?.routines.find((r) => r.id === active?.nextRoutineId);
+  const today =
+    program && routine && routine.items.length > 0 && !readActiveSession()
+      ? { routine, programName: program.name }
+      : null;
 
   const handleStart = () => {
     if (!today) return;

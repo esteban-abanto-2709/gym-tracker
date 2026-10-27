@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  fireEvent,
+  render as renderPlain,
+  screen,
+} from "@testing-library/react";
 import { PublicationDetail } from "./PublicationDetail";
 import { api } from "@/lib/api";
+import { queryWrapper } from "@/lib/queryTesting";
 import type { ExploreDetail } from "@/lib/types";
 
 const push = vi.fn();
@@ -12,7 +17,12 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-vi.mock("@/lib/api", () => ({ api: { post: vi.fn() } }));
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
+  api: { post: vi.fn() },
+}));
+
+const render = (ui: React.ReactElement) => renderPlain(ui, queryWrapper());
 
 let auth: { user: { id: string } | null; loading: boolean };
 

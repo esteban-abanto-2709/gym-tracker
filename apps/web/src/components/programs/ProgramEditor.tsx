@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
+import { programsQuery, refetchAll, routinesQuery } from "@/lib/queries";
 import type { Program, Routine } from "@/lib/types";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
@@ -14,6 +16,9 @@ import { Button } from "@/components/base/button";
 import { LoadingOverlay, Spinner } from "@/components/base/spinner";
 import { cn } from "@/lib/utils";
 import { heading } from "@/components/base/heading";
+
+const NONE_ROUTINES: Routine[] = [];
+const NONE_PROGRAMS: Program[] = [];
 
 interface ProgramEditorProps {
   programId?: string;
@@ -25,38 +30,23 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
 
   const [name, setName] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
-  const [routines, setRoutines] = useState<Routine[]>([]);
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [seeded, setSeeded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
+  const routinesList = useQuery(routinesQuery);
+  const programsList = useQuery(programsQuery);
+  const routines = routinesList.data ?? NONE_ROUTINES;
+  const programs = programsList.data ?? NONE_PROGRAMS;
+  const loading = routinesList.isPending || programsList.isPending;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [routineList, programList] = await Promise.all([
-          api.get<Routine[]>(routes.api.routines.list()),
-          api.get<Program[]>(routes.api.programs.list()),
-        ]);
-        setRoutines(routineList);
-        setPrograms(programList);
-        const current = programList.find((p) => p.id === programId);
-        if (current) {
-          setName(current.name);
-          setSelected(current.routines.map((r) => r.id));
-        }
-      } catch (e) {
-        console.error("Error fetching program data:", e);
-        notifyError(
-          programId
-            ? "No se pudo cargar el programa"
-            : "No se pudieron cargar tus rutinas",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [programId]);
+  if (!seeded && programsList.data) {
+    const current = programsList.data.find((p) => p.id === programId);
+    if (current) {
+      setName(current.name);
+      setSelected(current.routines.map((r) => r.id));
+    }
+    setSeeded(true);
+  }
 
   const programNames = new Map(programs.map((p) => [p.id, p.name]));
   const routineNames = new Map(routines.map((r) => [r.id, r.name]));
@@ -85,6 +75,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
         } else {
           await api.post(routes.api.programs.create(), payload);
         }
+        await refetchAll(queryClient, programsQuery);
         router.push(routes.programs());
       } catch (e) {
         console.error("Error saving program:", e);
@@ -106,6 +97,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
     setSaving(true);
     try {
       await api.delete(routes.api.programs.delete(programId));
+      await refetchAll(queryClient, programsQuery);
       router.push(routes.programs());
     } catch (e) {
       console.error("Error deleting program:", e);

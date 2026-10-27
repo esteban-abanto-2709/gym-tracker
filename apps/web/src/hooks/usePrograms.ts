@@ -1,48 +1,45 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
-import type { ActiveProgram, Program } from "@/lib/types";
+import { activeProgramQuery, programsQuery } from "@/lib/queries";
+import type { Program } from "@/lib/types";
+
+const NONE: Program[] = [];
 
 export function usePrograms() {
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
-  const [nextRoutineId, setNextRoutineId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        const [list, active] = await Promise.all([
-          api.get<Program[]>(routes.api.programs.list()),
-          api.get<ActiveProgram>(routes.api.programs.active()),
-        ]);
-        setPrograms(list);
-        setActiveProgramId(active.program?.id ?? null);
-        setNextRoutineId(active.nextRoutineId);
-      } catch (e) {
-        console.error("Error fetching programs:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPrograms();
-  }, []);
+  const queryClient = useQueryClient();
+  const list = useQuery(programsQuery);
+  const active = useQuery(activeProgramQuery);
+  const programs = list.data ?? NONE;
 
   const setActive = useCallback(
     async (programId: string | null) => {
-      const previous = activeProgramId;
-      setActiveProgramId(programId);
+      const { queryKey } = activeProgramQuery;
+      const previous = queryClient.getQueryData(queryKey);
+      queryClient.setQueryData(queryKey, {
+        program: programs.find((p) => p.id === programId) ?? null,
+        nextRoutineId: null,
+      });
       try {
         await api.put(routes.api.programs.active(), { programId });
       } catch (e) {
         console.error("Error setting active program:", e);
-        setActiveProgramId(previous);
+        queryClient.setQueryData(queryKey, previous);
         notifyError("No se pudo cambiar el programa activo");
+      } finally {
+        queryClient.invalidateQueries({ queryKey });
       }
     },
-    [activeProgramId],
+    [programs, queryClient],
   );
 
-  return { programs, activeProgramId, nextRoutineId, loading, setActive };
+  return {
+    programs,
+    activeProgramId: active.data?.program?.id ?? null,
+    nextRoutineId: active.data?.nextRoutineId ?? null,
+    loading: list.isPending || active.isPending,
+    setActive,
+  };
 }

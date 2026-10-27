@@ -201,6 +201,39 @@ describe("AuthProvider errors", () => {
   );
 });
 
+describe("AuthProvider cached data", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  function LanguagePicker() {
+    const { updateMe } = useAuth();
+    return (
+      <button onClick={() => updateMe({ exerciseLocale: "es" })}>
+        español
+      </button>
+    );
+  }
+
+  it("reloads cached data after changing the exercise language", async () => {
+    meResponds(true);
+    pathname = "/perfil";
+    render(
+      <AuthProvider>
+        <LanguagePicker />
+      </AuthProvider>,
+    );
+    await screen.findByText("español");
+    getQueryClient().setQueryData(["exercises"], [{ id: "ex-1" }]);
+
+    fireEvent.click(screen.getByText("español"));
+
+    await waitFor(() =>
+      expect(getQueryClient().getQueryState(["exercises"])?.isInvalidated).toBe(
+        true,
+      ),
+    );
+  });
+});
+
 describe("AuthProvider pending sets", () => {
   afterEach(() => {
     vi.unstubAllGlobals();

@@ -1,5 +1,7 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { api } from "@/lib/api";
+import { getQueryClient } from "@/lib/query";
+import { activeProgramQuery } from "@/lib/queries";
 import {
   type PendingSet,
   addPendingSets,
@@ -9,7 +11,8 @@ import {
   setPendingOwner,
 } from "@/lib/pendingSets";
 
-vi.mock("@/lib/api", () => ({
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
   api: { post: vi.fn() },
 }));
 
@@ -188,5 +191,21 @@ describe("pendingSets per account", () => {
     discardPendingSets();
     setPendingOwner("u-ana");
     expect(queued()).toEqual(["a"]);
+  });
+
+  it("marks today's routine stale once a set reaches the API", async () => {
+    const client = getQueryClient();
+    client.setQueryData(activeProgramQuery.queryKey, {
+      program: null,
+      nextRoutineId: "r-1",
+    });
+    vi.mocked(api.post).mockResolvedValue({});
+    addPendingSets([pending("c-today")]);
+
+    await flushPendingSets();
+
+    expect(
+      client.getQueryState(activeProgramQuery.queryKey)?.isInvalidated,
+    ).toBe(true);
   });
 });

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import { useEquipment } from "./useEquipment";
 import { api, ApiError } from "@/lib/api";
 import { notifyError } from "@/lib/notify";
-import { makeQueryClient } from "@/lib/query";
+import { queryWrapper } from "@/lib/queryTesting";
 import type { Equipment } from "@/lib/types";
 
 vi.mock("@/lib/api", async (importOriginal) => ({
@@ -17,19 +17,14 @@ vi.mock("@/lib/notify", () => ({ notifyError: vi.fn() }));
 const barbell = { id: "eq-1", name: "Barra" } as Equipment;
 
 let client: QueryClient;
+let wrapper: ReturnType<typeof queryWrapper>["wrapper"];
 
-const render = () =>
-  renderHook(() => useEquipment(), {
-    wrapper: ({ children }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
-    ),
-  });
+const render = () => renderHook(() => useEquipment(), { wrapper });
 
 describe("useEquipment", () => {
   beforeEach(() => {
     vi.mocked(notifyError).mockReset();
-    client = makeQueryClient();
-    client.setDefaultOptions({ queries: { retry: false } });
+    ({ client, wrapper } = queryWrapper());
   });
 
   it("loads the equipment list", async () => {

@@ -229,6 +229,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       >,
     ) => {
       setUser(await api.patch<AuthUser>(routes.api.auth.me(), changes));
+      if (changes.exerciseLocale) getQueryClient().invalidateQueries();
     },
     [],
   );

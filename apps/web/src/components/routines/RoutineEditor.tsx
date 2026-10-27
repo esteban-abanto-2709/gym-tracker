@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -24,6 +25,7 @@ import {
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
+import { programsQuery, refetchAll, routinesQuery } from "@/lib/queries";
 import type { Exercise, Routine, RoutineBlock } from "@/lib/types";
 import { useExercises } from "@/hooks/useExercises";
 import { useRoutines } from "@/hooks/useRoutines";
@@ -129,6 +131,7 @@ const toBlock = (block: DraftBlock): RoutineBlock => {
 
 export function RoutineEditor({ routineId }: RoutineEditorProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const isEdit = Boolean(routineId);
 
   const {
@@ -278,6 +281,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         } else {
           await api.post(routes.api.routines.create(), payload);
         }
+        await refetchAll(queryClient, routinesQuery, programsQuery);
         router.push(routes.routines());
       } catch (e) {
         console.error("Error saving routine:", e);

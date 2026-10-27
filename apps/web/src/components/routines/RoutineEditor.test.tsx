@@ -2,12 +2,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { RoutineEditor } from "./RoutineEditor";
 import { api } from "@/lib/api";
+import { queryWrapper } from "@/lib/queryTesting";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock("@/lib/api", () => ({ api: { get: vi.fn() } }));
+vi.mock("@/lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api")>()),
+  api: { get: vi.fn() },
+}));
 
 vi.mock("@/hooks/useExercises", () => ({
   useExercises: () => ({
@@ -34,7 +38,7 @@ const warning = "Ya tienes una rutina con ese nombre.";
 
 describe("RoutineEditor", () => {
   it("warns when the name belongs to another routine of yours", async () => {
-    render(<RoutineEditor />);
+    render(<RoutineEditor />, queryWrapper());
     await screen.findByLabelText("Nombre de la rutina");
 
     fireEvent.change(nameInput(), { target: { value: "Torso A " } });
@@ -43,7 +47,7 @@ describe("RoutineEditor", () => {
   });
 
   it("does not warn when editing a routine that keeps its name", async () => {
-    render(<RoutineEditor routineId="r-torso" />);
+    render(<RoutineEditor routineId="r-torso" />, queryWrapper());
 
     expect(await screen.findByDisplayValue("Torso A")).toBeTruthy();
     expect(screen.queryByText(warning)).toBeNull();

@@ -1,35 +1,25 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { notifyError } from "@/lib/notify";
 import { routes } from "@/lib/routes";
+import { notifyError } from "@/lib/notify";
+import { exercisesQuery } from "@/lib/queries";
 import type { Exercise } from "@/lib/types";
 import { addExercise, matchesSearch } from "@/lib/exercises";
 
+const NONE: Exercise[] = [];
+
 export function useExercises() {
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [loadingExercises, setLoadingExercises] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: exercises = NONE, isPending: loadingExercises } =
+    useQuery(exercisesQuery);
   const [search, setSearch] = useState("");
   const [creatingExercise, setCreatingExercise] = useState(false);
-
-  // Fetch exercises on mount
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const data = await api.get<Exercise[]>(routes.api.exercises.list());
-        setExercises(data);
-      } catch (e) {
-        console.error("Error fetching exercises:", e);
-      } finally {
-        setLoadingExercises(false);
-      }
-    };
-    fetchExercises();
-  }, []);
 
   // Derived: filtered exercises based on search term
   const filteredExercises = exercises.filter((ex) => matchesSearch(ex, search));
 
-  // Create a new exercise and add it to the local list
+  // Create a new exercise and add it to the shared list
   const createExercise = useCallback(
     async (name: string): Promise<Exercise> => {
       setCreatingExercise(true);
@@ -39,7 +29,9 @@ export function useExercises() {
           { name: name.trim() },
         );
 
-        setExercises((prev) => addExercise(prev, created));
+        queryClient.setQueryData(exercisesQuery.queryKey, (prev) =>
+          addExercise(prev ?? [], created),
+        );
 
         return created;
       } catch (e) {
@@ -49,7 +41,7 @@ export function useExercises() {
         setCreatingExercise(false);
       }
     },
-    [],
+    [queryClient],
   );
 
   return {

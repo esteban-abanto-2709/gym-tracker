@@ -1,5 +1,7 @@
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
+import { getQueryClient } from "@/lib/query";
+import { activeProgramQuery } from "@/lib/queries";
 import type { SetType } from "@/lib/types";
 
 const KEY = "gymtrack-pending-sets";
@@ -74,6 +76,7 @@ export function discardPendingSets(): void {
 }
 
 async function drain(): Promise<number> {
+  let sent = 0;
   try {
     for (let set = readPendingSets()[0]; set; set = readPendingSets()[0]) {
       await api.post(routes.api.workouts.create(), {
@@ -83,9 +86,15 @@ async function drain(): Promise<number> {
       writePendingSets(
         readPendingSets().filter((s) => s.clientId !== set.clientId),
       );
+      sent++;
     }
   } catch (e) {
     console.error("Error sending pending sets:", e);
+  }
+  if (sent > 0) {
+    getQueryClient().invalidateQueries({
+      queryKey: activeProgramQuery.queryKey,
+    });
   }
   return readPendingSets().length;
 }

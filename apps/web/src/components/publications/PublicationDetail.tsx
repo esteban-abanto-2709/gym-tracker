@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
+import { programsQuery, refetchAll, routinesQuery } from "@/lib/queries";
 import { useAuth } from "@/lib/auth-context";
 import type {
   CopiedProgram,
@@ -43,6 +45,7 @@ export function PublicationDetail({
   publication,
 }: PublicationDetailProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user, loading } = useAuth();
   const guest = !loading && !user;
   const isProgram = kind === "PROGRAM";
@@ -54,12 +57,14 @@ export function PublicationDetail({
       const endpoint = routes.api.explore.copy(kind, slug);
       if (isProgram) {
         const { activated } = await api.post<CopiedProgram>(endpoint, {});
+        await refetchAll(queryClient, routinesQuery, programsQuery);
         toast.success(
           activated ? "Programa copiado y activado" : "Programa copiado",
         );
         router.push(activated ? routes.home() : routes.programs());
       } else {
         await api.post<CopiedRoutine>(endpoint, {});
+        await refetchAll(queryClient, routinesQuery);
         toast.success("Rutina copiada");
         router.push(routes.routines());
       }
@@ -76,6 +81,7 @@ export function PublicationDetail({
       await api.post<CopiedRoutine>(routes.api.explore.copy(kind, slug), {
         routinePosition,
       });
+      await refetchAll(queryClient, routinesQuery);
       toast.success("Rutina copiada");
       router.push(routes.routines());
     } catch (e) {
