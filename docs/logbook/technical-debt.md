@@ -14,13 +14,13 @@ and is deleted from here.
 
 ---
 
-## [TD-142] The offline set queue has no test of its own
-- **Location:** `apps/web/src/lib/pendingSets.ts`
-- **Risk:** 5/10
-- **Problem:** the queue that keeps sets when there's no network (send in order, drop each one only after the API accepts it, a single flush at a time, re-flush when asked mid-flush) is only covered indirectly through `useGuidedSession.test.ts`; there's no `pendingSets.test.ts`. `PendingSet.body.setType` is also typed as `string` instead of `SetType`.
-- **Future impact:** a change to the queue can lose or duplicate real sets without any test going red; it's the piece where a bug costs user data.
-- **Suggestion:** a `pendingSets.test.ts` with a mocked `api.post`: failure mid-queue keeps the rest, two concurrent flushes send each set once, a flush requested mid-flush runs again.
-- **Date:** 2026-10-26 · **Status:** Open
+## [TD-147] A set the API rejects for good blocks the offline queue
+- **Location:** `apps/web/src/lib/pendingSets.ts:64`
+- **Risk:** 6/10
+- **Problem:** `drain` stops at the first failed post and treats every error the same, so a set the API will never accept (a 4xx such as a deleted exercise or a failed validation) stays at the head of the queue and every set behind it is never sent. The only way out is discarding the whole queue.
+- **Future impact:** one bad set can keep a whole session's real sets from reaching the server, and the user can only drop all of them, losing them.
+- **Suggestion:** tell permanent rejections (4xx) apart from network failures and set those aside on their own instead of retrying them at the head.
+- **Date:** 2026-10-27 · **Status:** Open
 
 ## [TD-141] Icon-only buttons without an accessible name
 - **Location:** `apps/web/src/components/layout/AppHeader.tsx:56` (`BackAction`: neither label nor title), `AppHeader.tsx:67` and `:79` (`HistoryAction`, `RoutinesAction`: `title` only), plus the other header icon buttons

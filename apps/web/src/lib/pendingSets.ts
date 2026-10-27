@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
+import type { SetType } from "@/lib/types";
 
 const KEY = "gymtrack-pending-sets";
 
@@ -16,7 +17,7 @@ export interface PendingSet {
     weight: number | null;
     durationSec: number | null;
     equipmentId: string | null;
-    setType: string;
+    setType: SetType;
     step: number | null;
   };
 }

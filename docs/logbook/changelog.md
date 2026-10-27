@@ -12,6 +12,10 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-142] The offline set queue has no test of its own (2026-10-27 08:32)
+`pendingSets.test.ts` covers send order, drop only after the API accepts, a mid-queue failure keeping the rest, a single flush at a time and re-draining when asked mid-flush.
+`PendingSet.body.setType` is now typed as `SetType`.
+
 ## [TD-146] Dev and prod repeat the same compose (2026-10-27 07:29)
 `apps/docker/dev/` and `prod/` (two near-identical composes) become `compose.yaml` + `compose.override.yaml` (dev, loaded on its own) + `compose.prod.yaml` (server, via `COMPOSE_FILE`), with one `.env` per machine. The tunnel is a dev profile and `.env.example` works as is; prod's resolved config hashes are unchanged, so no container is recreated.
 
