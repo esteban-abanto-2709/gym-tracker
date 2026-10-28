@@ -36,7 +36,7 @@ and is deleted from here.
 - **Problem:** every private page waits for `GET /auth/me` in the browser before rendering, showing "Cargando…" and only then redirecting to `/login`; 51 files are `"use client"`. An exception in a page has no error boundary, and unknown URLs get Next's default 404.
 - **Future impact:** a blank loader on every cold start (~250 ms per trip through the tunnel), a white screen on an unexpected error, and every new page has to remember the auth dance.
 - **Suggestion:** redirect without a `token` cookie in `proxy.ts` (Next 16's name for middleware; verify when starting), as `app/page.tsx` already does, plus root `error.tsx` and `not-found.tsx`.
-- **Date:** 2026-10-26 · **Status:** Open
+- **Date:** 2026-10-26 · **Status:** In progress (2026-10-27)
 
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`
