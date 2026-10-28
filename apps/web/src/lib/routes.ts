@@ -120,3 +120,15 @@ export const routes = {
     },
   },
 } as const;
+
+const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
+const OPEN_PATHS = new Set<string>([routes.home(), routes.privacy()]);
+const OPEN_SECTIONS = [routes.explore()];
+
+export const isPublicPath = (pathname: string) => PUBLIC_PATHS.has(pathname);
+
+export const isOpenPath = (pathname: string) =>
+  OPEN_PATHS.has(pathname) ||
+  OPEN_SECTIONS.some(
+    (section) => pathname === section || pathname.startsWith(`${section}/`),
+  );

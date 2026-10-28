@@ -10,21 +10,11 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { routes } from "@/lib/routes";
+import { isOpenPath, isPublicPath, routes } from "@/lib/routes";
 import { api, ApiError } from "@/lib/api";
 import { discardPendingSets, setPendingOwner } from "@/lib/pendingSets";
 import { getQueryClient } from "@/lib/query";
 import type { AuthUser } from "@/lib/types";
-
-const PUBLIC_PATHS = new Set<string>([routes.login(), routes.register()]);
-const OPEN_PATHS = new Set<string>([routes.home(), routes.privacy()]);
-const OPEN_SECTIONS = [routes.explore()];
-
-const isOpenPath = (pathname: string) =>
-  OPEN_PATHS.has(pathname) ||
-  OPEN_SECTIONS.some(
-    (section) => pathname === section || pathname.startsWith(`${section}/`),
-  );
 
 function nextPath() {
   const next = new URLSearchParams(window.location.search).get("next");
@@ -240,7 +230,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!loading) applyAccountTheme();
   }, [loading, accountTheme]);
 
-  const isPublic = PUBLIC_PATHS.has(pathname);
+  const isPublic = isPublicPath(pathname);
   const isOpen = isOpenPath(pathname);
 
   useEffect(() => {

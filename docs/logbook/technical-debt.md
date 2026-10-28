@@ -14,6 +14,13 @@ and is deleted from here.
 
 ---
 
+## [TD-150] An unknown URL without a session lands on login, not the 404
+- **Location:** `apps/web/src/proxy.ts:4`, `apps/web/src/lib/auth-context.tsx:233`
+- **Risk:** 2/10
+- **Problem:** any path that isn't open or public counts as private, so a guest on a mistyped or dead URL is sent to `/login` instead of seeing `app/not-found.tsx`; only people with a session see the 404.
+- **Future impact:** a guest following a broken link is asked to sign in for a page that doesn't exist, and after signing in lands on the 404.
+- **Date:** 2026-10-27 · **Status:** Open
+
 ## [TD-149] A set the API rejects for good still blocks the offline queue
 - **Location:** `apps/web/src/lib/pendingSets.ts:64`
 - **Risk:** 4/10
@@ -29,14 +36,6 @@ and is deleted from here.
 - **Future impact:** a screen-reader user hears "link" or "button" with no purpose; regressions go unnoticed because nothing checks them.
 - **Suggestion:** `aria-label` on every icon-only control, and an `@axe-core/playwright` check in the existing e2e.
 - **Date:** 2026-10-26 · **Status:** Open
-
-## [TD-140] Route protection and loading states live in the client
-- **Location:** `apps/web/src/lib/auth-context.tsx:224` (redirect effect + `FullScreenLoader`), `apps/web/src/app/` (no `loading.tsx`, `error.tsx` or `not-found.tsx`)
-- **Risk:** 4/10
-- **Problem:** every private page waits for `GET /auth/me` in the browser before rendering, showing "Cargando…" and only then redirecting to `/login`; 51 files are `"use client"`. An exception in a page has no error boundary, and unknown URLs get Next's default 404.
-- **Future impact:** a blank loader on every cold start (~250 ms per trip through the tunnel), a white screen on an unexpected error, and every new page has to remember the auth dance.
-- **Suggestion:** redirect without a `token` cookie in `proxy.ts` (Next 16's name for middleware; verify when starting), as `app/page.tsx` already does, plus root `error.tsx` and `not-found.tsx`.
-- **Date:** 2026-10-26 · **Status:** In progress (2026-10-27)
 
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`

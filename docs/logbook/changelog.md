@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-140] Route protection and loading states live in the client (2026-10-27 19:34)
+`proxy.ts` sends guests on private pages to `/login?next=…` before rendering, sharing the open/public path lists with `AuthProvider`; root `error.tsx` and `not-found.tsx` replace the white screen and Next's default 404.
+
 ## [WL-082] Data cache in the browser (2026-10-27 13:35)
 TanStack Query keeps routines, exercises, equipment, programs, measurements, explore and history between screens, so going back shows the last data at once and refreshes in the background.
 
