@@ -4,6 +4,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useEquipment } from "./useEquipment";
 import { api, ApiError } from "@/lib/api";
 import { notifyError } from "@/lib/notify";
+import { equipmentQuery } from "@/lib/queries";
 import { queryWrapper } from "@/lib/queryTesting";
 import type { Equipment } from "@/lib/types";
 
@@ -53,10 +54,12 @@ describe("useEquipment", () => {
   });
 
   it("keeps showing cached data when a background refresh fails", async () => {
-    client.setQueryData(["equipment"], [barbell]);
+    client.setQueryData(equipmentQuery.queryKey, [barbell]);
     vi.mocked(api.get).mockRejectedValue(new ApiError("boom", 500));
     const { result } = render();
-    await act(() => client.refetchQueries({ queryKey: ["equipment"] }));
+    await act(() =>
+      client.refetchQueries({ queryKey: equipmentQuery.queryKey }),
+    );
     expect(result.current.equipment).toEqual([barbell]);
     expect(notifyError).not.toHaveBeenCalled();
   });

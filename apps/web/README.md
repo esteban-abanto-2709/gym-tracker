@@ -82,6 +82,29 @@ UX; if a test fails, the trace lands in `e2e-results/` and the report in
   pending sets, the app offers to retry or discard.
 - Other failed writes show a toast with "Reintentar" (`lib/notify.ts`).
 
+## Data fetching
+
+Reads go through TanStack Query; lint enforces rules 1 and 2.
+
+1. **Every read is defined once in `lib/queries.ts`**: its key, its `api.get`
+   call and the `meta.errorMessage` shown if it fails. Components and hooks use
+   it with `useQuery(routinesQuery)`, never with `useEffect` + `fetch`. Keys
+   are never written by hand outside that file.
+2. **Nothing calls `fetch` directly**: the browser uses `api` (`lib/api.ts`),
+   whose errors are an `ApiError` with the HTTP status; server components use
+   `lib/server-api.ts`.
+3. **After a write, update the cache**: `setQueryData` when the new value is
+   known, otherwise invalidate the affected queries with `refetchAll` or
+   `invalidateQueries({ queryKey: xQuery.queryKey })`. Writes are plain
+   `async` functions with `try/catch` + `notifyError`.
+4. **The global client (`lib/query.tsx`)** keeps data fresh for 30 s, retries
+   once and shows a toast with the query's message when a read fails with
+   nothing on screen; a `401` shows none, since `api` already redirects to
+   `/login`.
+5. **Not in the cache**: the offline set queue (`lib/pendingSets.ts`) and the
+   guided session (`lib/activeSession.ts`) stay in `localStorage`; the queue
+   only invalidates the active program and history after sending.
+
 ## Routes
 
 | Route                                                  | Screen                                                                                                                                    |
@@ -124,7 +147,8 @@ src/
 └── lib/            # HTTP client, auth, routes, types and pure logic
 ```
 
-- **No global state library.** Each domain has its hook in `hooks/`, and
+- **No global state library.** Server data lives in the TanStack Query cache
+  (see **Data fetching**); each domain has its hook in `hooks/`, and
   `lib/api.ts` is the only point of contact with the API.
 - **Centralized routes** in `lib/routes.ts`, both the app's and the API's.
 - **News** in `lib/news.ts`: each entry has its id, and the API stores which
