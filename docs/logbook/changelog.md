@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [RM-135] Enable React Compiler in the web (2026-10-28 13:49)
+`reactCompiler: true` with `babel-plugin-react-compiler` 1.0.0 for the whole web; lint already enforced its rules. Files with `try/finally` (the guided session and the data hooks) are skipped and stay as they were, so the manual `useCallback`/`useMemo` stay too.
+
 ## [TD-141] Icon-only buttons without an accessible name (2026-10-27 20:57)
 Every icon-only control has an `aria-label`, form labels are linked, headings are in order and the red token meets AA contrast in both themes (dark mode now puts dark text on red); `a11y.spec.ts` runs axe on every main page and sheet in both themes; the web e2e run locally or from a manual GitHub workflow, never blocking deploys.
 

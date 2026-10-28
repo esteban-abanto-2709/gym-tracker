@@ -14,6 +14,14 @@ and is deleted from here.
 
 ---
 
+## [TD-153] The axe check on the training screen is flaky
+- **Location:** `apps/web/e2e/a11y.spec.ts:128`, `apps/web/e2e/axe.ts:13`, `apps/web/src/app/train/page.tsx:126`
+- **Risk:** 4/10
+- **Problem:** "training is accessible" fails about one run in three with `color-contrast` on the whole set form (`.text-primary`, `.bg-primary`, the weight and reps inputs, the chips), with or without React Compiler. The likely cause is axe measuring while `animate-fade-in-up` is still running: the form mounts after the recommendation fetch, so its animation can start after `expectAccessible` collected the running ones.
+- **Future impact:** a red e2e that says nothing about the app; real contrast regressions on that screen get ignored as "the flaky one".
+- **Suggestion:** wait for the set form to be visible before `expectAccessible`, or disable animations in the e2e (`reducedMotion: "reduce"` once TD-152 lands).
+- **Date:** 2026-10-28 · **Status:** Open
+
 ## [TD-152] Animations ignore reduced motion
 - **Location:** `apps/web/src/app/globals.css:177` (`.animate-fade-in-up`, `.animate-slide-in-right`, `.animate-scale-in`)
 - **Risk:** 2/10
