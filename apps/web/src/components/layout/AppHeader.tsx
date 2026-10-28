@@ -61,6 +61,7 @@ export function BackAction({ href = "/" }: { href?: string }) {
     <Link
       href={href}
       className="text-muted-foreground hover:text-foreground transition-colors"
+      aria-label="Volver"
     >
       <ArrowLeft className="w-6 h-6" strokeWidth={2.5} />
     </Link>
@@ -73,6 +74,7 @@ export function HistoryAction() {
       href="/history"
       className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
       title="Ver Historial"
+      aria-label="Ver Historial"
     >
       <History className="w-6 h-6" />
     </Link>
@@ -85,6 +87,7 @@ export function RoutinesAction() {
       href="/routines"
       className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
       title="Ver Rutinas"
+      aria-label="Ver Rutinas"
     >
       <ClipboardList className="w-6 h-6" />
     </Link>

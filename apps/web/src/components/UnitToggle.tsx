@@ -12,7 +12,6 @@ export function UnitToggle({ unit, onToggle }: UnitToggleProps) {
       type="button"
       onClick={onToggle}
       className="flex items-center text-3xs font-bold rounded-full border border-input overflow-hidden"
-      aria-label="Cambiar unidad de peso"
     >
       {(["kg", "lb"] as const).map((option) => (
         <span
@@ -27,6 +26,7 @@ export function UnitToggle({ unit, onToggle }: UnitToggleProps) {
           {option}
         </span>
       ))}
+      <span className="sr-only">{`, unidad de peso en ${unit}`}</span>
     </button>
   );
 }

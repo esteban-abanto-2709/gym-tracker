@@ -133,7 +133,7 @@ export function ExerciseProgress({
             ? "border-primary text-primary shadow-primary/30"
             : "border-input text-muted-foreground/70",
         )}
-        aria-label="Ver historial del ejercicio"
+        aria-label={`Racha ${progress.streak}, ver historial del ejercicio`}
       >
         <Flame className={cn("w-4 h-4", lit && "fill-current")} />
         <span className="font-display font-bold text-lg tabular-nums leading-none">

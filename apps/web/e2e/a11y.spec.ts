@@ -131,7 +131,10 @@ for (const colorScheme of ["light", "dark"] as const) {
       await page.getByRole("button", { name: "Empezar Rutina" }).click();
       await expect(page).toHaveURL(/\/train/);
       await expectAccessible(page);
-      await openSheet(page, page.getByTitle("Mapa de la sesión"));
+      await openSheet(
+        page,
+        page.getByRole("button", { name: "Mapa de la sesión" }),
+      );
 
       await page.locator('input[inputmode="decimal"]').fill("40");
       await page.getByRole("button", { name: "Registrar serie" }).click();

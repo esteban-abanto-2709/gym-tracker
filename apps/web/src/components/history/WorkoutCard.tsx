@@ -81,6 +81,7 @@ export function WorkoutCard({
               size="icon"
               onClick={() => onEdit(workout)}
               title="Editar Set"
+              aria-label="Editar Set"
             >
               <Pencil className="w-4 h-4" />
             </Button>
@@ -89,6 +90,7 @@ export function WorkoutCard({
               size="icon"
               onClick={() => onDelete(workout)}
               title="Eliminar Set"
+              aria-label="Eliminar Set"
             >
               <Trash2 className="w-4 h-4" />
             </Button>

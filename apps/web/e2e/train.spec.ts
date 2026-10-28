@@ -62,7 +62,7 @@ test("trains a guided routine, jumping ahead, without ending it early", async ({
   await logSet(page, "40");
   await currentExercise(page, a.name);
 
-  await page.getByTitle("Mapa de la sesión").click();
+  await page.getByRole("button", { name: "Mapa de la sesión" }).click();
   await expect(
     page.getByRole("heading", { name: "Mapa de la sesión" }),
   ).toBeVisible();

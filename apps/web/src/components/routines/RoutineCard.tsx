@@ -68,6 +68,7 @@ export function RoutineCard({
             href={routes.routineEdit(routine.id)}
             className={buttonVariants({ variant: "muted", size: "icon" })}
             title="Editar Rutina"
+            aria-label="Editar Rutina"
           >
             <Pencil className="w-4 h-4" />
           </Link>
@@ -76,6 +77,7 @@ export function RoutineCard({
             size="icon"
             onClick={() => onDelete(routine)}
             title="Eliminar Rutina"
+            aria-label="Eliminar Rutina"
           >
             <Trash2 className="w-4 h-4" />
           </Button>

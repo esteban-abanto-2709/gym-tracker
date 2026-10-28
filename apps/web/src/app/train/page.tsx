@@ -110,6 +110,7 @@ export default function TrainPage() {
             onClick={() => setMapOpen(true)}
             className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95"
             title="Mapa de la sesión"
+            aria-label={`Mapa de la sesión, ${position}/${totalCount}`}
           >
             <ListChecks className="w-6 h-6" />
             <span className="text-xs font-bold tabular-nums">

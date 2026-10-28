@@ -13,8 +13,6 @@ const TAGS = [
 const PENDING = [
   "color-contrast",
   "label",
-  "link-name",
-  "label-content-name-mismatch",
   "heading-order",
   "page-has-heading-one",
 ];

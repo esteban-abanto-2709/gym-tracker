@@ -101,6 +101,7 @@ export default function RoutinesPage() {
             href={routes.routineNew()}
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
             title="Nueva rutina"
+            aria-label="Nueva rutina"
           >
             <Plus className="w-6 h-6" strokeWidth={2.5} />
           </Link>
