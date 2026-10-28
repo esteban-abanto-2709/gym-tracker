@@ -44,9 +44,9 @@ export function RoutineCard({
               Hoy toca
             </span>
           )}
-          <h3 className="font-bold text-foreground text-lg leading-tight truncate">
+          <h2 className="font-bold text-foreground text-lg leading-tight truncate">
             {routine.name}
-          </h3>
+          </h2>
           <span className="inline-flex items-center gap-1.5 kicker text-4xs text-muted-foreground mt-1.5">
             <ListChecks className="w-3.5 h-3.5" />
             {count} {count === 1 ? "ejercicio" : "ejercicios"}

@@ -10,7 +10,7 @@ const TAGS = [
   "best-practice",
 ];
 
-const PENDING = ["color-contrast", "heading-order", "page-has-heading-one"];
+const PENDING = ["color-contrast"];
 
 export async function expectAccessible(page: Page) {
   await page.waitForLoadState("networkidle");

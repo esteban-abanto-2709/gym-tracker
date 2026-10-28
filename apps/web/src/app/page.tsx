@@ -24,7 +24,7 @@ export default async function Home() {
                 </p>
                 <NewsButton />
               </div>
-              <h2
+              <h1
                 className={heading({
                   className:
                     "text-foreground text-[2.75rem] leading-[0.9] tracking-tight mt-2",
@@ -33,7 +33,7 @@ export default async function Home() {
                 Hoy
                 <br />
                 <span className="text-primary">entrenas.</span>
-              </h2>
+              </h1>
             </div>
 
             <ContinueRoutineBanner />

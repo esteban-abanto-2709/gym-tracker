@@ -117,9 +117,9 @@ export default function HistoryPage() {
               <Calendar className="w-10 h-10 text-muted-foreground/50" />
             </div>
             <div className="space-y-2">
-              <h3 className={heading({ size: "sm" })}>
+              <h2 className={heading({ size: "sm" })}>
                 Sin entrenamientos aún
-              </h3>
+              </h2>
               <p className="text-sm text-muted-foreground max-w-[250px]">
                 Tus rutinas aparecerán aquí cuando guardes tu primer set.
               </p>
