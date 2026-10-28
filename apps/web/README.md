@@ -67,10 +67,10 @@ UX; if a test fails, the trace lands in `e2e-results/` and the report in
 
 `a11y.spec.ts` runs axe (`expectAccessible` in `e2e/axe.ts`) on every main
 page and its bottom sheets, in the light and dark themes. Call
-`expectAccessible(page)` on any new page or sheet. `PENDING` lists the rules
-still being fixed; once one is fixed, remove it from the list so it can't come
-back. CI runs the whole suite against the docker stack, and a failure blocks
-the deploy.
+`expectAccessible(page)` on any new page or sheet. Every rule is on: fix a
+violation in the component, or in the theme token for contrast, never by
+disabling the rule. CI runs the whole suite against the docker stack, and a
+failure blocks the deploy.
 
 ## How it talks to the API
 

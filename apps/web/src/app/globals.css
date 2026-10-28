@@ -13,7 +13,7 @@
   --card-foreground: 45 11% 7%;
   --popover: 0 0% 100%;
   --popover-foreground: 45 11% 7%;
-  --primary: 4 78% 53%;
+  --primary: 4 78% 45%;
   --primary-foreground: 0 0% 100%;
   --secondary: 47 26% 93%;
   --secondary-foreground: 45 11% 7%;
@@ -21,17 +21,17 @@
   --muted-foreground: 45 6% 40%;
   --accent: 47 26% 93%;
   --accent-foreground: 45 11% 7%;
-  --destructive: 4 78% 53%;
+  --destructive: 4 78% 45%;
   --destructive-foreground: 0 0% 100%;
   --border: 45 10% 84%;
   --input: 45 10% 84%;
-  --ring: 4 78% 53%;
+  --ring: 4 78% 45%;
   --radius: 1rem;
 
   /* Custom semantic tokens */
   --surface-elevated: 0 0% 98%;
-  --brand-gradient-start: 4 78% 53%;
-  --brand-gradient-end: 4 70% 45%;
+  --brand-gradient-start: 4 78% 45%;
+  --brand-gradient-end: 4 70% 37%;
   --success: 72 70% 38%;
   --success-foreground: 0 0% 100%;
   --warning: oklch(82.8% 0.189 84.429);
@@ -54,7 +54,7 @@
   --popover: 240 8% 8%;
   --popover-foreground: 45 27% 94%;
   --primary: 4 100% 59%;
-  --primary-foreground: 0 0% 100%;
+  --primary-foreground: 240 6% 5%;
   --secondary: 240 9% 12%;
   --secondary-foreground: 45 27% 94%;
   --muted: 240 9% 12%;
@@ -62,7 +62,7 @@
   --accent: 240 9% 12%;
   --accent-foreground: 45 27% 94%;
   --destructive: 4 100% 59%;
-  --destructive-foreground: 0 0% 100%;
+  --destructive-foreground: 240 6% 5%;
   --border: 240 8% 16%;
   --input: 240 8% 16%;
   --ring: 4 100% 59%;

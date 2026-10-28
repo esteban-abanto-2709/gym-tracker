@@ -10,8 +10,6 @@ const TAGS = [
   "best-practice",
 ];
 
-const PENDING = ["color-contrast"];
-
 export async function expectAccessible(page: Page) {
   await page.waitForLoadState("networkidle");
   await page.evaluate(() =>
@@ -24,7 +22,6 @@ export async function expectAccessible(page: Page) {
   );
   const { violations } = await new AxeBuilder({ page })
     .withTags(TAGS)
-    .disableRules(PENDING)
     .analyze();
   expect(
     violations.map(

@@ -110,7 +110,7 @@ export function SortableExerciseItem({
           <GripVertical className="w-5 h-5" />
         </button>
 
-        <span className="shrink-0 w-6 text-center font-display text-lg text-muted-foreground/60 tabular-nums">
+        <span className="shrink-0 w-6 text-center font-display text-lg text-muted-foreground tabular-nums">
           {String(index + 1).padStart(2, "0")}
         </span>
 

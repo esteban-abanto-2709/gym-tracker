@@ -70,7 +70,9 @@ export function HomeActions() {
       <>
         <Link href={routes.explore("programs")} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-          <p className="kicker text-3xs opacity-55 relative">Empieza aquí</p>
+          <p className="kicker text-3xs text-muted-foreground relative">
+            Empieza aquí
+          </p>
           <p
             className={heading({
               className: "text-5xl leading-[0.85] mt-3 relative pr-16",
@@ -80,7 +82,7 @@ export function HomeActions() {
             <br />
             programas
           </p>
-          <p className="text-sm mt-3 opacity-60 relative">
+          <p className="text-sm mt-3 text-muted-foreground relative">
             Copia uno y entrena hoy ·{" "}
             <Compass className="inline w-3.5 h-3.5 align-[-2px]" />
           </p>
@@ -114,7 +116,7 @@ export function HomeActions() {
       {today ? (
         <button type="button" onClick={handleStart} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-          <p className="kicker text-3xs opacity-55 relative pr-16 truncate">
+          <p className="kicker text-3xs text-muted-foreground relative pr-16 truncate">
             Hoy toca · {today.programName}
           </p>
           <p
@@ -125,7 +127,7 @@ export function HomeActions() {
           >
             {today.routine.name}
           </p>
-          <p className="text-sm mt-3 opacity-60 relative">
+          <p className="text-sm mt-3 text-muted-foreground relative">
             Toca para empezar ·{" "}
             <Play className="inline w-3.5 h-3.5 fill-current align-[-2px]" />
           </p>
@@ -133,7 +135,9 @@ export function HomeActions() {
       ) : (
         <Link href={routes.routines()} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
-          <p className="kicker text-3xs opacity-55 relative">Empieza fuerte</p>
+          <p className="kicker text-3xs text-muted-foreground relative">
+            Empieza fuerte
+          </p>
           <p
             className={heading({
               className: "text-5xl leading-[0.85] mt-3 relative",
@@ -143,7 +147,7 @@ export function HomeActions() {
             <br />
             rutina
           </p>
-          <p className="text-sm mt-3 opacity-60 relative">
+          <p className="text-sm mt-3 text-muted-foreground relative">
             Elige tu rutina y ve paso a paso ·{" "}
             <Play className="inline w-3.5 h-3.5 fill-current align-[-2px]" />
           </p>

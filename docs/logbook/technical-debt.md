@@ -14,6 +14,14 @@ and is deleted from here.
 
 ---
 
+## [TD-152] Animations ignore reduced motion
+- **Location:** `apps/web/src/app/globals.css:177` (`.animate-fade-in-up`, `.animate-slide-in-right`, `.animate-scale-in`)
+- **Risk:** 2/10
+- **Problem:** the entrance animations run on every page even when the phone asks for reduced motion; only a few spots use `motion-safe:`.
+- **Future impact:** people sensitive to motion get every page sliding in; axe doesn't check it, so nothing catches new ones.
+- **Suggestion:** wrap the custom animations in `@media (prefers-reduced-motion: no-preference)`.
+- **Date:** 2026-10-27 · **Status:** Open
+
 ## [TD-151] The web e2e suite sits at the API's sign-up rate limit
 - **Location:** `apps/api/src/modules/auth/auth.module.ts:14`, `apps/web/e2e/`
 - **Risk:** 3/10
@@ -29,14 +37,6 @@ and is deleted from here.
 - **Future impact:** one bad set can hold back a whole session of real sets.
 - **Suggestion:** two rules before code: change the set DTO only with expand/contract, and never delete a catalog exercise (hide or redirect it when merging).
 - **Date:** 2026-10-27 · **Status:** Open
-
-## [TD-141] Icon-only buttons without an accessible name
-- **Location:** `apps/web/src/components/layout/AppHeader.tsx:56` (`BackAction`: neither label nor title), `AppHeader.tsx:67` and `:79` (`HistoryAction`, `RoutinesAction`: `title` only), plus the other header icon buttons
-- **Risk:** 4/10
-- **Problem:** several buttons and links show only a lucide icon and rely on `title` (not read reliably by screen readers, never shown on touch) or have nothing at all; there's no automated accessibility check.
-- **Future impact:** a screen-reader user hears "link" or "button" with no purpose; regressions go unnoticed because nothing checks them.
-- **Suggestion:** `aria-label` on every icon-only control, and an `@axe-core/playwright` check in the existing e2e.
-- **Date:** 2026-10-26 · **Status:** In progress (2026-10-27)
 
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`

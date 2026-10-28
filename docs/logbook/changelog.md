@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-141] Icon-only buttons without an accessible name (2026-10-27 20:57)
+Every icon-only control has an `aria-label`, form labels are linked, headings are in order and the red token meets AA contrast in both themes (dark mode now puts dark text on red); `a11y.spec.ts` runs axe on every main page and sheet in both themes, and a new CI job runs the web e2e before every deploy.
+
 ## [TD-150] An unknown URL without a session lands on login, not the 404 (2026-10-27 19:47)
 The proxy and `AuthProvider` now gate only an explicit list of private sections, so guests on unknown URLs get the 404; a test fails if a page is neither private, public nor listed as open.
 
