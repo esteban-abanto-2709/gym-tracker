@@ -69,8 +69,9 @@ UX; if a test fails, the trace lands in `e2e-results/` and the report in
 page and its bottom sheets, in the light and dark themes. Call
 `expectAccessible(page)` on any new page or sheet. Every rule is on: fix a
 violation in the component, or in the theme token for contrast, never by
-disabling the rule. CI runs the whole suite against the docker stack, and a
-failure blocks the deploy.
+disabling the rule. The suite runs on your machine; to run it on GitHub, start
+the manual **Web e2e** workflow (`.github/workflows/e2e.yml`) from the Actions
+tab. It never runs on its own and doesn't block deploys.
 
 ## How it talks to the API
 
