@@ -14,6 +14,14 @@ and is deleted from here.
 
 ---
 
+## [TD-151] The web e2e suite sits at the API's sign-up rate limit
+- **Location:** `apps/api/src/modules/auth/auth.module.ts:14`, `apps/web/e2e/`
+- **Risk:** 3/10
+- **Problem:** register and login allow 5 calls per minute per IP, and the e2e suite already makes exactly 5 (`pending-sets` 3, `train` 1, `a11y` 1). A second run within a minute fails with 429s that look like broken tests.
+- **Future impact:** the next journey that signs a user in breaks CI for a reason that has nothing to do with the app.
+- **Suggestion:** a higher limit outside prod through an env var, or sign one user in once and share its cookies across specs.
+- **Date:** 2026-10-27 · **Status:** Open
+
 ## [TD-149] A set the API rejects for good still blocks the offline queue
 - **Location:** `apps/web/src/lib/pendingSets.ts:64`
 - **Risk:** 4/10
@@ -28,7 +36,7 @@ and is deleted from here.
 - **Problem:** several buttons and links show only a lucide icon and rely on `title` (not read reliably by screen readers, never shown on touch) or have nothing at all; there's no automated accessibility check.
 - **Future impact:** a screen-reader user hears "link" or "button" with no purpose; regressions go unnoticed because nothing checks them.
 - **Suggestion:** `aria-label` on every icon-only control, and an `@axe-core/playwright` check in the existing e2e.
-- **Date:** 2026-10-26 · **Status:** Open
+- **Date:** 2026-10-26 · **Status:** In progress (2026-10-27)
 
 ## [TD-137] Switching between login and sign-up drops the way back
 - **Location:** `apps/web/src/app/login/page.tsx:106`, `apps/web/src/app/register/page.tsx:132`

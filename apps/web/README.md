@@ -65,6 +65,13 @@ Screenshots of the key moments land in `e2e-screenshots/` for reviewing the
 UX; if a test fails, the trace lands in `e2e-results/` and the report in
 `e2e-report/`. All three folders are ignored by git.
 
+`a11y.spec.ts` runs axe (`expectAccessible` in `e2e/axe.ts`) on every main
+page and its bottom sheets, in the light and dark themes. Call
+`expectAccessible(page)` on any new page or sheet. `PENDING` lists the rules
+still being fixed; once one is fixed, remove it from the list so it can't come
+back. CI runs the whole suite against the docker stack, and a failure blocks
+the deploy.
+
 ## How it talks to the API
 
 - The browser **only calls its own origin**: `lib/api.ts` requests `/api/...`
