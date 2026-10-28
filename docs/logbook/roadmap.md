@@ -32,7 +32,7 @@ changelog and is deleted from here.
 - **Goal:** show the interface (buttons, titles, messages) in the user's language. It's a preference separate from the exercise language (RM-086): some people want the interface in Spanish and the exercises in English.
 - **Scope:** install an i18n library for Next.js (candidate: `next-intl`, verify its API when starting) and move each screen's texts into `es`/`en` translation files. Includes equipment names (fixed list), the date format (fixed to Spanish today) and the explanatory texts of the AI export. With no saved preference, the interface uses the phone's language if it's `es` or `en`; anything else, `en`. The selector goes in the same language panel in the profile, below "Nombres de ejercicios". Today three date locales coexist (`es-ES`, `es-PE`, `en-CA`) and `<html lang="es">` is fixed: unify them in the same pass.
 - **Done when:** with the language set to English, the interface, equipment, dates and export come out in English.
-- **Date:** 2026-10-12 · **Status:** Open
+- **Date:** 2026-10-12 · **Status:** In progress (2026-10-28)
 
 ## [RM-090] Exercise dictionary: aliases and variants
 - **Goal:** find an exercise by any name it's known by, including the ones that carry the equipment in the name. Depends on RM-086.

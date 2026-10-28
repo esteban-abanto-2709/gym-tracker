@@ -19,6 +19,10 @@ export class UpdateMeDto {
   @IsEnum(Locale)
   exerciseLocale?: Locale;
 
+  @IsOptional()
+  @IsEnum(Locale)
+  interfaceLocale?: Locale | null;
+
   @ValidateIf((o: UpdateMeDto) => o.theme !== undefined)
   @IsEnum(Theme)
   theme?: Theme;
