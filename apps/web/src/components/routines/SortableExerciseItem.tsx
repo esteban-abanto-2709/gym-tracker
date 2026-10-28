@@ -192,6 +192,7 @@ export function SortableExerciseItem({
                             }),
                           })
                         }
+                        aria-label={`Reps del escalón ${stepIndex + 1}`}
                         className={numberInputClass}
                       />
                       <span className="text-xs font-bold text-muted-foreground">
@@ -211,6 +212,7 @@ export function SortableExerciseItem({
                             }),
                           })
                         }
+                        aria-label={`Porcentaje del escalón ${stepIndex + 1}`}
                         className={numberInputClass}
                       />
                       <span className="text-xs font-bold text-muted-foreground">
@@ -264,6 +266,7 @@ export function SortableExerciseItem({
                         sets: e.target.value,
                       })
                     }
+                    aria-label="Series"
                     className={numberInputClass}
                   />
                   <span className="text-xs font-bold text-muted-foreground">
@@ -293,6 +296,9 @@ export function SortableExerciseItem({
                         onChangeBlock(item.key, block.key, {
                           reps: e.target.value,
                         })
+                      }
+                      aria-label={
+                        usesRepRange(block) ? "Mínimo de reps" : "Reps"
                       }
                       className={numberInputClass}
                     />

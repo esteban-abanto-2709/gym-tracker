@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useId, useRef } from "react";
 import { api } from "@/lib/api";
 import { flushPendingSets } from "@/lib/pendingSets";
 import { routes } from "@/lib/routes";
@@ -68,6 +68,7 @@ export function SetForm({
 }: SetFormProps) {
   const { setType, targetReps, targetRepsMax, targetDurationSec, step, pct } =
     plan;
+  const fieldId = useId();
   const [measure, setMeasure] = useState<SetMeasure>(plan.measure);
   const measureTouched = useRef(false);
   const [weight, setWeight] = useState("");
@@ -209,13 +210,17 @@ export function SetForm({
 
   const repsInput = (
     <div className="space-y-2">
-      <label className="kicker text-muted-foreground text-4xs">
+      <label
+        htmlFor={`${fieldId}-reps`}
+        className="kicker text-muted-foreground text-4xs"
+      >
         Reps
         {targetReps
           ? ` · meta ${formatRepRange(targetReps, targetRepsMax)}`
           : ""}
       </label>
       <input
+        id={`${fieldId}-reps`}
         type="number"
         inputMode="numeric"
         value={reps}
@@ -279,12 +284,16 @@ export function SetForm({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="kicker text-muted-foreground text-4xs">
+              <label
+                htmlFor={`${fieldId}-weight`}
+                className="kicker text-muted-foreground text-4xs"
+              >
                 Peso ({unit})
               </label>
               <UnitToggle unit={unit} onToggle={toggleUnit} />
             </div>
             <input
+              id={`${fieldId}-weight`}
               type="number"
               step="0.5"
               inputMode="decimal"
