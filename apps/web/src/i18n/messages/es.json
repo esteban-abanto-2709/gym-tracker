@@ -1,0 +1,21 @@
+{
+  "profile": {
+    "settings": {
+      "title": "Ajustes",
+      "appGroup": "// app",
+      "accountGroup": "// cuenta",
+      "theme": "Tema",
+      "privacy": "Privacidad",
+      "privacyHint": "Qué guardamos y quién lo ve",
+      "logout": "Cerrar sesión",
+      "deleteAccount": "Borrar mi cuenta"
+    },
+    "language": {
+      "kicker": "// preferencias",
+      "title": "Idioma",
+      "exerciseNames": "Nombres de ejercicios",
+      "exerciseNamesHint": "Cómo se ven en tus rutinas y tu historial. Para buscar sirve cualquier idioma.",
+      "saveError": "No se pudo guardar el idioma"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { notifyError } from "@/lib/notify";
 import type { Locale } from "@/lib/types";
@@ -21,6 +22,7 @@ const EXERCISE_LANGUAGES: { value: Locale; label: string; example: string }[] =
   ];
 
 export function LanguageSheet({ onClose }: { onClose: () => void }) {
+  const t = useTranslations("profile.language");
   const { user, updateMe } = useAuth();
   const [saving, setSaving] = useState<Locale | null>(null);
   const current = user?.exerciseLocale ?? "en";
@@ -31,32 +33,31 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
     try {
       await updateMe({ exerciseLocale: value });
     } catch {
-      notifyError("No se pudo guardar el idioma");
+      notifyError(t("saveError"));
     } finally {
       setSaving(null);
     }
   };
 
   return (
-    <BottomSheet label="Idioma" onClose={onClose}>
+    <BottomSheet label={t("title")} onClose={onClose}>
       <div className="max-w-md mx-auto">
         <SheetHeader
-          kicker="// preferencias"
-          title="Idioma"
+          kicker={t("kicker")}
+          title={t("title")}
           onClose={onClose}
         />
 
         <p className="mt-5 kicker text-4xs text-muted-foreground">
-          Nombres de ejercicios
+          {t("exerciseNames")}
         </p>
         <p className="mt-1 text-sm text-muted-foreground text-balance">
-          Cómo se ven en tus rutinas y tu historial. Para buscar sirve cualquier
-          idioma.
+          {t("exerciseNamesHint")}
         </p>
 
         <div
           role="radiogroup"
-          aria-label="Nombres de ejercicios"
+          aria-label={t("exerciseNames")}
           className="mt-3 grid gap-2"
         >
           {EXERCISE_LANGUAGES.map(({ value, label, example }) => {

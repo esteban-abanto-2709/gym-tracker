@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { LanguageSheet } from "./LanguageSheet";
 
 const updateMe = vi.fn().mockResolvedValue(undefined);
@@ -10,7 +11,7 @@ vi.mock("@/lib/auth-context", () => ({
 
 describe("LanguageSheet", () => {
   it("offers only English and Spanish, with English selected", () => {
-    render(<LanguageSheet onClose={vi.fn()} />);
+    renderWithIntl(<LanguageSheet onClose={vi.fn()} />);
     const options = screen.getAllByRole("radio");
 
     expect(options).toHaveLength(2);
@@ -20,7 +21,7 @@ describe("LanguageSheet", () => {
   });
 
   it("saves Spanish on tap and ignores a tap on the current language", async () => {
-    render(<LanguageSheet onClose={vi.fn()} />);
+    renderWithIntl(<LanguageSheet onClose={vi.fn()} />);
     const [english, spanish] = screen.getAllByRole("radio");
 
     fireEvent.click(english);
@@ -34,7 +35,7 @@ describe("LanguageSheet", () => {
 
   it("closes from the X button", () => {
     const onClose = vi.fn();
-    render(<LanguageSheet onClose={onClose} />);
+    renderWithIntl(<LanguageSheet onClose={onClose} />);
     fireEvent.click(screen.getByLabelText("Cerrar"));
     expect(onClose).toHaveBeenCalled();
   });

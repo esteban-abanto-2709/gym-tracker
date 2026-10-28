@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { routes } from "@/lib/routes";
 import { useAuth } from "@/lib/auth-context";
@@ -37,6 +38,7 @@ function Group({ kicker, children }: { kicker: string; children: ReactNode }) {
 }
 
 export default function AjustesPage() {
+  const t = useTranslations("profile");
   const { user, logout } = useAuth();
   const { theme } = useTheme();
   const currentTheme =
@@ -48,12 +50,12 @@ export default function AjustesPage() {
   return (
     <PageShell variant="history">
       <AppHeader
-        title="Ajustes"
+        title={t("settings.title")}
         leftAction={<BackAction href={routes.profile()} />}
       />
       <main className="flex-1 px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto">
-          <Group kicker="// app">
+          <Group kicker={t("settings.appGroup")}>
             <button
               type="button"
               onClick={() => setThemeOpen(true)}
@@ -61,7 +63,7 @@ export default function AjustesPage() {
             >
               <SettingsRowContent
                 Icon={currentTheme.icon}
-                label="Tema"
+                label={t("settings.theme")}
                 value={currentTheme.label}
               />
             </button>
@@ -72,20 +74,20 @@ export default function AjustesPage() {
             >
               <SettingsRowContent
                 Icon={Languages}
-                label="Nombres de ejercicios"
+                label={t("language.exerciseNames")}
                 value={user?.exerciseLocale === "es" ? "Español" : "English"}
               />
             </button>
           </Group>
 
-          <Group kicker="// cuenta">
+          <Group kicker={t("settings.accountGroup")}>
             <BirthDateRow />
             {user?.hasPassword && <PasswordRow />}
             <Link href={routes.privacy()} className={settingsRowClass}>
               <SettingsRowContent
                 Icon={ShieldCheck}
-                label="Privacidad"
-                value="Qué guardamos y quién lo ve"
+                label={t("settings.privacy")}
+                value={t("settings.privacyHint")}
               />
             </Link>
           </Group>
@@ -99,7 +101,7 @@ export default function AjustesPage() {
               <div className="shrink-0 w-14 grid place-items-center">
                 <LogOut className="w-5 h-5" />
               </div>
-              Cerrar sesión
+              {t("settings.logout")}
             </button>
           </div>
 
@@ -109,7 +111,7 @@ export default function AjustesPage() {
             className="mt-6 mx-auto flex items-center gap-1.5 px-4 py-3 text-sm font-bold text-muted-foreground hover:text-destructive active:scale-95 transition-all"
           >
             <Trash2 className="w-4 h-4" strokeWidth={2.5} />
-            Borrar mi cuenta
+            {t("settings.deleteAccount")}
           </button>
         </div>
       </main>
