@@ -100,9 +100,19 @@ describe("AuthProvider guard", () => {
     },
   );
 
-  it("does not open look-alike paths", async () => {
+  it.each(["/no-existe", "/perfilx"])(
+    "lets a logged-out user reach the 404 on %s",
+    async (path) => {
+      meResponds(false);
+      renderAt(path);
+      expect(await screen.findByText("contenido")).toBeTruthy();
+      expect(replace).not.toHaveBeenCalled();
+    },
+  );
+
+  it("still guards nested private pages", async () => {
     meResponds(false);
-    renderAt("/explorer");
+    renderAt("/perfil/ajustes");
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/login"));
   });
 

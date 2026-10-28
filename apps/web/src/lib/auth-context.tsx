@@ -10,7 +10,7 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { isOpenPath, isPublicPath, routes } from "@/lib/routes";
+import { isPrivatePath, isPublicPath, routes } from "@/lib/routes";
 import { api, ApiError } from "@/lib/api";
 import { discardPendingSets, setPendingOwner } from "@/lib/pendingSets";
 import { getQueryClient } from "@/lib/query";
@@ -231,18 +231,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [loading, accountTheme]);
 
   const isPublic = isPublicPath(pathname);
-  const isOpen = isOpenPath(pathname);
+  const isPrivate = isPrivatePath(pathname);
 
   useEffect(() => {
-    if (loading || isOpen) return;
-    if (!user && !isPublic) {
+    if (loading) return;
+    if (!user && isPrivate) {
       router.replace(routes.login());
     } else if (user && isPublic) {
       router.replace(nextPath());
     }
-  }, [loading, user, isPublic, isOpen, router]);
+  }, [loading, user, isPublic, isPrivate, router]);
 
-  if (!isOpen && (loading || (!user && !isPublic) || (user && isPublic))) {
+  if (
+    (isPrivate || isPublic) &&
+    (loading || (!user && isPrivate) || (user && isPublic))
+  ) {
     return <FullScreenLoader />;
   }
 

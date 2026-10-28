@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-150] An unknown URL without a session lands on login, not the 404 (2026-10-27 19:47)
+The proxy and `AuthProvider` now gate only an explicit list of private sections, so guests on unknown URLs get the 404; a test fails if a page is neither private, public nor listed as open.
+
 ## [TD-140] Route protection and loading states live in the client (2026-10-27 19:34)
 `proxy.ts` sends guests on private pages to `/login?next=…` before rendering, sharing the open/public path lists with `AuthProvider`; root `error.tsx` and `not-found.tsx` replace the white screen and Next's default 404.
 

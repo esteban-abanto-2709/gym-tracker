@@ -29,13 +29,9 @@ describe("proxy", () => {
     "/privacidad",
     "/explore",
     "/explore/routines/push",
+    "/no-existe",
+    "/routinesx",
   ])("lets a guest open %s", (path) => {
     expect(location(path)).toBeNull();
-  });
-
-  it("does not treat a lookalike of an open section as open", () => {
-    expect(location("/explorer")).toBe(
-      "http://localhost:3000/login?next=%2Fexplorer",
-    );
   });
 });

@@ -14,13 +14,6 @@ and is deleted from here.
 
 ---
 
-## [TD-150] An unknown URL without a session lands on login, not the 404
-- **Location:** `apps/web/src/proxy.ts:4`, `apps/web/src/lib/auth-context.tsx:233`
-- **Risk:** 2/10
-- **Problem:** any path that isn't open or public counts as private, so a guest on a mistyped or dead URL is sent to `/login` instead of seeing `app/not-found.tsx`; only people with a session see the 404.
-- **Future impact:** a guest following a broken link is asked to sign in for a page that doesn't exist, and after signing in lands on the 404.
-- **Date:** 2026-10-27 · **Status:** Open
-
 ## [TD-149] A set the API rejects for good still blocks the offline queue
 - **Location:** `apps/web/src/lib/pendingSets.ts:64`
 - **Risk:** 4/10
