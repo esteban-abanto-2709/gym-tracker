@@ -41,9 +41,9 @@ export function AppHeader({
           ) : (
             <h1 className={heading({ size: "sm" })}>
               <span className="bg-linear-to-r from-brand-start to-brand-end bg-clip-text text-transparent">
-                GYM
+                {"GYM"}
               </span>
-              <span className="text-foreground">TRACK</span>
+              <span className="text-foreground">{"TRACK"}</span>
             </h1>
           )}
 

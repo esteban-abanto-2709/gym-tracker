@@ -91,8 +91,8 @@ A one-off element (a list row, a radio tile) may stay a plain `<button>` or
 - Overriding a base piece: pass `className`; `cn()` lets the later class win.
 - Icons come from `lucide-react`. No emoji anywhere in the UI.
 - Design mobile-first (iPhone width); every screen works in light and dark.
-- UI copy stays in Spanish, short and direct; base components take their text
-  as props, so translating the UI later touches the callers, not `base/`.
+- UI copy is short and direct, in `src/i18n/messages/` (Spanish and English);
+  base components take their text as props or from `common`.
 
 ## Charts
 

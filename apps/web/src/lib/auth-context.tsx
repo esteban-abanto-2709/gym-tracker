@@ -15,6 +15,7 @@ import { isPrivatePath, isPublicPath, routes } from "@/lib/routes";
 import { api, ApiError } from "@/lib/api";
 import { discardPendingSets, setPendingOwner } from "@/lib/pendingSets";
 import { getQueryClient } from "@/lib/query";
+import { readLocaleCookie, writeLocaleCookie } from "@/i18n/locale";
 import type { AuthUser } from "@/lib/types";
 
 function nextPath() {
@@ -45,7 +46,12 @@ interface AuthContextValue {
     changes: Partial<
       Pick<
         AuthUser,
-        "birthDate" | "exerciseLocale" | "theme" | "newsOpened" | "newsSeen"
+        | "birthDate"
+        | "exerciseLocale"
+        | "interfaceLocale"
+        | "theme"
+        | "newsOpened"
+        | "newsSeen"
       >
     >,
   ) => Promise<void>;
@@ -220,7 +226,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       changes: Partial<
         Pick<
           AuthUser,
-          "birthDate" | "exerciseLocale" | "theme" | "newsOpened" | "newsSeen"
+          | "birthDate"
+          | "exerciseLocale"
+          | "interfaceLocale"
+          | "theme"
+          | "newsOpened"
+          | "newsSeen"
         >
       >,
     ) => {
@@ -229,6 +240,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     [],
   );
+
+  const accountLocale = user?.interfaceLocale ?? null;
+  const applyAccountLocale = useEffectEvent(() => {
+    if (readLocaleCookie() === accountLocale) return;
+    writeLocaleCookie(accountLocale);
+    router.refresh();
+  });
+  useEffect(() => {
+    if (user) applyAccountLocale();
+  }, [user, accountLocale]);
 
   const accountTheme = user?.theme ?? "system";
   const applyAccountTheme = useEffectEvent(() => setTheme(accountTheme));

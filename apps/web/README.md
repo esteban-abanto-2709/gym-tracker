@@ -13,6 +13,7 @@ Next server itself.
 | UI              | Tailwind CSS 4 · shadcn/ui on Radix · `lucide-react` icons |
 | Interaction     | `@dnd-kit` (reorder exercises) · `sonner` (toasts)         |
 | Google auth     | `@react-oauth/google`                                      |
+| Translations    | `next-intl` (no locale in the URL)                         |
 | Tests           | Vitest + Testing Library on jsdom                          |
 | Package manager | pnpm (pinned in `package.json`, via corepack)              |
 
@@ -114,6 +115,29 @@ Reads go through TanStack Query; lint enforces rules 1 and 2.
    guided session (`lib/activeSession.ts`) stay in `localStorage`; the queue
    only invalidates the active program and history after sending.
 
+## Translations
+
+The interface is in Spanish and English with `next-intl`, without a locale in
+the URL; lint (`react/jsx-no-literals`) rejects loose text in JSX.
+
+1. **Every text lives in `src/i18n/messages/es.json` and `en.json`**, grouped
+   by area (`train`, `history`, `explore`…) with camelCase keys named for what
+   they say. Both files must have the same keys (`messages.test.ts`), and the
+   keys are typed from `es.json`, so a misspelled one doesn't compile.
+2. **The language** comes from the `locale` cookie, then the phone
+   (`Accept-Language`, only `es` or `en`), then English (`src/i18n/request.ts`).
+   The account keeps its choice in `User.interfaceLocale` (`null` = the phone)
+   and `AuthProvider` copies it to the cookie on each device. It's separate
+   from the exercise language (`User.exerciseLocale`).
+3. **Components** use `useTranslations`; async server components, metadata
+   and route handlers use `getTranslations`. Code outside React gets the text
+   from its caller (`buildExport` takes a `t`, `formatBlocks` takes labels);
+   query errors and the toast retry go through `src/i18n/errors.ts`.
+4. **Dates and times** use the active locale (`useLocale()`); `en-CA` stays
+   only to build ISO day keys. Equipment names are translated by id
+   (`equipment.names`, `useEquipmentName`).
+5. **Tests** render with `renderWithIntl` or `queryWrapper`, both in Spanish.
+
 ## Routes
 
 | Route                                                  | Screen                                                                                                                                    |
@@ -128,7 +152,7 @@ Reads go through TanStack Query; lint enforces rules 1 and 2.
 | `/explore/programs/[slug]`, `/explore/routines/[slug]` | A publication: copy it whole or, in a program, a single routine                                                                           |
 | `/routines/[id]/publish`, `/programs/[id]/publish`     | Publish a routine or a program with its slug                                                                                              |
 | `/history`                                             | History by session, loaded in pages: repeat, edit and delete sets; export a range for your AI (`.md`)                                     |
-| `/perfil`                                              | Account, exercise language, birth date, body measurements and logout                                                                      |
+| `/perfil`                                              | Account, interface and exercise languages, birth date, body measurements and logout                                                       |
 | `/login`, `/register`                                  | Sign in with email or Google                                                                                                              |
 
 The main navigation is the four-tab bottom bar

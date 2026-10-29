@@ -268,7 +268,12 @@
       "title": "Idioma",
       "exerciseNames": "Nombres de ejercicios",
       "exerciseNamesHint": "Cómo se ven en tus rutinas y tu historial. Para buscar sirve cualquier idioma.",
-      "saveError": "No se pudo guardar el idioma"
+      "saveError": "No se pudo guardar el idioma",
+      "interface": "Interfaz",
+      "interfaceHint": "Botones, títulos y mensajes.",
+      "phone": "Teléfono",
+      "phoneHint": "Sigue el idioma de tu celular",
+      "summary": "{interface} · ejercicios en {exercises}"
     },
     "kicker": "// tu cuenta",
     "title": "Perfil",

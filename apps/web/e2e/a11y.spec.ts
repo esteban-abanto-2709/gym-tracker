@@ -115,10 +115,7 @@ for (const colorScheme of ["light", "dark"] as const) {
       }
 
       await openSheet(page, page.getByRole("button", { name: "Tema" }));
-      await openSheet(
-        page,
-        page.getByRole("button", { name: "Nombres de ejercicios" }),
-      );
+      await openSheet(page, page.getByRole("button", { name: "Idioma" }));
       await openSheet(
         page,
         page.getByRole("button", { name: "Borrar mi cuenta" }),

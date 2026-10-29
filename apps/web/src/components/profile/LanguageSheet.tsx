@@ -1,43 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { notifyError } from "@/lib/notify";
-import type { Locale } from "@/lib/types";
-import { Check } from "lucide-react";
+import type { AuthUser, Locale } from "@/lib/types";
+import { Check, Smartphone } from "lucide-react";
 import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
 import { cn } from "@/lib/utils";
+import { LOCALES } from "@/i18n/locale";
 
-const EXERCISE_LANGUAGES: { value: Locale; label: string; example: string }[] =
-  [
-    { value: "en", label: "English", example: "Bench Press · Lat Pulldown" },
-    {
-      value: "es",
-      label: "Español",
-      example: "Press de banca · Jalón al pecho",
-    },
-  ];
+type Changes = Partial<Pick<AuthUser, "exerciseLocale" | "interfaceLocale">>;
+
+interface Option<T> {
+  value: T;
+  code: ReactNode;
+  label: string;
+  example: string;
+}
+
+export const LANGUAGE_NAMES: Record<Locale, string> = {
+  en: "English",
+  es: "Español",
+};
+
+const EXERCISE_EXAMPLES: Record<Locale, string> = {
+  en: "Bench Press · Lat Pulldown",
+  es: "Press de banca · Jalón al pecho",
+};
+
+const INTERFACE_EXAMPLES: Record<Locale, string> = {
+  en: "Today · Routines · History",
+  es: "Hoy · Rutinas · Historial",
+};
 
 export function LanguageSheet({ onClose }: { onClose: () => void }) {
   const t = useTranslations("profile.language");
   const { user, updateMe } = useAuth();
-  const [saving, setSaving] = useState<Locale | null>(null);
-  const current = user?.exerciseLocale ?? "en";
+  const [saving, setSaving] = useState<string | null>(null);
 
-  const choose = async (value: Locale) => {
-    if (value === current || saving) return;
-    setSaving(value);
+  const save = async (key: string, changes: Changes) => {
+    if (saving) return;
+    setSaving(key);
     try {
-      await updateMe({ exerciseLocale: value });
+      await updateMe(changes);
     } catch {
       notifyError(t("saveError"));
     } finally {
       setSaving(null);
     }
   };
+
+  const exerciseOptions: Option<Locale>[] = LOCALES.map((value) => ({
+    value,
+    code: value,
+    label: LANGUAGE_NAMES[value],
+    example: EXERCISE_EXAMPLES[value],
+  }));
+
+  const interfaceOptions: Option<Locale | null>[] = [
+    {
+      value: null,
+      code: <Smartphone className="w-6 h-6" strokeWidth={2.5} />,
+      label: t("phone"),
+      example: t("phoneHint"),
+    },
+    ...LOCALES.map((value) => ({
+      value,
+      code: value,
+      label: LANGUAGE_NAMES[value],
+      example: INTERFACE_EXAMPLES[value],
+    })),
+  ];
 
   return (
     <BottomSheet label={t("title")} onClose={onClose}>
@@ -48,65 +84,100 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
           onClose={onClose}
         />
 
-        <p className="mt-5 kicker text-4xs text-muted-foreground">
-          {t("exerciseNames")}
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground text-balance">
-          {t("exerciseNamesHint")}
-        </p>
+        <Choice
+          title={t("exerciseNames")}
+          hint={t("exerciseNamesHint")}
+          options={exerciseOptions}
+          current={user?.exerciseLocale ?? "en"}
+          saving={saving}
+          savingKey={(value) => `exercise-${value}`}
+          onChoose={(value) =>
+            save(`exercise-${value}`, { exerciseLocale: value })
+          }
+        />
 
-        <div
-          role="radiogroup"
-          aria-label={t("exerciseNames")}
-          className="mt-3 grid gap-2"
-        >
-          {EXERCISE_LANGUAGES.map(({ value, label, example }) => {
-            const selected = value === current;
-            return (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => choose(value)}
-                className={cn(
-                  "flex items-center gap-4 rounded-2xl border-2 px-4 py-3.5 text-left transition-all active:scale-[0.98]",
-                  selected
-                    ? "border-primary bg-primary/10"
-                    : "border-input bg-muted/40 hover:border-primary/50",
-                )}
-              >
-                <span
-                  className={heading({
-                    className:
-                      "shrink-0 w-11 text-2xl leading-none text-primary",
-                  })}
-                >
-                  {value}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block font-bold text-foreground">
-                    {label}
-                  </span>
-                  <span className="block text-sm text-muted-foreground truncate">
-                    {example}
-                  </span>
-                </span>
-                {saving === value ? (
-                  <Spinner className="size-5 text-primary shrink-0" />
-                ) : (
-                  selected && (
-                    <Check
-                      className="w-5 h-5 text-primary shrink-0"
-                      strokeWidth={3}
-                    />
-                  )
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <Choice
+          title={t("interface")}
+          hint={t("interfaceHint")}
+          options={interfaceOptions}
+          current={user?.interfaceLocale ?? null}
+          saving={saving}
+          savingKey={(value) => `interface-${value}`}
+          onChoose={(value) =>
+            save(`interface-${value}`, { interfaceLocale: value })
+          }
+        />
       </div>
     </BottomSheet>
+  );
+}
+
+function Choice<T extends Locale | null>({
+  title,
+  hint,
+  options,
+  current,
+  saving,
+  savingKey,
+  onChoose,
+}: {
+  title: string;
+  hint: string;
+  options: Option<T>[];
+  current: T;
+  saving: string | null;
+  savingKey: (value: T) => string;
+  onChoose: (value: T) => void;
+}) {
+  return (
+    <>
+      <p className="mt-5 kicker text-4xs text-muted-foreground">{title}</p>
+      <p className="mt-1 text-sm text-muted-foreground text-balance">{hint}</p>
+
+      <div role="radiogroup" aria-label={title} className="mt-3 grid gap-2">
+        {options.map(({ value, code, label, example }) => {
+          const selected = value === current;
+          return (
+            <button
+              key={String(value)}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              onClick={() => !selected && onChoose(value)}
+              className={cn(
+                "flex items-center gap-4 rounded-2xl border-2 px-4 py-3.5 text-left transition-all active:scale-[0.98]",
+                selected
+                  ? "border-primary bg-primary/10"
+                  : "border-input bg-muted/40 hover:border-primary/50",
+              )}
+            >
+              <span
+                className={heading({
+                  className: "shrink-0 w-11 text-2xl leading-none text-primary",
+                })}
+              >
+                {code}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold text-foreground">{label}</span>
+                <span className="block text-sm text-muted-foreground truncate">
+                  {example}
+                </span>
+              </span>
+              {saving === savingKey(value) ? (
+                <Spinner className="size-5 text-primary shrink-0" />
+              ) : (
+                selected && (
+                  <Check
+                    className="w-5 h-5 text-primary shrink-0"
+                    strokeWidth={3}
+                  />
+                )
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </>
   );
 }

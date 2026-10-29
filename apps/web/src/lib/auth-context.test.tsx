@@ -12,11 +12,12 @@ import {
 import { getQueryClient } from "./query";
 
 const replace = vi.fn();
+const refresh = vi.fn();
 const setTheme = vi.fn();
 let pathname = "/";
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ replace }),
+  useRouter: () => ({ replace, refresh }),
   usePathname: () => pathname,
 }));
 
@@ -24,14 +25,20 @@ vi.mock("next-themes", () => ({
   useTheme: () => ({ setTheme: (theme: string) => setTheme(theme) }),
 }));
 
-const meResponds = (loggedIn: boolean, theme = "system") =>
+const meResponds = (
+  loggedIn: boolean,
+  theme = "system",
+  interfaceLocale: string | null = null,
+) =>
   vi.stubGlobal(
     "fetch",
     vi.fn().mockResolvedValue({
       ok: loggedIn,
       json: () =>
         Promise.resolve(
-          loggedIn ? { id: "u1", theme } : { message: "Unauthorized" },
+          loggedIn
+            ? { id: "u1", theme, interfaceLocale }
+            : { message: "Unauthorized" },
         ),
     }),
   );
@@ -242,6 +249,37 @@ describe("AuthProvider cached data", () => {
         true,
       ),
     );
+  });
+});
+
+describe("AuthProvider interface language", () => {
+  beforeEach(() => {
+    refresh.mockReset();
+    document.cookie = "locale=; path=/; max-age=0";
+  });
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("brings the account language to this device and re-renders with it", async () => {
+    meResponds(true, "system", "es");
+    renderAt("/perfil");
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    expect(document.cookie).toContain("locale=es");
+  });
+
+  it("drops the device choice when the account follows the phone", async () => {
+    document.cookie = "locale=en; path=/";
+    meResponds(true);
+    renderAt("/perfil");
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    expect(document.cookie).not.toContain("locale=");
+  });
+
+  it("does nothing when the device already matches the account", async () => {
+    document.cookie = "locale=en; path=/";
+    meResponds(true, "system", "en");
+    renderAt("/perfil");
+    expect(await screen.findByText("contenido")).toBeTruthy();
+    expect(refresh).not.toHaveBeenCalled();
   });
 });
 

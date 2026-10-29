@@ -9,7 +9,10 @@ import { useAuth } from "@/lib/auth-context";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader, BackAction } from "@/components/layout/AppHeader";
 import { BirthDateRow } from "@/components/profile/BirthDateRow";
-import { LanguageSheet } from "@/components/profile/LanguageSheet";
+import {
+  LANGUAGE_NAMES,
+  LanguageSheet,
+} from "@/components/profile/LanguageSheet";
 import { THEME_OPTIONS, ThemeSheet } from "@/components/profile/ThemeSheet";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { PasswordRow } from "@/components/profile/PasswordRow";
@@ -74,8 +77,13 @@ export default function AjustesPage() {
             >
               <SettingsRowContent
                 Icon={Languages}
-                label={t("language.exerciseNames")}
-                value={user?.exerciseLocale === "es" ? "Español" : "English"}
+                label={t("language.title")}
+                value={t("language.summary", {
+                  interface: user?.interfaceLocale
+                    ? LANGUAGE_NAMES[user.interfaceLocale]
+                    : t("language.phone"),
+                  exercises: LANGUAGE_NAMES[user?.exerciseLocale ?? "en"],
+                })}
               />
             </button>
           </Group>

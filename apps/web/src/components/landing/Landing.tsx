@@ -37,11 +37,13 @@ function SetPreview() {
             {t("landing.preview.exercise")}
           </p>
           <p className="text-sm text-muted-foreground">
-            {t("equipment.names.barra")} · 3 × 8-10
+            {t("equipment.names.barra")}
+            {" · 3 × 8-10"}
           </p>
         </div>
         <span className="flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-1 text-primary font-bold text-sm">
-          <Flame className="w-4 h-4 fill-current" aria-hidden />3
+          <Flame className="w-4 h-4 fill-current" aria-hidden />
+          {3}
         </span>
       </div>
 
@@ -51,7 +53,7 @@ function SetPreview() {
         </p>
         <div className="mt-2 flex items-end gap-3">
           <p className="font-display font-bold text-foreground text-7xl leading-[0.8] tracking-tight">
-            60
+            {60}
           </p>
           <p className="font-display uppercase text-muted-foreground text-2xl leading-none pb-1">
             kg
@@ -65,7 +67,7 @@ function SetPreview() {
                 key={i}
                 className="grid place-items-center w-10 h-10 rounded-lg border-2 border-primary/60 font-mono font-bold text-foreground"
               >
-                10
+                {10}
               </span>
             ))}
           </div>

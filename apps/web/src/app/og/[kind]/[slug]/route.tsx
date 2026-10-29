@@ -91,7 +91,7 @@ export async function GET(
       >
         <div style={{ display: "flex" }}>{stats.join("  ·  ")}</div>
         <div style={{ display: "flex", color: "#fafafa", fontWeight: 700 }}>
-          Gym Tracker
+          {"Gym Tracker"}
         </div>
       </div>
     </div>,

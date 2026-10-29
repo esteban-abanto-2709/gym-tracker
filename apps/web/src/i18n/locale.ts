@@ -1,8 +1,22 @@
 import type { Locale } from "@/lib/types";
 
-export const LOCALES: readonly Locale[] = ["es", "en"];
+export const LOCALES: readonly Locale[] = ["en", "es"];
 export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "locale";
+
+export function writeLocaleCookie(locale: Locale | null) {
+  document.cookie = locale
+    ? `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`
+    : `${LOCALE_COOKIE}=; path=/; max-age=0; samesite=lax`;
+}
+
+export function readLocaleCookie(): Locale | null {
+  const value = document.cookie
+    .split("; ")
+    .find((c) => c.startsWith(`${LOCALE_COOKIE}=`))
+    ?.slice(LOCALE_COOKIE.length + 1);
+  return isLocale(value) ? value : null;
+}
 
 export const isLocale = (value: unknown): value is Locale =>
   LOCALES.includes(value as Locale);

@@ -108,6 +108,21 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  {
+    files: ["src/**/*.tsx"],
+    ignores: ["src/components/ui/**", "src/**/*.test.tsx"],
+    rules: {
+      "react/jsx-no-literals": [
+        "error",
+        {
+          allowedStrings: [
+            ...["·", "×", "–", "—", "*", "≈", "/", "%"],
+            ...["kg", "lb", "reps", "min", "s"],
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

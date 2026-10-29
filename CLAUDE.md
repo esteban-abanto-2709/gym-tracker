@@ -133,11 +133,12 @@ Source of truth: `apps/api/prisma/schema.prisma`. What the schema doesn't say:
 ## Conventions
 
 - **All code is English**: identifiers, enums, slugs, seed data, log
-  messages, test names. Only what the user sees is Spanish; reference data
-  shown to users (like exercise names) is translated in a language layer, not
-  stored in Spanish in seeds.
-- UI copy is **Spanish**, short and direct. Icons come from `lucide-react`;
-  `components/ui/` (shadcn) is not edited by hand.
+  messages, test names. What the user sees is translated: reference data
+  (like exercise names) in a language layer, not stored in Spanish in seeds.
+- UI copy lives in `apps/web/src/i18n/messages/` (Spanish and English, same
+  keys), short and direct; see **Translations** in `apps/web/README.md`.
+  Icons come from `lucide-react`; `components/ui/` (shadcn) is not edited by
+  hand.
 - Before adding or changing any web UI, read `docs/design-system.md` and
   follow it; lint enforces its main rules.
 - Before adding a web read or write to the API, follow **Data fetching** in
