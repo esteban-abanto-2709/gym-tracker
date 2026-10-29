@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -19,6 +20,7 @@ import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
 
 export default function HistoryPage() {
+  const t = useTranslations("history");
   const [exportOpen, setExportOpen] = useState(false);
   const {
     sessions,
@@ -52,15 +54,15 @@ export default function HistoryPage() {
   return (
     <PageShell variant="history">
       <AppHeader
-        title="Historial"
+        title={t("title")}
         sticky
         rightAction={
           <button
             type="button"
             onClick={() => setExportOpen(true)}
             disabled={sessions.length === 0}
-            aria-label="Exportar para tu IA"
-            title="Exportar para tu IA"
+            aria-label={t("export")}
+            title={t("export")}
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95 disabled:opacity-30"
           >
             <Share className="w-6 h-6" />
@@ -71,7 +73,9 @@ export default function HistoryPage() {
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar items-center">
           <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
           {!loading && sessions.length === 0 && (
-            <span className="text-sm text-muted-foreground">Sin registros</span>
+            <span className="text-sm text-muted-foreground">
+              {t("noRecords")}
+            </span>
           )}
           {sessions.map((session) => (
             <button
@@ -92,10 +96,10 @@ export default function HistoryPage() {
               type="button"
               onClick={() => void loadMore()}
               disabled={loadingMore}
-              aria-label="Cargar sesiones anteriores"
+              aria-label={t("loadOlder")}
               className="flex-none flex items-center gap-1 px-4 py-2 rounded-xl kicker text-3xs border-2 bg-card border-input text-muted-foreground hover:border-border disabled:opacity-50"
             >
-              Más
+              {t("more")}
               <ChevronRight className="w-3 h-3" />
             </button>
           )}
@@ -108,7 +112,7 @@ export default function HistoryPage() {
           <div className="flex flex-col items-center justify-center h-64 space-y-4">
             <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="text-sm text-muted-foreground font-medium animate-pulse">
-              Cargando historial...
+              {t("loading")}
             </p>
           </div>
         ) : !currentSession ? (
@@ -117,18 +121,16 @@ export default function HistoryPage() {
               <Calendar className="w-10 h-10 text-muted-foreground/50" />
             </div>
             <div className="space-y-2">
-              <h2 className={heading({ size: "sm" })}>
-                Sin entrenamientos aún
-              </h2>
+              <h2 className={heading({ size: "sm" })}>{t("empty")}</h2>
               <p className="text-sm text-muted-foreground max-w-[250px]">
-                Tus rutinas aparecerán aquí cuando guardes tu primer set.
+                {t("emptyHint")}
               </p>
             </div>
             <Link
               href="/log"
               className="px-8 py-3 bg-primary text-primary-foreground rounded-2xl font-display uppercase tracking-wide text-lg shadow-lg shadow-primary/20 hover:scale-105 transition-all"
             >
-              Comenzar a entrenar
+              {t("startTraining")}
             </Link>
           </div>
         ) : (
@@ -141,7 +143,7 @@ export default function HistoryPage() {
               <div className="space-y-3">
                 {currentWorkouts.length === 0 ? (
                   <p className="text-sm text-muted-foreground opacity-70">
-                    No hay series en esta sesión.
+                    {t("noSets")}
                   </p>
                 ) : (
                   currentWorkouts.map((workout, idx) => (

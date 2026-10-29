@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildExport, exportFilename } from "./exportForAi";
+import { createTranslator } from "next-intl";
+import { buildExport } from "./exportForAi";
+import messages from "@/i18n/messages/es.json";
 import type { Workout } from "./types";
 
 const set = (createdAt: string, overrides: Partial<Workout> = {}): Workout => ({
@@ -25,6 +27,8 @@ const base = {
   to: "2026-10-09",
   now: new Date("2026-10-09T23:40:00Z"),
   timeZone: "America/Lima",
+  t: createTranslator({ locale: "es", messages, namespace: "export.doc" }),
+  equipmentName: (_id: string | null, name: string) => name,
 };
 
 const seriesRows = (markdown: string) =>
@@ -110,8 +114,5 @@ describe("buildExport", () => {
     expect(markdown).toContain("- Edad: no registrada");
     expect(markdown).toContain("Sin medidas corporales registradas.");
     expect(markdown).toContain("Formato: gym-tracker-export v1");
-    expect(exportFilename(base.from, base.to)).toBe(
-      "historial-2026-09-09_2026-10-09.md",
-    );
   });
 });

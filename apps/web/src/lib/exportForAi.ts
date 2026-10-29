@@ -1,3 +1,4 @@
+import type { useTranslations } from "next-intl";
 import type { BodyMeasurement, Workout } from "@/lib/types";
 import { ageOn } from "@/lib/measurements";
 
@@ -11,6 +12,8 @@ export interface ExportInput {
   to: string;
   now?: Date;
   timeZone?: string;
+  t: ReturnType<typeof useTranslations<"export.doc">>;
+  equipmentName: (id: string | null, fallback: string) => string;
 }
 
 export interface ExportStats {
@@ -20,11 +23,6 @@ export interface ExportStats {
   firstDay: string | null;
   lastDay: string | null;
 }
-
-const SET_TYPE: Record<string, string> = {
-  WORKING: "efectiva",
-  WARMUP: "calentamiento",
-};
 
 function csvCell(value: string | number | null | undefined): string {
   if (value == null) return "";
@@ -52,13 +50,6 @@ function localParts(iso: string, timeZone: string) {
   return { day, time };
 }
 
-export const plural = (n: number, one: string, many: string) =>
-  `${n} ${n === 1 ? one : many}`;
-
-export function exportFilename(from: string, to: string) {
-  return `historial-${from}_${to}.md`;
-}
-
 export function buildExport({
   workouts,
   measurements,
@@ -67,6 +58,8 @@ export function buildExport({
   to,
   now = new Date(),
   timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone,
+  t,
+  equipmentName,
 }: ExportInput): { markdown: string; stats: ExportStats } {
   const rows = workouts
     .map((w) => ({ w, ...localParts(w.createdAt, timeZone) }))
@@ -89,35 +82,46 @@ export function buildExport({
   const shownMeasurements = baseline ? [baseline, ...inRange] : inRange;
 
   const lines = [
-    `# Historial de entrenamiento · ${from} a ${to}`,
+    t("title", { from, to }),
     "",
-    `Formato: ${EXPORT_FORMAT} · exportado ${today.day} ${today.time} (${timeZone})`,
+    t("format", {
+      format: EXPORT_FORMAT,
+      day: today.day,
+      time: today.time,
+      timeZone,
+    }),
     "",
     stats.sets > 0
-      ? `Período pedido: ${from} a ${to}. Hay series del ${stats.firstDay} al ${stats.lastDay}, en ${plural(stats.days, "día", "días")} (${plural(stats.sets, "serie", "series")}, ${plural(stats.exercises, "ejercicio", "ejercicios")}). Un día sin series no confirma descanso: puede que no se haya registrado.`
-      : `Período pedido: ${from} a ${to}. No hay series registradas en este período.`,
+      ? t("range", {
+          from,
+          to,
+          first: stats.firstDay ?? "",
+          last: stats.lastDay ?? "",
+          days: stats.days,
+          sets: stats.sets,
+          exercises: stats.exercises,
+        })
+      : t("rangeEmpty", { from, to }),
     "",
-    "## Sobre mí",
-    `- Edad: ${birthDate ? `${ageOn(birthDate, today.day)} años` : "no registrada"}`,
+    t("aboutMe"),
+    birthDate
+      ? t("age", { age: ageOn(birthDate, today.day) })
+      : t("ageUnknown"),
     "",
-    "## Medidas corporales",
+    t("measurements"),
   ];
 
   if (shownMeasurements.length === 0) {
-    lines.push("Sin medidas corporales registradas.");
+    lines.push(t("noMeasurements"));
   } else {
-    lines.push(
-      "Medidas tomadas cuando quise. Vacío = no medido ese día; no arrastres el valor anterior.",
-    );
+    lines.push(t("measurementsNote"));
     if (baseline) {
-      lines.push(
-        `La primera fila (${baseline.date}) es la última medida antes del período, como punto de partida.`,
-      );
+      lines.push(t("baseline", { date: baseline.date }));
     }
     lines.push(
       "",
       "```csv",
-      "fecha,altura_cm,peso_kg,grasa_pct",
+      t("measurementsHeader"),
       ...shownMeasurements.map((m) =>
         csvRow([m.date, m.heightCm, m.weightKg, m.bodyFatPct]),
       ),
@@ -127,35 +131,35 @@ export function buildExport({
 
   lines.push(
     "",
-    "## Cómo leer las series",
-    "- **Una fila = una serie.** Las series de un mismo día y rutina forman la sesión.",
-    "- **Peso en kg.** Barra = total (barra + discos). Mancuerna = el peso de una sola. Máquina y polea = lo que marca el aparato.",
-    "- **Tipo:** `efectiva` cuenta para el progreso; `calentamiento` no; `rampa N` es el escalón N de aproximación antes de las efectivas, con peso creciente.",
-    "- **Celdas vacías:** sin peso ni reps = serie de tiempo (mira `segundos`); sin peso = peso corporal o solo reps. Equipo vacío = no se registró.",
-    "- **Rutina vacía** = día libre, fuera de la rutina.",
-    "- **Nota** = lo que escribí sobre esa serie, tal cual.",
-    "- **Descanso:** se deduce de la hora de cada serie.",
-    `- Fecha y hora en mi zona horaria (${timeZone}).`,
+    t("howToRead"),
+    t("rule1"),
+    t("rule2"),
+    t("rule3", { working: t("working"), warmup: t("warmup"), ramp: t("ramp") }),
+    t("rule4"),
+    t("rule5"),
+    t("rule6"),
+    t("rule7"),
+    t("rule8", { timeZone }),
     "",
-    "## Series",
+    t("sets"),
     "",
   );
 
   if (rows.length === 0) {
-    lines.push("Sin series en este período.");
+    lines.push(t("noSets"));
   } else {
     lines.push(
       "```csv",
-      "fecha,hora,ejercicio,equipo,tipo,peso_kg,reps,segundos,rutina,nota",
+      t("setsHeader"),
       ...rows.map(({ w, day, time }) =>
         csvRow([
           day,
           time,
           w.exercise.name,
-          w.equipment?.name,
+          w.equipment && equipmentName(w.equipment.id, w.equipment.name),
           w.setType === "RAMP"
-            ? `rampa ${w.step ?? ""}`.trim()
-            : SET_TYPE[w.setType ?? "WORKING"],
+            ? `${t("ramp")} ${w.step ?? ""}`.trim()
+            : t(w.setType === "WARMUP" ? "warmup" : "working"),
           w.weight,
           w.reps,
           w.durationSec,

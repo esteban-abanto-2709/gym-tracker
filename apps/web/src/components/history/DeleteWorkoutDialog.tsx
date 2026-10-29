@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,20 +23,22 @@ export function DeleteWorkoutDialog({
   loading,
   onConfirm,
 }: DeleteWorkoutDialogProps) {
+  const t = useTranslations();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
-            ¿Eliminar este registro?
+            {t("history.deleteDialog.title")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Se eliminarán los datos de esta
-            serie permanentemente.
+            {t("history.deleteDialog.message")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+          <AlertDialogCancel className="rounded-xl">
+            {t("common.cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             onClick={(e) => {
@@ -44,7 +47,9 @@ export function DeleteWorkoutDialog({
             }}
             disabled={loading}
           >
-            {loading ? "Eliminando..." : "Eliminar Set"}
+            {loading
+              ? t("history.deleteDialog.deleting")
+              : t("history.deleteSet")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

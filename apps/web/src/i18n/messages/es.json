@@ -360,5 +360,86 @@
       "saveError": "No se pudo guardar el programa",
       "deleteError": "No se pudo eliminar el programa"
     }
+  },
+  "history": {
+    "title": "Historial",
+    "export": "Exportar para tu IA",
+    "noRecords": "Sin registros",
+    "loadOlder": "Cargar sesiones anteriores",
+    "more": "Más",
+    "loading": "Cargando historial...",
+    "empty": "Sin entrenamientos aún",
+    "emptyHint": "Tus rutinas aparecerán aquí cuando guardes tu primer set.",
+    "startTraining": "Comenzar a entrenar",
+    "noSets": "No hay series en esta sesión.",
+    "freeDay": "Día libre",
+    "repeatSet": "Repetir set",
+    "editSet": "Editar set",
+    "deleteSet": "Eliminar set",
+    "loadMoreError": "No se pudieron cargar más sesiones",
+    "saveError": "No se pudieron guardar los cambios",
+    "deleteError": "No se pudo borrar el set",
+    "deleteDialog": {
+      "title": "¿Eliminar este registro?",
+      "message": "Esta acción no se puede deshacer. Se eliminarán los datos de esta serie permanentemente.",
+      "deleting": "Eliminando..."
+    },
+    "editDialog": {
+      "title": "Editar entrenamiento",
+      "time": "Tiempo",
+      "weight": "Peso (kg)",
+      "reps": "Repeticiones"
+    }
+  },
+  "export": {
+    "sheet": {
+      "title": "Exportar historial",
+      "kicker": "// para tu IA",
+      "days": "{count} días",
+      "all": "Todo",
+      "from": "Desde",
+      "to": "Hasta",
+      "sets": "{count, plural, one {# serie} other {# series}}",
+      "dayCount": "{count, plural, one {# día} other {# días}}",
+      "exercises": "{count, plural, one {# ejercicio} other {# ejercicios}}",
+      "measurements": "{count, plural, one {# medida} other {# medidas}}",
+      "empty": "Sin series en este rango.",
+      "share": "Compartir",
+      "download": "Descargar",
+      "copy": "Copiar texto",
+      "copied": "Texto copiado",
+      "shareError": "No se pudo compartir el archivo",
+      "copyError": "No se pudo copiar el texto",
+      "filename": "historial-{from}_{to}.md"
+    },
+    "doc": {
+      "title": "# Historial de entrenamiento · {from} a {to}",
+      "format": "Formato: {format} · exportado {day} {time} ({timeZone})",
+      "range": "Período pedido: {from} a {to}. Hay series del {first} al {last}, en {days, plural, one {# día} other {# días}} ({sets, plural, one {# serie} other {# series}}, {exercises, plural, one {# ejercicio} other {# ejercicios}}). Un día sin series no confirma descanso: puede que no se haya registrado.",
+      "rangeEmpty": "Período pedido: {from} a {to}. No hay series registradas en este período.",
+      "aboutMe": "## Sobre mí",
+      "age": "- Edad: {age} años",
+      "ageUnknown": "- Edad: no registrada",
+      "measurements": "## Medidas corporales",
+      "noMeasurements": "Sin medidas corporales registradas.",
+      "measurementsNote": "Medidas tomadas cuando quise. Vacío = no medido ese día; no arrastres el valor anterior.",
+      "baseline": "La primera fila ({date}) es la última medida antes del período, como punto de partida.",
+      "measurementsHeader": "fecha,altura_cm,peso_kg,grasa_pct",
+      "howToRead": "## Cómo leer las series",
+      "rule1": "- **Una fila = una serie.** Las series de un mismo día y rutina forman la sesión.",
+      "rule2": "- **Peso en kg.** Barra = total (barra + discos). Mancuerna = el peso de una sola. Máquina y polea = lo que marca el aparato.",
+      "rule3": "- **Tipo:** `{working}` cuenta para el progreso; `{warmup}` no; `{ramp} N` es el escalón N de aproximación antes de las efectivas, con peso creciente.",
+      "rule4": "- **Celdas vacías:** sin peso ni reps = serie de tiempo (mira `segundos`); sin peso = peso corporal o solo reps. Equipo vacío = no se registró.",
+      "rule5": "- **Rutina vacía** = día libre, fuera de la rutina.",
+      "rule6": "- **Nota** = lo que escribí sobre esa serie, tal cual.",
+      "rule7": "- **Descanso:** se deduce de la hora de cada serie.",
+      "rule8": "- Fecha y hora en mi zona horaria ({timeZone}).",
+      "sets": "## Series",
+      "noSets": "Sin series en este período.",
+      "setsHeader": "fecha,hora,ejercicio,equipo,tipo,peso_kg,reps,segundos,rutina,nota",
+      "working": "efectiva",
+      "warmup": "calentamiento",
+      "ramp": "rampa"
+    }
   }
 }

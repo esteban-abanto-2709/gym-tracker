@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { useMeasurements } from "@/hooks/useMeasurements";
+import { useEquipmentName } from "@/hooks/useEquipment";
 import { todayLocal } from "@/lib/measurements";
-import { buildExport, exportFilename, plural } from "@/lib/exportForAi";
+import { buildExport } from "@/lib/exportForAi";
 import { notifyError } from "@/lib/notify";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
@@ -30,14 +32,19 @@ interface ExportSheetProps {
 }
 
 export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
+  const t = useTranslations("export.sheet");
+  const tDoc = useTranslations("export.doc");
+  const tErrors = useTranslations("errors.load");
+  const tCommon = useTranslations("common");
+  const equipmentName = useEquipmentName();
   const { user } = useAuth();
   const { measurements, loading } = useMeasurements();
   const today = todayLocal();
   const presets = [
-    { label: "7 días", from: shiftDays(today, -6) },
-    { label: "30 días", from: shiftDays(today, -29) },
-    { label: "90 días", from: shiftDays(today, -89) },
-    { label: "Todo", from: firstDay },
+    { label: t("days", { count: 7 }), from: shiftDays(today, -6) },
+    { label: t("days", { count: 30 }), from: shiftDays(today, -29) },
+    { label: t("days", { count: 90 }), from: shiftDays(today, -89) },
+    { label: t("all"), from: firstDay },
   ];
   const [from, setFrom] = useState(presets[1].from);
   const [to, setTo] = useState(today);
@@ -52,8 +59,8 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
     api
       .get<Workout[]>(routes.api.workouts.range(from, to))
       .then((sets) => setFetched({ key: `${from}_${to}`, workouts: sets }))
-      .catch(() => notifyError("No se pudo cargar el historial"));
-  }, [from, to]);
+      .catch(() => notifyError(tErrors("history")));
+  }, [from, to, tErrors]);
 
   const { markdown, stats } = useMemo(
     () =>
@@ -63,13 +70,15 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
         birthDate: user?.birthDate ?? null,
         from,
         to,
+        t: tDoc,
+        equipmentName,
       }),
-    [workouts, measurements, user?.birthDate, from, to],
+    [workouts, measurements, user?.birthDate, from, to, tDoc, equipmentName],
   );
   const measured = measurements.filter(
     (m) => m.date >= from && m.date <= to,
   ).length;
-  const filename = exportFilename(from, to);
+  const filename = t("filename", { from, to });
   const file = useMemo(
     () => new File([markdown], filename, { type: "text/plain" }),
     [markdown, filename],
@@ -93,7 +102,7 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
       await navigator.share({ files: [file], title: filename });
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
-        notifyError("No se pudo compartir el archivo");
+        notifyError(t("shareError"));
       }
     }
   };
@@ -101,18 +110,18 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(markdown);
-      toast.success("Texto copiado");
+      toast.success(t("copied"));
     } catch {
-      notifyError("No se pudo copiar el texto");
+      notifyError(t("copyError"));
     }
   };
 
   return (
-    <BottomSheet label="Exportar historial" onClose={onClose}>
+    <BottomSheet label={t("title")} onClose={onClose}>
       <div className="max-w-md mx-auto">
         <SheetHeader
-          kicker="// para tu IA"
-          title="Exportar historial"
+          kicker={t("kicker")}
+          title={t("title")}
           onClose={onClose}
         />
 
@@ -143,7 +152,9 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <label className="min-w-0 block">
-            <span className="kicker text-4xs text-muted-foreground">Desde</span>
+            <span className="kicker text-4xs text-muted-foreground">
+              {t("from")}
+            </span>
             <input
               type="date"
               value={from}
@@ -153,7 +164,9 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
             />
           </label>
           <label className="min-w-0 block">
-            <span className="kicker text-4xs text-muted-foreground">Hasta</span>
+            <span className="kicker text-4xs text-muted-foreground">
+              {t("to")}
+            </span>
             <input
               type="date"
               value={to}
@@ -167,7 +180,9 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
 
         <div className="mt-4 rounded-2xl bg-muted/60 px-4 py-3">
           {workouts === null ? (
-            <p className="py-2 text-sm text-muted-foreground">Cargando…</p>
+            <p className="py-2 text-sm text-muted-foreground">
+              {tCommon("loading")}
+            </p>
           ) : stats.sets > 0 ? (
             <>
               <p
@@ -176,22 +191,20 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
                     "text-3xl leading-none text-foreground tabular-nums",
                 })}
               >
-                {plural(stats.sets, "serie", "series")}
+                {t("sets", { count: stats.sets })}
               </p>
               <p className="mt-1.5 text-sm text-muted-foreground">
                 {[
-                  plural(stats.days, "día", "días"),
-                  plural(stats.exercises, "ejercicio", "ejercicios"),
-                  measured > 0 && plural(measured, "medida", "medidas"),
+                  t("dayCount", { count: stats.days }),
+                  t("exercises", { count: stats.exercises }),
+                  measured > 0 && t("measurements", { count: measured }),
                 ]
                   .filter(Boolean)
                   .join(" · ")}
               </p>
             </>
           ) : (
-            <p className="py-2 text-sm text-muted-foreground">
-              Sin series en este rango.
-            </p>
+            <p className="py-2 text-sm text-muted-foreground">{t("empty")}</p>
           )}
         </div>
 
@@ -206,7 +219,7 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
           ) : (
             <Download className="w-5 h-5" strokeWidth={2.5} />
           )}
-          {shareable ? "Compartir" : "Descargar"}
+          {t(shareable ? "share" : "download")}
         </Button>
         <button
           type="button"
@@ -215,7 +228,7 @@ export function ExportSheet({ firstDay, onClose }: ExportSheetProps) {
           className="mt-1 w-full py-2.5 text-muted-foreground hover:text-foreground font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
         >
           <Copy className="w-4 h-4" />
-          Copiar texto
+          {t("copy")}
         </button>
       </div>
     </BottomSheet>

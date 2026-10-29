@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import type { Workout } from "@/lib/types";
 import { setMetrics } from "@/lib/setDisplay";
 import { RotateCcw, Pencil, Trash2 } from "lucide-react";
@@ -21,6 +22,8 @@ export function WorkoutCard({
   onEdit,
   onDelete,
 }: WorkoutCardProps) {
+  const t = useTranslations("history");
+  const locale = useLocale();
   return (
     <div
       className={cn(
@@ -39,7 +42,7 @@ export function WorkoutCard({
               {workout.exercise.name}
             </h3>
             <span className="text-3xs font-mono text-muted-foreground tracking-wide">
-              {new Date(workout.createdAt).toLocaleTimeString("es-ES", {
+              {new Date(workout.createdAt).toLocaleTimeString(locale, {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
@@ -49,8 +52,8 @@ export function WorkoutCard({
           <Button
             size="icon"
             onClick={() => onRepeat(workout)}
-            aria-label="Repetir Set"
-            title="Repetir Set"
+            aria-label={t("repeatSet")}
+            title={t("repeatSet")}
             className="flex shadow-md hover:scale-105"
           >
             <RotateCcw className="w-4 h-4" strokeWidth={3} />
@@ -80,8 +83,8 @@ export function WorkoutCard({
               variant="muted"
               size="icon"
               onClick={() => onEdit(workout)}
-              title="Editar Set"
-              aria-label="Editar Set"
+              title={t("editSet")}
+              aria-label={t("editSet")}
             >
               <Pencil className="w-4 h-4" />
             </Button>
@@ -89,8 +92,8 @@ export function WorkoutCard({
               variant="danger"
               size="icon"
               onClick={() => onDelete(workout)}
-              title="Eliminar Set"
-              aria-label="Eliminar Set"
+              title={t("deleteSet")}
+              aria-label={t("deleteSet")}
             >
               <Trash2 className="w-4 h-4" />
             </Button>

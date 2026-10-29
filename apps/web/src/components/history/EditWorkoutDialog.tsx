@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ export function EditWorkoutDialog({
   loading,
   onSave,
 }: EditWorkoutDialogProps) {
+  const t = useTranslations();
   const viewport = useVisualViewport(open);
 
   const viewportStyle = viewport
@@ -54,14 +56,14 @@ export function EditWorkoutDialog({
       >
         <DialogHeader>
           <DialogTitle className="font-display uppercase tracking-tight text-2xl">
-            Editar Entrenamiento
+            {t("history.editDialog.title")}
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           {measure === "time" ? (
             <div className="space-y-2">
               <label className="kicker text-muted-foreground text-3xs">
-                Tiempo
+                {t("history.editDialog.time")}
               </label>
               <DurationPicker value={durationSec} onChange={onDurationChange} />
             </div>
@@ -78,7 +80,7 @@ export function EditWorkoutDialog({
                     htmlFor="edit-weight"
                     className="kicker text-muted-foreground text-3xs"
                   >
-                    Peso (kg)
+                    {t("history.editDialog.weight")}
                   </label>
                   <input
                     id="edit-weight"
@@ -95,7 +97,7 @@ export function EditWorkoutDialog({
                   htmlFor="edit-reps"
                   className="kicker text-muted-foreground text-3xs"
                 >
-                  Repeticiones
+                  {t("history.editDialog.reps")}
                 </label>
                 <input
                   id="edit-reps"
@@ -116,7 +118,7 @@ export function EditWorkoutDialog({
             }
             className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-display uppercase tracking-wide text-xl shadow-lg hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
           >
-            {loading ? "Guardando..." : "Guardar Cambios"}
+            {t(loading ? "common.saving" : "common.saveChanges")}
           </button>
         </DialogFooter>
       </DialogContent>

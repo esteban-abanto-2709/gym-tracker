@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import {
   useInfiniteQuery,
   useQuery,
@@ -15,7 +16,7 @@ import { setMeasure } from "@/lib/setDisplay";
 const localDay = (iso: string, timeZone?: string) =>
   new Date(iso).toLocaleDateString("en-CA", { timeZone });
 
-function displayDate(dateStr: string): string {
+function displayDate(dateStr: string, locale: string): string {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
@@ -24,16 +25,18 @@ function displayDate(dateStr: string): string {
   if (!y || !m || !d) return dateStr;
   const dateObj = new Date(Number(y), Number(m) - 1, Number(d));
 
-  if (dateObj.toDateString() === today.toDateString()) return "Hoy";
-  if (dateObj.toDateString() === yesterday.toDateString()) return "Ayer";
-
-  return new Intl.DateTimeFormat("es-ES", {
-    weekday: "long",
-    day: "2-digit",
-    month: "short",
-  })
-    .format(dateObj)
-    .replace(/^\w/, (c) => c.toUpperCase());
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  const label =
+    dateObj.toDateString() === today.toDateString()
+      ? relative.format(0, "day")
+      : dateObj.toDateString() === yesterday.toDateString()
+        ? relative.format(-1, "day")
+        : new Intl.DateTimeFormat(locale, {
+            weekday: "long",
+            day: "2-digit",
+            month: "short",
+          }).format(dateObj);
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 const NO_SETS: Workout[] = [];
@@ -41,8 +44,8 @@ const NO_SETS: Workout[] = [];
 const sessionDay = (session: SessionSummary) =>
   localDay(session.startedAt, session.timeZone);
 
-const sessionTime = (session: SessionSummary) =>
-  new Date(session.startedAt).toLocaleTimeString("es-PE", {
+const sessionTime = (session: SessionSummary, locale: string) =>
+  new Date(session.startedAt).toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
@@ -50,6 +53,8 @@ const sessionTime = (session: SessionSummary) =>
   });
 
 export function useWorkoutHistory() {
+  const t = useTranslations("history");
+  const locale = useLocale();
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -75,9 +80,9 @@ export function useWorkoutHistory() {
     if (!hasNextPage || isFetchingNextPage) return;
     const result = await fetchNextPage();
     if (result.isFetchNextPageError) {
-      notifyError("No se pudieron cargar más sesiones");
+      notifyError(t("loadMoreError"));
     }
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, t]);
 
   const currentSession =
     sessions.find((s) => s.id === selectedId) ?? sessions[0] ?? null;
@@ -89,16 +94,16 @@ export function useWorkoutHistory() {
     (session: SessionSummary) => {
       const day = sessionDay(session);
       const sameDay = sessions.filter((s) => sessionDay(s) === day).length;
-      const label = displayDate(day);
-      return sameDay > 1 ? `${label} · ${sessionTime(session)}` : label;
+      const label = displayDate(day, locale);
+      return sameDay > 1 ? `${label} · ${sessionTime(session, locale)}` : label;
     },
-    [sessions],
+    [sessions, locale],
   );
 
   const sessionTitle = useCallback(
     (session: SessionSummary) =>
-      `${sessionLabel(session)} · ${session.routine?.name ?? "Día libre"}`,
-    [sessionLabel],
+      `${sessionLabel(session)} · ${session.routine?.name ?? t("freeDay")}`,
+    [sessionLabel, t],
   );
 
   // Repeat a workout set
@@ -157,7 +162,7 @@ export function useWorkoutHistory() {
         );
         setEditingWorkout(null);
       } catch {
-        notifyError("No se pudieron guardar los cambios", run);
+        notifyError(t("saveError"), run);
       } finally {
         setActionLoading(false);
       }
@@ -170,6 +175,7 @@ export function useWorkoutHistory() {
     editDuration,
     activeId,
     queryClient,
+    t,
   ]);
 
   // Confirm and delete a workout
@@ -201,13 +207,13 @@ export function useWorkoutHistory() {
         );
         setDeletingWorkout(null);
       } catch {
-        notifyError("No se pudo borrar el set", run);
+        notifyError(t("deleteError"), run);
       } finally {
         setActionLoading(false);
       }
     };
     await run();
-  }, [deletingWorkout, currentWorkouts, activeId, queryClient]);
+  }, [deletingWorkout, currentWorkouts, activeId, queryClient, t]);
 
   return {
     // Data
