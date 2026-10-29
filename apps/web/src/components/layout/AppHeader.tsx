@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { History, ArrowLeft, ClipboardList } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
 
@@ -57,39 +58,14 @@ export function AppHeader({
 // --- Pre-built actions for convenience ---
 
 export function BackAction({ href = "/" }: { href?: string }) {
+  const t = useTranslations("common");
   return (
     <Link
       href={href}
       className="text-muted-foreground hover:text-foreground transition-colors"
-      aria-label="Volver"
+      aria-label={t("back")}
     >
       <ArrowLeft className="w-6 h-6" strokeWidth={2.5} />
-    </Link>
-  );
-}
-
-export function HistoryAction() {
-  return (
-    <Link
-      href="/history"
-      className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
-      title="Ver Historial"
-      aria-label="Ver Historial"
-    >
-      <History className="w-6 h-6" />
-    </Link>
-  );
-}
-
-export function RoutinesAction() {
-  return (
-    <Link
-      href="/routines"
-      className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
-      title="Ver Rutinas"
-      aria-label="Ver Rutinas"
-    >
-      <ClipboardList className="w-6 h-6" />
     </Link>
   );
 }

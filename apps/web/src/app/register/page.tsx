@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { routes } from "@/lib/routes";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,8 @@ import { Button } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
 
 export default function RegisterPage() {
+  const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const { register } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -31,7 +34,7 @@ export default function RegisterPage() {
         password.trim(),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo registrar");
+      setError(err instanceof Error ? err.message : t("errors.registerFailed"));
       setSubmitting(false);
     }
   }
@@ -40,19 +43,19 @@ export default function RegisterPage() {
     <main className="min-h-dvh flex flex-col px-6 pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] max-w-md mx-auto w-full">
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
-        <p className="kicker text-primary text-2xs">{"// tu primera serie"}</p>
+        <p className="kicker text-primary text-2xs">{t("register.kicker")}</p>
         <h1
           className={heading({
             size: "lg",
             className: "text-foreground leading-[0.88] mt-3",
           })}
         >
-          Crea tu
+          {t("register.titleTop")}
           <br />
-          <span className="text-primary">cuenta.</span>
+          <span className="text-primary">{t("register.titleAccent")}</span>
         </h1>
         <p className="text-muted-foreground text-sm mt-4 max-w-[88%]">
-          Sin configurar nada. Entra y empieza a mover peso.
+          {t("register.subtitle")}
         </p>
       </div>
 
@@ -68,7 +71,7 @@ export default function RegisterPage() {
             htmlFor="username"
             className="kicker font-bold text-muted-foreground text-2xs"
           >
-            Nombre de usuario
+            {t("register.username")}
           </Label>
           <Input
             id="username"
@@ -88,7 +91,7 @@ export default function RegisterPage() {
             htmlFor="email"
             className="kicker font-bold text-muted-foreground text-2xs"
           >
-            Correo
+            {t("email")}
           </Label>
           <Input
             id="email"
@@ -109,7 +112,7 @@ export default function RegisterPage() {
             htmlFor="password"
             className="kicker font-bold text-muted-foreground text-2xs"
           >
-            Contraseña
+            {t("password")}
           </Label>
           <PasswordInput
             id="password"
@@ -127,18 +130,18 @@ export default function RegisterPage() {
           disabled={submitting}
           className="shadow-primary/30"
         >
-          {submitting ? "Creando…" : "Crear cuenta"}
+          {t(submitting ? "register.submitting" : "register.submit")}
         </Button>
 
         <GoogleButton />
 
         <p className="text-sm text-center text-muted-foreground pt-1">
-          ¿Ya tienes cuenta?{" "}
+          {t("register.hasAccount")}{" "}
           <Link
             href={routes.login()}
             className="text-foreground font-semibold underline underline-offset-4"
           >
-            Ingresa
+            {t("register.toLogin")}
           </Link>
         </p>
 
@@ -146,7 +149,7 @@ export default function RegisterPage() {
           href={routes.privacy()}
           className="block text-xs text-center text-muted-foreground underline underline-offset-4"
         >
-          Privacidad
+          {tCommon("privacy")}
         </Link>
       </form>
     </main>

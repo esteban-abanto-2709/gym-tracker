@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { PasswordRow } from "./PasswordRow";
 
 const changePassword = vi.fn();
@@ -24,7 +25,7 @@ describe("PasswordRow", () => {
   beforeEach(() => {
     changePassword.mockReset().mockResolvedValue(undefined);
     success.mockReset();
-    render(<PasswordRow />);
+    renderWithIntl(<PasswordRow />);
     fireEvent.click(screen.getByRole("button", { name: /Contraseña/ }));
   });
 

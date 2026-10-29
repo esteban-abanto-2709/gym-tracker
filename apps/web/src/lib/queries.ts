@@ -23,19 +23,19 @@ import type {
 export const equipmentQuery = queryOptions({
   queryKey: ["equipment"],
   queryFn: () => api.get<Equipment[]>(routes.api.equipment.list()),
-  meta: { errorMessage: "No se pudieron cargar los equipos" },
+  meta: { errorMessage: "load.equipment" },
 });
 
 export const exercisesQuery = queryOptions({
   queryKey: ["exercises"],
   queryFn: () => api.get<Exercise[]>(routes.api.exercises.list()),
-  meta: { errorMessage: "No se pudieron cargar los ejercicios" },
+  meta: { errorMessage: "load.exercises" },
 });
 
 export const routinesQuery = queryOptions({
   queryKey: ["routines"],
   queryFn: () => api.get<Routine[]>(routes.api.routines.list()),
-  meta: { errorMessage: "No se pudieron cargar tus rutinas" },
+  meta: { errorMessage: "load.routines" },
 });
 
 export const routineQuery = (id: string) =>
@@ -43,13 +43,13 @@ export const routineQuery = (id: string) =>
     queryKey: ["routines", id],
     queryFn: () => api.get<Routine>(routes.api.routines.get(id)),
     enabled: id !== "",
-    meta: { errorMessage: "No se pudo cargar la rutina" },
+    meta: { errorMessage: "load.routine" },
   });
 
 export const programsQuery = queryOptions({
   queryKey: ["programs"],
   queryFn: () => api.get<Program[]>(routes.api.programs.list()),
-  meta: { errorMessage: "No se pudieron cargar tus programas" },
+  meta: { errorMessage: "load.programs" },
 });
 
 export const programQuery = (id: string) =>
@@ -57,19 +57,19 @@ export const programQuery = (id: string) =>
     queryKey: ["programs", id],
     queryFn: () => api.get<Program>(routes.api.programs.get(id)),
     enabled: id !== "",
-    meta: { errorMessage: "No se pudo cargar el programa" },
+    meta: { errorMessage: "load.program" },
   });
 
 export const activeProgramQuery = queryOptions({
   queryKey: ["programs", "active"],
   queryFn: () => api.get<ActiveProgram>(routes.api.programs.active()),
-  meta: { errorMessage: "No se pudo cargar tu programa activo" },
+  meta: { errorMessage: "load.activeProgram" },
 });
 
 export const measurementsQuery = queryOptions({
   queryKey: ["measurements"],
   queryFn: () => api.get<BodyMeasurement[]>(routes.api.measurements.list()),
-  meta: { errorMessage: "No se pudieron cargar tus medidas" },
+  meta: { errorMessage: "load.measurements" },
 });
 
 export const exploreKey = ["explore"] as const;
@@ -79,13 +79,13 @@ export const exploreQuery = (kind: PublicationKind, sort: ExploreSort) =>
     queryKey: [...exploreKey, kind, sort],
     queryFn: () =>
       api.get<ExploreListItem[]>(routes.api.explore.list(kind, sort)),
-    meta: { errorMessage: "No se pudieron cargar las publicaciones" },
+    meta: { errorMessage: "load.publications" },
   });
 
 export const myPublicationsQuery = queryOptions({
   queryKey: [...exploreKey, "mine"],
   queryFn: () => api.get<ExploreListItem[]>(routes.api.publications.mine()),
-  meta: { errorMessage: "No se pudieron cargar tus publicaciones" },
+  meta: { errorMessage: "load.myPublications" },
 });
 
 export const sessionsQuery = infiniteQueryOptions({
@@ -94,7 +94,7 @@ export const sessionsQuery = infiniteQueryOptions({
     api.get<SessionPage>(routes.api.sessions.list(pageParam)),
   initialPageParam: null as string | null,
   getNextPageParam: (page) => page.next,
-  meta: { errorMessage: "No se pudo cargar el historial" },
+  meta: { errorMessage: "load.history" },
 });
 
 export const sessionQuery = (id: string) =>
@@ -102,7 +102,7 @@ export const sessionQuery = (id: string) =>
     queryKey: ["sessions", id],
     queryFn: () => api.get<{ sets: Workout[] }>(routes.api.sessions.one(id)),
     enabled: id !== "",
-    meta: { errorMessage: "No se pudo cargar la sesión" },
+    meta: { errorMessage: "load.session" },
   });
 
 export const refetchAll = (

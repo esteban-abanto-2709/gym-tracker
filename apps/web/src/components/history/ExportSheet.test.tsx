@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { ExportSheet } from "./ExportSheet";
 import { api } from "@/lib/api";
 import type { Workout } from "@/lib/types";
@@ -46,7 +47,9 @@ const pressed = () =>
 describe("ExportSheet", () => {
   it("starts at 30 days and the summary follows the chosen range", async () => {
     serveSets([set(daysAgo(1)), set(daysAgo(10)), set(daysAgo(60))]);
-    render(<ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />);
+    renderWithIntl(
+      <ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />,
+    );
 
     expect(pressed()).toEqual(["30 días"]);
     expect(await screen.findByText("2 series")).toBeTruthy();
@@ -60,7 +63,9 @@ describe("ExportSheet", () => {
 
   it("does not allow exporting without sets in the range", async () => {
     serveSets([set(daysAgo(60))]);
-    render(<ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />);
+    renderWithIntl(
+      <ExportSheet firstDay={dayOf(daysAgo(60))} onClose={vi.fn()} />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "7 días" }));
 

@@ -8,10 +8,11 @@ import {
 } from "@tanstack/react-query";
 import { ApiError } from "@/lib/api";
 import { notifyError } from "@/lib/notify";
+import { errorText, useErrorText, type ErrorKey } from "@/i18n/errors";
 
 declare module "@tanstack/react-query" {
   interface Register {
-    queryMeta: { errorMessage?: string };
+    queryMeta: { errorMessage?: ErrorKey };
   }
 }
 
@@ -21,9 +22,7 @@ export function makeQueryClient() {
       onError: (error, query) => {
         if (error instanceof ApiError && error.status === 401) return;
         if (query.state.data !== undefined) return;
-        notifyError(
-          query.meta?.errorMessage ?? "No se pudieron cargar los datos",
-        );
+        notifyError(errorText(query.meta?.errorMessage ?? "load.data"));
       },
     }),
     defaultOptions: {
@@ -41,6 +40,7 @@ export function getQueryClient() {
 }
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
+  useErrorText();
   return (
     <QueryClientProvider client={getQueryClient()}>
       {children}

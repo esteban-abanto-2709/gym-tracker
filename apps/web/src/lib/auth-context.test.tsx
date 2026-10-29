@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useState } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { AuthProvider, useAuth } from "./auth-context";
 import {
   type PendingSet,
@@ -37,7 +38,7 @@ const meResponds = (loggedIn: boolean, theme = "system") =>
 
 const renderAt = (path: string) => {
   pathname = path;
-  return render(
+  return renderWithIntl(
     <AuthProvider>
       <p>contenido</p>
     </AuthProvider>,
@@ -200,7 +201,7 @@ describe("AuthProvider errors", () => {
         }),
       );
       pathname = "/login";
-      render(
+      renderWithIntl(
         <AuthProvider>
           <LoginAttempt />
         </AuthProvider>,
@@ -226,7 +227,7 @@ describe("AuthProvider cached data", () => {
   it("reloads cached data after changing the exercise language", async () => {
     meResponds(true);
     pathname = "/perfil";
-    render(
+    renderWithIntl(
       <AuthProvider>
         <LanguagePicker />
       </AuthProvider>,
@@ -268,7 +269,7 @@ describe("AuthProvider pending sets", () => {
   const signedIn = () => {
     meResponds(true);
     pathname = "/perfil";
-    render(
+    renderWithIntl(
       <AuthProvider>
         <Account />
       </AuthProvider>,

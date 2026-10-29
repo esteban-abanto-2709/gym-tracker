@@ -1,9 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { BottomSheet, SheetHeader } from "./sheet";
 
 function renderSheet(onClose = vi.fn()) {
-  render(
+  renderWithIntl(
     <>
       <button type="button">Detrás</button>
       <BottomSheet label="Tema" onClose={onClose}>

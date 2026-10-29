@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { routes } from "@/lib/routes";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,8 @@ import { Button } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
 
 export default function LoginPage() {
+  const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +29,7 @@ export default function LoginPage() {
     try {
       await login(email.trim().toLowerCase(), password.trim());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo ingresar");
+      setError(err instanceof Error ? err.message : t("errors.loginFailed"));
       setSubmitting(false);
     }
   }
@@ -35,21 +38,19 @@ export default function LoginPage() {
     <main className="min-h-dvh flex flex-col px-6 pt-[calc(4rem+env(safe-area-inset-top))] pb-[calc(2rem+env(safe-area-inset-bottom))] max-w-md mx-auto w-full">
       <div className="h-2 rounded-sm hazard-bar mb-6" />
       <div>
-        <p className="kicker text-primary text-2xs">
-          {"// directo a entrenar"}
-        </p>
+        <p className="kicker text-primary text-2xs">{t("login.kicker")}</p>
         <h1
           className={heading({
             size: "lg",
             className: "text-foreground leading-[0.88] mt-3",
           })}
         >
-          Sin vueltas.
+          {t("login.titleTop")}
           <br />
-          <span className="text-primary">A entrenar.</span>
+          <span className="text-primary">{t("login.titleAccent")}</span>
         </h1>
         <p className="text-muted-foreground text-sm mt-4 max-w-[88%]">
-          Abre, registra la serie, cierra. Nada entre tú y el peso.
+          {t("login.subtitle")}
         </p>
       </div>
 
@@ -65,7 +66,7 @@ export default function LoginPage() {
             htmlFor="email"
             className="kicker font-bold text-muted-foreground text-2xs"
           >
-            Correo
+            {t("email")}
           </Label>
           <Input
             id="email"
@@ -86,7 +87,7 @@ export default function LoginPage() {
             htmlFor="password"
             className="kicker font-bold text-muted-foreground text-2xs"
           >
-            Contraseña
+            {t("password")}
           </Label>
           <PasswordInput
             id="password"
@@ -103,18 +104,18 @@ export default function LoginPage() {
           disabled={submitting}
           className="shadow-primary/30"
         >
-          {submitting ? "Ingresando…" : "Ingresar"}
+          {t(submitting ? "login.submitting" : "login.submit")}
         </Button>
 
         <GoogleButton />
 
         <p className="text-sm text-center text-muted-foreground pt-1">
-          ¿No tienes cuenta?{" "}
+          {t("login.noAccount")}{" "}
           <Link
             href={routes.register()}
             className="text-foreground font-semibold underline underline-offset-4"
           >
-            Regístrate
+            {t("login.toRegister")}
           </Link>
         </p>
 
@@ -122,7 +123,7 @@ export default function LoginPage() {
           href={routes.privacy()}
           className="block text-xs text-center text-muted-foreground underline underline-offset-4"
         >
-          Privacidad
+          {tCommon("privacy")}
         </Link>
       </form>
     </main>

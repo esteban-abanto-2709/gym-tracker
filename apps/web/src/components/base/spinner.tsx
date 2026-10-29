@@ -1,9 +1,11 @@
 import * as React from "react";
+import { useTranslations } from "next-intl";
 
 import { Spinner as UiSpinner } from "@/components/ui/spinner";
 
 export function Spinner(props: React.ComponentProps<typeof UiSpinner>) {
-  return <UiSpinner aria-label="Cargando" {...props} />;
+  const t = useTranslations("common");
+  return <UiSpinner aria-label={t("loading")} {...props} />;
 }
 
 export function LoadingOverlay({ label }: { label: string }) {

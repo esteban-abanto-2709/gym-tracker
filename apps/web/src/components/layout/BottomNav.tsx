@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { routes } from "@/lib/routes";
 import { Dumbbell, Home, History, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: routes.home(), label: "Hoy", Icon: Home },
-  { href: routes.routines(), label: "Rutinas", Icon: Dumbbell },
-  { href: routes.history(), label: "Historial", Icon: History },
-  { href: routes.profile(), label: "Perfil", Icon: User },
-];
+  { href: routes.home(), label: "today", Icon: Home },
+  { href: routes.routines(), label: "routines", Icon: Dumbbell },
+  { href: routes.history(), label: "history", Icon: History },
+  { href: routes.profile(), label: "profile", Icon: User },
+] as const;
 
 export function BottomNav() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
 
   return (
@@ -33,7 +35,7 @@ export function BottomNav() {
             >
               <Icon className="w-5 h-5" strokeWidth={active ? 2.5 : 2} />
               <span className="text-3xs font-semibold tracking-wide">
-                {label}
+                {t(label)}
               </span>
             </Link>
           );

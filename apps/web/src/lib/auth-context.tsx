@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { isPrivatePath, isPublicPath, routes } from "@/lib/routes";
 import { api, ApiError } from "@/lib/api";
@@ -66,9 +67,6 @@ async function authCall<T>(call: Promise<T>, copy?: ErrorCopy): Promise<T> {
 
 type ErrorCopy = { fallback: string } & Partial<Record<number, string>>;
 
-const TOO_MANY_ATTEMPTS =
-  "Demasiados intentos. Espera un minuto y vuelve a probar.";
-
 function authError(status: number, copy?: ErrorCopy) {
   return new Error(copy?.[status] ?? copy?.fallback ?? "Request failed");
 }
@@ -84,9 +82,10 @@ function owning(user: AuthUser | null) {
 }
 
 export function FullScreenLoader() {
+  const t = useTranslations("common");
   return (
     <div className="min-h-dvh flex items-center justify-center text-muted-foreground">
-      Cargando…
+      {t("loading")}
     </div>
   );
 }
@@ -97,6 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { setTheme } = useTheme();
+  const t = useTranslations("auth.errors");
 
   useEffect(() => {
     api
@@ -106,24 +106,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    setUser(
-      owning(
-        await authCall(
-          api.post<AuthUser>(
-            routes.api.auth.login(),
-            { email, password },
-            noRedirect,
+  const login = useCallback(
+    async (email: string, password: string) => {
+      setUser(
+        owning(
+          await authCall(
+            api.post<AuthUser>(
+              routes.api.auth.login(),
+              { email, password },
+              noRedirect,
+            ),
+            {
+              401: t("badCredentials"),
+              429: t("tooManyAttempts"),
+              fallback: t("loginFailed"),
+            },
           ),
-          {
-            401: "Correo o contraseña incorrectos.",
-            429: TOO_MANY_ATTEMPTS,
-            fallback: "No se pudo ingresar.",
-          },
         ),
-      ),
-    );
-  }, []);
+      );
+    },
+    [t],
+  );
 
   const register = useCallback(
     async (email: string, username: string, password: string) => {
@@ -136,35 +139,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               noRedirect,
             ),
             {
-              400: "Revisa los datos e inténtalo de nuevo.",
-              409: "Ese correo ya tiene una cuenta.",
-              429: TOO_MANY_ATTEMPTS,
-              fallback: "No se pudo registrar.",
+              400: t("checkData"),
+              409: t("emailTaken"),
+              429: t("tooManyAttempts"),
+              fallback: t("registerFailed"),
             },
           ),
         ),
       );
     },
-    [],
+    [t],
   );
 
-  const loginWithGoogle = useCallback(async (credential: string) => {
-    setUser(
-      owning(
-        await authCall(
-          api.post<AuthUser>(
-            routes.api.auth.google(),
-            { credential },
-            noRedirect,
+  const loginWithGoogle = useCallback(
+    async (credential: string) => {
+      setUser(
+        owning(
+          await authCall(
+            api.post<AuthUser>(
+              routes.api.auth.google(),
+              { credential },
+              noRedirect,
+            ),
+            {
+              401: t("googleUnverified"),
+              fallback: t("googleFailed"),
+            },
           ),
-          {
-            401: "Tu cuenta de Google no tiene el correo verificado.",
-            fallback: "No se pudo ingresar con Google.",
-          },
         ),
-      ),
-    );
-  }, []);
+      );
+    },
+    [t],
+  );
 
   const logout = useCallback(async () => {
     await authCall(api.post(routes.api.auth.logout(), {}, noRedirect));
@@ -182,14 +188,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             noRedirect,
           ),
           {
-            403: "La contraseña actual no es correcta.",
-            429: TOO_MANY_ATTEMPTS,
-            fallback: "No se pudo cambiar la contraseña.",
+            403: t("wrongPassword"),
+            429: t("tooManyAttempts"),
+            fallback: t("changePasswordFailed"),
           },
         ),
       );
     },
-    [],
+    [t],
   );
 
   const deleteAccount = useCallback(
@@ -197,16 +203,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await authCall(
         api.delete(routes.api.auth.me(), confirmation, noRedirect),
         {
-          403: "No coincide. Revisa lo que escribiste.",
-          429: TOO_MANY_ATTEMPTS,
-          fallback: "No se pudo borrar la cuenta.",
+          403: t("confirmMismatch"),
+          429: t("tooManyAttempts"),
+          fallback: t("deleteFailed"),
         },
       );
       discardPendingSets();
       setUser(owning(null));
       router.replace(routes.login());
     },
-    [router],
+    [router, t],
   );
 
   const updateMe = useCallback(

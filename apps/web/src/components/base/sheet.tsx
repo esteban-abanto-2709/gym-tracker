@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Dialog } from "radix-ui";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { heading } from "@/components/base/heading";
 import { cn } from "@/lib/utils";
@@ -67,6 +68,7 @@ export function SheetHeader({
   title: React.ReactNode;
   onClose: () => void;
 }) {
+  const t = useTranslations("common");
   return (
     <>
       <SheetHandle />
@@ -85,7 +87,7 @@ export function SheetHeader({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Cerrar"
+          aria-label={t("close")}
           className={cn(
             "p-2 -mr-2 text-muted-foreground hover:text-foreground active:scale-95 transition-all",
             !kicker && "-mt-1",

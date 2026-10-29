@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { ThemeSheet } from "./ThemeSheet";
 
 const setTheme = vi.fn();
@@ -22,7 +23,7 @@ describe("ThemeSheet", () => {
   });
 
   it("offers system, light and dark, with system selected", () => {
-    render(<ThemeSheet onClose={vi.fn()} />);
+    renderWithIntl(<ThemeSheet onClose={vi.fn()} />);
     const options = screen.getAllByRole("radio");
 
     expect(options.map((o) => o.textContent)).toEqual([
@@ -34,7 +35,7 @@ describe("ThemeSheet", () => {
   });
 
   it("applies the theme on tap and saves it to the account", async () => {
-    render(<ThemeSheet onClose={vi.fn()} />);
+    renderWithIntl(<ThemeSheet onClose={vi.fn()} />);
     fireEvent.click(screen.getByRole("radio", { name: /Claro/ }));
 
     expect(setTheme).toHaveBeenCalledWith("light");
@@ -45,14 +46,14 @@ describe("ThemeSheet", () => {
 
   it("goes back to the account theme when saving fails", async () => {
     updateMe.mockRejectedValue(new Error("offline"));
-    render(<ThemeSheet onClose={vi.fn()} />);
+    renderWithIntl(<ThemeSheet onClose={vi.fn()} />);
     fireEvent.click(screen.getByRole("radio", { name: /Oscuro/ }));
 
     await waitFor(() => expect(setTheme).toHaveBeenLastCalledWith("system"));
   });
 
   it("ignores a tap on the current theme", () => {
-    render(<ThemeSheet onClose={vi.fn()} />);
+    renderWithIntl(<ThemeSheet onClose={vi.fn()} />);
     fireEvent.click(screen.getByRole("radio", { name: /Sistema/ }));
     expect(setTheme).not.toHaveBeenCalled();
     expect(updateMe).not.toHaveBeenCalled();
@@ -60,7 +61,7 @@ describe("ThemeSheet", () => {
 
   it("closes from the X button", () => {
     const onClose = vi.fn();
-    render(<ThemeSheet onClose={onClose} />);
+    renderWithIntl(<ThemeSheet onClose={onClose} />);
     fireEvent.click(screen.getByLabelText("Cerrar"));
     expect(onClose).toHaveBeenCalled();
   });

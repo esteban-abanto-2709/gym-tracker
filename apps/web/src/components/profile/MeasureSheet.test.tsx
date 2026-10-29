@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { MeasureSheet } from "./MeasureSheet";
 
 const props = {
@@ -16,7 +17,7 @@ const save = () => screen.getByRole("button", { name: /guardar|actualizar/i });
 describe("MeasureSheet", () => {
   it("saves with a single value and leaves the others empty", async () => {
     const onSave = vi.fn().mockResolvedValue(undefined);
-    render(<MeasureSheet {...props} onSave={onSave} />);
+    renderWithIntl(<MeasureSheet {...props} onSave={onSave} />);
 
     expect(save()).toHaveProperty("disabled", true);
     fireEvent.change(screen.getByLabelText("Peso (kg)"), {
@@ -35,7 +36,7 @@ describe("MeasureSheet", () => {
   });
 
   it("a date that already has a measurement loads its values to update it", () => {
-    render(<MeasureSheet {...props} onSave={vi.fn()} />);
+    renderWithIntl(<MeasureSheet {...props} onSave={vi.fn()} />);
 
     const date = document.querySelector('input[type="date"]')!;
     fireEvent.change(date, { target: { value: "2026-09-29" } });
@@ -46,7 +47,7 @@ describe("MeasureSheet", () => {
   });
 
   it("an out-of-range value blocks saving and says why", () => {
-    render(<MeasureSheet {...props} onSave={vi.fn()} />);
+    renderWithIntl(<MeasureSheet {...props} onSave={vi.fn()} />);
 
     fireEvent.change(screen.getByLabelText("Grasa (%)"), {
       target: { value: "95" },

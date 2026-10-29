@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { TriangleAlert } from "lucide-react";
 import { StatusScreen } from "@/components/layout/StatusScreen";
 import { Button } from "@/components/base/button";
@@ -14,6 +15,7 @@ export default function ErrorPage({
   error: unknown;
   retry: () => void;
 }) {
+  const t = useTranslations();
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -22,16 +24,16 @@ export default function ErrorPage({
     <StatusScreen
       icon={TriangleAlert}
       kicker="// error"
-      title="Algo falló"
-      message="Algo se rompió en esta pantalla. Vuelve a intentarlo."
+      title={t("errors.page.title")}
+      message={t("errors.page.message")}
     >
       <div className="space-y-4">
-        <Button onClick={retry}>Reintentar</Button>
+        <Button onClick={retry}>{t("errors.retry")}</Button>
         <Link
           href={routes.home()}
           className="block text-muted-foreground font-bold hover:text-foreground"
         >
-          Ir a Hoy
+          {t("common.goHome")}
         </Link>
       </div>
     </StatusScreen>

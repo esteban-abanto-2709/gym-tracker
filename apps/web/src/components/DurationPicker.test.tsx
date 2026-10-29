@@ -1,16 +1,17 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { DurationField, DurationPicker } from "./DurationPicker";
 
 describe("DurationPicker", () => {
   it("shows seconds split into minutes and seconds", () => {
-    render(<DurationPicker value="90" onChange={vi.fn()} />);
+    renderWithIntl(<DurationPicker value="90" onChange={vi.fn()} />);
 
     expect(screen.getByText("1 min 30 s")).toBeTruthy();
   });
 
   it("an empty value starts at zero", () => {
-    render(<DurationPicker value="" onChange={vi.fn()} />);
+    renderWithIntl(<DurationPicker value="" onChange={vi.fn()} />);
 
     expect(screen.getByText("0 min 0 s")).toBeTruthy();
   });
@@ -18,7 +19,9 @@ describe("DurationPicker", () => {
 
 describe("DurationField", () => {
   it("shows the time as a clock with no wheels until tapped", () => {
-    render(<DurationField value="110" onChange={vi.fn()} label="Tiempo" />);
+    renderWithIntl(
+      <DurationField value="110" onChange={vi.fn()} label="Tiempo" />,
+    );
 
     expect(screen.getByRole("button", { name: /1:50/ })).toBeTruthy();
     expect(screen.queryByRole("group")).toBeNull();
@@ -26,7 +29,9 @@ describe("DurationField", () => {
 
   it("closing the sheet keeps the time unchanged", () => {
     const onChange = vi.fn();
-    render(<DurationField value="110" onChange={onChange} label="Tiempo" />);
+    renderWithIntl(
+      <DurationField value="110" onChange={onChange} label="Tiempo" />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /1:50/ }));
     expect(screen.getByRole("dialog", { name: "Tiempo" })).toBeTruthy();
@@ -38,7 +43,9 @@ describe("DurationField", () => {
 
   it("Listo applies the time chosen in the sheet", () => {
     const onChange = vi.fn();
-    render(<DurationField value="110" onChange={onChange} label="Tiempo" />);
+    renderWithIntl(
+      <DurationField value="110" onChange={onChange} label="Tiempo" />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /1:50/ }));
     fireEvent.click(screen.getByRole("button", { name: "Listo" }));
@@ -48,7 +55,9 @@ describe("DurationField", () => {
   });
 
   it("Listo is disabled at zero", () => {
-    render(<DurationField value="" onChange={vi.fn()} label="Tiempo" />);
+    renderWithIntl(
+      <DurationField value="" onChange={vi.fn()} label="Tiempo" />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /sin tiempo/ }));
 

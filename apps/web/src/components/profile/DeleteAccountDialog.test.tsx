@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 
 const deleteAccount = vi.fn();
@@ -19,7 +20,7 @@ describe("DeleteAccountDialog", () => {
 
   it("asks for the password when the account has one", async () => {
     hasPassword = true;
-    render(<DeleteAccountDialog open onOpenChange={vi.fn()} />);
+    renderWithIntl(<DeleteAccountDialog open onOpenChange={vi.fn()} />);
 
     const field = screen.getByLabelText(/contraseña para confirmar/);
     expect(
@@ -39,7 +40,7 @@ describe("DeleteAccountDialog", () => {
 
   it("asks a Google-only account for its email", async () => {
     hasPassword = false;
-    render(<DeleteAccountDialog open onOpenChange={vi.fn()} />);
+    renderWithIntl(<DeleteAccountDialog open onOpenChange={vi.fn()} />);
 
     fireEvent.change(screen.getByLabelText(/correo para confirmar/), {
       target: { value: "me@gmail.com" },
@@ -55,7 +56,7 @@ describe("DeleteAccountDialog", () => {
     deleteAccount.mockRejectedValueOnce(
       new Error("No coincide. Revisa lo que escribiste."),
     );
-    render(<DeleteAccountDialog open onOpenChange={vi.fn()} />);
+    renderWithIntl(<DeleteAccountDialog open onOpenChange={vi.fn()} />);
 
     fireEvent.change(screen.getByLabelText(/contraseña para confirmar/), {
       target: { value: "wrong" },

@@ -1,5 +1,6 @@
 import { beforeEach, describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, screen, within } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { NEWS } from "@/lib/news";
 import { NewsButton } from "./NewsButton";
 
@@ -23,7 +24,7 @@ describe("NewsButton", () => {
   });
 
   it("shows the dot to a new user and clears it on open", () => {
-    render(<NewsButton />);
+    renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByLabelText("Novedades, hay algo nuevo"));
 
     expect(updateMe).toHaveBeenCalledWith({ newsOpened: allIds });
@@ -33,7 +34,7 @@ describe("NewsButton", () => {
 
   it("keeps ids already opened, so a card removed and restored stays quiet", () => {
     user = { newsOpened: ["removed-card"], newsSeen: [] };
-    render(<NewsButton />);
+    renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByLabelText("Novedades, hay algo nuevo"));
 
     expect(updateMe).toHaveBeenCalledWith({
@@ -43,7 +44,7 @@ describe("NewsButton", () => {
 
   it("has no dot and saves nothing when everything was opened", () => {
     user = { newsOpened: allIds, newsSeen: [] };
-    render(<NewsButton />);
+    renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByRole("button", { name: "Novedades" }));
 
     expect(updateMe).not.toHaveBeenCalled();
@@ -52,7 +53,7 @@ describe("NewsButton", () => {
   it("lists unseen news first and seen ones under 'Ya vistas'", () => {
     const [first, second] = NEWS;
     user = { newsOpened: allIds, newsSeen: [first.id] };
-    render(<NewsButton />);
+    renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByRole("button", { name: "Novedades" }));
 
     const titles = cardTitles();
@@ -64,7 +65,7 @@ describe("NewsButton", () => {
   it("marks a card seen when expanded and links 'Ir' to its screen", () => {
     const item = NEWS.find((n) => n.href)!;
     user = { newsOpened: allIds, newsSeen: ["other"] };
-    render(<NewsButton />);
+    renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByRole("button", { name: "Novedades" }));
 
     const card = screen.getByText(item.title).closest("button")!;
@@ -78,7 +79,7 @@ describe("NewsButton", () => {
 
   it("does not offer 'Ir' for news without a screen", () => {
     const item = NEWS.find((n) => !n.href)!;
-    render(<NewsButton />);
+    renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByLabelText("Novedades, hay algo nuevo"));
 
     const card = screen.getByText(item.title).closest("button")!;

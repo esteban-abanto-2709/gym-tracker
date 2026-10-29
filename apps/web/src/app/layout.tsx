@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { QueryProvider } from "@/lib/query";
@@ -29,15 +29,18 @@ const spaceMono = localFont({
   variable: "--font-space-mono",
 });
 
-export const metadata: Metadata = {
-  title: { default: "Gym Tracker", template: "%s · Gym Tracker" },
-  description: "Registra tus entrenamientos sin fricción.",
-  appleWebApp: {
-    capable: true,
-    title: "GymTrack",
-    statusBarStyle: "black-translucent",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app");
+  return {
+    title: { default: "Gym Tracker", template: "%s · Gym Tracker" },
+    description: t("description"),
+    appleWebApp: {
+      capable: true,
+      title: "GymTrack",
+      statusBarStyle: "black-translucent",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   viewportFit: "cover",
@@ -49,6 +52,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const t = await getTranslations("app");
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -64,6 +68,7 @@ export default async function RootLayout({
           <ThemeProvider>
             <GoogleOAuthProvider
               clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ""}
+              locale={locale}
             >
               <QueryProvider>
                 <AuthProvider>{children}</AuthProvider>
@@ -88,7 +93,7 @@ export default async function RootLayout({
             <path d="M2 9l3-3 3 3" />
             <path d="M5 6v6a4 4 0 0 0 4 4h2" />
           </svg>
-          <p>Rota el celular para continuar</p>
+          <p>{t("rotatePhone")}</p>
         </div>
       </body>
     </html>

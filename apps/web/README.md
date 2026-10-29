@@ -95,7 +95,8 @@ tab. It never runs on its own and doesn't block deploys.
 Reads go through TanStack Query; lint enforces rules 1 and 2.
 
 1. **Every read is defined once in `lib/queries.ts`**: its key, its `api.get`
-   call and the `meta.errorMessage` shown if it fails. Components and hooks use
+   call and the `meta.errorMessage` shown if it fails, a key under `errors` in
+   `src/i18n/messages/es.json`. Components and hooks use
    it with `useQuery(routinesQuery)`, never with `useEffect` + `fetch`. Keys
    are never written by hand outside that file.
 2. **Nothing calls `fetch` directly**: the browser uses `api` (`lib/api.ts`),

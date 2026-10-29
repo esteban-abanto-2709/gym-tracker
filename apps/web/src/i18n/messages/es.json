@@ -1,4 +1,89 @@
 {
+  "app": {
+    "description": "Registra tus entrenamientos sin fricción.",
+    "rotatePhone": "Rota el celular para continuar"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "close": "Cerrar",
+    "back": "Volver",
+    "goHome": "Ir a Hoy",
+    "privacy": "Privacidad"
+  },
+  "nav": {
+    "today": "Hoy",
+    "routines": "Rutinas",
+    "history": "Historial",
+    "profile": "Perfil"
+  },
+  "errors": {
+    "retry": "Reintentar",
+    "page": {
+      "title": "Algo falló",
+      "message": "Algo se rompió en esta pantalla. Vuelve a intentarlo."
+    },
+    "notFound": {
+      "title": "No existe",
+      "message": "Esta página no está o se movió."
+    },
+    "load": {
+      "data": "No se pudieron cargar los datos",
+      "equipment": "No se pudieron cargar los equipos",
+      "exercises": "No se pudieron cargar los ejercicios",
+      "routines": "No se pudieron cargar tus rutinas",
+      "routine": "No se pudo cargar la rutina",
+      "programs": "No se pudieron cargar tus programas",
+      "program": "No se pudo cargar el programa",
+      "activeProgram": "No se pudo cargar tu programa activo",
+      "measurements": "No se pudieron cargar tus medidas",
+      "publications": "No se pudieron cargar las publicaciones",
+      "myPublications": "No se pudieron cargar tus publicaciones",
+      "history": "No se pudo cargar el historial",
+      "session": "No se pudo cargar la sesión"
+    }
+  },
+  "auth": {
+    "email": "Correo",
+    "password": "Contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "or": "o",
+    "login": {
+      "kicker": "// directo a entrenar",
+      "titleTop": "Sin vueltas.",
+      "titleAccent": "A entrenar.",
+      "subtitle": "Abre, registra la serie, cierra. Nada entre tú y el peso.",
+      "submit": "Ingresar",
+      "submitting": "Ingresando…",
+      "noAccount": "¿No tienes cuenta?",
+      "toRegister": "Regístrate"
+    },
+    "register": {
+      "kicker": "// tu primera serie",
+      "titleTop": "Crea tu",
+      "titleAccent": "cuenta.",
+      "subtitle": "Sin configurar nada. Entra y empieza a mover peso.",
+      "username": "Nombre de usuario",
+      "submit": "Crear cuenta",
+      "submitting": "Creando…",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "toLogin": "Ingresa"
+    },
+    "errors": {
+      "tooManyAttempts": "Demasiados intentos. Espera un minuto y vuelve a probar.",
+      "badCredentials": "Correo o contraseña incorrectos.",
+      "loginFailed": "No se pudo ingresar.",
+      "checkData": "Revisa los datos e inténtalo de nuevo.",
+      "emailTaken": "Ese correo ya tiene una cuenta.",
+      "registerFailed": "No se pudo registrar.",
+      "googleUnverified": "Tu cuenta de Google no tiene el correo verificado.",
+      "googleFailed": "No se pudo ingresar con Google.",
+      "wrongPassword": "La contraseña actual no es correcta.",
+      "changePasswordFailed": "No se pudo cambiar la contraseña.",
+      "confirmMismatch": "No coincide. Revisa lo que escribiste.",
+      "deleteFailed": "No se pudo borrar la cuenta."
+    }
+  },
   "profile": {
     "settings": {
       "title": "Ajustes",

@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
+import { getTranslations } from "next-intl/server";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const t = await getTranslations("app");
   return {
     name: "Gym Tracker",
     short_name: "GymTrack",
-    description: "Registra tus entrenamientos sin fricción.",
+    description: t("description"),
     start_url: "/",
     display: "standalone",
     orientation: "portrait",
