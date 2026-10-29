@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
@@ -9,6 +10,7 @@ import type { Routine } from "@/lib/types";
 const NONE: Routine[] = [];
 
 export function useRoutines() {
+  const t = useTranslations("routines");
   const queryClient = useQueryClient();
   const { data: routines = NONE, isPending: loading } = useQuery(routinesQuery);
   const [deletingRoutine, setDeletingRoutine] = useState<Routine | null>(null);
@@ -25,11 +27,11 @@ export function useRoutines() {
       refetchAll(queryClient, programsQuery);
       setDeletingRoutine(null);
     } catch {
-      notifyError("No se pudo eliminar la rutina");
+      notifyError(t("deleteError"));
     } finally {
       setActionLoading(false);
     }
-  }, [deletingRoutine, queryClient]);
+  }, [deletingRoutine, queryClient, t]);
 
   return {
     routines,

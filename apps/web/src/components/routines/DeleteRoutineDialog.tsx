@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,20 +25,24 @@ export function DeleteRoutineDialog({
   routineName,
   onConfirm,
 }: DeleteRoutineDialogProps) {
+  const t = useTranslations();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
-            ¿Eliminar {routineName ? `"${routineName}"` : "esta rutina"}?
+            {routineName
+              ? t("routines.deleteDialog.titleNamed", { name: routineName })
+              : t("routines.deleteDialog.title")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Se eliminará la rutina y sus
-            ejercicios configurados.
+            {t("routines.deleteDialog.message")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+          <AlertDialogCancel className="rounded-xl">
+            {t("common.cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             onClick={(e) => {
@@ -46,7 +51,9 @@ export function DeleteRoutineDialog({
             }}
             disabled={loading}
           >
-            {loading ? "Eliminando..." : "Eliminar Rutina"}
+            {loading
+              ? t("routines.deleteDialog.deleting")
+              : t("routines.delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

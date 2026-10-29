@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useRoutines } from "@/hooks/useRoutines";
 import { usePrograms } from "@/hooks/usePrograms";
@@ -27,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { surfaceClass } from "@/components/base/surface";
 
 export default function RoutinesPage() {
+  const t = useTranslations();
   const router = useRouter();
   const {
     routines,
@@ -60,7 +62,7 @@ export default function RoutinesPage() {
       })),
     {
       key: "loose",
-      title: "Sin programa",
+      title: t("routines.noProgram"),
       routines: routines.filter((r) => !r.programId),
     },
   ].filter((group) => group.routines.length > 0);
@@ -83,7 +85,10 @@ export default function RoutinesPage() {
       active &&
       active.routineId !== routine.id &&
       !window.confirm(
-        `Tienes "${active.routineName}" en curso. ¿Empezar "${routine.name}" y descartarla?`,
+        t("routines.replaceActive", {
+          active: active.routineName,
+          routine: routine.name,
+        }),
       )
     ) {
       return;
@@ -95,13 +100,13 @@ export default function RoutinesPage() {
   return (
     <PageShell variant="history">
       <AppHeader
-        title="Rutinas"
+        title={t("routines.title")}
         rightAction={
           <Link
             href={routes.routineNew()}
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
-            title="Nueva rutina"
-            aria-label="Nueva rutina"
+            title={t("routines.new")}
+            aria-label={t("routines.new")}
           >
             <Plus className="w-6 h-6" strokeWidth={2.5} />
           </Link>
@@ -123,17 +128,17 @@ export default function RoutinesPage() {
                   className: "text-foreground",
                 })}
               >
-                Aún no tienes rutinas
+                {t("routines.empty")}
               </p>
               <p className="text-sm opacity-70 mb-6">
-                Arma tu primera rutina con calma.
+                {t("routines.emptyHint")}
               </p>
               <Link
                 href={routes.routineNew()}
                 className={buttonVariants({ size: "lg" })}
               >
                 <Plus className="w-5 h-5" strokeWidth={3} />
-                Nueva Rutina
+                {t("routines.new")}
               </Link>
             </div>
           ) : activeRoutines.length === 0 ? (
@@ -152,7 +157,7 @@ export default function RoutinesPage() {
                   aria-expanded={showOthers}
                   className="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Otros programas
+                  {t("routines.otherPrograms")}
                   <ChevronDown
                     className={cn(
                       "w-4 h-4 transition-transform",
@@ -188,10 +193,10 @@ export default function RoutinesPage() {
                   strokeWidth={2.5}
                 />
                 <span className="font-bold text-foreground leading-tight">
-                  Programas
+                  {t("routines.programsTile")}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  Tu rotación
+                  {t("routines.programsTileHint")}
                 </span>
               </Link>
               <Link
@@ -206,10 +211,10 @@ export default function RoutinesPage() {
                   strokeWidth={2.5}
                 />
                 <span className="font-bold text-foreground leading-tight">
-                  Explorar
+                  {t("common.explore")}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  Copia uno armado
+                  {t("routines.exploreTileHint")}
                 </span>
               </Link>
             </div>

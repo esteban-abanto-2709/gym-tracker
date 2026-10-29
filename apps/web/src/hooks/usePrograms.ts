@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
@@ -9,6 +10,7 @@ import type { Program } from "@/lib/types";
 const NONE: Program[] = [];
 
 export function usePrograms() {
+  const t = useTranslations("programs");
   const queryClient = useQueryClient();
   const list = useQuery(programsQuery);
   const active = useQuery(activeProgramQuery);
@@ -26,12 +28,12 @@ export function usePrograms() {
         await api.put(routes.api.programs.active(), { programId });
       } catch {
         queryClient.setQueryData(queryKey, previous);
-        notifyError("No se pudo cambiar el programa activo");
+        notifyError(t("activeError"));
       } finally {
         queryClient.invalidateQueries({ queryKey });
       }
     },
-    [programs, queryClient],
+    [programs, queryClient, t],
   );
 
   return {

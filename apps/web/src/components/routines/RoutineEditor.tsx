@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -135,6 +136,7 @@ const toBlock = (block: DraftBlock): RoutineBlock => {
 };
 
 export function RoutineEditor({ routineId }: RoutineEditorProps) {
+  const t = useTranslations();
   const router = useRouter();
   const queryClient = useQueryClient();
   const isEdit = Boolean(routineId);
@@ -280,7 +282,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
         router.push(routes.routines());
       } catch {
         setSaving(false);
-        notifyError("No se pudo guardar la rutina", run);
+        notifyError(t("routines.editor.saveError"), run);
       }
     };
 
@@ -300,18 +302,18 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
 
   return (
     <PageShell>
-      {saving && <LoadingOverlay label="Guardando..." />}
+      {saving && <LoadingOverlay label={t("common.saving")} />}
 
       <AppHeader
         leftAction={<BackAction href={routes.routines()} />}
-        title={isEdit ? "Editar Rutina" : "Nueva Rutina"}
+        title={t(isEdit ? "routines.edit" : "routines.new")}
         rightAction={
           routineId ? (
             <Link
               href={routes.routinePublish(routineId)}
               className="text-muted-foreground hover:text-primary transition-colors"
-              title="Publicar rutina"
-              aria-label="Publicar rutina"
+              title={t("routines.publish")}
+              aria-label={t("routines.publish")}
             >
               <Globe className="w-5 h-5" />
             </Link>
@@ -326,13 +328,13 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
               htmlFor="routine-name"
               className="kicker text-muted-foreground text-3xs"
             >
-              Nombre de la rutina
+              {t("routines.editor.name")}
             </label>
             <input
               id="routine-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Torso A"
+              placeholder={t("routines.editor.namePlaceholder")}
               className={heading({
                 size: "md",
                 className:
@@ -342,7 +344,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             />
             {duplicateName && (
               <p className="text-sm text-destructive">
-                Ya tienes una rutina con ese nombre.
+                {t("routines.editor.duplicate")}
               </p>
             )}
           </div>
@@ -359,15 +361,15 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
           />
 
           <p className="kicker text-muted-foreground text-3xs">
-            Ejercicios · {items.length}
+            {t("routines.editor.exercises", { count: items.length })}
           </p>
 
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-10 px-6 border-2 border-dashed border-border rounded-2xl text-muted-foreground">
               <Plus className="w-8 h-8 mb-2 opacity-50" />
-              <p className="font-medium">Añade ejercicios a tu rutina</p>
+              <p className="font-medium">{t("routines.editor.empty")}</p>
               <p className="text-sm opacity-70">
-                Búscalos arriba; arrástralos para ordenarlos.
+                {t("routines.editor.emptyHint")}
               </p>
             </div>
           ) : (
@@ -404,7 +406,7 @@ export function RoutineEditor({ routineId }: RoutineEditorProps) {
             disabled={!canSave}
             className="hover:shadow-xl hover:shadow-primary/30"
           >
-            {isEdit ? "Guardar Cambios" : "Crear Rutina"}
+            {t(isEdit ? "common.saveChanges" : "routines.create")}
           </Button>
         </div>
       </main>

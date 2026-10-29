@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
@@ -25,6 +26,7 @@ interface ProgramEditorProps {
 }
 
 export function ProgramEditor({ programId }: ProgramEditorProps) {
+  const t = useTranslations();
   const router = useRouter();
   const isEdit = Boolean(programId);
 
@@ -79,7 +81,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
         router.push(routes.programs());
       } catch {
         setSaving(false);
-        notifyError("No se pudo guardar el programa", run);
+        notifyError(t("programs.editor.saveError"), run);
       }
     };
 
@@ -89,7 +91,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
   const handleDelete = async () => {
     if (
       !programId ||
-      !window.confirm(`¿Eliminar "${name}"? Tus rutinas no se borran.`)
+      !window.confirm(t("programs.editor.confirmDelete", { name }))
     ) {
       return;
     }
@@ -100,7 +102,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
       router.push(routes.programs());
     } catch {
       setSaving(false);
-      notifyError("No se pudo eliminar el programa");
+      notifyError(t("programs.editor.deleteError"));
     }
   };
 
@@ -117,19 +119,19 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
 
   return (
     <PageShell>
-      {saving && <LoadingOverlay label="Guardando..." />}
+      {saving && <LoadingOverlay label={t("common.saving")} />}
 
       <AppHeader
         leftAction={<BackAction href={routes.programs()} />}
-        title={isEdit ? "Editar Programa" : "Nuevo Programa"}
+        title={t(isEdit ? "programs.edit" : "programs.new")}
         rightAction={
           programId ? (
             <div className="flex items-center gap-4">
               <Link
                 href={routes.programPublish(programId)}
                 className="text-muted-foreground hover:text-primary transition-colors"
-                title="Publicar programa"
-                aria-label="Publicar programa"
+                title={t("programs.publish")}
+                aria-label={t("programs.publish")}
               >
                 <Globe className="w-5 h-5" />
               </Link>
@@ -137,8 +139,8 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
                 type="button"
                 onClick={handleDelete}
                 className="text-muted-foreground hover:text-destructive transition-colors"
-                title="Eliminar programa"
-                aria-label="Eliminar programa"
+                title={t("programs.delete")}
+                aria-label={t("programs.delete")}
               >
                 <Trash2 className="w-5 h-5" />
               </button>
@@ -154,13 +156,13 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
               htmlFor="program-name"
               className="kicker text-muted-foreground text-3xs"
             >
-              Nombre del programa
+              {t("programs.editor.name")}
             </label>
             <input
               id="program-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Upper/Lower"
+              placeholder={t("programs.editor.namePlaceholder")}
               className={heading({
                 size: "md",
                 className:
@@ -170,35 +172,35 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
             />
             {duplicateName && (
               <p className="text-sm text-destructive">
-                Ya tienes un programa con ese nombre.
+                {t("programs.editor.duplicate")}
               </p>
             )}
           </div>
 
           <div className="space-y-1">
             <p className="kicker text-muted-foreground text-3xs">
-              Rotación · {selected.length}
+              {t("programs.editor.rotation", { count: selected.length })}
             </p>
             <p className="text-sm text-foreground min-h-5">
               {selected.length > 0
                 ? selected.map((id) => routineNames.get(id)).join(" → ")
-                : "Toca tus rutinas en el orden en que las haces."}
+                : t("programs.editor.rotationHint")}
             </p>
           </div>
 
           {routines.length === 0 ? (
             <div className="flex flex-col items-center justify-center text-center py-10 px-6 border-2 border-dashed border-border rounded-2xl text-muted-foreground">
               <ClipboardList className="w-8 h-8 mb-2 opacity-50" />
-              <p className="font-medium">Aún no tienes rutinas</p>
+              <p className="font-medium">{t("programs.editor.noRoutines")}</p>
               <p className="text-sm opacity-70 mb-4">
-                Crea tus rutinas primero y luego agrúpalas aquí.
+                {t("programs.editor.noRoutinesHint")}
               </p>
               <Link
                 href={routes.routineNew()}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border-2 border-input font-bold text-foreground hover:border-border active:scale-95 transition-all"
               >
                 <Plus className="w-4 h-4" strokeWidth={3} />
-                Crear rutina
+                {t("routines.create")}
               </Link>
             </div>
           ) : (
@@ -240,8 +242,12 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
                       {otherProgram && (
                         <span className="block text-xs text-muted-foreground truncate">
                           {isSelected
-                            ? `Se mueve desde ${otherProgram}`
-                            : `En ${otherProgram}`}
+                            ? t("programs.editor.movesFrom", {
+                                program: otherProgram,
+                              })
+                            : t("programs.editor.inProgram", {
+                                program: otherProgram,
+                              })}
                         </span>
                       )}
                     </span>
@@ -257,7 +263,7 @@ export function ProgramEditor({ programId }: ProgramEditorProps) {
             disabled={!canSave}
             className="hover:shadow-xl hover:shadow-primary/30"
           >
-            {isEdit ? "Guardar Cambios" : "Crear Programa"}
+            {t(isEdit ? "common.saveChanges" : "programs.create")}
           </Button>
         </div>
       </main>

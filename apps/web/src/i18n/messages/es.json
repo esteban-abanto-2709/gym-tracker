@@ -10,7 +10,10 @@
     "goHome": "Ir a Hoy",
     "privacy": "Privacidad",
     "saving": "Guardando...",
-    "done": "Listo"
+    "done": "Listo",
+    "cancel": "Cancelar",
+    "saveChanges": "Guardar cambios",
+    "explore": "Explorar"
   },
   "nav": {
     "today": "Hoy",
@@ -266,6 +269,96 @@
       "exerciseNames": "Nombres de ejercicios",
       "exerciseNamesHint": "Cómo se ven en tus rutinas y tu historial. Para buscar sirve cualquier idioma.",
       "saveError": "No se pudo guardar el idioma"
+    }
+  },
+  "routines": {
+    "title": "Rutinas",
+    "new": "Nueva rutina",
+    "edit": "Editar rutina",
+    "start": "Empezar rutina",
+    "delete": "Eliminar rutina",
+    "publish": "Publicar rutina",
+    "create": "Crear rutina",
+    "noProgram": "Sin programa",
+    "replaceActive": "Tienes \"{active}\" en curso. ¿Empezar \"{routine}\" y descartarla?",
+    "empty": "Aún no tienes rutinas",
+    "emptyHint": "Arma tu primera rutina con calma.",
+    "otherPrograms": "Otros programas",
+    "programsTile": "Programas",
+    "programsTileHint": "Tu rotación",
+    "exploreTileHint": "Copia uno armado",
+    "nextUp": "Hoy toca",
+    "exercises": "{count, plural, one {# ejercicio} other {# ejercicios}}",
+    "deleteDialog": {
+      "titleNamed": "¿Eliminar \"{name}\"?",
+      "title": "¿Eliminar esta rutina?",
+      "message": "Esta acción no se puede deshacer. Se eliminará la rutina y sus ejercicios configurados.",
+      "deleting": "Eliminando..."
+    },
+    "editor": {
+      "name": "Nombre de la rutina",
+      "namePlaceholder": "Torso A",
+      "duplicate": "Ya tienes una rutina con ese nombre.",
+      "exercises": "Ejercicios · {count}",
+      "empty": "Añade ejercicios a tu rutina",
+      "emptyHint": "Búscalos arriba; arrástralos para ordenarlos.",
+      "saveError": "No se pudo guardar la rutina"
+    },
+    "item": {
+      "reorder": "Reordenar ejercicio",
+      "remove": "Quitar ejercicio",
+      "freeSets": "Series libres",
+      "blockKind": "Tipo de bloque",
+      "removeBlock": "Quitar bloque",
+      "stepReps": "Reps del escalón {step}",
+      "stepPercent": "Porcentaje del escalón {step}",
+      "removeStep": "Quitar escalón",
+      "addStep": "Agregar escalón",
+      "sets": "Series",
+      "setsUnit": "series",
+      "timeGoal": "Meta de tiempo",
+      "repsMin": "Mínimo de reps",
+      "reps": "Reps",
+      "repsMax": "Máximo de reps",
+      "repsMaxPlaceholder": "máx",
+      "addBlock": "Agregar bloque",
+      "kinds": {
+        "weight_reps": "Peso × reps",
+        "reps": "Solo reps",
+        "time": "Tiempo",
+        "warmup": "Calentamiento",
+        "ramp": "Rampa"
+      }
+    },
+    "deleteError": "No se pudo eliminar la rutina"
+  },
+  "programs": {
+    "title": "Programas",
+    "new": "Nuevo programa",
+    "edit": "Editar programa",
+    "publish": "Publicar programa",
+    "delete": "Eliminar programa",
+    "create": "Crear programa",
+    "empty": "Crea tu programa",
+    "emptyHint": "Agrupa tus rutinas en el orden en que las haces.",
+    "tapToDeactivate": "Toca el programa activo para desactivarlo.",
+    "tapToActivate": "Toca un programa para activarlo.",
+    "explore": "Explorar programas",
+    "exploreHint": "Copia uno armado por otra persona.",
+    "activeError": "No se pudo cambiar el programa activo",
+    "editor": {
+      "name": "Nombre del programa",
+      "namePlaceholder": "Upper/Lower",
+      "duplicate": "Ya tienes un programa con ese nombre.",
+      "rotation": "Rotación · {count}",
+      "rotationHint": "Toca tus rutinas en el orden en que las haces.",
+      "noRoutines": "Aún no tienes rutinas",
+      "noRoutinesHint": "Crea tus rutinas primero y luego agrúpalas aquí.",
+      "movesFrom": "Se mueve desde {program}",
+      "inProgram": "En {program}",
+      "confirmDelete": "¿Eliminar \"{name}\"? Tus rutinas no se borran.",
+      "saveError": "No se pudo guardar el programa",
+      "deleteError": "No se pudo eliminar el programa"
     }
   }
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { Routine } from "@/lib/types";
 import { routes } from "@/lib/routes";
 import { ListChecks, Pencil, Trash2, Play } from "lucide-react";
@@ -21,6 +22,7 @@ export function RoutineCard({
   onStart,
   onDelete,
 }: RoutineCardProps) {
+  const t = useTranslations("routines");
   const count = routine.items.length;
 
   return (
@@ -37,11 +39,11 @@ export function RoutineCard({
         <Link
           href={routes.routineEdit(routine.id)}
           className="min-w-0 flex-1"
-          title="Editar rutina"
+          title={t("edit")}
         >
           {isNext && (
             <span className="block kicker text-4xs text-primary mb-1">
-              Hoy toca
+              {t("nextUp")}
             </span>
           )}
           <h2 className="font-bold text-foreground text-lg leading-tight truncate">
@@ -49,7 +51,7 @@ export function RoutineCard({
           </h2>
           <span className="inline-flex items-center gap-1.5 kicker text-4xs text-muted-foreground mt-1.5">
             <ListChecks className="w-3.5 h-3.5" />
-            {count} {count === 1 ? "ejercicio" : "ejercicios"}
+            {t("exercises", { count })}
           </span>
         </Link>
 
@@ -59,16 +61,16 @@ export function RoutineCard({
             onClick={() => onStart(routine)}
             disabled={count === 0}
             className="shadow-md hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
-            title="Empezar Rutina"
-            aria-label="Empezar Rutina"
+            title={t("start")}
+            aria-label={t("start")}
           >
             <Play className="w-4 h-4" strokeWidth={3} />
           </Button>
           <Link
             href={routes.routineEdit(routine.id)}
             className={buttonVariants({ variant: "muted", size: "icon" })}
-            title="Editar Rutina"
-            aria-label="Editar Rutina"
+            title={t("edit")}
+            aria-label={t("edit")}
           >
             <Pencil className="w-4 h-4" />
           </Link>
@@ -76,8 +78,8 @@ export function RoutineCard({
             variant="danger"
             size="icon"
             onClick={() => onDelete(routine)}
-            title="Eliminar Rutina"
-            aria-label="Eliminar Rutina"
+            title={t("delete")}
+            aria-label={t("delete")}
           >
             <Trash2 className="w-4 h-4" />
           </Button>

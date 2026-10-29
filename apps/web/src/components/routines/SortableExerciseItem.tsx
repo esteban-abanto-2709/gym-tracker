@@ -2,18 +2,19 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useTranslations } from "next-intl";
 import { GripVertical, Plus, X } from "lucide-react";
 import type { RoutineBlock } from "@/lib/types";
 import { DurationField } from "@/components/DurationPicker";
 import { Button } from "@/components/base/button";
 import { cn } from "@/lib/utils";
 
-const KIND_OPTIONS: { value: DraftBlock["kind"]; label: string }[] = [
-  { value: "weight_reps", label: "Peso × reps" },
-  { value: "reps", label: "Solo reps" },
-  { value: "time", label: "Tiempo" },
-  { value: "warmup", label: "Calentamiento" },
-  { value: "ramp", label: "Rampa" },
+const KINDS: DraftBlock["kind"][] = [
+  "weight_reps",
+  "reps",
+  "time",
+  "warmup",
+  "ramp",
 ];
 
 const usesSeconds = (block: DraftBlock) => block.kind === "time";
@@ -74,6 +75,7 @@ export function SortableExerciseItem({
   onRemoveBlock,
   onRemove,
 }: SortableExerciseItemProps) {
+  const t = useTranslations("routines.item");
   const {
     attributes,
     listeners,
@@ -102,7 +104,7 @@ export function SortableExerciseItem({
       <div className="flex items-center gap-2">
         <button
           type="button"
-          aria-label="Reordenar ejercicio"
+          aria-label={t("reorder")}
           className="shrink-0 p-1 text-muted-foreground hover:text-foreground touch-none cursor-grab active:cursor-grabbing"
           {...attributes}
           {...listeners}
@@ -125,7 +127,7 @@ export function SortableExerciseItem({
           size="icon-round"
           type="button"
           onClick={() => onRemove(item.key)}
-          aria-label="Quitar ejercicio"
+          aria-label={t("remove")}
           className="shrink-0"
         >
           <X className="w-4 h-4" />
@@ -134,7 +136,7 @@ export function SortableExerciseItem({
 
       <div className="mt-3 pl-7 space-y-2">
         {item.blocks.length === 0 && (
-          <p className="text-xs text-muted-foreground">Series libres</p>
+          <p className="text-xs text-muted-foreground">{t("freeSets")}</p>
         )}
 
         {item.blocks.map((block) => (
@@ -150,12 +152,12 @@ export function SortableExerciseItem({
                     kind: e.target.value as DraftBlock["kind"],
                   })
                 }
-                aria-label="Tipo de bloque"
+                aria-label={t("blockKind")}
                 className="min-w-0 flex-1 bg-muted rounded-lg px-2 py-1 text-base font-bold text-foreground outline-none border-2 border-transparent focus:border-primary transition-colors"
               >
-                {KIND_OPTIONS.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
+                {KINDS.map((kind) => (
+                  <option key={kind} value={kind}>
+                    {t(`kinds.${kind}`)}
                   </option>
                 ))}
               </select>
@@ -165,7 +167,7 @@ export function SortableExerciseItem({
                 size="icon-round"
                 type="button"
                 onClick={() => onRemoveBlock(item.key, block.key)}
-                aria-label="Quitar bloque"
+                aria-label={t("removeBlock")}
                 className="shrink-0 p-1.5"
               >
                 <X className="w-3.5 h-3.5" />
@@ -192,7 +194,7 @@ export function SortableExerciseItem({
                             }),
                           })
                         }
-                        aria-label={`Reps del escalón ${stepIndex + 1}`}
+                        aria-label={t("stepReps", { step: stepIndex + 1 })}
                         className={numberInputClass}
                       />
                       <span className="text-xs font-bold text-muted-foreground">
@@ -212,7 +214,7 @@ export function SortableExerciseItem({
                             }),
                           })
                         }
-                        aria-label={`Porcentaje del escalón ${stepIndex + 1}`}
+                        aria-label={t("stepPercent", { step: stepIndex + 1 })}
                         className={numberInputClass}
                       />
                       <span className="text-xs font-bold text-muted-foreground">
@@ -231,7 +233,7 @@ export function SortableExerciseItem({
                             ),
                           })
                         }
-                        aria-label="Quitar escalón"
+                        aria-label={t("removeStep")}
                         className="shrink-0 p-1.5"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -250,7 +252,7 @@ export function SortableExerciseItem({
                   className="flex items-center gap-1.5 text-xs font-bold text-primary hover:opacity-80 transition-opacity"
                 >
                   <Plus className="w-3.5 h-3.5" strokeWidth={3} />
-                  Agregar escalón
+                  {t("addStep")}
                 </button>
               </div>
             ) : (
@@ -266,11 +268,11 @@ export function SortableExerciseItem({
                         sets: e.target.value,
                       })
                     }
-                    aria-label="Series"
+                    aria-label={t("sets")}
                     className={numberInputClass}
                   />
                   <span className="text-xs font-bold text-muted-foreground">
-                    series
+                    {t("setsUnit")}
                   </span>
                 </div>
 
@@ -283,7 +285,7 @@ export function SortableExerciseItem({
                       onChange={(durationSec) =>
                         onChangeBlock(item.key, block.key, { durationSec })
                       }
-                      label="Meta de tiempo"
+                      label={t("timeGoal")}
                       size="sm"
                     />
                   ) : (
@@ -297,9 +299,7 @@ export function SortableExerciseItem({
                           reps: e.target.value,
                         })
                       }
-                      aria-label={
-                        usesRepRange(block) ? "Mínimo de reps" : "Reps"
-                      }
+                      aria-label={t(usesRepRange(block) ? "repsMin" : "reps")}
                       className={numberInputClass}
                     />
                   )}
@@ -316,8 +316,8 @@ export function SortableExerciseItem({
                             repsMax: e.target.value,
                           })
                         }
-                        placeholder="máx"
-                        aria-label="Máximo de reps"
+                        placeholder={t("repsMaxPlaceholder")}
+                        aria-label={t("repsMax")}
                         className={numberInputClass}
                       />
                     </>
@@ -339,7 +339,7 @@ export function SortableExerciseItem({
           className="flex items-center gap-1.5 text-xs font-bold text-primary hover:opacity-80 transition-opacity"
         >
           <Plus className="w-3.5 h-3.5" strokeWidth={3} />
-          Agregar bloque
+          {t("addBlock")}
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { routes } from "@/lib/routes";
 import { usePrograms } from "@/hooks/usePrograms";
 import { PageShell } from "@/components/layout/PageShell";
@@ -12,19 +13,20 @@ import { heading } from "@/components/base/heading";
 import { Spinner } from "@/components/base/spinner";
 
 export default function ProgramsPage() {
+  const t = useTranslations("programs");
   const { programs, activeProgramId, loading, setActive } = usePrograms();
 
   return (
     <PageShell variant="history">
       <AppHeader
         leftAction={<BackAction href={routes.routines()} />}
-        title="Programas"
+        title={t("title")}
         rightAction={
           <Link
             href={routes.programNew()}
             className="text-muted-foreground hover:text-foreground transition-all hover:scale-110 active:scale-90"
-            title="Nuevo programa"
-            aria-label="Nuevo programa"
+            title={t("new")}
+            aria-label={t("new")}
           >
             <Plus className="w-6 h-6" strokeWidth={2.5} />
           </Link>
@@ -49,11 +51,9 @@ export default function ProgramsPage() {
                   className: "text-foreground",
                 })}
               >
-                Crea tu programa
+                {t("empty")}
               </span>
-              <span className="text-sm opacity-70">
-                Agrupa tus rutinas en el orden en que las haces.
-              </span>
+              <span className="text-sm opacity-70">{t("emptyHint")}</span>
             </Link>
           ) : (
             <>
@@ -102,8 +102,8 @@ export default function ProgramsPage() {
                         buttonVariants({ variant: "muted", size: "icon" }),
                         "shrink-0",
                       )}
-                      title="Editar programa"
-                      aria-label="Editar programa"
+                      title={t("edit")}
+                      aria-label={t("edit")}
                     >
                       <Pencil className="w-4 h-4" />
                     </Link>
@@ -111,9 +111,7 @@ export default function ProgramsPage() {
                 );
               })}
               <p className="text-xs text-muted-foreground">
-                {activeProgramId
-                  ? "Toca el programa activo para desactivarlo."
-                  : "Toca un programa para activarlo."}
+                {t(activeProgramId ? "tapToDeactivate" : "tapToActivate")}
               </p>
             </>
           )}
@@ -126,11 +124,9 @@ export default function ProgramsPage() {
               <Compass className="shrink-0 w-6 h-6" strokeWidth={2.5} />
               <span className="min-w-0">
                 <span className="block font-bold text-foreground">
-                  Explorar programas
+                  {t("explore")}
                 </span>
-                <span className="block text-xs">
-                  Copia uno armado por otra persona.
-                </span>
+                <span className="block text-xs">{t("exploreHint")}</span>
               </span>
             </Link>
           )}
