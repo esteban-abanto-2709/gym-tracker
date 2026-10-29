@@ -12,8 +12,8 @@ Summary in ≤2 lines of what was done.
 
 ---
 
-## [RM-093] Translate the interface (2026-10-28 20:34)
-The web is in Spanish and English with `next-intl`, dates, equipment and the AI export included; the interface language is its own preference in Perfil → Ajustes → Idioma (phone, English or Spanish), saved in the account apart from the exercise language. Lint rejects loose text in JSX.
+## [RM-093] Translate the interface (2026-10-28 22:12)
+The web is in Spanish and English with `next-intl`, dates, equipment and the AI export included; a new account starts in its device language for the interface and the exercise names, each changed apart in Perfil → Ajustes → Idioma. Lint rejects loose text in JSX.
 
 ## [RM-135] Enable React Compiler in the web (2026-10-28 13:49)
 `reactCompiler: true` with `babel-plugin-react-compiler` 1.0.0 for the whole web; lint already enforced its rules. Files with `try/finally` (the guided session and the data hooks) are skipped and stay as they were, so the manual `useCallback`/`useMemo` stay too.

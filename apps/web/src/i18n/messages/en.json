@@ -271,8 +271,6 @@
       "saveError": "Couldn't save the language",
       "interface": "Interface",
       "interfaceHint": "Buttons, titles and messages.",
-      "phone": "Phone",
-      "phoneHint": "Follows your phone's language",
       "summary": "{interface} · exercises in {exercises}"
     },
     "kicker": "// your account",

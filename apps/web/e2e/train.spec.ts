@@ -26,6 +26,7 @@ test("trains a guided routine, jumping ahead, without ending it early", async ({
       email: `e2e-${id}@example.test`,
       username: `e2e-${id}`,
       password: `pw-${id}-${Math.random().toString(36).slice(2)}`,
+      locale: "es",
     },
   });
   expect(register.ok()).toBeTruthy();

@@ -271,8 +271,6 @@
       "saveError": "No se pudo guardar el idioma",
       "interface": "Interfaz",
       "interfaceHint": "Botones, títulos y mensajes.",
-      "phone": "Teléfono",
-      "phoneHint": "Sigue el idioma de tu celular",
       "summary": "{interface} · ejercicios en {exercises}"
     },
     "kicker": "// tu cuenta",

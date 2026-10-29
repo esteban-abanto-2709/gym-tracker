@@ -7,6 +7,9 @@ If an idea is promoted, it's deleted from here and a new `RM` is born.
 
 ---
 
+## [WL-139] Public pages under `/es` and `/en` for search and shared links
+Today one URL serves both languages by cookie or phone, so Google indexes only one (likely English) and a WhatsApp preview takes the bot's language, with the OG image cached for a year in the first language asked. Decided approach: move only the public pages (landing, privacy, Explore and publications) under a language folder with next-intl routing, `hreflang` and a sitemap, and share links that carry the language; the signed-in app keeps following the account. Worth it when publications should be found by search.
+
 ## [WL-138] Tell the user their routine no longer exists
 Since TD-147 the sets of a deleted routine are saved as a free day, and opening a guided session whose routine is gone drops it silently. Say so instead: "Esta rutina ya no existe; tus series se guardaron como día libre".
 

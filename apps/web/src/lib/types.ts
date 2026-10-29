@@ -10,7 +10,7 @@ export interface AuthUser {
   hasPassword: boolean;
   birthDate: string | null;
   exerciseLocale: Locale;
-  interfaceLocale: Locale | null;
+  interfaceLocale: Locale;
   theme: Theme;
   newsOpened: string[];
   newsSeen: string[];

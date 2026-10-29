@@ -126,9 +126,10 @@ the URL; lint (`react/jsx-no-literals`) rejects loose text in JSX.
    keys are typed from `es.json`, so a misspelled one doesn't compile.
 2. **The language** comes from the `locale` cookie, then the phone
    (`Accept-Language`, only `es` or `en`), then English (`src/i18n/request.ts`).
-   The account keeps its choice in `User.interfaceLocale` (`null` = the phone)
-   and `AuthProvider` copies it to the cookie on each device. It's separate
-   from the exercise language (`User.exerciseLocale`).
+   An account is created with the language it signed up in, for both the
+   interface (`User.interfaceLocale`) and the exercise names
+   (`User.exerciseLocale`); each is changed apart in Ajustes → Idioma, and
+   `AuthProvider` copies the interface one to the cookie on each device.
 3. **Components** use `useTranslations`; async server components, metadata
    and route handlers use `getTranslations`. Code outside React gets the text
    from its caller (`buildExport` takes a `t`, `formatBlocks` takes labels);

@@ -4,10 +4,8 @@ export const LOCALES: readonly Locale[] = ["en", "es"];
 export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "locale";
 
-export function writeLocaleCookie(locale: Locale | null) {
-  document.cookie = locale
-    ? `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`
-    : `${LOCALE_COOKIE}=; path=/; max-age=0; samesite=lax`;
+export function writeLocaleCookie(locale: Locale) {
+  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`;
 }
 
 export function readLocaleCookie(): Locale | null {

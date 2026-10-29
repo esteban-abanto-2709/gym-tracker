@@ -6,6 +6,7 @@ const account = (name: string) => ({
   email: `e2e-${name}-${id}@example.test`,
   username: `e2e${name}${id}`,
   password: `pw-${id}-${Math.random().toString(36).slice(2)}`,
+  locale: "es",
 });
 
 async function signIn(page: Page, path: string, data: object) {

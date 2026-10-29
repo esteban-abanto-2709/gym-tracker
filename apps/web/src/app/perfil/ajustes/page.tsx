@@ -79,9 +79,7 @@ export default function AjustesPage() {
                 Icon={Languages}
                 label={t("language.title")}
                 value={t("language.summary", {
-                  interface: user?.interfaceLocale
-                    ? LANGUAGE_NAMES[user.interfaceLocale]
-                    : t("language.phone"),
+                  interface: LANGUAGE_NAMES[user?.interfaceLocale ?? "en"],
                   exercises: LANGUAGE_NAMES[user?.exerciseLocale ?? "en"],
                 })}
               />

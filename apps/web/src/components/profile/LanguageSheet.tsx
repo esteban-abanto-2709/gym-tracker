@@ -1,79 +1,39 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { notifyError } from "@/lib/notify";
 import type { AuthUser, Locale } from "@/lib/types";
-import { Check, Smartphone } from "lucide-react";
-import { heading } from "@/components/base/heading";
+import { ChevronDown } from "lucide-react";
 import { Spinner } from "@/components/base/spinner";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
+import { fieldInputClass } from "@/components/base/field";
 import { cn } from "@/lib/utils";
 import { LOCALES } from "@/i18n/locale";
 
-type Changes = Partial<Pick<AuthUser, "exerciseLocale" | "interfaceLocale">>;
-
-interface Option<T> {
-  value: T;
-  code: ReactNode;
-  label: string;
-  example: string;
-}
+type LanguageField = "interfaceLocale" | "exerciseLocale";
 
 export const LANGUAGE_NAMES: Record<Locale, string> = {
   en: "English",
   es: "Español",
 };
 
-const EXERCISE_EXAMPLES: Record<Locale, string> = {
-  en: "Bench Press · Lat Pulldown",
-  es: "Press de banca · Jalón al pecho",
-};
-
-const INTERFACE_EXAMPLES: Record<Locale, string> = {
-  en: "Today · Routines · History",
-  es: "Hoy · Rutinas · Historial",
-};
-
 export function LanguageSheet({ onClose }: { onClose: () => void }) {
   const t = useTranslations("profile.language");
   const { user, updateMe } = useAuth();
-  const [saving, setSaving] = useState<string | null>(null);
+  const [saving, setSaving] = useState<LanguageField | null>(null);
 
-  const save = async (key: string, changes: Changes) => {
-    if (saving) return;
-    setSaving(key);
+  const save = async (field: LanguageField, value: Locale) => {
+    setSaving(field);
     try {
-      await updateMe(changes);
+      await updateMe({ [field]: value } as Pick<AuthUser, LanguageField>);
     } catch {
       notifyError(t("saveError"));
     } finally {
       setSaving(null);
     }
   };
-
-  const exerciseOptions: Option<Locale>[] = LOCALES.map((value) => ({
-    value,
-    code: value,
-    label: LANGUAGE_NAMES[value],
-    example: EXERCISE_EXAMPLES[value],
-  }));
-
-  const interfaceOptions: Option<Locale | null>[] = [
-    {
-      value: null,
-      code: <Smartphone className="w-6 h-6" strokeWidth={2.5} />,
-      label: t("phone"),
-      example: t("phoneHint"),
-    },
-    ...LOCALES.map((value) => ({
-      value,
-      code: value,
-      label: LANGUAGE_NAMES[value],
-      example: INTERFACE_EXAMPLES[value],
-    })),
-  ];
 
   return (
     <BottomSheet label={t("title")} onClose={onClose}>
@@ -84,100 +44,75 @@ export function LanguageSheet({ onClose }: { onClose: () => void }) {
           onClose={onClose}
         />
 
-        <Choice
-          title={t("exerciseNames")}
+        <LanguageSelect
+          label={t("exerciseNames")}
           hint={t("exerciseNamesHint")}
-          options={exerciseOptions}
-          current={user?.exerciseLocale ?? "en"}
-          saving={saving}
-          savingKey={(value) => `exercise-${value}`}
-          onChoose={(value) =>
-            save(`exercise-${value}`, { exerciseLocale: value })
-          }
+          value={user?.exerciseLocale ?? "en"}
+          saving={saving === "exerciseLocale"}
+          disabled={saving !== null}
+          onChange={(value) => save("exerciseLocale", value)}
         />
 
-        <Choice
-          title={t("interface")}
+        <LanguageSelect
+          label={t("interface")}
           hint={t("interfaceHint")}
-          options={interfaceOptions}
-          current={user?.interfaceLocale ?? null}
-          saving={saving}
-          savingKey={(value) => `interface-${value}`}
-          onChoose={(value) =>
-            save(`interface-${value}`, { interfaceLocale: value })
-          }
+          value={user?.interfaceLocale ?? "en"}
+          saving={saving === "interfaceLocale"}
+          disabled={saving !== null}
+          onChange={(value) => save("interfaceLocale", value)}
         />
       </div>
     </BottomSheet>
   );
 }
 
-function Choice<T extends Locale | null>({
-  title,
+function LanguageSelect({
+  label,
   hint,
-  options,
-  current,
+  value,
   saving,
-  savingKey,
-  onChoose,
+  disabled,
+  onChange,
 }: {
-  title: string;
+  label: string;
   hint: string;
-  options: Option<T>[];
-  current: T;
-  saving: string | null;
-  savingKey: (value: T) => string;
-  onChoose: (value: T) => void;
+  value: Locale;
+  saving: boolean;
+  disabled: boolean;
+  onChange: (value: Locale) => void;
 }) {
+  const id = useId();
   return (
-    <>
-      <p className="mt-5 kicker text-4xs text-muted-foreground">{title}</p>
+    <div className="mt-5">
+      <label htmlFor={id} className="kicker text-4xs text-muted-foreground">
+        {label}
+      </label>
       <p className="mt-1 text-sm text-muted-foreground text-balance">{hint}</p>
-
-      <div role="radiogroup" aria-label={title} className="mt-3 grid gap-2">
-        {options.map(({ value, code, label, example }) => {
-          const selected = value === current;
-          return (
-            <button
-              key={String(value)}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              onClick={() => !selected && onChoose(value)}
-              className={cn(
-                "flex items-center gap-4 rounded-2xl border-2 px-4 py-3.5 text-left transition-all active:scale-[0.98]",
-                selected
-                  ? "border-primary bg-primary/10"
-                  : "border-input bg-muted/40 hover:border-primary/50",
-              )}
-            >
-              <span
-                className={heading({
-                  className: "shrink-0 w-11 text-2xl leading-none text-primary",
-                })}
-              >
-                {code}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-bold text-foreground">{label}</span>
-                <span className="block text-sm text-muted-foreground truncate">
-                  {example}
-                </span>
-              </span>
-              {saving === savingKey(value) ? (
-                <Spinner className="size-5 text-primary shrink-0" />
-              ) : (
-                selected && (
-                  <Check
-                    className="w-5 h-5 text-primary shrink-0"
-                    strokeWidth={3}
-                  />
-                )
-              )}
-            </button>
-          );
-        })}
+      <div className="relative mt-3">
+        <select
+          id={id}
+          value={value}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.value as Locale)}
+          className={cn(
+            fieldInputClass,
+            "w-full appearance-none pr-12 font-bold text-foreground outline-none focus:border-primary disabled:opacity-60",
+          )}
+        >
+          {LOCALES.map((locale) => (
+            <option key={locale} value={locale}>
+              {LANGUAGE_NAMES[locale]}
+            </option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-primary">
+          {saving ? (
+            <Spinner className="size-5" />
+          ) : (
+            <ChevronDown className="w-5 h-5" strokeWidth={2.5} />
+          )}
+        </span>
       </div>
-    </>
+    </div>
   );
 }

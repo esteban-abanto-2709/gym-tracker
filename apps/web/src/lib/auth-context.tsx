@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { isPrivatePath, isPublicPath, routes } from "@/lib/routes";
 import { api, ApiError } from "@/lib/api";
@@ -103,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { setTheme } = useTheme();
   const t = useTranslations("auth.errors");
+  const locale = useLocale();
 
   useEffect(() => {
     api
@@ -141,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await authCall(
             api.post<AuthUser>(
               routes.api.auth.register(),
-              { email, username, password },
+              { email, username, password, locale },
               noRedirect,
             ),
             {
@@ -154,7 +155,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ),
       );
     },
-    [t],
+    [t, locale],
   );
 
   const loginWithGoogle = useCallback(
@@ -164,7 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await authCall(
             api.post<AuthUser>(
               routes.api.auth.google(),
-              { credential },
+              { credential, locale },
               noRedirect,
             ),
             {
@@ -175,7 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ),
       );
     },
-    [t],
+    [t, locale],
   );
 
   const logout = useCallback(async () => {
@@ -241,9 +242,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const accountLocale = user?.interfaceLocale ?? null;
+  const accountLocale = user?.interfaceLocale;
   const applyAccountLocale = useEffectEvent(() => {
-    if (readLocaleCookie() === accountLocale) return;
+    if (!accountLocale || readLocaleCookie() === accountLocale) return;
     writeLocaleCookie(accountLocale);
     router.refresh();
   });

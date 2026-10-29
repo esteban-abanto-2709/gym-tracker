@@ -252,6 +252,13 @@ describe("AuthProvider cached data", () => {
   });
 });
 
+function SignUp() {
+  const { register } = useAuth();
+  return (
+    <button onClick={() => register("a@b.c", "ab", "password1")}>crear</button>
+  );
+}
+
 describe("AuthProvider interface language", () => {
   beforeEach(() => {
     refresh.mockReset();
@@ -266,12 +273,36 @@ describe("AuthProvider interface language", () => {
     expect(document.cookie).toContain("locale=es");
   });
 
-  it("drops the device choice when the account follows the phone", async () => {
-    document.cookie = "locale=en; path=/";
-    meResponds(true);
-    renderAt("/perfil");
-    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
-    expect(document.cookie).not.toContain("locale=");
+  it("signs up with the language the device is showing", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        json: () => Promise.resolve({ message: "Unauthorized" }),
+      }),
+    );
+    pathname = "/register";
+    renderWithIntl(
+      <AuthProvider>
+        <SignUp />
+      </AuthProvider>,
+    );
+    const fetchMock = vi.mocked(fetch);
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ id: "u1", interfaceLocale: "es" }),
+    } as Response);
+    fireEvent.click(await screen.findByText("crear"));
+
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.some(
+          ([url, init]) =>
+            String(url).endsWith("/auth/register") &&
+            JSON.parse(String(init?.body)).locale === "es",
+        ),
+      ).toBe(true),
+    );
   });
 
   it("does nothing when the device already matches the account", async () => {
