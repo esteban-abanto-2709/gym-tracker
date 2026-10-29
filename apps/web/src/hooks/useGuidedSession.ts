@@ -81,6 +81,10 @@ function pendingSet(
 export function useGuidedSession() {
   const t = useTranslations("train");
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(routes.home());
+  }, [router]);
   const [session, setSession] = useState<ActiveSession | null>(
     readActiveSession,
   );

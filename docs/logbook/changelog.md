@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-166] Tapping a tab does nothing for a second (2026-10-29 14:29)
+Reading the locale cookie made every page dynamic, so Next stopped prefetching and a tap waited for the server with no feedback. The bottom nav prefetches its tabs, the buttons that start or finish training prefetch where they go, and a root `loading.tsx` answers every other tap at once.
+
 ## [RM-093] Translate the interface (2026-10-28 22:12)
 The web is in Spanish and English with `next-intl`, dates, equipment and the AI export included; a new account starts in its device language for the interface and the exercise names, each changed apart in Perfil → Ajustes → Idioma. Lint rejects loose text in JSX.
 

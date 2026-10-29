@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -30,6 +30,10 @@ import { surfaceClass } from "@/components/base/surface";
 export default function RoutinesPage() {
   const t = useTranslations();
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(routes.train());
+  }, [router]);
   const {
     routines,
     loading: loadingRoutines,

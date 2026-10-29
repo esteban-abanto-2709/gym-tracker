@@ -9,7 +9,7 @@ import { addPendingSets, readPendingSets } from "@/lib/pendingSets";
 import type { Routine } from "@/lib/types";
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: vi.fn(), prefetch: vi.fn() }),
 }));
 
 vi.mock("@/lib/api", async (importOriginal) => ({

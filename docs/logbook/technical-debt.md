@@ -14,6 +14,102 @@ and is deleted from here.
 
 ---
 
+## [TD-165] Small convention drift in the API
+- **Location:** `apps/api/src/modules/auth/auth.module.ts:17`, `apps/api/src/modules/auth/auth.service.ts:19`, `apps/api/src/common/slugify.ts`, `apps/api/src/common/locale.ts:3`, `apps/api/src/modules/exercises/exercises.service.ts:3`
+- **Risk:** 2/10
+- **Problem:** the throttler message is in Spanish though all code is English; three separate "strip accents and normalize" helpers (`slugify`, `uniqueSlug`, `toSearchName`); `exercises.service.ts` uses relative imports while the rest uses `@/`. Unlike the web, no lint rule guards the API's own conventions.
+- **Future impact:** the three normalizers drift apart (a slug and a search name built differently for the same text); a Spanish message reaches English users.
+- **Suggestion:** one normalize helper reused by the three; English message (the web already translates 429s); a lint rule for `@/` imports.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-164] API response shapes are inconsistent and the README is out of date
+- **Location:** `apps/api/src/modules/publications/publications.service.ts:83`, `apps/api/src/modules/workouts/workouts.service.ts`, `apps/api/README.md`
+- **Risk:** 3/10
+- **Problem:** DELETE returns the deleted row (workouts, routines, programs), `{id}` (publications) or `{ok:true}` (measurements, auth); POST and PATCH `/workouts` return the bare row while GET returns it with relations. The README's endpoint table lacks `PATCH /auth/password` and `DELETE /auth/me` and still says the P2002 → 409 mapping is only for programs.
+- **Future impact:** every client has to learn each endpoint's shape by reading code; a second client gets it wrong.
+- **Suggestion:** pick one DELETE shape (`204` or `{ok:true}`) and make writes return what GET returns; refresh the README table.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-163] The API doesn't check its config at boot
+- **Location:** `apps/api/src/modules/auth/auth.module.ts:10`, `apps/api/src/main.ts`, `apps/api/Dockerfile`, `apps/api/.env.example`
+- **Risk:** 4/10
+- **Problem:** `process.env` is read in 7 places with no check: without `JWT_SECRET` the app starts and every login fails with a 500. The container runs as root (no `USER node`) and `.env.example` lacks `NODE_ENV`, which decides whether the cookie is `secure`.
+- **Future impact:** a broken `.env` passes the deploy healthcheck and only shows up when someone tries to log in.
+- **Suggestion:** a 10-line required-vars check at the top of `bootstrap()`; `USER node` in the runtime stage. No config library.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-162] Foreign keys without an index
+- **Location:** `apps/api/prisma/schema.prisma:205` (`RoutineItem.routineId`), plus `Routine.programId`, `Workout.routineId`, `Session.routineId`, `Exercise.createdById`
+- **Risk:** 2/10
+- **Problem:** Postgres doesn't index foreign keys on its own; `RoutineItem.routineId` is read on every routines and programs GET, and the others on deletes (`SetNull`) and program views.
+- **Future impact:** sequential scans that grow with every user's data; invisible today because the tables are small.
+- **Suggestion:** one `@@index` per key in a single migration.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-161] The API's tsconfig isn't strict
+- **Location:** `apps/api/tsconfig.json:23`
+- **Risk:** 3/10
+- **Problem:** no `strict`, with `noImplicitAny: false` and `strictBindCallApply: false`. Today there are 0 implicit `any`s, but nothing stops new ones. Turning on `strict` gives 29 errors: 26 are DTO `TS2564` (normal with class-validator) and only 3 are real (`auth.module.ts:13`, `exercises.service.spec.ts:27`, `measurements.service.spec.ts:38`).
+- **Future impact:** untyped code creeps in unnoticed, and query params typed `string` can be `undefined` (see TD-156).
+- **Suggestion:** `strict: true` + `strictPropertyInitialization: false`, and fix the 3 errors.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-160] The public healthz leaks the DB error and reports no real version
+- **Location:** `apps/api/src/app.service.ts:34`, `apps/api/src/app.service.ts:16`
+- **Risk:** 3/10
+- **Problem:** `/healthz` is public and returns the database driver's raw `error.message`; its `version` comes from `package.json` and always says `0.0.1`. The API has no logger at all (0 `Logger` uses), so errors only reach Nest's default handler.
+- **Future impact:** internal details exposed to anyone; after a deploy there's no way to tell which commit is running.
+- **Suggestion:** return a fixed `"db": "down"` and log the detail with Nest's `Logger`; pass the commit SHA as an env var at build time.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-159] The API e2e suite is flaky and leaks handles
+- **Location:** `apps/api/test/explore.e2e-spec.ts:80`, `apps/api/package.json` (`test:e2e`), `apps/api/test/*.e2e-spec.ts`
+- **Risk:** 4/10
+- **Problem:** the explore `beforeAll` went over the 5 s timeout in 1 of 3 full runs (12 failures); Jest warns "worker failed to exit gracefully" on every run and `--forceExit` hides it. The app bootstrap, `ValidationPipe` config included, is copied into all 17 files instead of reusing `main.ts`.
+- **Future impact:** a red CD for no reason, and e2e that test a different app from prod the day `main.ts` changes.
+- **Suggestion:** a shared `createTestApp()` that applies the same setup as `main.ts`, a longer timeout on heavy `beforeAll`s, and find the open handle with `--detectOpenHandles`.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-158] No test guards that one user can't reach another's data
+- **Location:** `apps/api/test/` (no suite for it)
+- **Risk:** 6/10
+- **Problem:** every service filters by `userId` today (read one by one), but no e2e checks that user B gets 404 on GET, PATCH or DELETE of user A's `routines/:id`, `programs/:id`, `workouts/:id` or measurements. `/programs/active` (today's routine), `/measurements`, `/equipment` and `/healthz` have no e2e at all.
+- **Future impact:** a refactor that drops one `userId` filter leaks a person's training data to everyone, and CI stays green.
+- **Suggestion:** one parametrized suite: user A creates each resource, user B tries every verb and must get 404.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-157] Text and list fields have no maximum size
+- **Location:** `apps/api/src/modules/routines/dto/create-routine.dto.ts:32`, `apps/api/src/modules/programs/dto/create-program.dto.ts:12`, `apps/api/src/modules/exercises/dto/create-exercise.dto.ts:13`, `apps/api/src/modules/workouts/dto/create-workout.dto.ts:49`, `apps/api/src/modules/workouts/dto/update-workout.dto.ts:39`
+- **Risk:** 5/10
+- **Problem:** routine, program and exercise names and a set's `opinion` take any length; routine items and blocks have no `ArrayMaxSize`; `equipmentId` is only checked as a string.
+- **Future impact:** a client (or a script) can store megabytes per row, break layouts with endless names, or publish huge routines that every Explore visitor downloads.
+- **Suggestion:** `MaxLength` on every free-text field and `ArrayMaxSize` on items and blocks, with limits generous enough for real use.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-156] Recommendation and progress don't validate their query
+- **Location:** `apps/api/src/modules/workouts/workouts.controller.ts:38`, `apps/api/src/modules/workouts/workouts.controller.ts:58`, `apps/api/src/modules/workouts/streak.ts:47`
+- **Risk:** 5/10
+- **Problem:** both read loose `@Query` params instead of a DTO. Without `exerciseId` the Prisma filter is `undefined`, so they answer with data from any of the user's exercises; an invalid `tz` makes `Intl` throw a `RangeError` in `streak.ts` → 500. Creating a set does validate `tz` (`workouts.service.ts:111`).
+- **Future impact:** a client bug shows the wrong last set or streak without any error; a bad timezone breaks the training screen.
+- **Suggestion:** a query DTO with a required `exerciseId` and the same `tz` check `create` already uses.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-155] Custom exercises are shared with every user
+- **Location:** `apps/api/src/modules/exercises/exercises.service.ts:44`, `apps/api/src/modules/exercises/exercises.service.ts:22`, `apps/api/src/modules/exercises/exercises.controller.ts`
+- **Risk:** 7/10
+- **Problem:** `findAll` has no `createdById` filter, so every custom exercise anyone creates shows up in everyone's catalog; `create` returns another user's custom exercise when the name matches; `POST /exercises` has no throttle and no name length limit (TD-157).
+- **Future impact:** with people Esteban doesn't know, anyone can fill everyone's exercise list with junk or offensive names, and nothing undoes it short of deleting rows by hand.
+- **Suggestion:** decide visibility first (official + own: `createdById: null OR createdById: userId` in `findAll` and in the match in `create`), then throttle `POST /exercises`.
+- **Date:** 2026-10-29 · **Status:** Open
+
+## [TD-154] Foreign key and unique violations answer 500 instead of 4xx
+- **Location:** `apps/api/src/main.ts` (no exception filter), `apps/api/src/modules/routines/routines.service.ts`, `apps/api/src/modules/workouts/workouts.service.ts`, `apps/api/src/modules/auth/auth.service.ts`
+- **Risk:** 6/10
+- **Problem:** Prisma's P2003 (missing foreign key) and the P2002 races outside `withUniqueName` reach the client as 500: a routine with a valid but nonexistent `exerciseId`, a set POST or PATCH with a nonexistent `exerciseId` or `equipmentId`, and races on register, user slug and exercise create.
+- **Future impact:** clients can't tell "never going to be accepted" (4xx) from "failed now, retry" (5xx); it's the API half of TD-149, since the offline queue can't learn to drop a set the API will always refuse.
+- **Suggestion:** one small global filter: P2003 → 400 (or 404), P2002 → 409, everything else untouched.
+- **Date:** 2026-10-29 · **Status:** Open
+
 ## [TD-153] The axe check on the training screen is flaky
 - **Location:** `apps/web/e2e/a11y.spec.ts:128`, `apps/web/e2e/axe.ts:13`, `apps/web/src/app/train/page.tsx:126`
 - **Risk:** 4/10

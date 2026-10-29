@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -50,6 +50,10 @@ function Tile({
 export function HomeActions() {
   const t = useTranslations("home");
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(routes.train());
+  }, [router]);
   const { data: active } = useQuery(activeProgramQuery);
   const { data: routines } = useQuery(routinesQuery);
 

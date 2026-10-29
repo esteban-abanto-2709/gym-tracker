@@ -49,6 +49,10 @@ export function useWorkoutForm(
   loadingExercises: boolean,
 ) {
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch(routes.success());
+  }, [router]);
   const searchParams = useSearchParams();
 
   const t = useTranslations("log");
