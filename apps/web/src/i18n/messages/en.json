@@ -1,0 +1,728 @@
+{
+  "app": {
+    "description": "Log your workouts without friction.",
+    "rotatePhone": "Rotate your phone to continue"
+  },
+  "common": {
+    "loading": "Loading…",
+    "close": "Close",
+    "back": "Back",
+    "goHome": "Go to Today",
+    "privacy": "Privacy",
+    "saving": "Saving...",
+    "done": "Done",
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "explore": "Explore"
+  },
+  "nav": {
+    "today": "Today",
+    "routines": "Routines",
+    "history": "History",
+    "profile": "Profile"
+  },
+  "errors": {
+    "retry": "Retry",
+    "page": {
+      "title": "Something failed",
+      "message": "Something broke on this screen. Try again."
+    },
+    "notFound": {
+      "title": "Not found",
+      "message": "This page isn't here or it moved."
+    },
+    "load": {
+      "data": "Couldn't load the data",
+      "equipment": "Couldn't load the equipment",
+      "exercises": "Couldn't load the exercises",
+      "routines": "Couldn't load your routines",
+      "routine": "Couldn't load the routine",
+      "programs": "Couldn't load your programs",
+      "program": "Couldn't load the program",
+      "activeProgram": "Couldn't load your active program",
+      "measurements": "Couldn't load your measurements",
+      "publications": "Couldn't load the publications",
+      "myPublications": "Couldn't load your publications",
+      "history": "Couldn't load the history",
+      "session": "Couldn't load the session"
+    }
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "or": "or",
+    "login": {
+      "kicker": "// straight to training",
+      "titleTop": "No detours.",
+      "titleAccent": "Train.",
+      "subtitle": "Open, log the set, close. Nothing between you and the weight.",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "noAccount": "No account?",
+      "toRegister": "Sign up"
+    },
+    "register": {
+      "kicker": "// your first set",
+      "titleTop": "Create your",
+      "titleAccent": "account.",
+      "subtitle": "Nothing to set up. Get in and start moving weight.",
+      "username": "Username",
+      "submit": "Create account",
+      "submitting": "Creating…",
+      "hasAccount": "Already have an account?",
+      "toLogin": "Log in"
+    },
+    "errors": {
+      "tooManyAttempts": "Too many attempts. Wait a minute and try again.",
+      "badCredentials": "Wrong email or password.",
+      "loginFailed": "Couldn't log in.",
+      "checkData": "Check your details and try again.",
+      "emailTaken": "That email already has an account.",
+      "registerFailed": "Couldn't sign up.",
+      "googleUnverified": "Your Google account doesn't have a verified email.",
+      "googleFailed": "Couldn't log in with Google.",
+      "wrongPassword": "The current password isn't right.",
+      "changePasswordFailed": "Couldn't change the password.",
+      "confirmMismatch": "It doesn't match. Check what you typed.",
+      "deleteFailed": "Couldn't delete the account."
+    }
+  },
+  "home": {
+    "kicker": "// ready to train",
+    "titleTop": "Today",
+    "titleAccent": "you train.",
+    "startHere": "Start here",
+    "exploreTop": "Explore",
+    "exploreBottom": "programs",
+    "exploreHint": "Copy one and train today ·",
+    "buildMine": "Build my own",
+    "buildMineHint": "Create your first routine",
+    "freeDay": "Free day",
+    "freeDayHint": "A single set",
+    "todayIs": "Today · {program}",
+    "tapToStart": "Tap to start ·",
+    "startStrong": "Start strong",
+    "startTop": "Start",
+    "startBottom": "routine",
+    "startHint": "Pick your routine and go step by step ·",
+    "inProgress": "In progress · {routine}",
+    "resume": "Pick up where you left off"
+  },
+  "train": {
+    "noRoutine": "No active routine",
+    "noRoutineHint": "Start a routine to train guided.",
+    "seeRoutines": "See my routines",
+    "restTime": "Rest time",
+    "ramp": "Ramp",
+    "setNumber": "Set {number}",
+    "goal": "Goal {target}",
+    "free": "Free",
+    "next": "Next: {exercise}",
+    "rampSets": "{count, plural, one {# set} other {# sets}}",
+    "done": {
+      "title": "Routine done!",
+      "extraSet": "One extra set"
+    },
+    "finish": {
+      "action": "End session",
+      "title": "End the session?",
+      "remaining": "{count, plural, one {exercise left undone} other {exercises left undone}}",
+      "kept": "What you already logged stays in your history.",
+      "keepTraining": "Keep training",
+      "confirm": "End"
+    },
+    "map": {
+      "title": "Session map",
+      "button": "Session map, {position}/{total}",
+      "position": "Exercise {position} of {total}",
+      "skipped": "Skipped",
+      "progress": "{done}/{target} sets",
+      "sets": "{count, plural, one {# set} other {# sets}}",
+      "freeSets": "Free sets",
+      "added": "added",
+      "options": "Options",
+      "reactivate": "Bring back",
+      "skip": "Skip",
+      "replace": "Replace",
+      "addExercise": "Add exercise"
+    },
+    "unsaved": {
+      "saving": "Saving sets",
+      "title": "{count, plural, one {# unsaved set} other {# unsaved sets}}",
+      "sending": "Sending what was left pending.",
+      "failed": "Couldn't send them. Check your connection and retry.",
+      "discard": "Discard and leave"
+    },
+    "set": {
+      "noPrevious": "No previous record",
+      "last": "Last time · {value}",
+      "reps": "Reps",
+      "goalSuffix": " · goal {target}",
+      "warmup": "Warm-up · ",
+      "rampStep": "Ramp {step} · ",
+      "percentOf": "≈ {pct} % of {weight} kg",
+      "goUp": "Go up to {weight} kg",
+      "time": "Time",
+      "weight": "Weight ({unit})",
+      "log": "Log set"
+    },
+    "rampForm": {
+      "steps": "{count, plural, one {# step} other {# steps}}",
+      "stepReps": "Reps for step {step}",
+      "stepWeight": "Weight for step {step}",
+      "goUp": "Go up to {weight} {unit}",
+      "done": "Ramp done"
+    },
+    "progress": {
+      "streak": "Streak {streak}, see the exercise history",
+      "history": "History · {streak}",
+      "goal": "Goal {sets} × {reps}",
+      "down": "You fell below the floor: maybe lower the weight.",
+      "upStreak": "Several sessions at the top: time to go up.",
+      "up": "You hit the top. If it felt clean, go up.",
+      "freeDay": "Free day",
+      "showMore": "Show more"
+    }
+  },
+  "log": {
+    "title": "Free day",
+    "kicker": "// log your set",
+    "time": "Time",
+    "weight": "Weight ({unit})",
+    "reps": "Reps",
+    "submit": "Log set",
+    "hint": "It saves on its own with date and time",
+    "pickExercise": "Please pick an exercise before saving."
+  },
+  "success": {
+    "kicker": "// logged",
+    "title": "Set saved!",
+    "message": "Your progress was logged.",
+    "repeat": "Repeat exercise",
+    "another": "Log another",
+    "toHistory": "Go to history",
+    "motto": "Keep pushing, consistency is the key"
+  },
+  "measure": {
+    "label": "Measured in",
+    "weight_reps": "Weight × reps",
+    "reps": "Reps only",
+    "time": "Time"
+  },
+  "weightUnit": {
+    "current": ", weight unit in {unit}"
+  },
+  "duration": {
+    "label": "Duration",
+    "unset": "no time",
+    "change": "{label}: {value}. Change",
+    "seconds": "sec"
+  },
+  "blocks": {
+    "ramp": "Ramp",
+    "warmupShort": "W-up"
+  },
+  "equipment": {
+    "label": "Equipment",
+    "names": {
+      "barra": "Barbell",
+      "polea": "Cable",
+      "mancuerna": "Dumbbell",
+      "maquina": "Machine",
+      "peso-corporal": "Bodyweight",
+      "otro": "Other"
+    }
+  },
+  "exercises": {
+    "label": "Exercise",
+    "loading": "Loading exercises...",
+    "searchOther": "Search another exercise...",
+    "searchOrCreate": "Search or type to create...",
+    "unofficial": "Unofficial",
+    "create": "Create \"{name}\"...",
+    "newName": "New",
+    "newTitle": "New exercise",
+    "nameQuestion": "What's it called?",
+    "namePlaceholder": "E.g. Single-leg press",
+    "creating": "Creating...",
+    "createAndSelect": "Create and select",
+    "createError": "Couldn't create the exercise",
+    "tiktok": "Watch {name} on TikTok",
+    "tiktokTitle": "Watch on TikTok"
+  },
+  "profile": {
+    "settings": {
+      "title": "Settings",
+      "appGroup": "// app",
+      "accountGroup": "// account",
+      "theme": "Theme",
+      "privacy": "Privacy",
+      "privacyHint": "What we keep and who sees it",
+      "logout": "Log out",
+      "deleteAccount": "Delete my account"
+    },
+    "language": {
+      "kicker": "// preferences",
+      "title": "Language",
+      "exerciseNames": "Exercise names",
+      "exerciseNamesHint": "How they show in your routines and your history. Search works in any language.",
+      "saveError": "Couldn't save the language"
+    },
+    "kicker": "// your account",
+    "title": "Profile",
+    "settingsLink": "Settings",
+    "birth": {
+      "label": "Birth date",
+      "value": "{date} · {age} years",
+      "add": "Add",
+      "input": "Date of birth",
+      "saveError": "Couldn't save your date of birth"
+    },
+    "deleteAccount": {
+      "title": "Delete your account?",
+      "message": "Your sets, routines, programs, measurements and date of birth are deleted for good. It can't be undone.",
+      "confirmPassword": "Type your password to confirm",
+      "confirmEmail": "Type your email to confirm",
+      "submit": "Delete my account"
+    },
+    "measurements": {
+      "kicker": "// measurements",
+      "measure": "Measure",
+      "empty": "Add your measurements whenever you want. They help your AI understand your progress.",
+      "add": "Log measurement",
+      "edit": "Edit measurement",
+      "noData": "no data",
+      "more": "{count} more. To edit an older one, pick its date in Measure.",
+      "date": "Date",
+      "fillWhatYouHave": "Fill in only what you measured.",
+      "fieldInput": "{field} ({unit})",
+      "range": "{field} between {min} and {max} {unit}",
+      "update": "Update",
+      "save": "Save",
+      "confirmDelete": "Tap again to delete",
+      "delete": "Delete measurement",
+      "saveError": "Couldn't save the measurement",
+      "deleteError": "Couldn't delete the measurement",
+      "fields": {
+        "heightCm": "Height",
+        "weightKg": "Weight",
+        "bodyFatPct": "Body fat"
+      }
+    },
+    "password": {
+      "label": "Password",
+      "change": "Change",
+      "title": "Change password",
+      "message": "You stay logged in on this device; on the others you'll have to log in again.",
+      "current": "Current password",
+      "new": "New password",
+      "tooShort": "The new password needs at least {min} characters.",
+      "changed": "Password changed. We logged you out on your other devices.",
+      "save": "Save"
+    },
+    "theme": {
+      "title": "Theme",
+      "kicker": "// preferences",
+      "system": "System",
+      "systemHint": "Follows your phone's mode",
+      "light": "Light",
+      "lightHint": "Always light",
+      "dark": "Dark",
+      "darkHint": "Always dark",
+      "saveError": "Couldn't save the theme"
+    }
+  },
+  "routines": {
+    "title": "Routines",
+    "new": "New routine",
+    "edit": "Edit routine",
+    "start": "Start routine",
+    "delete": "Delete routine",
+    "publish": "Publish routine",
+    "create": "Create routine",
+    "noProgram": "No program",
+    "replaceActive": "\"{active}\" is in progress. Start \"{routine}\" and discard it?",
+    "empty": "No routines yet",
+    "emptyHint": "Build your first routine, no rush.",
+    "otherPrograms": "Other programs",
+    "programsTile": "Programs",
+    "programsTileHint": "Your rotation",
+    "exploreTileHint": "Copy a ready-made one",
+    "nextUp": "Up today",
+    "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+    "deleteDialog": {
+      "titleNamed": "Delete \"{name}\"?",
+      "title": "Delete this routine?",
+      "message": "This can't be undone. The routine and its configured exercises will be deleted.",
+      "deleting": "Deleting..."
+    },
+    "editor": {
+      "name": "Routine name",
+      "namePlaceholder": "Upper A",
+      "duplicate": "You already have a routine with that name.",
+      "exercises": "Exercises · {count}",
+      "empty": "Add exercises to your routine",
+      "emptyHint": "Search for them above; drag them to reorder.",
+      "saveError": "Couldn't save the routine"
+    },
+    "item": {
+      "reorder": "Reorder exercise",
+      "remove": "Remove exercise",
+      "freeSets": "Free sets",
+      "blockKind": "Block type",
+      "removeBlock": "Remove block",
+      "stepReps": "Reps for step {step}",
+      "stepPercent": "Percentage for step {step}",
+      "removeStep": "Remove step",
+      "addStep": "Add step",
+      "sets": "Sets",
+      "setsUnit": "sets",
+      "timeGoal": "Time goal",
+      "repsMin": "Minimum reps",
+      "reps": "Reps",
+      "repsMax": "Maximum reps",
+      "repsMaxPlaceholder": "max",
+      "addBlock": "Add block",
+      "kinds": {
+        "weight_reps": "Weight × reps",
+        "reps": "Reps only",
+        "time": "Time",
+        "warmup": "Warm-up",
+        "ramp": "Ramp"
+      }
+    },
+    "deleteError": "Couldn't delete the routine"
+  },
+  "programs": {
+    "title": "Programs",
+    "new": "New program",
+    "edit": "Edit program",
+    "publish": "Publish program",
+    "delete": "Delete program",
+    "create": "Create program",
+    "empty": "Create your program",
+    "emptyHint": "Group your routines in the order you do them.",
+    "tapToDeactivate": "Tap the active program to turn it off.",
+    "tapToActivate": "Tap a program to make it active.",
+    "explore": "Explore programs",
+    "exploreHint": "Copy one built by someone else.",
+    "activeError": "Couldn't change the active program",
+    "editor": {
+      "name": "Program name",
+      "namePlaceholder": "Upper/Lower",
+      "duplicate": "You already have a program with that name.",
+      "rotation": "Rotation · {count}",
+      "rotationHint": "Tap your routines in the order you do them.",
+      "noRoutines": "No routines yet",
+      "noRoutinesHint": "Create your routines first, then group them here.",
+      "movesFrom": "Moves from {program}",
+      "inProgram": "In {program}",
+      "confirmDelete": "Delete \"{name}\"? Your routines aren't deleted.",
+      "saveError": "Couldn't save the program",
+      "deleteError": "Couldn't delete the program"
+    }
+  },
+  "history": {
+    "title": "History",
+    "export": "Export for your AI",
+    "noRecords": "No records",
+    "loadOlder": "Load older sessions",
+    "more": "More",
+    "loading": "Loading history...",
+    "empty": "No workouts yet",
+    "emptyHint": "Your routines will show up here when you save your first set.",
+    "startTraining": "Start training",
+    "noSets": "No sets in this session.",
+    "freeDay": "Free day",
+    "repeatSet": "Repeat set",
+    "editSet": "Edit set",
+    "deleteSet": "Delete set",
+    "loadMoreError": "Couldn't load more sessions",
+    "saveError": "Couldn't save the changes",
+    "deleteError": "Couldn't delete the set",
+    "deleteDialog": {
+      "title": "Delete this record?",
+      "message": "This can't be undone. This set's data will be deleted for good.",
+      "deleting": "Deleting..."
+    },
+    "editDialog": {
+      "title": "Edit workout",
+      "time": "Time",
+      "weight": "Weight (kg)",
+      "reps": "Reps"
+    }
+  },
+  "export": {
+    "sheet": {
+      "title": "Export history",
+      "kicker": "// for your AI",
+      "days": "{count} days",
+      "all": "All",
+      "from": "From",
+      "to": "To",
+      "sets": "{count, plural, one {# set} other {# sets}}",
+      "dayCount": "{count, plural, one {# day} other {# days}}",
+      "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+      "measurements": "{count, plural, one {# measurement} other {# measurements}}",
+      "empty": "No sets in this range.",
+      "share": "Share",
+      "download": "Download",
+      "copy": "Copy text",
+      "copied": "Text copied",
+      "shareError": "Couldn't share the file",
+      "copyError": "Couldn't copy the text",
+      "filename": "history-{from}_{to}.md"
+    },
+    "doc": {
+      "title": "# Training history · {from} to {to}",
+      "format": "Format: {format} · exported {day} {time} ({timeZone})",
+      "range": "Requested period: {from} to {to}. There are sets from {first} to {last}, on {days, plural, one {# day} other {# days}} ({sets, plural, one {# set} other {# sets}}, {exercises, plural, one {# exercise} other {# exercises}}). A day without sets doesn't confirm rest: it may just not have been logged.",
+      "rangeEmpty": "Requested period: {from} to {to}. No sets logged in this period.",
+      "aboutMe": "## About me",
+      "age": "- Age: {age} years",
+      "ageUnknown": "- Age: not recorded",
+      "measurements": "## Body measurements",
+      "noMeasurements": "No body measurements recorded.",
+      "measurementsNote": "Measurements taken whenever I felt like it. Empty = not measured that day; don't carry the previous value forward.",
+      "baseline": "The first row ({date}) is the last measurement before the period, as a starting point.",
+      "measurementsHeader": "date,height_cm,weight_kg,body_fat_pct",
+      "howToRead": "## How to read the sets",
+      "rule1": "- **One row = one set.** Sets from the same day and routine make up the session.",
+      "rule2": "- **Weight in kg.** Barbell = total (bar + plates). Dumbbell = the weight of one. Machine and cable = what the machine shows.",
+      "rule3": "- **Type:** `{working}` counts toward progress; `{warmup}` doesn't; `{ramp} N` is approach step N before the working sets, with rising weight.",
+      "rule4": "- **Empty cells:** no weight and no reps = timed set (see `seconds`); no weight = bodyweight or reps only. Empty equipment = not logged.",
+      "rule5": "- **Empty routine** = free day, outside the routine.",
+      "rule6": "- **Note** = what I wrote about that set, as is.",
+      "rule7": "- **Rest:** worked out from the time of each set.",
+      "rule8": "- Date and time in my time zone ({timeZone}).",
+      "sets": "## Sets",
+      "noSets": "No sets in this period.",
+      "setsHeader": "date,time,exercise,equipment,type,weight_kg,reps,seconds,routine,note",
+      "working": "working",
+      "warmup": "warm-up",
+      "ramp": "ramp"
+    }
+  },
+  "news": {
+    "button": "What's new",
+    "buttonUnread": "What's new, there's something new",
+    "kicker": "// what you can do",
+    "seen": "Already seen",
+    "new": "New",
+    "go": "Go",
+    "items": {
+      "explore-programs-2": {
+        "title": "Publish and copy routines and programs",
+        "body": "Your stuff is private now: publish whatever you want with the globe in the editor. In Explore, copy a whole program or a single routine, like it and share the link."
+      },
+      "programs": {
+        "title": "Build your program and the app tells you what's up today",
+        "body": "Group your routines in the order you do them. When you open the app, Today shows you the next one and you start with one tap."
+      },
+      "streak": {
+        "title": "Your streak per exercise",
+        "body": "Give your sets a range (for example 8–10). The flame counts the sessions in a row where you hit the top on all of them; tap it to see the exercise history and whether it's time to go up."
+      },
+      "tiktok": {
+        "title": "Not sure how to do an exercise?",
+        "body": "While you train, tap the TikTok button and watch videos of that exercise without searching by hand."
+      },
+      "export-for-ai": {
+        "title": "Export your history for your AI",
+        "body": "Pick a date range and share a file with your sets, routines and measurements. Give it to your AI and ask it to review your progress."
+      },
+      "body-measurements": {
+        "title": "Log your measurements",
+        "body": "Write down height, weight and body fat % with their date to see how you change. They go in the file you export, so your AI advises you better."
+      },
+      "exercise-language": {
+        "title": "Exercises in English or Spanish",
+        "body": "Choose how names show in your routines and your history in Profile → Settings. Search works with either."
+      }
+    }
+  },
+  "explore": {
+    "title": "Explore",
+    "description": "Training routines and programs published by the Gym Tracker community. Copy them and train.",
+    "tabs": {
+      "programs": "Programs",
+      "routines": "Routines",
+      "mine": "Mine"
+    },
+    "sorts": {
+      "likes": "Popular",
+      "copies": "Most copied",
+      "recent": "Recent"
+    },
+    "emptyTitle": "Nothing published yet",
+    "emptyProgram": "Publish a program from its editor, with the globe icon.",
+    "emptyRoutine": "Publish a routine from its editor, with the globe icon.",
+    "yours": "Yours",
+    "program": "Program",
+    "routine": "Routine",
+    "by": "by",
+    "routines": "{count, plural, one {# routine} other {# routines}}",
+    "exercises": "{count, plural, one {# exercise} other {# exercises}}",
+    "likesLabel": "likes",
+    "copiesLabel": "copies",
+    "likes": "{count, plural, one {# like} other {# likes}}",
+    "copies": "{count, plural, one {# copy} other {# copies}}",
+    "like": "Like",
+    "unlike": "Unlike",
+    "likeError": "Couldn't save your like",
+    "unavailable": "This publication is no longer available.",
+    "unavailableTitle": "Not available",
+    "metaProgram": "Program by {author} · {exercises}. Copy it on Gym Tracker.",
+    "metaRoutine": "Routine by {author} · {exercises}. Copy it on Gym Tracker.",
+    "copying": "Copying...",
+    "programCopiedActive": "Program copied and made active",
+    "programCopied": "Program copied",
+    "routineCopied": "Routine copied",
+    "copyError": "Couldn't copy",
+    "copyRoutineError": "Couldn't copy the routine",
+    "copyOnly": "Copy only {name}",
+    "onlyThis": "Just this one",
+    "signUp": "Create your account",
+    "signUpHintProgram": "With your account you copy this program and change it your way.",
+    "signUpHintRoutine": "With your account you copy this routine and change it your way.",
+    "haveAccount": "I already have an account",
+    "copyProgram": "Copy program",
+    "copyRoutine": "Copy routine",
+    "yourCopy": "It's your copy: you can change it without touching the original.",
+    "share": "Share",
+    "linkCopied": "Link copied",
+    "copyThisLink": "Copy this link",
+    "mine": {
+      "rename": "Rename {name}",
+      "delete": "Delete {name}",
+      "renameError": "Couldn't change the name",
+      "deleted": "Publication deleted",
+      "deleteError": "Couldn't delete the publication"
+    },
+    "deleteDialog": {
+      "title": "Delete the publication?",
+      "message": "\"{name}\" stops showing in Explore and it can't be undone.",
+      "messageUnnamed": "This publication stops showing in Explore and it can't be undone.",
+      "noLikes": "It has no likes.",
+      "losesLikes": "{count, plural, one {You lose # like.} other {You lose # likes.}}",
+      "noCopies": "Nobody has copied it.",
+      "copies": "{count, plural, one {# person copied it} other {# people copied it}}: their copies stay.",
+      "original": "Your original routine or program isn't touched.",
+      "deleting": "Deleting...",
+      "delete": "Delete publication"
+    },
+    "rename": {
+      "title": "Rename",
+      "message": "Only the visible name changes. The address and what was published stay the same.",
+      "name": "Name",
+      "save": "Save"
+    },
+    "publish": {
+      "publishing": "Publishing...",
+      "routine": "Publish routine",
+      "program": "Publish program",
+      "preview": "Preview",
+      "emptyProgram": "Add routines to the program before publishing it.",
+      "snapshot": "It's published as it is today. If you change it later, the publication doesn't change.",
+      "slug": "Address (URL)",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Who it's for, how many days, what it aims for",
+      "submit": "Publish",
+      "checking": "Checking...",
+      "free": "Available",
+      "taken": "Already taken. Try another.",
+      "invalid": "3 to 60 characters: lowercase letters, numbers and hyphens.",
+      "routinePublished": "Routine published",
+      "programPublished": "Program published",
+      "error": "Couldn't publish"
+    }
+  },
+  "landing": {
+    "kicker": "// get in, train, get out",
+    "titleLine1": "Log",
+    "titleLine2": "between sets.",
+    "titleLine3": "No thinking.",
+    "subtitle": "You see what you did last time, the app tells you if it's time to go up, you log it and put the phone down.",
+    "signUp": "Create account",
+    "haveAccount": "I already have an account",
+    "features": {
+      "lastTime": {
+        "title": "Last time, in plain sight",
+        "text": "The weight and reps of your last set show up before you start the next one. Repeating it is one tap."
+      },
+      "goUp": {
+        "title": "It tells you when to go up",
+        "text": "When all your sets hit the top of the range, it's time to add weight. The app keeps count; you decide."
+      },
+      "noSetup": {
+        "title": "Zero setup",
+        "text": "No surveys or goals. You get in, pick a routine or copy a friend's, and train."
+      }
+    },
+    "preview": {
+      "label": "This is what a set looks like in the app",
+      "exercise": "Bench press",
+      "sets": "3 sets of 10"
+    },
+    "notHere": {
+      "nutrition": "Nutrition.",
+      "feed": "Feed.",
+      "paywall": "Paywall."
+    },
+    "onlyTraining": "Just your training.",
+    "yourData": "Your data is yours",
+    "yourDataText": "Your age, weight and measurements are optional: you add them whenever you want, never before training. And you can export everything for your AI to analyze.",
+    "privacyLink": "How we look after your data",
+    "hasAccount": "Already have an account?",
+    "login": "Log in"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "description": "What data Gym Tracker keeps, what it uses it for, who sees it and how to delete your account.",
+    "kicker": "// your data",
+    "updated": "Updated on October 28, 2026.",
+    "sections": [
+      {
+        "title": "What we keep",
+        "items": [
+          "Your account: email, username and your encrypted password (it is never stored as is). If you log in with Google, we get your name, your email and an identifier of your account from Google.",
+          "Your training: sets, routines, programs and the exercises you create.",
+          "If you add them: date of birth and measurements (height, weight and body fat %). They are health data, which is why they are optional.",
+          "On your phone: a cookie to keep you logged in, another with the interface language and, in the browser storage, the guided session in progress, the last equipment you used and the sets not sent yet. We don't use advertising or analytics cookies."
+        ]
+      },
+      {
+        "title": "What for",
+        "items": [
+          "Only so the app works: showing your history, working out your streak and preparing the file for your AI when you ask for it. We don't sell your data or use it for advertising."
+        ]
+      },
+      {
+        "title": "Who sees it",
+        "items": [
+          "Only you. The exception is what you decide to publish: that routine or program shows in Explore with your username, as it was when you published it, and other users can see it, like it and copy it. Nobody sees what you don't publish.",
+          "When you export your data for an AI, you share that file with whoever you choose.",
+          "To work, the app uses a server where the database lives, Cloudflare (which the site's traffic goes through) and Google (only if you log in with Google)."
+        ]
+      },
+      {
+        "title": "How long",
+        "items": [
+          "As long as you have your account. On top of that, a daily encrypted backup of the database is made, and each backup deletes itself after 90 days."
+        ]
+      },
+      {
+        "title": "Delete your account",
+        "items": [
+          "From Profile → Settings → Delete my account. It is deleted instantly with everything of yours; it disappears from the backups within 90 days at most.",
+          "The exercises you created are deleted too, except the ones someone else uses: those stay in the catalog without your name.",
+          "Your publications are deleted with your account. The copies other people already made are theirs and they stay."
+        ]
+      }
+    ],
+    "contactTitle": "Contact",
+    "contact": "To ask for a copy of your data, correct it or delete it, write to <email>{address}</email>."
+  }
+}

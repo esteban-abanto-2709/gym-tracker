@@ -13,5 +13,7 @@ export default defineConfig({
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
     trace: "retain-on-failure",
   },
-  projects: [{ name: "iphone", use: { ...devices["iPhone 13"] } }],
+  projects: [
+    { name: "iphone", use: { ...devices["iPhone 13"], locale: "es-PE" } },
+  ],
 });

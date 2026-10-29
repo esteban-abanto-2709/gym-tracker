@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createTranslator } from "next-intl";
 import { buildExport } from "./exportForAi";
 import messages from "@/i18n/messages/es.json";
+import english from "@/i18n/messages/en.json";
 import type { Workout } from "./types";
 
 const set = (createdAt: string, overrides: Partial<Workout> = {}): Workout => ({
@@ -31,9 +32,9 @@ const base = {
   equipmentName: (_id: string | null, name: string) => name,
 };
 
-const seriesRows = (markdown: string) =>
+const seriesRows = (markdown: string, heading = "## Series") =>
   markdown
-    .split("## Series")[1]
+    .split(heading)[1]
     .split("\n")
     .filter((l) => /^\d{4}-/.test(l));
 
@@ -114,5 +115,33 @@ describe("buildExport", () => {
     expect(markdown).toContain("- Edad: no registrada");
     expect(markdown).toContain("Sin medidas corporales registradas.");
     expect(markdown).toContain("Formato: gym-tracker-export v1");
+  });
+
+  it("comes out in English, equipment included, with an English translator", () => {
+    const { markdown } = buildExport({
+      ...base,
+      t: createTranslator({
+        locale: "en",
+        messages: english,
+        namespace: "export.doc",
+      }),
+      equipmentName: (id, name) =>
+        (id && (english.equipment.names as Record<string, string>)[id]) || name,
+      workouts: [
+        set("2026-09-12T23:30:00Z"),
+        set("2026-09-12T23:35:00Z", { setType: "WARMUP" }),
+      ],
+    });
+
+    expect(markdown).toContain("# Training history · 2026-09-09 to 2026-10-09");
+    expect(markdown).toContain("on 1 day (2 sets, 1 exercise)");
+    expect(markdown).toContain(
+      "date,time,exercise,equipment,type,weight_kg,reps,seconds,routine,note",
+    );
+    expect(seriesRows(markdown, "## Sets")).toEqual([
+      "2026-09-12,18:30,Press banca,Barbell,working,80,8,,Upper A,",
+      "2026-09-12,18:35,Press banca,Barbell,warm-up,80,8,,Upper A,",
+    ]);
+    expect(markdown).toContain("- Age: not recorded");
   });
 });

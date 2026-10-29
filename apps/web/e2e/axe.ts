@@ -12,6 +12,8 @@ const TAGS = [
 
 export async function expectAccessible(page: Page) {
   await page.waitForLoadState("networkidle");
+  await expect(page).toHaveTitle(/Gym Tracker/);
+  await page.locator("main").waitFor({ state: "attached" });
   await page.evaluate(() =>
     Promise.allSettled(
       document
