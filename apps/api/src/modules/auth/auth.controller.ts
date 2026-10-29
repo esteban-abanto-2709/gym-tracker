@@ -65,7 +65,10 @@ export class AuthController {
     @Body() dto: GoogleLoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const user = await this.authService.loginWithGoogle(dto.credential);
+    const user = await this.authService.loginWithGoogle(
+      dto.credential,
+      dto.locale,
+    );
     await this.setAuthCookie(res, user.id);
     return user;
   }

@@ -22,7 +22,7 @@ model User {
   activeProgram   Program?          @relation("ActiveProgram", fields: [activeProgramId], references: [id], onDelete: SetNull)
   birthDate       DateTime?         @db.Date
   exerciseLocale  Locale            @default(en)
-  interfaceLocale Locale?
+  interfaceLocale Locale            @default(en)
   theme           Theme             @default(system)
   newsOpened      String[]          @default([])
   newsSeen        String[]          @default([])

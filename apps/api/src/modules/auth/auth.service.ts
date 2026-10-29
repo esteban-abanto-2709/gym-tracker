@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { OAuth2Client } from 'google-auth-library';
-import { User } from '@prisma/client';
+import { Locale, User } from '@prisma/client';
 import { PrismaService } from '@/providers/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -17,6 +17,11 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { fromDbDate, toDbDate } from '@/common/date-only';
 
 const DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
+
+const languages = (locale: Locale = 'en') => ({
+  exerciseLocale: locale,
+  interfaceLocale: locale,
+});
 
 @Injectable()
 export class AuthService {
@@ -36,7 +41,13 @@ export class AuthService {
     const slug = await this.uniqueSlug(dto.username);
 
     const user = await this.prisma.user.create({
-      data: { email: dto.email, username: dto.username, slug, passwordHash },
+      data: {
+        email: dto.email,
+        username: dto.username,
+        slug,
+        passwordHash,
+        ...languages(dto.locale),
+      },
     });
 
     return this.publicUser(user);
@@ -56,7 +67,7 @@ export class AuthService {
     return this.publicUser(user);
   }
 
-  async loginWithGoogle(credential: string) {
+  async loginWithGoogle(credential: string, locale?: Locale) {
     const ticket = await this.googleClient.verifyIdToken({
       idToken: credential,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -87,7 +98,13 @@ export class AuthService {
     const username = payload.name || email.split('@')[0];
     const slug = await this.uniqueSlug(username);
     const user = await this.prisma.user.create({
-      data: { email, username, slug, googleId: payload.sub },
+      data: {
+        email,
+        username,
+        slug,
+        googleId: payload.sub,
+        ...languages(locale),
+      },
     });
     return this.publicUser(user);
   }
@@ -170,9 +187,7 @@ export class AuthService {
           birthDate: dto.birthDate ? toDbDate(dto.birthDate) : null,
         }),
         ...(dto.exerciseLocale && { exerciseLocale: dto.exerciseLocale }),
-        ...(dto.interfaceLocale !== undefined && {
-          interfaceLocale: dto.interfaceLocale,
-        }),
+        ...(dto.interfaceLocale && { interfaceLocale: dto.interfaceLocale }),
         ...(dto.theme && { theme: dto.theme }),
         ...(dto.newsOpened && { newsOpened: [...new Set(dto.newsOpened)] }),
         ...(dto.newsSeen && { newsSeen: [...new Set(dto.newsSeen)] }),

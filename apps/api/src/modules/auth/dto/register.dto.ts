@@ -1,5 +1,13 @@
+import { Locale } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { normalizeEmail } from '../email';
 
 export class RegisterDto {
@@ -16,4 +24,8 @@ export class RegisterDto {
   @MinLength(8)
   @MaxLength(72)
   password: string;
+
+  @IsOptional()
+  @IsEnum(Locale)
+  locale?: Locale;
 }

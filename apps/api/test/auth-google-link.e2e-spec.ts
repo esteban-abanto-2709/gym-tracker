@@ -81,6 +81,29 @@ describe('AuthController google linking (e2e)', () => {
       .expect(401);
   });
 
+  it('creates a new Google account in the language the device signed up with', async () => {
+    const googleClient: OAuth2Client = app.get(AuthService)['googleClient'];
+    jest.spyOn(googleClient, 'verifyIdToken').mockResolvedValueOnce({
+      getPayload: () => ({
+        sub: `google-new-${stamp}`,
+        email: `e2e-google-new-${stamp}@test.local`,
+        email_verified: true,
+        name: 'Google Newcomer',
+      }),
+    } as never);
+
+    const res = await request(app.getHttpServer())
+      .post('/auth/google')
+      .send({ credential: 'fake', locale: 'es' })
+      .expect(201);
+    try {
+      expect(res.body.interfaceLocale).toBe('es');
+      expect(res.body.exerciseLocale).toBe('es');
+    } finally {
+      await prisma.user.delete({ where: { id: res.body.id } });
+    }
+  });
+
   it('keeps the session when an already linked account logs in again', async () => {
     const first = await request(app.getHttpServer())
       .post('/auth/google')

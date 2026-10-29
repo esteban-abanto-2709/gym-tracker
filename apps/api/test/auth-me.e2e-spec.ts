@@ -79,9 +79,44 @@ describe('AuthController /auth/me (e2e)', () => {
     expect(after.body.theme).toBe('light');
   });
 
+  it('creates the account in English when the sign-up sends no language', async () => {
+    const res = await agent.get('/auth/me').expect(200);
+    expect(res.body.interfaceLocale).toBe('en');
+    expect(res.body.exerciseLocale).toBe('en');
+  });
+
+  it('creates the account in the language the device signed up with', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        email: `e2e-me-es-${stamp}@test.local`,
+        username: `e2emees${stamp}`,
+        password: 'e2e-password',
+        locale: 'es',
+      })
+      .expect(201);
+    try {
+      expect(res.body.interfaceLocale).toBe('es');
+      expect(res.body.exerciseLocale).toBe('es');
+    } finally {
+      await prisma.user.delete({ where: { id: res.body.id } });
+    }
+  });
+
+  it('rejects an unknown sign-up language', async () => {
+    await request(app.getHttpServer())
+      .post('/auth/register')
+      .send({
+        email: `e2e-me-fr-${stamp}@test.local`,
+        username: `e2emefr${stamp}`,
+        password: 'e2e-password',
+        locale: 'fr',
+      })
+      .expect(400);
+  });
+
   it('keeps the interface language apart from the exercise language', async () => {
     const before = await agent.get('/auth/me').expect(200);
-    expect(before.body.interfaceLocale).toBeNull();
 
     await agent.patch('/auth/me').send({ interfaceLocale: 'es' }).expect(200);
 
@@ -90,12 +125,8 @@ describe('AuthController /auth/me (e2e)', () => {
     expect(after.body.exerciseLocale).toBe(before.body.exerciseLocale);
   });
 
-  it('clears the interface language back to the phone default', async () => {
-    await agent.patch('/auth/me').send({ interfaceLocale: 'en' }).expect(200);
-    await agent.patch('/auth/me').send({ interfaceLocale: null }).expect(200);
-
-    const res = await agent.get('/auth/me').expect(200);
-    expect(res.body.interfaceLocale).toBeNull();
+  it('always keeps an interface language: it cannot be cleared', async () => {
+    await agent.patch('/auth/me').send({ interfaceLocale: null }).expect(400);
   });
 
   it('rejects an unknown interface language', async () => {
