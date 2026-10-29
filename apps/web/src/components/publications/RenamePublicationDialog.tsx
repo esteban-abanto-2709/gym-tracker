@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,7 @@ export function RenamePublicationDialog({
   onOpenChange,
   onConfirm,
 }: RenamePublicationDialogProps) {
+  const t = useTranslations();
   const [name, setName] = useState(publication?.name ?? "");
   const trimmed = name.trim();
   const canSave =
@@ -34,12 +36,9 @@ export function RenamePublicationDialog({
       <DialogContent className="sm:max-w-[425px] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="font-display uppercase tracking-tight text-2xl">
-            Renombrar
+            {t("explore.rename.title")}
           </DialogTitle>
-          <DialogDescription>
-            Solo cambia el nombre visible. La dirección y lo publicado se quedan
-            igual.
-          </DialogDescription>
+          <DialogDescription>{t("explore.rename.message")}</DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -49,7 +48,7 @@ export function RenamePublicationDialog({
           className="space-y-4"
         >
           <label htmlFor="publication-name" className="sr-only">
-            Nombre
+            {t("explore.rename.name")}
           </label>
           <input
             id="publication-name"
@@ -65,7 +64,7 @@ export function RenamePublicationDialog({
               disabled={!canSave}
               className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold disabled:opacity-50"
             >
-              {loading ? "Guardando..." : "Guardar"}
+              {t(loading ? "common.saving" : "explore.rename.save")}
             </button>
           </DialogFooter>
         </form>

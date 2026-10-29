@@ -9,6 +9,7 @@
 | What | Where |
 |---|---|
 | Which news items exist | [`apps/web/src/lib/news.ts`](../apps/web/src/lib/news.ts), the `NEWS` list |
+| What each one says | `news.items.<id>` in each messages file under [`apps/web/src/i18n/messages/`](../apps/web/src/i18n/messages/) |
 | What each user opened and saw | `User.newsOpened` and `User.newsSeen` in the database: ids only |
 
 The database doesn't know which news items exist. Adding or removing one means
@@ -34,18 +35,24 @@ it.
 {
   id: "body-measurements",
   Icon: Ruler,
-  title: "Registra tus medidas",
-  body: "Anota altura, peso y % de grasa con su fecha para ver cómo cambias. ...",
   href: "/perfil#medidas",
+}
+```
+
+```json
+"body-measurements": {
+  "title": "Registra tus medidas",
+  "body": "Anota altura, peso y % de grasa con su fecha para ver cómo cambias. ..."
 }
 ```
 
 - **`id`:** English and kebab-case. It's what's stored per user: **it's never
   changed or reused**.
 - **`Icon`:** from `lucide-react`.
-- **`title`:** a short sentence that stands on its own, ideally with a verb
-  ("Registra tus medidas", "Copia el programa de otro").
-- **`body`:** two or three lines: what it does and why it helps.
+- **`title`** (messages file): a short sentence that stands on its own,
+  ideally with a verb ("Registra tus medidas", "Copia el programa de otro").
+- **`body`** (messages file): two or three lines: what it does and why it
+  helps.
 - **`href`:** optional. The screen "Ir" takes you to; with no fixed place
   (something that lives inside training), it's omitted. To open a panel or
   scroll to a section, use a parameter or an anchor that screen already

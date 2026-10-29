@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -25,6 +26,7 @@ export function DeleteAccountDialog({
   open,
   onOpenChange,
 }: DeleteAccountDialogProps) {
+  const t = useTranslations();
   const { user, deleteAccount } = useAuth();
   const hasPassword = user?.hasPassword ?? false;
   const [value, setValue] = useState("");
@@ -48,7 +50,7 @@ export function DeleteAccountDialog({
       await deleteAccount(hasPassword ? { password: value } : { email: value });
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "No se pudo borrar la cuenta",
+        err instanceof Error ? err.message : t("auth.errors.deleteFailed"),
       );
       setDeleting(false);
     }
@@ -60,19 +62,20 @@ export function DeleteAccountDialog({
         <form onSubmit={onSubmit} className="grid gap-4">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
-              ¿Borrar tu cuenta?
+              {t("profile.deleteAccount.title")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Se borran para siempre tus series, rutinas, programas, medidas y
-              fecha de nacimiento. No se puede deshacer.
+              {t("profile.deleteAccount.message")}
             </AlertDialogDescription>
           </AlertDialogHeader>
 
           <div className="space-y-1.5">
             <Label htmlFor="delete-confirmation">
-              {hasPassword
-                ? "Escribe tu contraseña para confirmar"
-                : "Escribe tu correo para confirmar"}
+              {t(
+                hasPassword
+                  ? "profile.deleteAccount.confirmPassword"
+                  : "profile.deleteAccount.confirmEmail",
+              )}
             </Label>
             {hasPassword ? (
               <PasswordInput
@@ -96,7 +99,7 @@ export function DeleteAccountDialog({
 
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-xl" disabled={deleting}>
-              Cancelar
+              {t("common.cancel")}
             </AlertDialogCancel>
             <button
               type="submit"
@@ -104,7 +107,7 @@ export function DeleteAccountDialog({
               className="py-2 px-4 rounded-xl bg-destructive text-destructive-foreground font-bold flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-60"
             >
               {deleting && <Spinner className="size-4" />}
-              Borrar mi cuenta
+              {t("profile.deleteAccount.submit")}
             </button>
           </AlertDialogFooter>
         </form>

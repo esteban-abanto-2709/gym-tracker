@@ -1,7 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { countLabel, exerciseCount, getPublication } from "@/lib/server-api";
+import { getTranslations } from "next-intl/server";
+import { exerciseCount, getPublication } from "@/lib/server-api";
 import type { PublicationKind } from "@/lib/types";
 
 const KINDS: Record<string, PublicationKind> = {
@@ -22,12 +23,15 @@ export async function GET(
   const publication = kind ? await getPublication(kind, slug) : null;
   if (!kind || !publication) return new Response("Not found", { status: 404 });
 
+  const t = await getTranslations("explore");
   const isProgram = kind === "PROGRAM";
   const name = publication.name;
   const stats = [
-    isProgram ? countLabel(publication.routines.length, "rutina") : null,
-    exerciseCount(publication),
-    publication.likeCount > 0 ? `${publication.likeCount} me gusta` : null,
+    isProgram ? t("routines", { count: publication.routines.length }) : null,
+    t("exercises", { count: exerciseCount(publication) }),
+    publication.likeCount > 0
+      ? t("likes", { count: publication.likeCount })
+      : null,
   ].filter(Boolean);
 
   return new ImageResponse(
@@ -61,7 +65,7 @@ export async function GET(
           textTransform: "uppercase",
         }}
       >
-        {`${isProgram ? "Programa" : "Rutina"} · de ${publication.author.username}`}
+        {`${t(isProgram ? "program" : "routine")} · ${t("by")} ${publication.author.username}`}
       </div>
       <div
         style={{

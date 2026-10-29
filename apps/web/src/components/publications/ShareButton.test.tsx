@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { toast } from "sonner";
 import { ShareButton } from "./ShareButton";
 
@@ -23,7 +24,7 @@ describe("ShareButton", () => {
       value: share,
       configurable: true,
     });
-    render(<ShareButton title="Upper/Lower" path={path} />);
+    renderWithIntl(<ShareButton title="Upper/Lower" path={path} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Compartir" }));
 
@@ -38,7 +39,7 @@ describe("ShareButton", () => {
       value: { writeText },
       configurable: true,
     });
-    render(<ShareButton title="Upper/Lower" path={path} />);
+    renderWithIntl(<ShareButton title="Upper/Lower" path={path} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Compartir" }));
 
@@ -53,7 +54,7 @@ describe("ShareButton", () => {
       value: { writeText: vi.fn().mockRejectedValue(new Error("denied")) },
       configurable: true,
     });
-    render(<ShareButton title="Upper/Lower" path={path} />);
+    renderWithIntl(<ShareButton title="Upper/Lower" path={path} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Compartir" }));
 

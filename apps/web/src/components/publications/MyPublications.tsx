@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
@@ -18,6 +19,7 @@ interface MyPublicationsProps {
 }
 
 export function MyPublications({ items, onChange }: MyPublicationsProps) {
+  const t = useTranslations("explore.mine");
   const [renaming, setRenaming] = useState<ExploreListItem | null>(null);
   const [deleting, setDeleting] = useState<ExploreListItem | null>(null);
   const [busy, setBusy] = useState(false);
@@ -37,7 +39,7 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
       );
       setRenaming(null);
     } catch {
-      notifyError("No se pudo cambiar el nombre");
+      notifyError(t("renameError"));
     } finally {
       setBusy(false);
     }
@@ -50,9 +52,9 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
       await api.delete(routes.api.publications.delete(deleting.id));
       setDeleting(null);
       onChange(items.filter((p) => p.id !== deleting.id));
-      toast.success("Publicación eliminada");
+      toast.success(t("deleted"));
     } catch {
-      notifyError("No se pudo eliminar la publicación");
+      notifyError(t("deleteError"));
     } finally {
       setBusy(false);
     }
@@ -72,7 +74,7 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
                 size="icon"
                 type="button"
                 onClick={() => setRenaming(item)}
-                aria-label={`Renombrar ${item.name}`}
+                aria-label={t("rename", { name: item.name })}
               >
                 <Pencil className="w-4 h-4" />
               </Button>
@@ -81,7 +83,7 @@ export function MyPublications({ items, onChange }: MyPublicationsProps) {
                 size="icon"
                 type="button"
                 onClick={() => setDeleting(item)}
-                aria-label={`Eliminar ${item.name}`}
+                aria-label={t("delete", { name: item.name })}
               >
                 <Trash2 className="w-4 h-4" />
               </Button>

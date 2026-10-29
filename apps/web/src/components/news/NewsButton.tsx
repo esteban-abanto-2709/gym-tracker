@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { NEWS, type NewsItem } from "@/lib/news";
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { heading } from "@/components/base/heading";
 
 export function NewsButton() {
+  const t = useTranslations("news");
   const { user, updateMe } = useAuth();
   const [opened, setOpened] = useState(user?.newsOpened ?? []);
   const [seen, setSeen] = useState(user?.newsSeen ?? []);
@@ -36,7 +38,7 @@ export function NewsButton() {
       <button
         type="button"
         onClick={openSheet}
-        aria-label={hasUnopened ? "Novedades, hay algo nuevo" : "Novedades"}
+        aria-label={t(hasUnopened ? "buttonUnread" : "button")}
         className="relative p-2 -m-2 text-muted-foreground hover:text-foreground active:scale-90 transition-all"
       >
         <Sparkles className="w-6 h-6" />
@@ -65,6 +67,7 @@ function NewsSheet({
   onSeen: (id: string) => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("news");
   const [initialSeen] = useState(seen);
   const [expanded, setExpanded] = useState<string | null>(null);
   const fresh = NEWS.filter((n) => !initialSeen.includes(n.id));
@@ -88,15 +91,15 @@ function NewsSheet({
 
   return (
     <BottomSheet
-      label="Novedades"
+      label={t("button")}
       onClose={onClose}
       className="flex flex-col max-h-[85dvh] overflow-visible p-0"
     >
       <div className="shrink-0 px-5 pt-3 pb-4 border-b border-border">
         <div className="max-w-md mx-auto">
           <SheetHeader
-            kicker="// lo que puedes hacer"
-            title="Novedades"
+            kicker={t("kicker")}
+            title={t("button")}
             onClose={onClose}
           />
         </div>
@@ -116,7 +119,7 @@ function NewsSheet({
                   "mb-2 kicker text-4xs text-muted-foreground",
                 )}
               >
-                Ya vistas
+                {t("seen")}
               </p>
               <div className="grid gap-2">{old.map(card)}</div>
             </>
@@ -140,6 +143,7 @@ function NewsCard({
   onToggle: () => void;
   onGo: () => void;
 }) {
+  const t = useTranslations("news");
   const { Icon } = item;
 
   return (
@@ -167,10 +171,12 @@ function NewsCard({
         </span>
         <span className="min-w-0 flex-1">
           {isNew && (
-            <span className="block kicker text-primary text-5xs">Nuevo</span>
+            <span className="block kicker text-primary text-5xs">
+              {t("new")}
+            </span>
           )}
           <span className="block font-bold text-foreground leading-snug">
-            {item.title}
+            {t(`items.${item.id}.title`)}
           </span>
         </span>
         <ChevronDown
@@ -190,7 +196,7 @@ function NewsCard({
         <div className="overflow-hidden">
           <div className="px-4 pb-4">
             <p className="text-sm text-muted-foreground text-pretty">
-              {item.body}
+              {t(`items.${item.id}.body`)}
             </p>
             {item.href && (
               <Link
@@ -202,7 +208,7 @@ function NewsCard({
                     "mt-3 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 tracking-wide active:scale-[0.98] transition-transform",
                 })}
               >
-                Ir
+                {t("go")}
                 <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
               </Link>
             )}

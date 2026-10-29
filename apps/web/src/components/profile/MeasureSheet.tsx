@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
 import type { BodyMeasurement } from "@/lib/types";
 import {
@@ -37,6 +38,7 @@ export function MeasureSheet({
   onDelete,
   onClose,
 }: MeasureSheetProps) {
+  const t = useTranslations("profile.measurements");
   const find = (d: string) => measurements.find((m) => m.date === d);
   const [date, setDate] = useState(initialDate);
   const [values, setValues] = useState<Values>(() =>
@@ -76,7 +78,7 @@ export function MeasureSheet({
       });
       onClose();
     } catch {
-      notifyError("No se pudo guardar la medida", save);
+      notifyError(t("saveError"), save);
     } finally {
       setBusy(false);
     }
@@ -92,7 +94,7 @@ export function MeasureSheet({
       await onDelete(date);
       onClose();
     } catch {
-      notifyError("No se pudo borrar la medida");
+      notifyError(t("deleteError"));
     } finally {
       setBusy(false);
     }
@@ -108,19 +110,21 @@ export function MeasureSheet({
 
   return (
     <BottomSheet
-      label={existing ? "Editar medida" : "Registrar medida"}
+      label={t(existing ? "edit" : "add")}
       style={viewportStyle}
       onClose={onClose}
     >
       <div className="max-w-md mx-auto">
         <SheetHeader
-          kicker="// medidas"
-          title={existing ? "Editar medida" : "Registrar medida"}
+          kicker={t("kicker")}
+          title={t(existing ? "edit" : "add")}
           onClose={onClose}
         />
 
         <label className="mt-4 block">
-          <span className="kicker text-4xs text-muted-foreground">Fecha</span>
+          <span className="kicker text-4xs text-muted-foreground">
+            {t("date")}
+          </span>
           <input
             type="date"
             value={date}
@@ -131,10 +135,10 @@ export function MeasureSheet({
         </label>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Llena solo lo que te midieron.
+          {t("fillWhatYouHave")}
         </p>
         <div className="mt-2 grid grid-cols-3 gap-2">
-          {MEASURE_FIELDS.map(({ key, label, unit }) => (
+          {MEASURE_FIELDS.map(({ key, unit }) => (
             <label
               key={key}
               className={cn(
@@ -145,7 +149,7 @@ export function MeasureSheet({
               )}
             >
               <span className="kicker text-4xs text-muted-foreground">
-                {label}
+                {t(`fields.${key}`)}
               </span>
               <input
                 type="number"
@@ -156,7 +160,10 @@ export function MeasureSheet({
                 onChange={(e) =>
                   setValues((v) => ({ ...v, [key]: e.target.value }))
                 }
-                aria-label={`${label} (${unit})`}
+                aria-label={t("fieldInput", {
+                  field: t(`fields.${key}`),
+                  unit,
+                })}
                 className="w-full bg-transparent text-center font-display font-bold text-3xl text-foreground tabular-nums placeholder:text-muted-foreground/40 focus:outline-none"
               />
               <span className="text-xs text-muted-foreground">{unit}</span>
@@ -166,7 +173,14 @@ export function MeasureSheet({
         {invalid.length > 0 && (
           <p className="mt-2 text-xs text-destructive">
             {invalid
-              .map((f) => `${f.label} entre ${f.min} y ${f.max} ${f.unit}`)
+              .map((f) =>
+                t("range", {
+                  field: t(`fields.${f.key}`),
+                  min: f.min,
+                  max: f.max,
+                  unit: f.unit,
+                }),
+              )
               .join(" · ")}
           </p>
         )}
@@ -178,7 +192,7 @@ export function MeasureSheet({
           className="mt-5 py-3.5 disabled:opacity-40"
         >
           <Check className="w-5 h-5" strokeWidth={2.5} />
-          {existing ? "Actualizar" : "Guardar"}
+          {t(existing ? "update" : "save")}
         </Button>
 
         {existing && (
@@ -189,7 +203,7 @@ export function MeasureSheet({
             className="mt-1 w-full py-2.5 text-muted-foreground hover:text-destructive font-bold text-sm active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
           >
             <Trash2 className="w-4 h-4" />
-            {confirmDelete ? "Toca otra vez para borrar" : "Borrar medida"}
+            {t(confirmDelete ? "confirmDelete" : "delete")}
           </button>
         )}
       </div>

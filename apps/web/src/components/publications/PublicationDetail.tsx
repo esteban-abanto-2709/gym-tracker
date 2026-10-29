@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -49,6 +50,7 @@ export function PublicationDetail({
   slug,
   publication,
 }: PublicationDetailProps) {
+  const t = useTranslations("explore");
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, loading } = useAuth();
@@ -64,20 +66,18 @@ export function PublicationDetail({
         const { activated } = await api.post<CopiedProgram>(endpoint, {});
         await refetchAll(queryClient, routinesQuery, programsQuery);
         queryClient.invalidateQueries({ queryKey: exploreKey });
-        toast.success(
-          activated ? "Programa copiado y activado" : "Programa copiado",
-        );
+        toast.success(t(activated ? "programCopiedActive" : "programCopied"));
         router.push(activated ? routes.home() : routes.programs());
       } else {
         await api.post<CopiedRoutine>(endpoint, {});
         await refetchAll(queryClient, routinesQuery);
         queryClient.invalidateQueries({ queryKey: exploreKey });
-        toast.success("Rutina copiada");
+        toast.success(t("routineCopied"));
         router.push(routes.routines());
       }
     } catch {
       setCopying(false);
-      notifyError("No se pudo copiar", copyAll);
+      notifyError(t("copyError"), copyAll);
     }
   };
 
@@ -89,19 +89,17 @@ export function PublicationDetail({
       });
       await refetchAll(queryClient, routinesQuery);
       queryClient.invalidateQueries({ queryKey: exploreKey });
-      toast.success("Rutina copiada");
+      toast.success(t("routineCopied"));
       router.push(routes.routines());
     } catch {
       setCopying(false);
-      notifyError("No se pudo copiar la rutina", () =>
-        copyOne(routinePosition),
-      );
+      notifyError(t("copyRoutineError"), () => copyOne(routinePosition));
     }
   };
 
   return (
     <PageShell variant="history">
-      {copying && <LoadingOverlay label="Copiando..." />}
+      {copying && <LoadingOverlay label={t("copying")} />}
 
       <AppHeader
         leftAction={
@@ -109,7 +107,7 @@ export function PublicationDetail({
             href={routes.explore(isProgram ? "programs" : "routines")}
           />
         }
-        title={isProgram ? "Programa" : "Rutina"}
+        title={t(isProgram ? "program" : "routine")}
         rightAction={
           publication ? (
             <ShareButton
@@ -124,13 +122,13 @@ export function PublicationDetail({
         <div className="max-w-md mx-auto space-y-6">
           {!publication ? (
             <p className="text-center text-muted-foreground py-16">
-              Esta publicación ya no está disponible.
+              {t("unavailable")}
             </p>
           ) : (
             <>
               <div>
                 <p className="kicker text-primary text-3xs">
-                  de <AuthorName author={publication.author} />
+                  {t("by")} <AuthorName author={publication.author} />
                 </p>
                 <h1
                   className={heading({
@@ -155,8 +153,7 @@ export function PublicationDetail({
                   />
                   <span className="inline-flex items-center gap-1.5">
                     <Copy className="w-4 h-4" aria-hidden />
-                    {publication.copyCount}{" "}
-                    {publication.copyCount === 1 ? "copia" : "copias"}
+                    {t("copies", { count: publication.copyCount })}
                   </span>
                 </p>
               </div>
@@ -171,10 +168,10 @@ export function PublicationDetail({
                           onClick={() => copyOne(routine.position)}
                           disabled={copying}
                           className="shrink-0 inline-flex items-center gap-1 rounded-lg border-2 border-input px-2 py-1 text-xs font-bold text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors disabled:opacity-50"
-                          aria-label={`Copiar solo ${routine.name}`}
+                          aria-label={t("copyOnly", { name: routine.name })}
                         >
                           <Copy className="w-3.5 h-3.5" />
-                          Solo esta
+                          {t("onlyThis")}
                         </button>
                       )
                     : undefined
@@ -190,17 +187,15 @@ export function PublicationDetail({
                     className={copyButtonClass}
                   >
                     <UserPlus className="w-5 h-5" strokeWidth={2.5} />
-                    Crea tu cuenta
+                    {t("signUp")}
                   </Link>
                   <p className="text-xs text-center text-muted-foreground">
-                    {isProgram
-                      ? "Con tu cuenta copias este programa y lo cambias a tu gusto."
-                      : "Con tu cuenta copias esta rutina y la cambias a tu gusto."}{" "}
+                    {t(isProgram ? "signUpHintProgram" : "signUpHintRoutine")}{" "}
                     <Link
                       href={routes.login(routes.explorePublication(kind, slug))}
                       className="font-semibold text-foreground underline underline-offset-4"
                     >
-                      Ya tengo cuenta
+                      {t("haveAccount")}
                     </Link>
                   </p>
                 </div>
@@ -213,10 +208,10 @@ export function PublicationDetail({
                     className={copyButtonClass}
                   >
                     <Copy className="w-5 h-5" strokeWidth={2.5} />
-                    {isProgram ? "Copiar programa" : "Copiar rutina"}
+                    {t(isProgram ? "copyProgram" : "copyRoutine")}
                   </button>
                   <p className="text-xs text-center text-muted-foreground">
-                    Es tu copia: puedes cambiarla sin tocar la original.
+                    {t("yourCopy")}
                   </p>
                 </div>
               )}

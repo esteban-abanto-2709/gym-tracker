@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +24,7 @@ export function DeletePublicationDialog({
   onOpenChange,
   onConfirm,
 }: DeletePublicationDialogProps) {
+  const t = useTranslations();
   const likes = publication?.likeCount ?? 0;
   const copies = publication?.copyCount ?? 0;
 
@@ -31,32 +33,37 @@ export function DeletePublicationDialog({
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
-            ¿Eliminar la publicación?
+            {t("explore.deleteDialog.title")}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-2 text-left">
               <p>
-                {publication ? `"${publication.name}"` : "Esta publicación"}{" "}
-                deja de verse en Explorar y no se puede deshacer.
+                {publication
+                  ? t("explore.deleteDialog.message", {
+                      name: publication.name,
+                    })
+                  : t("explore.deleteDialog.messageUnnamed")}
               </p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
                   {likes === 0
-                    ? "No tiene me gusta."
-                    : `Pierdes ${likes} me gusta.`}
+                    ? t("explore.deleteDialog.noLikes")
+                    : t("explore.deleteDialog.losesLikes", { count: likes })}
                 </li>
                 <li>
                   {copies === 0
-                    ? "Nadie la ha copiado."
-                    : `${copies} ${copies === 1 ? "persona la copió" : "personas la copiaron"}: sus copias se quedan.`}
+                    ? t("explore.deleteDialog.noCopies")
+                    : t("explore.deleteDialog.copies", { count: copies })}
                 </li>
-                <li>Tu rutina o programa original no se toca.</li>
+                <li>{t("explore.deleteDialog.original")}</li>
               </ul>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+          <AlertDialogCancel className="rounded-xl">
+            {t("common.cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             onClick={(e) => {
@@ -65,7 +72,11 @@ export function DeletePublicationDialog({
             }}
             disabled={loading}
           >
-            {loading ? "Eliminando..." : "Eliminar publicación"}
+            {t(
+              loading
+                ? "explore.deleteDialog.deleting"
+                : "explore.deleteDialog.delete",
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

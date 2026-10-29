@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { LikeButton } from "./LikeButton";
 import { api } from "@/lib/api";
 import { getQueryClient } from "@/lib/query";
@@ -25,7 +26,7 @@ describe("LikeButton", () => {
     const listKey = ["explore", "ROUTINE", "likes"];
     getQueryClient().setQueryData(listKey, []);
     vi.mocked(api.put).mockResolvedValue({ likeCount: 5, likedByMe: true });
-    render(<LikeButton {...props} />);
+    renderWithIntl(<LikeButton {...props} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Me gusta" }));
 
@@ -37,7 +38,7 @@ describe("LikeButton", () => {
   it("adds instantly and keeps what the server says", async () => {
     let resolve!: (value: unknown) => void;
     vi.mocked(api.put).mockReturnValue(new Promise((r) => (resolve = r)));
-    render(<LikeButton {...props} />);
+    renderWithIntl(<LikeButton {...props} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Me gusta" }));
 
@@ -55,7 +56,7 @@ describe("LikeButton", () => {
 
   it("removes the like", async () => {
     vi.mocked(api.delete).mockResolvedValue({ likeCount: 3, likedByMe: false });
-    render(<LikeButton {...props} likedByMe />);
+    renderWithIntl(<LikeButton {...props} likedByMe />);
 
     fireEvent.click(screen.getByRole("button", { name: "Quitar me gusta" }));
 
@@ -67,7 +68,7 @@ describe("LikeButton", () => {
 
   it("reverts when the network fails", async () => {
     vi.mocked(api.put).mockRejectedValue(new Error("offline"));
-    render(<LikeButton {...props} />);
+    renderWithIntl(<LikeButton {...props} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Me gusta" }));
 
@@ -78,7 +79,7 @@ describe("LikeButton", () => {
   });
 
   it("shows only the count on your own publication", () => {
-    render(<LikeButton {...props} readOnly />);
+    renderWithIntl(<LikeButton {...props} readOnly />);
 
     expect(screen.getByText("4 me gusta")).toBeTruthy();
     expect(screen.queryByRole("button")).toBeNull();

@@ -1,7 +1,8 @@
 import { beforeEach, describe, it, expect, vi } from "vitest";
 import { fireEvent, screen, within } from "@testing-library/react";
 import { renderWithIntl } from "@/i18n/testing";
-import { NEWS } from "@/lib/news";
+import { NEWS, type NewsItem } from "@/lib/news";
+import messages from "@/i18n/messages/es.json";
 import { NewsButton } from "./NewsButton";
 
 const updateMe = vi.fn().mockResolvedValue(undefined);
@@ -12,6 +13,7 @@ vi.mock("@/lib/auth-context", () => ({
 }));
 
 const allIds = NEWS.map((n) => n.id);
+const title = (item: NewsItem) => messages.news.items[item.id].title;
 const cardTitles = () =>
   screen
     .getAllByRole("button", { expanded: false })
@@ -57,8 +59,8 @@ describe("NewsButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Novedades" }));
 
     const titles = cardTitles();
-    expect(titles[0]).toContain(second.title);
-    expect(titles.at(-1)).toContain(first.title);
+    expect(titles[0]).toContain(title(second));
+    expect(titles.at(-1)).toContain(title(first));
     expect(screen.getByText("Ya vistas")).toBeTruthy();
   });
 
@@ -68,7 +70,7 @@ describe("NewsButton", () => {
     renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByRole("button", { name: "Novedades" }));
 
-    const card = screen.getByText(item.title).closest("button")!;
+    const card = screen.getByText(title(item)).closest("button")!;
     fireEvent.click(card);
 
     expect(updateMe).toHaveBeenCalledWith({ newsSeen: ["other", item.id] });
@@ -82,7 +84,7 @@ describe("NewsButton", () => {
     renderWithIntl(<NewsButton />);
     fireEvent.click(screen.getByLabelText("Novedades, hay algo nuevo"));
 
-    const card = screen.getByText(item.title).closest("button")!;
+    const card = screen.getByText(title(item)).closest("button")!;
     fireEvent.click(card);
     expect(within(card.parentElement!).queryByRole("link")).toBeNull();
   });

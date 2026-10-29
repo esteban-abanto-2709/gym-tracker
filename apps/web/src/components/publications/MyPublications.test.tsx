@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useState } from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { MyPublications } from "./MyPublications";
 import { api } from "@/lib/api";
 import type { ExploreListItem } from "@/lib/types";
@@ -47,7 +48,7 @@ beforeEach(() => {
 
 describe("MyPublications", () => {
   it("shows your publications with their kind and counters", async () => {
-    render(<Harness />);
+    renderWithIntl(<Harness />);
 
     const card = (await screen.findByText("Espalda Cbum")).closest("a")!;
     expect(card.textContent).toContain("Rutina · 6 ejercicios");
@@ -57,7 +58,7 @@ describe("MyPublications", () => {
 
   it("warns what is lost and deletes the publication", async () => {
     vi.mocked(api.delete).mockResolvedValue({ id: "pub-1" });
-    render(<Harness />);
+    renderWithIntl(<Harness />);
     await screen.findByText("Espalda Cbum");
 
     fireEvent.click(
@@ -85,7 +86,7 @@ describe("MyPublications", () => {
       id: "pub-1",
       name: "Espalda Cbum V2",
     });
-    render(<Harness />);
+    renderWithIntl(<Harness />);
     await screen.findByText("Espalda Cbum");
 
     fireEvent.click(

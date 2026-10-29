@@ -37,7 +37,9 @@ describe("measurements", () => {
     expect(
       formatMeasurement(m("2026-10-08", { weightKg: 77.9, heightCm: 172 })),
     ).toBe("172 cm · 77.9 kg");
-    expect(formatShortDate("2026-10-08", "2026-10-09")).toBe("8 oct");
-    expect(formatShortDate("2025-10-08", "2026-10-09")).toBe("8 oct 2025");
+    expect(formatShortDate("2026-10-08", "es", "2026-10-09")).toBe("8 oct");
+    expect(formatShortDate("2025-10-08", "es", "2026-10-09")).toBe(
+      "8 oct 2025",
+    );
   });
 });

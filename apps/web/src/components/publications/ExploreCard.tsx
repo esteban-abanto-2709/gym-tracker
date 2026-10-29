@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { routes } from "@/lib/routes";
 import type { ExploreListItem } from "@/lib/types";
 import { AuthorName } from "./AuthorName";
@@ -38,6 +39,7 @@ export function ExploreCard({
   showKind?: boolean;
   actions?: ReactNode;
 }) {
+  const t = useTranslations("explore");
   const isProgram = item.kind === "PROGRAM";
   const exercises = item.routines[0]?.exerciseCount ?? 0;
 
@@ -58,26 +60,22 @@ export function ExploreCard({
           </span>
           {item.isMine && !showKind && (
             <span className="shrink-0 rounded-md bg-secondary px-1.5 py-0.5 kicker text-5xs text-muted-foreground">
-              Tuya
+              {t("yours")}
             </span>
           )}
         </span>
         <span className="block kicker text-4xs text-muted-foreground mt-1.5">
           {showKind ? (
-            isProgram ? (
-              "Programa"
-            ) : (
-              "Rutina"
-            )
+            t(isProgram ? "program" : "routine")
           ) : (
             <>
-              de <AuthorName author={item.author} />
+              {t("by")} <AuthorName author={item.author} />
             </>
           )}{" "}
           ·{" "}
           {isProgram
-            ? `${item.routines.length} ${item.routines.length === 1 ? "rutina" : "rutinas"}`
-            : `${exercises} ${exercises === 1 ? "ejercicio" : "ejercicios"}`}
+            ? t("routines", { count: item.routines.length })
+            : t("exercises", { count: exercises })}
         </span>
         {isProgram && (
           <span className="block text-xs text-muted-foreground truncate mt-1">
@@ -93,11 +91,11 @@ export function ExploreCard({
               )}
               aria-hidden
             />
-            <span aria-label="me gusta">{item.likeCount}</span>
+            <span aria-label={t("likesLabel")}>{item.likeCount}</span>
           </span>
           <span className="inline-flex items-center gap-1">
             <Copy className="w-3.5 h-3.5" aria-hidden />
-            <span aria-label="copias">{item.copyCount}</span>
+            <span aria-label={t("copiesLabel")}>{item.copyCount}</span>
           </span>
         </span>
       </Link>

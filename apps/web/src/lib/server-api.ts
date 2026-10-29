@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { routes } from "@/lib/routes";
 import type { ExploreDetail, PublicationKind } from "@/lib/types";
 
@@ -33,28 +34,26 @@ export const getPublication = cache((kind: PublicationKind, slug: string) =>
   ),
 );
 
-export function countLabel(n: number, singular: string) {
-  return `${n} ${n === 1 ? singular : `${singular}s`}`;
-}
-
 export function exerciseCount(publication: ExploreDetail) {
-  return countLabel(
-    publication.routines.reduce((n, r) => n + r.items.length, 0),
-    "ejercicio",
-  );
+  return publication.routines.reduce((n, r) => n + r.items.length, 0);
 }
 
 export async function publicationMetadata(
   kind: PublicationKind,
   slug: string,
 ): Promise<Metadata> {
+  const t = await getTranslations("explore");
   const publication = await getPublication(kind, slug);
-  if (!publication) return { title: "No disponible" };
+  if (!publication) return { title: t("unavailableTitle") };
 
-  const what = kind === "PROGRAM" ? "Programa" : "Rutina";
+  const isProgram = kind === "PROGRAM";
+  const what = t(isProgram ? "program" : "routine");
   const description =
     publication.description ||
-    `${what} de ${publication.author.username} · ${exerciseCount(publication)}. ${kind === "PROGRAM" ? "Cópialo" : "Cópiala"} en Gym Tracker.`;
+    t(isProgram ? "metaProgram" : "metaRoutine", {
+      author: publication.author.username,
+      exercises: t("exercises", { count: exerciseCount(publication) }),
+    });
   const origin = await siteOrigin();
   return {
     title: publication.name,

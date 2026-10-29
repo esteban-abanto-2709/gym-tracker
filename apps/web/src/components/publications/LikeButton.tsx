@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
@@ -27,10 +28,11 @@ export function LikeButton({
   likedByMe,
   readOnly,
 }: LikeButtonProps) {
+  const t = useTranslations("explore");
   const [state, setState] = useState<LikeState>({ likeCount, likedByMe });
   const [pending, setPending] = useState(false);
 
-  const label = `${state.likeCount} me gusta`;
+  const label = t("likes", { count: state.likeCount });
 
   if (readOnly) {
     return (
@@ -60,7 +62,7 @@ export function LikeButton({
       getQueryClient().invalidateQueries({ queryKey: exploreKey });
     } catch {
       setState(previous);
-      notifyError("No se pudo guardar tu me gusta");
+      notifyError(t("likeError"));
     } finally {
       setPending(false);
     }
@@ -71,7 +73,7 @@ export function LikeButton({
       type="button"
       onClick={toggle}
       aria-pressed={state.likedByMe}
-      aria-label={state.likedByMe ? "Quitar me gusta" : "Me gusta"}
+      aria-label={t(state.likedByMe ? "unlike" : "like")}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border-2 px-3 py-1 font-bold transition-all active:scale-90",
         state.likedByMe

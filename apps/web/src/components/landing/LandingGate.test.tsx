@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { LandingGate } from "./LandingGate";
 
 let user: { id: string } | null = null;
@@ -13,7 +14,7 @@ vi.mock("@/lib/auth-context", () => ({
 describe("LandingGate", () => {
   it("shows the landing with links to sign up and log in when logged out", () => {
     user = null;
-    render(
+    renderWithIntl(
       <LandingGate>
         <p>Hoy entrenas</p>
       </LandingGate>,
@@ -38,7 +39,7 @@ describe("LandingGate", () => {
   it("waits for the session before choosing landing or home", () => {
     user = null;
     loading = true;
-    render(
+    renderWithIntl(
       <LandingGate>
         <p>Hoy entrenas</p>
       </LandingGate>,
@@ -51,7 +52,7 @@ describe("LandingGate", () => {
 
   it("shows the app home when logged in", () => {
     user = { id: "u1" };
-    render(
+    renderWithIntl(
       <LandingGate>
         <p>Hoy entrenas</p>
       </LandingGate>,

@@ -64,7 +64,7 @@ export default function AjustesPage() {
               <SettingsRowContent
                 Icon={currentTheme.icon}
                 label={t("settings.theme")}
-                value={currentTheme.label}
+                value={t(`theme.${currentTheme.value}`)}
               />
             </button>
             <button

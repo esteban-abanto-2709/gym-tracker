@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useMeasurements } from "@/hooks/useMeasurements";
 import {
   MEASURE_FIELDS,
@@ -19,6 +20,8 @@ import { cn } from "@/lib/utils";
 const RECENT = 3;
 
 export function MeasurementsSection() {
+  const t = useTranslations("profile.measurements");
+  const locale = useLocale();
   const { measurements, loading, save, remove } = useMeasurements();
   const [sheetDate, setSheetDate] = useState<string | null>(null);
   const latest = latestByField(measurements);
@@ -27,7 +30,7 @@ export function MeasurementsSection() {
   return (
     <section id="medidas" className="mt-6 scroll-mt-6">
       <div className="flex items-center justify-between mb-2 min-h-9">
-        <p className="kicker text-primary text-2xs">{"// medidas"}</p>
+        <p className="kicker text-primary text-2xs">{t("kicker")}</p>
         {measurements.length > 0 && (
           <button
             type="button"
@@ -35,7 +38,7 @@ export function MeasurementsSection() {
             className="flex items-center gap-1.5 rounded-xl border-2 border-primary px-3 py-1.5 text-primary font-display uppercase tracking-wide text-sm active:scale-95 transition-all"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
-            Medir
+            {t("measure")}
           </button>
         )}
       </div>
@@ -48,8 +51,7 @@ export function MeasurementsSection() {
         <div className="rounded-2xl border-2 border-dashed border-input p-5 text-center">
           <Ruler className="w-7 h-7 mx-auto text-muted-foreground/60" />
           <p className="mt-2 text-sm text-muted-foreground text-balance">
-            Agrega tus medidas cuando quieras. Ayudan a tu IA a entender tu
-            progreso.
+            {t("empty")}
           </p>
           <Button
             size="lg"
@@ -58,13 +60,13 @@ export function MeasurementsSection() {
             className="mt-4 py-2.5 rounded-xl text-base"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
-            Registrar medida
+            {t("add")}
           </Button>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-3 gap-2">
-            {MEASURE_FIELDS.map(({ key, label, unit }) => {
+            {MEASURE_FIELDS.map(({ key, unit }) => {
               const last = latest[key];
               return (
                 <div
@@ -72,7 +74,7 @@ export function MeasurementsSection() {
                   className={cn(surfaceClass, "px-2 py-3 text-center")}
                 >
                   <p className="kicker text-5xs text-muted-foreground">
-                    {label}
+                    {t(`fields.${key}`)}
                   </p>
                   <p className="mt-1.5 font-display font-bold text-2xl leading-none tabular-nums text-foreground">
                     {last ? last.value : "—"}
@@ -83,7 +85,7 @@ export function MeasurementsSection() {
                     )}
                   </p>
                   <p className="mt-1.5 text-2xs text-muted-foreground">
-                    {last ? formatShortDate(last.date) : "sin dato"}
+                    {last ? formatShortDate(last.date, locale) : t("noData")}
                   </p>
                 </div>
               );
@@ -104,7 +106,7 @@ export function MeasurementsSection() {
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/50 active:bg-muted transition-colors"
                 >
                   <span className="kicker text-3xs text-muted-foreground w-20 shrink-0">
-                    {formatShortDate(m.date)}
+                    {formatShortDate(m.date, locale)}
                   </span>
                   <span className="flex-1 min-w-0 text-sm font-bold text-foreground tabular-nums truncate">
                     {formatMeasurement(m)}
@@ -116,8 +118,7 @@ export function MeasurementsSection() {
           </ul>
           {measurements.length > RECENT && (
             <p className="mt-2 px-1 text-xs text-muted-foreground">
-              {measurements.length - RECENT} más. Para editar una anterior,
-              elige su fecha en Medir.
+              {t("more", { count: measurements.length - RECENT })}
             </p>
           )}
         </>

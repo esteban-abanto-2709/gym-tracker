@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { KeyRound, Pencil } from "lucide-react";
@@ -25,6 +26,7 @@ import {
 const MIN_LENGTH = 8;
 
 export function PasswordRow() {
+  const t = useTranslations();
   const { changePassword } = useAuth();
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState("");
@@ -45,9 +47,7 @@ export function PasswordRow() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (next.length < MIN_LENGTH) {
-      setError(
-        `La nueva contraseña necesita al menos ${MIN_LENGTH} caracteres.`,
-      );
+      setError(t("profile.password.tooShort", { min: MIN_LENGTH }));
       return;
     }
     setError(null);
@@ -56,12 +56,12 @@ export function PasswordRow() {
       await changePassword(current, next);
       setSaving(false);
       handleOpenChange(false);
-      toast.success(
-        "Contraseña cambiada. Cerramos tu sesión en los demás dispositivos.",
-      );
+      toast.success(t("profile.password.changed"));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "No se pudo cambiar la contraseña",
+        err instanceof Error
+          ? err.message
+          : t("auth.errors.changePasswordFailed"),
       );
       setSaving(false);
     }
@@ -76,8 +76,8 @@ export function PasswordRow() {
       >
         <SettingsRowContent
           Icon={KeyRound}
-          label="Contraseña"
-          value="Cambiar"
+          label={t("profile.password.label")}
+          value={t("profile.password.change")}
           Trailing={Pencil}
         />
       </button>
@@ -87,16 +87,17 @@ export function PasswordRow() {
           <form onSubmit={onSubmit} className="grid gap-4">
             <AlertDialogHeader>
               <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
-                Cambiar contraseña
+                {t("profile.password.title")}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Sigues dentro en este dispositivo; en los demás tendrás que
-                volver a entrar.
+                {t("profile.password.message")}
               </AlertDialogDescription>
             </AlertDialogHeader>
 
             <div className="space-y-1.5">
-              <Label htmlFor="current-password">Contraseña actual</Label>
+              <Label htmlFor="current-password">
+                {t("profile.password.current")}
+              </Label>
               <PasswordInput
                 id="current-password"
                 autoComplete="current-password"
@@ -105,7 +106,7 @@ export function PasswordRow() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="new-password">Nueva contraseña</Label>
+              <Label htmlFor="new-password">{t("profile.password.new")}</Label>
               <PasswordInput
                 id="new-password"
                 autoComplete="new-password"
@@ -118,7 +119,7 @@ export function PasswordRow() {
 
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl" disabled={saving}>
-                Cancelar
+                {t("common.cancel")}
               </AlertDialogCancel>
               <Button
                 size="md"
@@ -127,7 +128,7 @@ export function PasswordRow() {
                 className="py-2 flex disabled:opacity-60"
               >
                 {saving && <Spinner className="size-4" />}
-                Guardar
+                {t("profile.password.save")}
               </Button>
             </AlertDialogFooter>
           </form>

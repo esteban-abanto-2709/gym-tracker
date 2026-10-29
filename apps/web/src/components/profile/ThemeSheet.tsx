@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth-context";
 import { notifyError } from "@/lib/notify";
 import type { Theme } from "@/lib/types";
@@ -9,23 +10,14 @@ import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { BottomSheet, SheetHeader } from "@/components/base/sheet";
 import { cn } from "@/lib/utils";
 
-export const THEME_OPTIONS: {
-  value: Theme;
-  label: string;
-  hint: string;
-  icon: LucideIcon;
-}[] = [
-  {
-    value: "system",
-    label: "Sistema",
-    hint: "Sigue el modo de tu celular",
-    icon: Monitor,
-  },
-  { value: "light", label: "Claro", hint: "Siempre claro", icon: Sun },
-  { value: "dark", label: "Oscuro", hint: "Siempre oscuro", icon: Moon },
+export const THEME_OPTIONS: { value: Theme; icon: LucideIcon }[] = [
+  { value: "system", icon: Monitor },
+  { value: "light", icon: Sun },
+  { value: "dark", icon: Moon },
 ];
 
 export function ThemeSheet({ onClose }: { onClose: () => void }) {
+  const t = useTranslations("profile.theme");
   const { user, updateMe } = useAuth();
   const { theme, setTheme } = useTheme();
   const current = theme ?? "system";
@@ -37,17 +29,25 @@ export function ThemeSheet({ onClose }: { onClose: () => void }) {
       await updateMe({ theme: value });
     } catch {
       setTheme(user?.theme ?? "system");
-      notifyError("No se pudo guardar el tema");
+      notifyError(t("saveError"));
     }
   };
 
   return (
-    <BottomSheet label="Tema" onClose={onClose}>
+    <BottomSheet label={t("title")} onClose={onClose}>
       <div className="max-w-md mx-auto">
-        <SheetHeader kicker="// preferencias" title="Tema" onClose={onClose} />
+        <SheetHeader
+          kicker={t("kicker")}
+          title={t("title")}
+          onClose={onClose}
+        />
 
-        <div role="radiogroup" aria-label="Tema" className="mt-5 grid gap-2">
-          {THEME_OPTIONS.map(({ value, label, hint, icon: Icon }) => {
+        <div
+          role="radiogroup"
+          aria-label={t("title")}
+          className="mt-5 grid gap-2"
+        >
+          {THEME_OPTIONS.map(({ value, icon: Icon }) => {
             const selected = value === current;
             return (
               <button
@@ -69,10 +69,10 @@ export function ThemeSheet({ onClose }: { onClose: () => void }) {
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block font-bold text-foreground">
-                    {label}
+                    {t(value)}
                   </span>
                   <span className="block text-sm text-muted-foreground truncate">
-                    {hint}
+                    {t(`${value}Hint`)}
                   </span>
                 </span>
                 {selected && (

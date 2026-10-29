@@ -269,6 +269,69 @@
       "exerciseNames": "Nombres de ejercicios",
       "exerciseNamesHint": "Cómo se ven en tus rutinas y tu historial. Para buscar sirve cualquier idioma.",
       "saveError": "No se pudo guardar el idioma"
+    },
+    "kicker": "// tu cuenta",
+    "title": "Perfil",
+    "settingsLink": "Ajustes",
+    "birth": {
+      "label": "Nacimiento",
+      "value": "{date} · {age} años",
+      "add": "Agregar",
+      "input": "Fecha de nacimiento",
+      "saveError": "No se pudo guardar tu fecha de nacimiento"
+    },
+    "deleteAccount": {
+      "title": "¿Borrar tu cuenta?",
+      "message": "Se borran para siempre tus series, rutinas, programas, medidas y fecha de nacimiento. No se puede deshacer.",
+      "confirmPassword": "Escribe tu contraseña para confirmar",
+      "confirmEmail": "Escribe tu correo para confirmar",
+      "submit": "Borrar mi cuenta"
+    },
+    "measurements": {
+      "kicker": "// medidas",
+      "measure": "Medir",
+      "empty": "Agrega tus medidas cuando quieras. Ayudan a tu IA a entender tu progreso.",
+      "add": "Registrar medida",
+      "edit": "Editar medida",
+      "noData": "sin dato",
+      "more": "{count} más. Para editar una anterior, elige su fecha en Medir.",
+      "date": "Fecha",
+      "fillWhatYouHave": "Llena solo lo que te midieron.",
+      "fieldInput": "{field} ({unit})",
+      "range": "{field} entre {min} y {max} {unit}",
+      "update": "Actualizar",
+      "save": "Guardar",
+      "confirmDelete": "Toca otra vez para borrar",
+      "delete": "Borrar medida",
+      "saveError": "No se pudo guardar la medida",
+      "deleteError": "No se pudo borrar la medida",
+      "fields": {
+        "heightCm": "Altura",
+        "weightKg": "Peso",
+        "bodyFatPct": "Grasa"
+      }
+    },
+    "password": {
+      "label": "Contraseña",
+      "change": "Cambiar",
+      "title": "Cambiar contraseña",
+      "message": "Sigues dentro en este dispositivo; en los demás tendrás que volver a entrar.",
+      "current": "Contraseña actual",
+      "new": "Nueva contraseña",
+      "tooShort": "La nueva contraseña necesita al menos {min} caracteres.",
+      "changed": "Contraseña cambiada. Cerramos tu sesión en los demás dispositivos.",
+      "save": "Guardar"
+    },
+    "theme": {
+      "title": "Tema",
+      "kicker": "// preferencias",
+      "system": "Sistema",
+      "systemHint": "Sigue el modo de tu celular",
+      "light": "Claro",
+      "lightHint": "Siempre claro",
+      "dark": "Oscuro",
+      "darkHint": "Siempre oscuro",
+      "saveError": "No se pudo guardar el tema"
     }
   },
   "routines": {
@@ -441,5 +504,178 @@
       "warmup": "calentamiento",
       "ramp": "rampa"
     }
+  },
+  "news": {
+    "button": "Novedades",
+    "buttonUnread": "Novedades, hay algo nuevo",
+    "kicker": "// lo que puedes hacer",
+    "seen": "Ya vistas",
+    "new": "Nuevo",
+    "go": "Ir",
+    "items": {
+      "explore-programs-2": {
+        "title": "Publica y copia rutinas y programas",
+        "body": "Lo tuyo ahora es privado: publica lo que quieras con el globo del editor. En Explorar copia un programa entero o una sola rutina, dale me gusta y comparte el link."
+      },
+      "programs": {
+        "title": "Arma tu programa y la app te dice qué toca hoy",
+        "body": "Agrupa tus rutinas en el orden en que las haces. Al abrir la app, Hoy te muestra la que sigue y empiezas de un toque."
+      },
+      "streak": {
+        "title": "Tu racha por ejercicio",
+        "body": "Ponle un rango a tus series (por ejemplo 8–10). El fuego cuenta las sesiones seguidas en que llegaste al tope en todas; tócalo para ver el historial del ejercicio y si toca subir."
+      },
+      "tiktok": {
+        "title": "¿No sabes cómo se hace un ejercicio?",
+        "body": "Mientras entrenas, toca el botón de TikTok y ves videos de ese ejercicio sin buscarlo a mano."
+      },
+      "export-for-ai": {
+        "title": "Exporta tu historial para tu IA",
+        "body": "Elige un rango de fechas y comparte un archivo con tus series, rutinas y medidas. Pásaselo a tu IA y pídele que revise tu progreso."
+      },
+      "body-measurements": {
+        "title": "Registra tus medidas",
+        "body": "Anota altura, peso y % de grasa con su fecha para ver cómo cambias. Van en el archivo que exportas, así tu IA te asesora mejor."
+      },
+      "exercise-language": {
+        "title": "Ejercicios en inglés o español",
+        "body": "Elige cómo se ven los nombres en tus rutinas y tu historial en Perfil → Ajustes. Para buscar sirve cualquiera."
+      }
+    }
+  },
+  "explore": {
+    "title": "Explorar",
+    "description": "Rutinas y programas de entrenamiento publicados por la comunidad de Gym Tracker. Cópialos y entrena.",
+    "tabs": {
+      "programs": "Programas",
+      "routines": "Rutinas",
+      "mine": "Mías"
+    },
+    "sorts": {
+      "likes": "Populares",
+      "copies": "Más copiados",
+      "recent": "Recientes"
+    },
+    "emptyTitle": "Nada publicado aún",
+    "emptyProgram": "Publica un programa desde su editor, con el ícono del globo.",
+    "emptyRoutine": "Publica una rutina desde su editor, con el ícono del globo.",
+    "yours": "Tuya",
+    "program": "Programa",
+    "routine": "Rutina",
+    "by": "de",
+    "routines": "{count, plural, one {# rutina} other {# rutinas}}",
+    "exercises": "{count, plural, one {# ejercicio} other {# ejercicios}}",
+    "likesLabel": "me gusta",
+    "copiesLabel": "copias",
+    "likes": "{count} me gusta",
+    "copies": "{count, plural, one {# copia} other {# copias}}",
+    "like": "Me gusta",
+    "unlike": "Quitar me gusta",
+    "likeError": "No se pudo guardar tu me gusta",
+    "unavailable": "Esta publicación ya no está disponible.",
+    "unavailableTitle": "No disponible",
+    "metaProgram": "Programa de {author} · {exercises}. Cópialo en Gym Tracker.",
+    "metaRoutine": "Rutina de {author} · {exercises}. Cópiala en Gym Tracker.",
+    "copying": "Copiando...",
+    "programCopiedActive": "Programa copiado y activado",
+    "programCopied": "Programa copiado",
+    "routineCopied": "Rutina copiada",
+    "copyError": "No se pudo copiar",
+    "copyRoutineError": "No se pudo copiar la rutina",
+    "copyOnly": "Copiar solo {name}",
+    "onlyThis": "Solo esta",
+    "signUp": "Crea tu cuenta",
+    "signUpHintProgram": "Con tu cuenta copias este programa y lo cambias a tu gusto.",
+    "signUpHintRoutine": "Con tu cuenta copias esta rutina y la cambias a tu gusto.",
+    "haveAccount": "Ya tengo cuenta",
+    "copyProgram": "Copiar programa",
+    "copyRoutine": "Copiar rutina",
+    "yourCopy": "Es tu copia: puedes cambiarla sin tocar la original.",
+    "share": "Compartir",
+    "linkCopied": "Link copiado",
+    "copyThisLink": "Copia este link",
+    "mine": {
+      "rename": "Renombrar {name}",
+      "delete": "Eliminar {name}",
+      "renameError": "No se pudo cambiar el nombre",
+      "deleted": "Publicación eliminada",
+      "deleteError": "No se pudo eliminar la publicación"
+    },
+    "deleteDialog": {
+      "title": "¿Eliminar la publicación?",
+      "message": "\"{name}\" deja de verse en Explorar y no se puede deshacer.",
+      "messageUnnamed": "Esta publicación deja de verse en Explorar y no se puede deshacer.",
+      "noLikes": "No tiene me gusta.",
+      "losesLikes": "Pierdes {count} me gusta.",
+      "noCopies": "Nadie la ha copiado.",
+      "copies": "{count, plural, one {# persona la copió} other {# personas la copiaron}}: sus copias se quedan.",
+      "original": "Tu rutina o programa original no se toca.",
+      "deleting": "Eliminando...",
+      "delete": "Eliminar publicación"
+    },
+    "rename": {
+      "title": "Renombrar",
+      "message": "Solo cambia el nombre visible. La dirección y lo publicado se quedan igual.",
+      "name": "Nombre",
+      "save": "Guardar"
+    },
+    "publish": {
+      "publishing": "Publicando...",
+      "routine": "Publicar rutina",
+      "program": "Publicar programa",
+      "preview": "Vista previa",
+      "emptyProgram": "Agrega rutinas al programa antes de publicarlo.",
+      "snapshot": "Se publica tal como está hoy. Si después la cambias, la publicación no cambia.",
+      "slug": "Dirección (URL)",
+      "description": "Descripción (opcional)",
+      "descriptionPlaceholder": "Para quién es, cuántos días, qué busca",
+      "submit": "Publicar",
+      "checking": "Revisando...",
+      "free": "Disponible",
+      "taken": "Ya está en uso. Prueba otra.",
+      "invalid": "De 3 a 60 caracteres: minúsculas, números y guiones.",
+      "routinePublished": "Rutina publicada",
+      "programPublished": "Programa publicado",
+      "error": "No se pudo publicar"
+    }
+  },
+  "landing": {
+    "kicker": "// entra, entrena, vete",
+    "titleLine1": "Registra",
+    "titleLine2": "entre series.",
+    "titleLine3": "Sin pensar.",
+    "subtitle": "Ves lo que hiciste la vez pasada, la app te dice si toca subir, lo registras y sueltas el celular.",
+    "signUp": "Crear cuenta",
+    "haveAccount": "Ya tengo cuenta",
+    "features": {
+      "lastTime": {
+        "title": "La vez pasada, a la vista",
+        "text": "El peso y las reps de tu última serie aparecen antes de que empieces la siguiente. Repetirlo es un toque."
+      },
+      "goUp": {
+        "title": "Te dice cuándo subir",
+        "text": "Cuando todas tus series llegan al tope del rango, toca subir el peso. La app lleva la cuenta; tú decides."
+      },
+      "noSetup": {
+        "title": "Cero configuración",
+        "text": "Sin encuestas ni objetivos. Entras, eliges una rutina o copias la de un amigo, y entrenas."
+      }
+    },
+    "preview": {
+      "label": "Así se ve una serie en la app",
+      "exercise": "Press de banca",
+      "sets": "3 series de 10"
+    },
+    "notHere": {
+      "nutrition": "Nutrición.",
+      "feed": "Feed.",
+      "paywall": "Muro de pago."
+    },
+    "onlyTraining": "Solo tu entrenamiento.",
+    "yourData": "Tus datos son tuyos",
+    "yourDataText": "Tu edad, tu peso y tus medidas son opcionales: los agregas cuando quieras, nunca antes de entrenar. Y puedes exportar todo para que lo analice tu IA.",
+    "privacyLink": "Cómo cuidamos tus datos",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "login": "Ingresa"
   }
 }

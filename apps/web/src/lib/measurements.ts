@@ -4,14 +4,13 @@ export type MeasureField = "weightKg" | "bodyFatPct" | "heightCm";
 
 export const MEASURE_FIELDS: {
   key: MeasureField;
-  label: string;
   unit: string;
   min: number;
   max: number;
 }[] = [
-  { key: "heightCm", label: "Altura", unit: "cm", min: 50, max: 250 },
-  { key: "weightKg", label: "Peso", unit: "kg", min: 20, max: 400 },
-  { key: "bodyFatPct", label: "Grasa", unit: "%", min: 2, max: 70 },
+  { key: "heightCm", unit: "cm", min: 50, max: 250 },
+  { key: "weightKg", unit: "kg", min: 20, max: 400 },
+  { key: "bodyFatPct", unit: "%", min: 2, max: 70 },
 ];
 
 export const todayLocal = () => new Date().toLocaleDateString("en-CA");
@@ -21,9 +20,13 @@ const parseDate = (date: string) => {
   return new Date(y, m - 1, d);
 };
 
-export function formatShortDate(date: string, today = todayLocal()): string {
+export function formatShortDate(
+  date: string,
+  locale: string,
+  today = todayLocal(),
+): string {
   const sameYear = date.slice(0, 4) === today.slice(0, 4);
-  return new Intl.DateTimeFormat("es-ES", {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
     ...(sameYear ? {} : { year: "numeric" }),

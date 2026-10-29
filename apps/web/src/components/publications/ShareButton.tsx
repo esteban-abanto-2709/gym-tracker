@@ -1,9 +1,11 @@
 "use client";
 
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Share2 } from "lucide-react";
 
 export function ShareButton({ title, path }: { title: string; path: string }) {
+  const t = useTranslations("explore");
   const share = async () => {
     const url = `${window.location.origin}${path}`;
     if (navigator.share) {
@@ -18,10 +20,10 @@ export function ShareButton({ title, path }: { title: string; path: string }) {
     }
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copiado");
+      toast.success(t("linkCopied"));
     } catch (e) {
       console.error("Error copying link:", e);
-      toast("Copia este link", { description: url, duration: 10000 });
+      toast(t("copyThisLink"), { description: url, duration: 10000 });
     }
   };
 
@@ -30,8 +32,8 @@ export function ShareButton({ title, path }: { title: string; path: string }) {
       type="button"
       onClick={share}
       className="text-muted-foreground hover:text-foreground transition-colors"
-      title="Compartir"
-      aria-label="Compartir"
+      title={t("share")}
+      aria-label={t("share")}
     >
       <Share2 className="w-5 h-5" />
     </button>

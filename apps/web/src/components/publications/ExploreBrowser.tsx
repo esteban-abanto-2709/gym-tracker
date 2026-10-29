@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
@@ -19,19 +20,12 @@ import { ExploreCard, ExploreEmpty, ExploreLoading } from "./ExploreCard";
 import { MyPublications } from "./MyPublications";
 import { cn } from "@/lib/utils";
 
-const TABS: { value: ExploreTab; label: string }[] = [
-  { value: "programs", label: "Programas" },
-  { value: "routines", label: "Rutinas" },
-  { value: "mine", label: "Mías" },
-];
+const TABS: ExploreTab[] = ["programs", "routines", "mine"];
 
-const SORTS: { value: ExploreSort; label: string }[] = [
-  { value: "likes", label: "Populares" },
-  { value: "copies", label: "Más copiados" },
-  { value: "recent", label: "Recientes" },
-];
+const SORTS: ExploreSort[] = ["likes", "copies", "recent"];
 
 export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
+  const t = useTranslations("explore");
   const router = useRouter();
   const [tab, setTab] = useState(initialTab);
   const [sort, setSort] = useState<ExploreSort>("likes");
@@ -48,7 +42,7 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
   };
 
   const hasMine = (mine?.length ?? 0) > 0;
-  const tabs = TABS.filter((t) => t.value !== "mine" || hasMine);
+  const tabs = TABS.filter((value) => value !== "mine" || hasMine);
   const current =
     tab === "mine" && mine !== null && !hasMine ? "programs" : tab;
 
@@ -61,7 +55,7 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
     <PageShell variant="history">
       <AppHeader
         leftAction={<BackAction href={routes.home()} />}
-        title="Explorar"
+        title={t("title")}
       >
         <div
           role="tablist"
@@ -70,21 +64,21 @@ export function ExploreBrowser({ initialTab }: { initialTab: ExploreTab }) {
             tabs.length === 3 ? "grid-cols-3" : "grid-cols-2",
           )}
         >
-          {tabs.map((t) => (
+          {tabs.map((value) => (
             <button
-              key={t.value}
+              key={value}
               type="button"
               role="tab"
-              aria-selected={current === t.value}
-              onClick={() => changeTab(t.value)}
+              aria-selected={current === value}
+              onClick={() => changeTab(value)}
               className={cn(
                 "rounded-lg py-2 font-display uppercase tracking-wide transition-colors",
-                current === t.value
+                current === value
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {t.label}
+              {t(`tabs.${value}`)}
             </button>
           ))}
         </div>
@@ -120,25 +114,26 @@ function PublicList({
   sort: ExploreSort;
   onSort: (sort: ExploreSort) => void;
 }) {
+  const t = useTranslations("explore");
   const { items, loading } = useExplore(kind, sort);
 
   return (
     <>
       <div className="flex gap-2 overflow-x-auto pb-1">
-        {SORTS.map((s) => (
+        {SORTS.map((value) => (
           <button
-            key={s.value}
+            key={value}
             type="button"
-            aria-pressed={sort === s.value}
-            onClick={() => onSort(s.value)}
+            aria-pressed={sort === value}
+            onClick={() => onSort(value)}
             className={cn(
               "shrink-0 rounded-full border-2 px-3 py-1 text-sm font-bold transition-colors",
-              sort === s.value
+              sort === value
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-input text-muted-foreground hover:text-foreground",
             )}
           >
-            {s.label}
+            {t(`sorts.${value}`)}
           </button>
         ))}
       </div>
@@ -147,12 +142,8 @@ function PublicList({
         <ExploreLoading />
       ) : items.length === 0 ? (
         <ExploreEmpty
-          title="Nada publicado aún"
-          hint={
-            kind === "PROGRAM"
-              ? "Publica un programa desde su editor, con el ícono del globo."
-              : "Publica una rutina desde su editor, con el ícono del globo."
-          }
+          title={t("emptyTitle")}
+          hint={t(kind === "PROGRAM" ? "emptyProgram" : "emptyRoutine")}
         />
       ) : (
         items.map((item) => <ExploreCard key={item.id} item={item} />)

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -31,6 +32,7 @@ interface PublishFormProps {
 const NO_ROUTINES: Routine[] = [];
 
 export function PublishForm({ kind, sourceId }: PublishFormProps) {
+  const t = useTranslations("explore.publish");
   const router = useRouter();
   const isRoutine = kind === "ROUTINE";
   const backHref = isRoutine
@@ -107,14 +109,14 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
         description: description.trim() || undefined,
       });
       getQueryClient().invalidateQueries({ queryKey: exploreKey });
-      toast.success(isRoutine ? "Rutina publicada" : "Programa publicado");
+      toast.success(t(isRoutine ? "routinePublished" : "programPublished"));
       router.push(backHref);
     } catch (e) {
       setPublishing(false);
       if (e instanceof Error && e.message === "Slug already taken") {
         setChecked({ slug, available: false });
       } else {
-        notifyError("No se pudo publicar", handlePublish);
+        notifyError(t("error"), handlePublish);
       }
     }
   };
@@ -123,11 +125,11 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
 
   return (
     <PageShell variant="history">
-      {publishing && <LoadingOverlay label="Publicando..." />}
+      {publishing && <LoadingOverlay label={t("publishing")} />}
 
       <AppHeader
         leftAction={<BackAction href={backHref} />}
-        title={isRoutine ? "Publicar rutina" : "Publicar programa"}
+        title={t(isRoutine ? "routine" : "program")}
       />
 
       <main className="flex-1 px-6 py-8 relative z-10 animate-fade-in-up">
@@ -139,7 +141,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
           ) : (
             <>
               <div>
-                <p className="kicker text-primary text-3xs">Vista previa</p>
+                <p className="kicker text-primary text-3xs">{t("preview")}</p>
                 <h2
                   className={heading({
                     size: "md",
@@ -152,7 +154,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
 
               {empty ? (
                 <p className="text-sm text-muted-foreground">
-                  Agrega rutinas al programa antes de publicarlo.
+                  {t("emptyProgram")}
                 </p>
               ) : (
                 <RoutineSnapshotList routines={routines} />
@@ -160,10 +162,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
 
               <div className="flex gap-3 rounded-2xl bg-secondary/60 p-4 text-sm text-muted-foreground">
                 <Camera className="w-5 h-5 shrink-0 text-primary" />
-                <p>
-                  Se publica tal como está hoy. Si después la cambias, la
-                  publicación no cambia.
-                </p>
+                <p>{t("snapshot")}</p>
               </div>
 
               <div className="space-y-2">
@@ -171,7 +170,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
                   htmlFor="publish-slug"
                   className="kicker text-muted-foreground text-3xs"
                 >
-                  Dirección (URL)
+                  {t("slug")}
                 </label>
                 <input
                   id="publish-slug"
@@ -201,7 +200,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
                   htmlFor="publish-description"
                   className="kicker text-muted-foreground text-3xs"
                 >
-                  Descripción (opcional)
+                  {t("description")}
                 </label>
                 <textarea
                   id="publish-description"
@@ -209,7 +208,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
                   onChange={(e) => setDescription(e.target.value)}
                   maxLength={DESCRIPTION_MAX}
                   rows={3}
-                  placeholder="Para quién es, cuántos días, qué busca"
+                  placeholder={t("descriptionPlaceholder")}
                   className="w-full rounded-xl border-2 border-input bg-card px-3 py-3 text-base text-foreground outline-none focus:border-primary transition-colors placeholder:text-muted-foreground/60 resize-none"
                 />
                 <p className="text-right text-xs text-muted-foreground">
@@ -223,7 +222,7 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
                 disabled={!canPublish}
                 className="hover:shadow-xl hover:shadow-primary/30"
               >
-                Publicar
+                {t("submit")}
               </Button>
             </>
           )}
@@ -234,11 +233,12 @@ export function PublishForm({ kind, sourceId }: PublishFormProps) {
 }
 
 function SlugHint({ status }: { status: SlugStatus }) {
+  const t = useTranslations("explore.publish");
   if (status === "checking") {
     return (
       <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <Spinner className="size-4" />
-        Revisando...
+        {t("checking")}
       </p>
     );
   }
@@ -246,16 +246,14 @@ function SlugHint({ status }: { status: SlugStatus }) {
     return (
       <p className="flex items-center gap-1.5 text-sm text-success">
         <Check className="w-4 h-4" />
-        Disponible
+        {t("free")}
       </p>
     );
   }
   return (
     <p className="flex items-center gap-1.5 text-sm text-destructive">
       <X className="w-4 h-4" />
-      {status === "taken"
-        ? "Ya está en uso. Prueba otra."
-        : "De 3 a 60 caracteres: minúsculas, números y guiones."}
+      {t(status === "taken" ? "taken" : "invalid")}
     </p>
   );
 }

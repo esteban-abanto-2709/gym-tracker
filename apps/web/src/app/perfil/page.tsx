@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { routes } from "@/lib/routes";
 import { useAuth } from "@/lib/auth-context";
 import { PageShell } from "@/components/layout/PageShell";
@@ -12,6 +13,7 @@ import { surfaceClass } from "@/components/base/surface";
 import { cn } from "@/lib/utils";
 
 export default function PerfilPage() {
+  const t = useTranslations("profile");
   const { user } = useAuth();
   const initial = user?.username?.charAt(0)?.toUpperCase() ?? "?";
 
@@ -19,7 +21,7 @@ export default function PerfilPage() {
     <PageShell variant="history">
       <main className="flex-1 px-6 pt-[calc(2.5rem+env(safe-area-inset-top))] pb-nav relative z-10 animate-fade-in-up">
         <div className="max-w-md mx-auto">
-          <p className="kicker text-primary text-2xs">{"// tu cuenta"}</p>
+          <p className="kicker text-primary text-2xs">{t("kicker")}</p>
           <div className="mt-2 flex items-end justify-between gap-4">
             <h1
               className={heading({
@@ -27,11 +29,11 @@ export default function PerfilPage() {
                 className: "text-foreground leading-[0.9]",
               })}
             >
-              Perfil
+              {t("title")}
             </h1>
             <Link
               href={routes.settings()}
-              aria-label="Ajustes"
+              aria-label={t("settingsLink")}
               className="w-11 h-11 grid place-items-center rounded-xl border-2 border-input text-muted-foreground hover:text-primary hover:border-primary/50 active:scale-95 transition-all"
             >
               <Settings className="w-5 h-5" strokeWidth={2.5} />

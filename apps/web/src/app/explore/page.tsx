@@ -1,12 +1,12 @@
 import { ExploreBrowser } from "@/components/publications/ExploreBrowser";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import type { ExploreTab } from "@/lib/types";
 
-export const metadata: Metadata = {
-  title: "Explorar",
-  description:
-    "Rutinas y programas de entrenamiento publicados por la comunidad de Gym Tracker. Cópialos y entrena.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("explore");
+  return { title: t("title"), description: t("description") };
+}
 
 export default async function ExplorePage({
   searchParams,
