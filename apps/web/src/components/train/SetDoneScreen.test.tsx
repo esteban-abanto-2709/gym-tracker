@@ -1,12 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { SetDoneScreen } from "./SetDoneScreen";
 
 describe("SetDoneScreen", () => {
   it("finishing is the main action and an extra set keeps training", () => {
     const onFinish = vi.fn();
     const onExtraSet = vi.fn();
-    render(<SetDoneScreen onFinish={onFinish} onExtraSet={onExtraSet} />);
+    renderWithIntl(
+      <SetDoneScreen onFinish={onFinish} onExtraSet={onExtraSet} />,
+    );
 
     expect(screen.getByText("¡Rutina completada!")).toBeDefined();
     const [first, second] = screen.getAllByRole("button");

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { ContinueRoutineBanner } from "./ContinueRoutineBanner";
 
 const saveSession = (startedAt: string) =>
@@ -16,7 +17,7 @@ const saveSession = (startedAt: string) =>
 
 describe("ContinueRoutineBanner", () => {
   it("is hidden without an active session", () => {
-    const { container } = render(<ContinueRoutineBanner />);
+    const { container } = renderWithIntl(<ContinueRoutineBanner />);
 
     expect(container.innerHTML).toBe("");
   });
@@ -24,7 +25,7 @@ describe("ContinueRoutineBanner", () => {
   it("invites to continue the routine with a session from today", () => {
     saveSession(new Date().toISOString());
 
-    render(<ContinueRoutineBanner />);
+    renderWithIntl(<ContinueRoutineBanner />);
 
     expect(screen.getByText("En curso · Upper A")).toBeTruthy();
     expect(screen.getByRole("link").getAttribute("href")).toBe("/train");
@@ -33,7 +34,7 @@ describe("ContinueRoutineBanner", () => {
   it("is hidden with a session from another day", () => {
     saveSession("2020-01-01T10:00:00Z");
 
-    const { container } = render(<ContinueRoutineBanner />);
+    const { container } = renderWithIntl(<ContinueRoutineBanner />);
 
     expect(container.innerHTML).toBe("");
   });

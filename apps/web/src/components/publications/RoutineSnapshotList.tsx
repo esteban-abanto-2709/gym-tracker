@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { formatBlocks } from "@/lib/blocks";
 import type { RoutineItem } from "@/lib/types";
 import { surfaceClass } from "@/components/base/surface";
@@ -17,6 +18,7 @@ export function RoutineSnapshotList<T extends SnapshotRoutine>({
   routines: T[];
   renderAction?: (routine: T) => ReactNode;
 }) {
+  const tBlocks = useTranslations("blocks");
   return (
     <div className="space-y-3">
       {routines.map((routine, index) => (
@@ -32,7 +34,10 @@ export function RoutineSnapshotList<T extends SnapshotRoutine>({
           </div>
           <ul className="mt-3 space-y-1.5">
             {routine.items.map((item) => {
-              const target = formatBlocks(item.blocks);
+              const target = formatBlocks(item.blocks, {
+                ramp: tBlocks("ramp"),
+                warmup: tBlocks("warmupShort"),
+              });
               return (
                 <li
                   key={item.id ?? item.position}

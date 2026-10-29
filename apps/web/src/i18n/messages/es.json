@@ -8,7 +8,9 @@
     "close": "Cerrar",
     "back": "Volver",
     "goHome": "Ir a Hoy",
-    "privacy": "Privacidad"
+    "privacy": "Privacidad",
+    "saving": "Guardando...",
+    "done": "Listo"
   },
   "nav": {
     "today": "Hoy",
@@ -83,6 +85,169 @@
       "confirmMismatch": "No coincide. Revisa lo que escribiste.",
       "deleteFailed": "No se pudo borrar la cuenta."
     }
+  },
+  "home": {
+    "kicker": "// listo para entrenar",
+    "titleTop": "Hoy",
+    "titleAccent": "entrenas.",
+    "startHere": "Empieza aquí",
+    "exploreTop": "Explorar",
+    "exploreBottom": "programas",
+    "exploreHint": "Copia uno y entrena hoy ·",
+    "buildMine": "Armar el mío",
+    "buildMineHint": "Crea tu primera rutina",
+    "freeDay": "Día libre",
+    "freeDayHint": "Un set suelto",
+    "todayIs": "Hoy toca · {program}",
+    "tapToStart": "Toca para empezar ·",
+    "startStrong": "Empieza fuerte",
+    "startTop": "Iniciar",
+    "startBottom": "rutina",
+    "startHint": "Elige tu rutina y ve paso a paso ·",
+    "inProgress": "En curso · {routine}",
+    "resume": "Continuar donde lo dejaste"
+  },
+  "train": {
+    "noRoutine": "No hay una rutina activa",
+    "noRoutineHint": "Empieza una rutina para entrenar guiado.",
+    "seeRoutines": "Ver mis rutinas",
+    "restTime": "Tiempo de descanso",
+    "ramp": "Rampa",
+    "setNumber": "Serie {number}",
+    "goal": "Meta {target}",
+    "free": "Libre",
+    "next": "Siguiente: {exercise}",
+    "rampSets": "{count, plural, one {# serie} other {# series}}",
+    "done": {
+      "title": "¡Rutina completada!",
+      "extraSet": "Una serie extra"
+    },
+    "finish": {
+      "action": "Terminar sesión",
+      "title": "¿Terminar la sesión?",
+      "remaining": "{count, plural, one {ejercicio sin hacer} other {ejercicios sin hacer}}",
+      "kept": "Lo que ya registraste queda guardado en tu historial.",
+      "keepTraining": "Seguir entrenando",
+      "confirm": "Terminar"
+    },
+    "map": {
+      "title": "Mapa de la sesión",
+      "button": "Mapa de la sesión, {position}/{total}",
+      "position": "Ejercicio {position} de {total}",
+      "skipped": "Saltado",
+      "progress": "{done}/{target} series",
+      "sets": "{count, plural, one {# serie} other {# series}}",
+      "freeSets": "Series libres",
+      "added": "añadido",
+      "options": "Opciones",
+      "reactivate": "Reactivar",
+      "skip": "Saltar",
+      "replace": "Reemplazar",
+      "addExercise": "Agregar ejercicio"
+    },
+    "unsaved": {
+      "saving": "Guardando series",
+      "title": "{count, plural, one {# serie sin guardar} other {# series sin guardar}}",
+      "sending": "Enviando lo que quedó pendiente.",
+      "failed": "No se pudieron enviar. Revisa tu conexión y reintenta.",
+      "discard": "Descartar y salir"
+    },
+    "set": {
+      "noPrevious": "Sin registro previo",
+      "last": "La última vez · {value}",
+      "reps": "Reps",
+      "goalSuffix": " · meta {target}",
+      "warmup": "Calentamiento · ",
+      "rampStep": "Rampa {step} · ",
+      "percentOf": "≈ {pct} % de {weight} kg",
+      "goUp": "Sube a {weight} kg",
+      "time": "Tiempo",
+      "weight": "Peso ({unit})",
+      "log": "Registrar serie"
+    },
+    "rampForm": {
+      "steps": "{count, plural, one {# escalón} other {# escalones}}",
+      "stepReps": "Reps del escalón {step}",
+      "stepWeight": "Peso del escalón {step}",
+      "goUp": "Sube a {weight} {unit}",
+      "done": "Rampa hecha"
+    },
+    "progress": {
+      "streak": "Racha {streak}, ver historial del ejercicio",
+      "history": "Historial · {streak}",
+      "goal": "Meta {sets} × {reps}",
+      "down": "Quedaste por debajo del piso: quizá convenga bajar el peso.",
+      "upStreak": "Varias sesiones al tope: toca subir.",
+      "up": "Llegaste al tope. Si se sintió limpio, sube.",
+      "freeDay": "Día libre",
+      "showMore": "Mostrar más"
+    }
+  },
+  "log": {
+    "title": "Día libre",
+    "kicker": "// registra tu set",
+    "time": "Tiempo",
+    "weight": "Peso ({unit})",
+    "reps": "Repeticiones",
+    "submit": "Registrar Set",
+    "hint": "Se guardará automáticamente con fecha y hora",
+    "pickExercise": "Por favor selecciona un ejercicio antes de guardar."
+  },
+  "success": {
+    "kicker": "// registrado",
+    "title": "¡Set guardado!",
+    "message": "Tu progreso ha sido registrado correctamente.",
+    "repeat": "Repetir ejercicio",
+    "another": "Registrar otro",
+    "toHistory": "Ir al historial",
+    "motto": "Sigue dándole duro, la constancia es la clave"
+  },
+  "measure": {
+    "label": "Se mide en",
+    "weight_reps": "Peso × reps",
+    "reps": "Solo reps",
+    "time": "Tiempo"
+  },
+  "weightUnit": {
+    "current": ", unidad de peso en {unit}"
+  },
+  "duration": {
+    "label": "Duración",
+    "unset": "sin tiempo",
+    "change": "{label}: {value}. Cambiar",
+    "seconds": "seg"
+  },
+  "blocks": {
+    "ramp": "Rampa",
+    "warmupShort": "Cal."
+  },
+  "equipment": {
+    "label": "Equipo",
+    "names": {
+      "barra": "Barra",
+      "polea": "Polea",
+      "mancuerna": "Mancuerna",
+      "maquina": "Máquina",
+      "peso-corporal": "Peso Corporal",
+      "otro": "Otro"
+    }
+  },
+  "exercises": {
+    "label": "Ejercicio",
+    "loading": "Cargando ejercicios...",
+    "searchOther": "Buscar otro ejercicio...",
+    "searchOrCreate": "Busca o escribe para crear...",
+    "unofficial": "No oficial",
+    "create": "Crear \"{name}\"...",
+    "newName": "Nuevo",
+    "newTitle": "Nuevo Ejercicio",
+    "nameQuestion": "¿Cómo se llama?",
+    "namePlaceholder": "Ej. Prensa a una pierna",
+    "creating": "Creando...",
+    "createAndSelect": "Crear y Seleccionar",
+    "createError": "No se pudo crear el ejercicio",
+    "tiktok": "Ver {name} en TikTok",
+    "tiktokTitle": "Ver en TikTok"
   },
   "profile": {
     "settings": {

@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { routes } from "@/lib/routes";
 import { type ActiveSession, readActiveSession } from "@/lib/activeSession";
 import { heading } from "@/components/base/heading";
 
 export function ContinueRoutineBanner() {
+  const t = useTranslations("home");
   const [session] = useState<ActiveSession | null>(readActiveSession);
 
   if (!session) return null;
@@ -21,14 +23,14 @@ export function ContinueRoutineBanner() {
         <span className="shrink-0 w-3 h-3 rounded-full bg-primary animate-pulse-red" />
         <div className="min-w-0">
           <p className="kicker text-primary text-4xs truncate">
-            En curso · {session.routineName}
+            {t("inProgress", { routine: session.routineName })}
           </p>
           <p
             className={heading({
               className: "text-foreground text-xl leading-none mt-1.5",
             })}
           >
-            Continuar donde lo dejaste
+            {t("resume")}
           </p>
         </div>
       </div>

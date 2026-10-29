@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { ExerciseCombobox } from "./ExerciseCombobox";
 import type { Exercise } from "@/lib/types";
 
@@ -10,7 +11,7 @@ const exercises = [
 
 describe("ExerciseCombobox", () => {
   it("marks only user-created exercises as not official", () => {
-    render(
+    renderWithIntl(
       <ExerciseCombobox
         exercises={exercises}
         loadingExercises={false}

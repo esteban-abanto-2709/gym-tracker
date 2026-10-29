@@ -40,9 +40,14 @@ function formatSeconds(totalSec: number): string {
   return `${d.value} ${d.unit}`;
 }
 
-function formatBlock(block: RoutineBlock): string | null {
+export interface BlockLabels {
+  ramp: string;
+  warmup: string;
+}
+
+function formatBlock(block: RoutineBlock, labels: BlockLabels): string | null {
   if (block.kind === "ramp") {
-    return `Rampa ${block.steps.map((step) => step.reps ?? "—").join("/")}`;
+    return `${labels.ramp} ${block.steps.map((step) => step.reps ?? "—").join("/")}`;
   }
   if (block.sets == null) return null;
   const reps =
@@ -55,16 +60,19 @@ function formatBlock(block: RoutineBlock): string | null {
         block.durationSec != null ? formatSeconds(block.durationSec) : "—"
       }`;
     case "warmup":
-      return `Cal. ${block.sets} × ${reps}`;
+      return `${labels.warmup} ${block.sets} × ${reps}`;
     case "weight_reps":
     case "reps":
       return `${block.sets} × ${reps}`;
   }
 }
 
-export function formatBlocks(blocks: RoutineBlock[]): string | null {
+export function formatBlocks(
+  blocks: RoutineBlock[],
+  labels: BlockLabels,
+): string | null {
   const parts = blocks
-    .map(formatBlock)
+    .map((block) => formatBlock(block, labels))
     .filter((part): part is string => part !== null);
   return parts.length > 0 ? parts.join(" + ") : null;
 }

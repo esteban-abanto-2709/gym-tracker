@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { History } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -7,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { heading } from "@/components/base/heading";
 
 export default function SuccessPage() {
+  const t = useTranslations("success");
   return (
     <PageShell>
       <AppHeader />
@@ -32,18 +34,16 @@ export default function SuccessPage() {
             </div>
 
             <div className="space-y-2 animate-fade-in-up [animation-delay:0.2s] opacity-0 [animation-fill-mode:forwards]">
-              <p className="kicker text-primary text-4xs">{"// registrado"}</p>
+              <p className="kicker text-primary text-4xs">{t("kicker")}</p>
               <h1
                 className={heading({
                   size: "lg",
                   className: "text-foreground",
                 })}
               >
-                ¡Set guardado!
+                {t("title")}
               </h1>
-              <p className="text-muted-foreground text-lg">
-                Tu progreso ha sido registrado correctamente.
-              </p>
+              <p className="text-muted-foreground text-lg">{t("message")}</p>
             </div>
           </div>
 
@@ -55,7 +55,7 @@ export default function SuccessPage() {
                 "group relative block hover:shadow-xl hover:shadow-primary/30 overflow-hidden",
               )}
             >
-              <span className="relative z-10">Repetir ejercicio</span>
+              <span className="relative z-10">{t("repeat")}</span>
               <div className="absolute inset-0 bg-linear-to-r from-brand-end to-brand-start opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
 
@@ -63,7 +63,7 @@ export default function SuccessPage() {
               href="/log"
               className="block w-full py-4 text-foreground bg-card/50 backdrop-blur-sm border-2 border-input rounded-2xl font-bold text-lg hover:bg-card hover:border-border transition-all active:scale-95"
             >
-              Registrar otro
+              {t("another")}
             </Link>
 
             <Link
@@ -71,12 +71,12 @@ export default function SuccessPage() {
               className="w-full py-4 text-muted-foreground bg-transparent border-2 border-border rounded-2xl font-bold text-lg hover:text-foreground hover:border-muted-foreground transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <History className="w-5 h-5" />
-              Ir al historial
+              {t("toHistory")}
             </Link>
           </div>
 
           <p className="text-xs text-muted-foreground animate-fade-in-up [animation-delay:0.6s] opacity-0 [animation-fill-mode:forwards]">
-            Sigue dándole duro, la constancia es la clave
+            {t("motto")}
           </p>
         </div>
       </main>

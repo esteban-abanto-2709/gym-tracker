@@ -1,13 +1,14 @@
 "use client";
 
 import { Dumbbell, Repeat, Timer } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { SetMeasure } from "@/lib/setDisplay";
 import { cn } from "@/lib/utils";
 
-const OPTIONS: { value: SetMeasure; label: string; Icon: typeof Dumbbell }[] = [
-  { value: "weight_reps", label: "Peso × reps", Icon: Dumbbell },
-  { value: "reps", label: "Solo reps", Icon: Repeat },
-  { value: "time", label: "Tiempo", Icon: Timer },
+const OPTIONS: { value: SetMeasure; Icon: typeof Dumbbell }[] = [
+  { value: "weight_reps", Icon: Dumbbell },
+  { value: "reps", Icon: Repeat },
+  { value: "time", Icon: Timer },
 ];
 
 interface MeasureSelectorProps {
@@ -16,13 +17,14 @@ interface MeasureSelectorProps {
 }
 
 export function MeasureSelector({ value, onChange }: MeasureSelectorProps) {
+  const t = useTranslations("measure");
   return (
     <div className="space-y-2">
       <label className="kicker text-muted-foreground text-4xs">
-        Se mide en
+        {t("label")}
       </label>
       <div className="flex flex-wrap gap-2">
-        {OPTIONS.map(({ value: option, label, Icon }) => {
+        {OPTIONS.map(({ value: option, Icon }) => {
           const selected = value === option;
           return (
             <button
@@ -38,7 +40,7 @@ export function MeasureSelector({ value, onChange }: MeasureSelectorProps) {
               )}
             >
               <Icon className="w-4 h-4" />
-              {label}
+              {t(option)}
             </button>
           );
         })}

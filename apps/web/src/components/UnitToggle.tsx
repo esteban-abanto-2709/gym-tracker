@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { Unit } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +8,7 @@ interface UnitToggleProps {
 }
 
 export function UnitToggle({ unit, onToggle }: UnitToggleProps) {
+  const t = useTranslations("weightUnit");
   return (
     <button
       type="button"
@@ -26,7 +28,7 @@ export function UnitToggle({ unit, onToggle }: UnitToggleProps) {
           {option}
         </span>
       ))}
-      <span className="sr-only">{`, unidad de peso en ${unit}`}</span>
+      <span className="sr-only">{t("current", { unit })}</span>
     </button>
   );
 }

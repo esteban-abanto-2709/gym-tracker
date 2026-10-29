@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Flag, PartyPopper, Plus } from "lucide-react";
 import { Button } from "@/components/base/button";
 import { heading } from "@/components/base/heading";
@@ -10,6 +11,7 @@ interface SetDoneScreenProps {
 }
 
 export function SetDoneScreen({ onExtraSet, onFinish }: SetDoneScreenProps) {
+  const t = useTranslations("train");
   return (
     <main className="flex-1 flex flex-col px-6 py-8 relative z-10 animate-fade-in-up">
       <div className="max-w-md mx-auto w-full flex-1 flex flex-col">
@@ -21,14 +23,14 @@ export function SetDoneScreen({ onExtraSet, onFinish }: SetDoneScreenProps) {
               className: "mt-3 text-foreground",
             })}
           >
-            ¡Rutina completada!
+            {t("done.title")}
           </p>
         </div>
 
         <div className="space-y-3 pt-6">
           <Button type="button" onClick={onFinish}>
             <Flag className="w-5 h-5" strokeWidth={2.5} />
-            Terminar sesión
+            {t("finish.action")}
           </Button>
           <button
             type="button"
@@ -36,7 +38,7 @@ export function SetDoneScreen({ onExtraSet, onFinish }: SetDoneScreenProps) {
             className="w-full py-4 rounded-2xl bg-secondary text-foreground font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
           >
             <Plus className="w-5 h-5" strokeWidth={2.5} />
-            Una serie extra
+            {t("done.extraSet")}
           </button>
         </div>
       </div>

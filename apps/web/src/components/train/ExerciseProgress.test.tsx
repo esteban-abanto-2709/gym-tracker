@@ -1,5 +1,6 @@
 import { beforeEach, describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import type { ExerciseProgress as Progress } from "@/lib/types";
 import { ExerciseProgress } from "./ExerciseProgress";
 import { addPendingSets } from "@/lib/pendingSets";
@@ -64,7 +65,9 @@ describe("ExerciseProgress", () => {
       return progress(1);
     });
 
-    render(<ExerciseProgress exerciseId="ex" routineId="r" setsDone={1} />);
+    renderWithIntl(
+      <ExerciseProgress exerciseId="ex" routineId="r" setsDone={1} />,
+    );
 
     expect(await screen.findByText("1")).toBeTruthy();
     expect(order).toEqual(["post", "get"]);
@@ -72,7 +75,7 @@ describe("ExerciseProgress", () => {
 
   it("asks for the streak again after each set on the same exercise", async () => {
     get.mockResolvedValueOnce(progress(2)).mockResolvedValueOnce(progress(0));
-    const { rerender } = render(
+    const { rerender } = renderWithIntl(
       <ExerciseProgress exerciseId="ex" routineId="r" setsDone={0} />,
     );
     expect(await screen.findByText("2")).toBeTruthy();
@@ -87,7 +90,7 @@ describe("ExerciseProgress", () => {
     get
       .mockResolvedValueOnce(progress(2))
       .mockReturnValueOnce(new Promise(() => {}));
-    const { rerender } = render(
+    const { rerender } = renderWithIntl(
       <ExerciseProgress exerciseId="ex" routineId="r" setsDone={0} />,
     );
     expect(await screen.findByText("2")).toBeTruthy();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Equipment } from "@/lib/types";
@@ -50,6 +51,8 @@ export function RampForm({
   logging,
   onLog,
 }: RampFormProps) {
+  const t = useTranslations("train.rampForm");
+  const tCommon = useTranslations("common");
   const [unit, setUnit] = useState<Unit>("kg");
   const [equipmentId, setEquipmentId] = useState<string | null>(() =>
     getLastEquipment(exerciseId),
@@ -147,7 +150,7 @@ export function RampForm({
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
       <div className="flex items-center justify-between">
         <p className="kicker text-4xs text-muted-foreground">
-          {steps.length === 1 ? "1 escalón" : `${steps.length} escalones`}
+          {t("steps", { count: steps.length })}
         </p>
         <UnitToggle unit={unit} onToggle={toggleUnit} />
       </div>
@@ -164,7 +167,7 @@ export function RampForm({
                 inputMode="numeric"
                 value={row.reps}
                 onChange={(e) => updateRow(i, { reps: e.target.value })}
-                aria-label={`Reps del escalón ${steps[i].step}`}
+                aria-label={t("stepReps", { step: steps[i].step })}
                 className="w-14 bg-transparent text-center font-mono text-xl text-muted-foreground focus:outline-none focus:text-foreground"
                 autoComplete="off"
                 data-1p-ignore
@@ -176,7 +179,7 @@ export function RampForm({
                 inputMode="decimal"
                 value={row.weight}
                 onChange={(e) => updateRow(i, { weight: e.target.value })}
-                aria-label={`Peso del escalón ${steps[i].step}`}
+                aria-label={t("stepWeight", { step: steps[i].step })}
                 className="min-w-0 flex-1 bg-transparent text-right font-mono text-3xl font-bold text-foreground focus:outline-none"
                 autoComplete="off"
                 data-1p-ignore
@@ -189,7 +192,10 @@ export function RampForm({
               <button
                 type="button"
                 onClick={() => applySuggestion(i)}
-                aria-label={`Sube a ${convertWeight(row.suggestedKg, "kg", unit)} ${unit}`}
+                aria-label={t("goUp", {
+                  weight: convertWeight(row.suggestedKg, "kg", unit),
+                  unit,
+                })}
                 className="absolute -top-3.5 right-4 flex items-center gap-1 rounded-full border-2 border-success bg-card pl-2 pr-2.5 py-0.5 text-success shadow-lg shadow-success/20 transition-all active:scale-95 animate-pop"
               >
                 <ArrowUp className="w-4 h-4" strokeWidth={3} />
@@ -212,12 +218,12 @@ export function RampForm({
         {logging ? (
           <>
             <Spinner className="size-5" />
-            Guardando...
+            {tCommon("saving")}
           </>
         ) : (
           <>
             <Check className="w-6 h-6" strokeWidth={3} />
-            Rampa hecha
+            {t("done")}
           </>
         )}
       </Button>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { formatDuration } from "@/lib/setDisplay";
 import { flushPendingSets } from "@/lib/pendingSets";
 import { routes } from "@/lib/routes";
+import { useEquipmentName } from "@/hooks/useEquipment";
 import type {
   ExerciseProgress as Progress,
   ExerciseSession,
@@ -26,21 +28,22 @@ interface ExerciseProgressProps {
 
 const PAGE = 4;
 
-const dayFormat = new Intl.DateTimeFormat("es-ES", {
-  weekday: "short",
-  day: "2-digit",
-  month: "short",
-});
-
-function dayLabel(date: string) {
+function dayLabel(date: string, locale: string) {
   const [y, m, d] = date.split("-").map(Number);
   const day = new Date(y, m - 1, d);
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
-  if (day.toDateString() === today.toDateString()) return "Hoy";
-  if (day.toDateString() === yesterday.toDateString()) return "Ayer";
-  return dayFormat.format(day);
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  if (day.toDateString() === today.toDateString())
+    return relative.format(0, "day");
+  if (day.toDateString() === yesterday.toDateString())
+    return relative.format(-1, "day");
+  return new Intl.DateTimeFormat(locale, {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+  }).format(day);
 }
 
 function setsLabel(sets: ExerciseSession["sets"]) {
@@ -62,13 +65,10 @@ function setsLabel(sets: ExerciseSession["sets"]) {
     .join(" · ");
 }
 
-function suggestionText(progress: Progress) {
-  if (progress.suggestion === "down")
-    return "Quedaste por debajo del piso: quizá convenga bajar el peso.";
+function suggestionKey(progress: Progress) {
+  if (progress.suggestion === "down") return "down";
   if (progress.suggestion !== "up") return null;
-  return (progress.streak ?? 0) >= 2
-    ? "Varias sesiones al tope: toca subir."
-    : "Llegaste al tope. Si se sintió limpio, sube.";
+  return (progress.streak ?? 0) >= 2 ? "upStreak" : "up";
 }
 
 function badgeArrow(progress: Progress) {
@@ -82,6 +82,9 @@ export function ExerciseProgress({
   routineId,
   setsDone,
 }: ExerciseProgressProps) {
+  const t = useTranslations("train.progress");
+  const locale = useLocale();
+  const equipmentName = useEquipmentName();
   const [progress, setProgress] = useState<Progress | null>(null);
   const [open, setOpen] = useState(false);
   const [shown, setShown] = useState(PAGE);
@@ -115,7 +118,7 @@ export function ExerciseProgress({
     return null;
 
   const lit = progress.streak > 0;
-  const suggestion = suggestionText(progress);
+  const suggestion = suggestionKey(progress);
   const { target, sessions } = progress;
   const arrow = badgeArrow(progress);
 
@@ -133,7 +136,7 @@ export function ExerciseProgress({
             ? "border-primary text-primary shadow-primary/30"
             : "border-input text-muted-foreground/70",
         )}
-        aria-label={`Racha ${progress.streak}, ver historial del ejercicio`}
+        aria-label={t("streak", { streak: progress.streak })}
       >
         <Flame className={cn("w-4 h-4", lit && "fill-current")} />
         <span className="font-display font-bold text-lg tabular-nums leading-none">
@@ -167,11 +170,11 @@ export function ExerciseProgress({
                   lit ? "text-primary fill-current" : "text-muted-foreground",
                 )}
               />
-              Historial · {progress.streak}
+              {t("history", { streak: progress.streak })}
             </DialogTitle>
             {target && (
               <p className="kicker text-4xs text-muted-foreground">
-                Meta {target.sets} × {target.reps}
+                {t("goal", { sets: target.sets, reps: target.reps })}
                 {target.repsMax != null && target.repsMax !== target.reps
                   ? `-${target.repsMax}`
                   : ""}
@@ -188,7 +191,7 @@ export function ExerciseProgress({
                   : "text-muted-foreground",
               )}
             >
-              {suggestion}
+              {t(suggestion)}
             </p>
           )}
 
@@ -203,17 +206,17 @@ export function ExerciseProgress({
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm font-bold text-foreground capitalize">
-                    {dayLabel(session.date)}
+                    {dayLabel(session.date, locale)}
                   </span>
                   <span className="flex gap-1.5">
                     {session.free && (
                       <span className="kicker text-5xs rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
-                        Día libre
+                        {t("freeDay")}
                       </span>
                     )}
                     {session.equipment && (
                       <span className="kicker text-5xs rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
-                        {session.equipment}
+                        {equipmentName(session.equipmentId, session.equipment)}
                       </span>
                     )}
                   </span>
@@ -231,7 +234,7 @@ export function ExerciseProgress({
               onClick={() => setShown((n) => n + PAGE)}
               className="mx-auto text-sm font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground"
             >
-              Mostrar más
+              {t("showMore")}
             </button>
           )}
         </DialogContent>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useGuidedSession } from "@/hooks/useGuidedSession";
 import { useEquipment } from "@/hooks/useEquipment";
 import { useRestSeconds } from "@/hooks/useRestSeconds";
@@ -54,6 +55,8 @@ export default function TrainPage() {
     closeUnsaved,
   } = useGuidedSession();
 
+  const t = useTranslations("train");
+  const tBlocks = useTranslations("blocks");
   const { equipment } = useEquipment();
   const [mapOpen, setMapOpen] = useState(false);
   const restSec = useRestSeconds(session?.lastSetAt);
@@ -76,23 +79,24 @@ export default function TrainPage() {
         <main className="flex-1 flex flex-col items-center justify-center px-6 text-center text-muted-foreground">
           <ClipboardList className="w-12 h-12 mb-3 opacity-40" />
           <p className={heading({ size: "sm", className: "text-foreground" })}>
-            No hay una rutina activa
+            {t("noRoutine")}
           </p>
-          <p className="text-sm opacity-70 mb-6">
-            Empieza una rutina para entrenar guiado.
-          </p>
+          <p className="text-sm opacity-70 mb-6">{t("noRoutineHint")}</p>
           <Link
             href={routes.routines()}
             className={buttonVariants({ size: "lg" })}
           >
-            Ver mis rutinas
+            {t("seeRoutines")}
           </Link>
         </main>
       </PageShell>
     );
   }
 
-  const currentTarget = formatBlocks(currentItem.blocks);
+  const currentTarget = formatBlocks(currentItem.blocks, {
+    ramp: tBlocks("ramp"),
+    warmup: tBlocks("warmupShort"),
+  });
   const currentPlan = setPlan(currentItem.blocks, setsDoneForCurrent);
   const freeWithNext =
     plannedSetCount(currentItem.blocks) === 0 &&
@@ -109,8 +113,8 @@ export default function TrainPage() {
             type="button"
             onClick={() => setMapOpen(true)}
             className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-all hover:scale-105 active:scale-95"
-            title="Mapa de la sesión"
-            aria-label={`Mapa de la sesión, ${position}/${totalCount}`}
+            title={t("map.title")}
+            aria-label={t("map.button", { position, total: totalCount })}
           >
             <ListChecks className="w-6 h-6" />
             <span className="text-xs font-bold tabular-nums">
@@ -130,7 +134,7 @@ export default function TrainPage() {
               {restSec != null && (
                 <div
                   className="absolute -top-4 left-4 flex items-center gap-1.5 rounded-full border-2 border-input bg-card pl-2.5 pr-3 py-1 shadow-lg text-foreground animate-pop"
-                  aria-label="Tiempo de descanso"
+                  aria-label={t("restTime")}
                 >
                   <Timer className="w-4 h-4 text-primary" strokeWidth={2.5} />
                   <span className="font-display font-bold text-lg tabular-nums leading-none">
@@ -140,9 +144,12 @@ export default function TrainPage() {
               )}
               <p className="kicker text-4xs text-primary">
                 {currentPlan.setType === "RAMP"
-                  ? "Rampa"
-                  : `Serie ${setsDoneForCurrent + 1}`}
-                {currentTarget ? ` · Meta ${currentTarget}` : " · Libre"}
+                  ? t("ramp")
+                  : t("setNumber", { number: setsDoneForCurrent + 1 })}
+                {" · "}
+                {currentTarget
+                  ? t("goal", { target: currentTarget })
+                  : t("free")}
               </p>
               <p
                 className={heading({
@@ -184,7 +191,7 @@ export default function TrainPage() {
                 className="w-full py-3 text-muted-foreground hover:text-foreground font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
-                Siguiente: {nextItem.exercise.name}
+                {t("next", { exercise: nextItem.exercise.name })}
               </button>
             )}
           </div>

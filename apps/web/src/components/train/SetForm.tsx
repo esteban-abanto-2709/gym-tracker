@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useId, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { flushPendingSets } from "@/lib/pendingSets";
 import { routes } from "@/lib/routes";
@@ -66,6 +67,8 @@ export function SetForm({
   logging,
   onLog,
 }: SetFormProps) {
+  const t = useTranslations("train.set");
+  const tCommon = useTranslations("common");
   const { setType, targetReps, targetRepsMax, targetDurationSec, step, pct } =
     plan;
   const fieldId = useId();
@@ -190,23 +193,19 @@ export function SetForm({
         )
       : null;
 
-  const lastLabel = (() => {
-    if (!recommendation) return "Sin registro previo";
+  const lastValue = (() => {
+    if (!recommendation) return null;
     const { lastWeight, lastReps, lastDurationSec } = recommendation;
     if (measure === "time") {
-      if (lastDurationSec == null) return "Sin registro previo";
+      if (lastDurationSec == null) return null;
       const d = formatDuration(lastDurationSec);
-      return `La última vez · ${d.value} ${d.unit}`;
+      return `${d.value} ${d.unit}`;
     }
-    if (measure === "reps") {
-      return lastReps != null
-        ? `La última vez · ${lastReps} reps`
-        : "Sin registro previo";
-    }
-    return lastWeight != null
-      ? `La última vez · ${lastWeight} kg × ${lastReps}`
-      : "Sin registro previo";
+    if (measure === "reps") return lastReps != null ? `${lastReps} reps` : null;
+    return lastWeight != null ? `${lastWeight} kg × ${lastReps}` : null;
   })();
+  const lastLabel =
+    lastValue != null ? t("last", { value: lastValue }) : t("noPrevious");
 
   const repsInput = (
     <div className="space-y-2">
@@ -214,9 +213,11 @@ export function SetForm({
         htmlFor={`${fieldId}-reps`}
         className="kicker text-muted-foreground text-4xs"
       >
-        Reps
+        {t("reps")}
         {targetReps
-          ? ` · meta ${formatRepRange(targetReps, targetRepsMax)}`
+          ? t("goalSuffix", {
+              target: formatRepRange(targetReps, targetRepsMax),
+            })
           : ""}
       </label>
       <input
@@ -237,21 +238,24 @@ export function SetForm({
     <form onSubmit={handleSubmit} className="space-y-4 mt-3" autoComplete="off">
       <div className="text-center space-y-2">
         <p className="kicker text-4xs text-muted-foreground">
-          {setType === "WARMUP" && `Calentamiento · `}
-          {setType === "RAMP" && `Rampa ${step} · `}
+          {setType === "WARMUP" && t("warmup")}
+          {setType === "RAMP" && t("rampStep", { step: step ?? "" })}
           {lastLabel}
         </p>
         {setType === "RAMP" &&
           pct != null &&
           recommendation?.workingWeight != null && (
             <p className="text-xs text-muted-foreground">
-              ≈ {pct} % de {recommendation.workingWeight} kg
+              {t("percentOf", {
+                pct,
+                weight: recommendation.workingWeight,
+              })}
             </p>
           )}
         {suggestedWeight != null && (
           <div className="inline-flex items-center gap-2 bg-success/15 text-success rounded-full px-4 py-1.5 text-sm font-bold">
             <ArrowUp className="w-4 h-4" strokeWidth={3} />
-            Sube a {suggestedWeight} kg
+            {t("goUp", { weight: suggestedWeight })}
           </div>
         )}
       </div>
@@ -269,12 +273,16 @@ export function SetForm({
       {measure === "time" && (
         <div className="space-y-2">
           <label className="kicker text-muted-foreground text-4xs">
-            Tiempo
+            {t("time")}
             {targetDurationSec
-              ? ` · meta ${formatClock(targetDurationSec)}`
+              ? t("goalSuffix", { target: formatClock(targetDurationSec) })
               : ""}
           </label>
-          <DurationField value={seconds} onChange={setSeconds} label="Tiempo" />
+          <DurationField
+            value={seconds}
+            onChange={setSeconds}
+            label={t("time")}
+          />
         </div>
       )}
 
@@ -288,7 +296,7 @@ export function SetForm({
                 htmlFor={`${fieldId}-weight`}
                 className="kicker text-muted-foreground text-4xs"
               >
-                Peso ({unit})
+                {t("weight", { unit })}
               </label>
               <UnitToggle unit={unit} onToggle={toggleUnit} />
             </div>
@@ -322,12 +330,12 @@ export function SetForm({
         {logging ? (
           <>
             <Spinner className="size-5" />
-            Guardando...
+            {tCommon("saving")}
           </>
         ) : (
           <>
             <Check className="w-6 h-6" strokeWidth={3} />
-            Registrar serie
+            {t("log")}
           </>
         )}
       </Button>

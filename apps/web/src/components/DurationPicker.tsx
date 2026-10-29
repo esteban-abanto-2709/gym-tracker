@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   WheelPicker,
@@ -72,8 +73,9 @@ function WheelColumn({
 export function DurationPicker({
   value,
   onChange,
-  label = "Duración",
+  label,
 }: DurationPickerProps) {
+  const t = useTranslations("duration");
   const total = toSeconds(value);
   const minutes = Math.min(59, Math.floor(total / 60));
   const seconds = total % 60;
@@ -82,7 +84,7 @@ export function DurationPicker({
     onChange(String(nextMinutes * 60 + nextSeconds));
 
   return (
-    <div role="group" aria-label={label}>
+    <div role="group" aria-label={label ?? t("label")}>
       <span className="sr-only" aria-live="polite">
         {minutes} min {seconds} s
       </span>
@@ -97,7 +99,7 @@ export function DurationPicker({
           options={SECONDS}
           value={seconds}
           onChange={(s) => update(minutes, s)}
-          unit="seg"
+          unit={t("seconds")}
           infinite
         />
       </WheelPickerWrapper>
@@ -120,9 +122,11 @@ interface DurationFieldProps extends DurationPickerProps {
 export function DurationField({
   value,
   onChange,
-  label = "Duración",
+  label: labelProp,
   size = "lg",
 }: DurationFieldProps) {
+  const t = useTranslations();
+  const label = labelProp ?? t("duration.label");
   const [draft, setDraft] = useState<string | null>(null);
   const total = toSeconds(value);
 
@@ -137,7 +141,10 @@ export function DurationField({
       <button
         type="button"
         onClick={() => setDraft(String(total))}
-        aria-label={`${label}: ${total > 0 ? formatClock(total) : "sin tiempo"}. Cambiar`}
+        aria-label={t("duration.change", {
+          label,
+          value: total > 0 ? formatClock(total) : t("duration.unset"),
+        })}
         className={FIELD_CLASS[size]}
       >
         {total > 0 ? formatClock(total) : "—"}
@@ -170,7 +177,7 @@ export function DurationField({
               className="mt-5"
             >
               <Check className="w-6 h-6" strokeWidth={3} />
-              Listo
+              {t("common.done")}
             </Button>
           </div>
         </BottomSheet>

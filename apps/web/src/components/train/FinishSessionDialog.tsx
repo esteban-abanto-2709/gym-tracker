@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,12 +23,13 @@ export function FinishSessionDialog({
   remainingCount,
   onConfirm,
 }: FinishSessionDialogProps) {
+  const t = useTranslations("train.finish");
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="rounded-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
-            ¿Terminar la sesión?
+            {t("title")}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3">
@@ -37,25 +39,23 @@ export function FinishSessionDialog({
                     {remainingCount}
                   </p>
                   <p className="mt-1 kicker text-xs text-foreground">
-                    {remainingCount === 1
-                      ? "ejercicio sin hacer"
-                      : "ejercicios sin hacer"}
+                    {t("remaining", { count: remainingCount })}
                   </p>
                 </div>
               )}
-              <p>Lo que ya registraste queda guardado en tu historial.</p>
+              <p>{t("kept")}</p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="rounded-xl">
-            Seguir entrenando
+            {t("keepTraining")}
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             onClick={onConfirm}
           >
-            Terminar
+            {t("confirm")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

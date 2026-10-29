@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Compass, Play, Plus, Zap } from "lucide-react";
 import { routes } from "@/lib/routes";
 import { activeProgramQuery, routinesQuery } from "@/lib/queries";
@@ -47,6 +48,7 @@ function Tile({
 }
 
 export function HomeActions() {
+  const t = useTranslations("home");
   const router = useRouter();
   const { data: active } = useQuery(activeProgramQuery);
   const { data: routines } = useQuery(routinesQuery);
@@ -71,19 +73,19 @@ export function HomeActions() {
         <Link href={routes.explore("programs")} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
           <p className="kicker text-3xs text-muted-foreground relative">
-            Empieza aquí
+            {t("startHere")}
           </p>
           <p
             className={heading({
               className: "text-5xl leading-[0.85] mt-3 relative pr-16",
             })}
           >
-            Explorar
+            {t("exploreTop")}
             <br />
-            programas
+            {t("exploreBottom")}
           </p>
           <p className="text-sm mt-3 text-muted-foreground relative">
-            Copia uno y entrena hoy ·{" "}
+            {t("exploreHint")}{" "}
             <Compass className="inline w-3.5 h-3.5 align-[-2px]" />
           </p>
         </Link>
@@ -92,8 +94,8 @@ export function HomeActions() {
           <Tile
             href={routes.routineNew()}
             icon={<Plus className="w-6 h-6 text-primary" strokeWidth={2.5} />}
-            title="Armar el mío"
-            subtitle="Crea tu primera rutina"
+            title={t("buildMine")}
+            subtitle={t("buildMineHint")}
           />
           <Tile
             href={routes.log()}
@@ -103,8 +105,8 @@ export function HomeActions() {
                 strokeWidth={2.5}
               />
             }
-            title="Día libre"
-            subtitle="Un set suelto"
+            title={t("freeDay")}
+            subtitle={t("freeDayHint")}
           />
         </div>
       </>
@@ -117,7 +119,7 @@ export function HomeActions() {
         <button type="button" onClick={handleStart} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
           <p className="kicker text-3xs text-muted-foreground relative pr-16 truncate">
-            Hoy toca · {today.programName}
+            {t("todayIs", { program: today.programName })}
           </p>
           <p
             className={heading({
@@ -128,7 +130,7 @@ export function HomeActions() {
             {today.routine.name}
           </p>
           <p className="text-sm mt-3 text-muted-foreground relative">
-            Toca para empezar ·{" "}
+            {t("tapToStart")}{" "}
             <Play className="inline w-3.5 h-3.5 fill-current align-[-2px]" />
           </p>
         </button>
@@ -136,19 +138,19 @@ export function HomeActions() {
         <Link href={routes.routines()} className={cardClass}>
           <div className="absolute top-0 right-0 bottom-0 w-16 hazard-bar opacity-90" />
           <p className="kicker text-3xs text-muted-foreground relative">
-            Empieza fuerte
+            {t("startStrong")}
           </p>
           <p
             className={heading({
               className: "text-5xl leading-[0.85] mt-3 relative",
             })}
           >
-            Iniciar
+            {t("startTop")}
             <br />
-            rutina
+            {t("startBottom")}
           </p>
           <p className="text-sm mt-3 text-muted-foreground relative">
-            Elige tu rutina y ve paso a paso ·{" "}
+            {t("startHint")}{" "}
             <Play className="inline w-3.5 h-3.5 fill-current align-[-2px]" />
           </p>
         </Link>
@@ -157,8 +159,8 @@ export function HomeActions() {
       <Tile
         href={routes.log()}
         icon={<Zap className="w-6 h-6 text-primary" strokeWidth={2.5} />}
-        title="Día libre"
-        subtitle="Un set suelto"
+        title={t("freeDay")}
+        subtitle={t("freeDayHint")}
       />
     </>
   );

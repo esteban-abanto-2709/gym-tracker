@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { RampForm } from "./RampForm";
 import { api } from "@/lib/api";
 import type { RampStepPlan } from "@/lib/blocks";
@@ -45,7 +46,7 @@ describe("RampForm", () => {
         : rec({ workingWeight: 60 }),
     );
 
-    render(<RampForm {...props} onLog={vi.fn()} />);
+    renderWithIntl(<RampForm {...props} onLog={vi.fn()} />);
 
     await waitFor(() => expect(weights()).toEqual(["30", "45", "51"]));
   });
@@ -57,7 +58,7 @@ describe("RampForm", () => {
         : rec({ lastWeight: 60, workingWeight: 70 }),
     );
 
-    render(<RampForm {...props} onLog={vi.fn()} />);
+    renderWithIntl(<RampForm {...props} onLog={vi.fn()} />);
     const chip = await screen.findByRole("button", { name: "Sube a 35 kg" });
     expect(chip.textContent).toBe("35 kg");
 
@@ -71,7 +72,7 @@ describe("RampForm", () => {
     get.mockResolvedValue(rec({ workingWeight: 100 }));
     const onLog = vi.fn().mockResolvedValue(undefined);
 
-    render(<RampForm {...props} onLog={onLog} />);
+    renderWithIntl(<RampForm {...props} onLog={onLog} />);
     await waitFor(() => expect(weights()).toEqual(["50", "70", "85"]));
     fireEvent.change(screen.getByLabelText("Peso del escalón 2"), {
       target: { value: "72.5" },

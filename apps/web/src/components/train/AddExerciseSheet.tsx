@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useExercises } from "@/hooks/useExercises";
 import { ExerciseCombobox } from "@/components/exercises/ExerciseCombobox";
 import { CreateExerciseModal } from "@/components/exercises/CreateExerciseModal";
@@ -23,6 +24,7 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
     creatingExercise,
   } = useExercises();
 
+  const t = useTranslations();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const handleCreate = async (name: string) => {
@@ -39,13 +41,13 @@ export function AddExerciseSheet({ onPick, onClose }: AddExerciseSheetProps) {
     <div className="fixed inset-0 z-50 flex flex-col bg-background/80 backdrop-blur-md animate-fade-in">
       <div className="shrink-0 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] border-b border-border flex items-center justify-between">
         <h2 className={heading({ size: "sm", className: "text-foreground" })}>
-          Agregar ejercicio
+          {t("train.map.addExercise")}
         </h2>
         <button
           type="button"
           onClick={onClose}
           className="p-2 -mr-2 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Cerrar"
+          aria-label={t("common.close")}
         >
           <X className="w-6 h-6" />
         </button>

@@ -7,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTranslations } from "next-intl";
 import type { PendingSet } from "@/lib/pendingSets";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/base/button";
@@ -27,6 +28,7 @@ export function UnsavedSetsDialog({
   onDiscard,
   onClose,
 }: UnsavedSetsDialogProps) {
+  const t = useTranslations();
   const count = sets?.length ?? 0;
   return (
     <AlertDialog open={sets != null} onOpenChange={(o) => !o && onClose()}>
@@ -34,10 +36,8 @@ export function UnsavedSetsDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="font-display uppercase tracking-tight text-2xl">
             {retrying
-              ? "Guardando series"
-              : count === 1
-                ? "1 serie sin guardar"
-                : `${count} series sin guardar`}
+              ? t("train.unsaved.saving")
+              : t("train.unsaved.title", { count })}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3">
@@ -49,9 +49,7 @@ export function UnsavedSetsDialog({
                 ))}
               </ul>
               <p>
-                {retrying
-                  ? "Enviando lo que quedó pendiente."
-                  : "No se pudieron enviar. Revisa tu conexión y reintenta."}
+                {t(retrying ? "train.unsaved.sending" : "train.unsaved.failed")}
               </p>
             </div>
           </AlertDialogDescription>
@@ -69,7 +67,7 @@ export function UnsavedSetsDialog({
             ) : (
               <RotateCcw className="w-5 h-5" strokeWidth={2.5} />
             )}
-            Reintentar
+            {t("errors.retry")}
           </Button>
           <button
             type="button"
@@ -77,10 +75,10 @@ export function UnsavedSetsDialog({
             disabled={retrying}
             className="w-full py-3 rounded-xl text-destructive font-bold active:scale-95 transition-all disabled:opacity-60"
           >
-            Descartar y salir
+            {t("train.unsaved.discard")}
           </button>
           <AlertDialogCancel className="rounded-xl" disabled={retrying}>
-            Seguir entrenando
+            {t("train.finish.keepTraining")}
           </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

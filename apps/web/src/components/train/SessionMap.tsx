@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Exercise } from "@/lib/types";
 import type { SessionMapItem } from "@/hooks/useGuidedSession";
 import { plannedSetCount } from "@/lib/blocks";
@@ -45,13 +46,13 @@ function StatusDot({ item }: { item: SessionMapItem }) {
   return <span className={cn("block w-3 h-3 rounded-full", color)} />;
 }
 
-function detailText(item: SessionMapItem): string {
+function DetailText({ item }: { item: SessionMapItem }) {
+  const t = useTranslations("train.map");
   const target = plannedSetCount(item.item.blocks);
-  if (item.status === "skipped") return "Saltado";
-  if (target > 0) return `${item.setsDone}/${target} series`;
-  if (item.setsDone > 0)
-    return `${item.setsDone} ${item.setsDone === 1 ? "serie" : "series"}`;
-  return "Series libres";
+  if (item.status === "skipped") return t("skipped");
+  if (target > 0) return t("progress", { done: item.setsDone, target });
+  if (item.setsDone > 0) return t("sets", { count: item.setsDone });
+  return t("freeSets");
 }
 
 export function SessionMap({
@@ -65,6 +66,7 @@ export function SessionMap({
   onFinish,
   onClose,
 }: SessionMapProps) {
+  const t = useTranslations();
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
   const [finishOpen, setFinishOpen] = useState(false);
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null);
@@ -73,7 +75,7 @@ export function SessionMap({
     <>
       {replacingIndex === null && (
         <BottomSheet
-          label="Mapa de la sesión"
+          label={t("train.map.title")}
           onClose={onClose}
           className="max-h-[80%] pb-[calc(2rem+env(safe-area-inset-bottom))]"
         >
@@ -87,17 +89,17 @@ export function SessionMap({
                   className: "text-foreground",
                 })}
               >
-                Mapa de la sesión
+                {t("train.map.title")}
               </SheetTitle>
               <p className="kicker text-4xs text-muted-foreground mt-1">
-                Ejercicio {position} de {totalCount}
+                {t("train.map.position", { position, total: totalCount })}
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
               className="shrink-0 grid place-items-center w-9 h-9 rounded-full bg-secondary text-foreground hover:text-primary transition-colors"
-              aria-label="Cerrar"
+              aria-label={t("common.close")}
             >
               <X className="w-5 h-5" />
             </button>
@@ -137,7 +139,7 @@ export function SessionMap({
                           {mi.item.exercise.name}
                         </span>
                         <span className="block text-xs text-muted-foreground truncate">
-                          {detailText(mi)}
+                          <DetailText item={mi} />
                           {mi.replacedFrom && (
                             <span className="text-primary">
                               {" · "}
@@ -146,7 +148,10 @@ export function SessionMap({
                             </span>
                           )}
                           {mi.isExtra && !mi.replacedFrom && (
-                            <span className="text-primary">{" · añadido"}</span>
+                            <span className="text-primary">
+                              {" · "}
+                              {t("train.map.added")}
+                            </span>
                           )}
                         </span>
                       </span>
@@ -158,7 +163,7 @@ export function SessionMap({
                         setMenuIndex(menuIndex === mi.index ? null : mi.index)
                       }
                       className="shrink-0 p-2 -mr-2 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-                      aria-label="Opciones"
+                      aria-label={t("train.map.options")}
                     >
                       <MoreVertical className="w-5 h-5" />
                     </button>
@@ -177,7 +182,7 @@ export function SessionMap({
                           className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
                         >
                           <RotateCcw className="w-4 h-4" />
-                          Reactivar
+                          {t("train.map.reactivate")}
                         </button>
                       ) : (
                         <button
@@ -189,7 +194,7 @@ export function SessionMap({
                           className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
                         >
                           <SkipForward className="w-4 h-4" />
-                          Saltar
+                          {t("train.map.skip")}
                         </button>
                       )}
                       <button
@@ -201,7 +206,7 @@ export function SessionMap({
                         className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-input text-sm font-bold text-foreground active:scale-95 transition-all"
                       >
                         <Repeat className="w-4 h-4" />
-                        Reemplazar
+                        {t("train.map.replace")}
                       </button>
                     </div>
                   )}
@@ -215,7 +220,7 @@ export function SessionMap({
               className="w-full mt-6 py-3.5 rounded-2xl bg-destructive/10 text-destructive font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
             >
               <Flag className="w-5 h-5" strokeWidth={2.5} />
-              Terminar sesión
+              {t("train.finish.action")}
             </button>
           </div>
         </BottomSheet>

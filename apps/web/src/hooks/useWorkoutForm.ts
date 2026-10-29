@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import type { Exercise } from "@/lib/types";
@@ -50,6 +51,7 @@ export function useWorkoutForm(
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const t = useTranslations("log");
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<Unit>("kg");
   const [reps, setReps] = useState("");
@@ -140,7 +142,7 @@ export function useWorkoutForm(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!selectedExercise) {
-        alert("Por favor selecciona un ejercicio antes de guardar.");
+        alert(t("pickExercise"));
         return;
       }
 
@@ -197,6 +199,7 @@ export function useWorkoutForm(
       unit,
       equipmentId,
       router,
+      t,
     ],
   );
 

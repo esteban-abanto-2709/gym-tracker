@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { PageShell } from "@/components/layout/PageShell";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ContinueRoutineBanner } from "@/components/train/ContinueRoutineBanner";
@@ -10,6 +11,7 @@ import { heading } from "@/components/base/heading";
 
 export default async function Home() {
   if (!(await cookies()).has("token")) return <Landing />;
+  const t = await getTranslations("home");
 
   return (
     <LandingGate>
@@ -19,9 +21,7 @@ export default async function Home() {
             {/* Hero */}
             <div>
               <div className="flex items-center justify-between">
-                <p className="kicker text-primary text-2xs">
-                  {"// listo para entrenar"}
-                </p>
+                <p className="kicker text-primary text-2xs">{t("kicker")}</p>
                 <NewsButton />
               </div>
               <h1
@@ -30,9 +30,9 @@ export default async function Home() {
                     "text-foreground text-[2.75rem] leading-[0.9] tracking-tight mt-2",
                 })}
               >
-                Hoy
+                {t("titleTop")}
                 <br />
-                <span className="text-primary">entrenas.</span>
+                <span className="text-primary">{t("titleAccent")}</span>
               </h1>
             </div>
 

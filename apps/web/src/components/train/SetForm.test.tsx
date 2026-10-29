@@ -1,11 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { SetForm } from "./SetForm";
 import { api } from "@/lib/api";
 import type { SetPlan } from "@/lib/blocks";
@@ -79,7 +74,7 @@ describe("SetForm", () => {
       return rec({ lastWeight: 60, lastReps: 8 });
     });
 
-    render(<SetForm {...props} />);
+    renderWithIntl(<SetForm {...props} />);
 
     await waitFor(() => expect(values()).toEqual(["60", "8"]));
     expect(order).toEqual(["post", "get"]);
@@ -88,7 +83,7 @@ describe("SetForm", () => {
   it("starts with the target reps and then preloads the last set", async () => {
     get.mockResolvedValue(rec({ lastWeight: 60, lastReps: 7 }));
 
-    render(<SetForm {...props} />);
+    renderWithIntl(<SetForm {...props} />);
 
     expect(values()).toEqual(["", "8"]);
     await waitFor(() => expect(values()).toEqual(["60", "7"]));
@@ -97,7 +92,7 @@ describe("SetForm", () => {
 
   it("moving to another exercise clears the form and preloads the new one", async () => {
     get.mockResolvedValueOnce(rec({ lastWeight: 60, lastReps: 7 }));
-    const { rerender } = render(<SetForm {...props} />);
+    const { rerender } = renderWithIntl(<SetForm {...props} />);
     await waitFor(() => expect(values()).toEqual(["60", "7"]));
 
     get.mockReturnValueOnce(new Promise(() => {}));
@@ -121,7 +116,7 @@ describe("SetForm", () => {
   it("a ramp with no history suggests the percentage of the working weight", async () => {
     get.mockResolvedValue(rec({ workingWeight: 100 }));
 
-    render(
+    renderWithIntl(
       <SetForm
         {...props}
         plan={{ ...plan, setType: "RAMP", step: 1, pct: 63 }}
@@ -134,7 +129,7 @@ describe("SetForm", () => {
   it("with preferLastMeasure adopts the last measure used", async () => {
     get.mockResolvedValue(rec({ lastMeasure: "time", lastDurationSec: 45 }));
 
-    render(<SetForm {...props} selectable preferLastMeasure />);
+    renderWithIntl(<SetForm {...props} selectable preferLastMeasure />);
 
     await waitFor(() =>
       expect(screen.getByRole("button", { name: /0:45/ })).toBeTruthy(),
@@ -145,7 +140,7 @@ describe("SetForm", () => {
     let resolve!: (value: unknown) => void;
     get.mockReturnValue(new Promise((r) => (resolve = r)));
 
-    render(<SetForm {...props} selectable preferLastMeasure />);
+    renderWithIntl(<SetForm {...props} selectable preferLastMeasure />);
     fireEvent.click(screen.getByRole("button", { name: "Solo reps" }));
     await act(async () => resolve(rec({ lastMeasure: "time", lastReps: 12 })));
 
@@ -156,7 +151,7 @@ describe("SetForm", () => {
     get.mockResolvedValue(rec({ lastDurationSec: 45 }));
     const onLog = vi.fn();
 
-    const { container } = render(
+    const { container } = renderWithIntl(
       <SetForm
         {...props}
         onLog={onLog}

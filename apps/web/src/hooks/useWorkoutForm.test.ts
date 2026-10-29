@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWorkoutForm } from "./useWorkoutForm";
+import { IntlWrapper } from "@/i18n/testing";
 import { api } from "@/lib/api";
 import type { Exercise } from "@/lib/types";
 
@@ -46,7 +47,9 @@ describe("useWorkoutForm: repeating a set", () => {
       measure: "weight_reps",
     });
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
 
     await waitFor(() => expect(result.current.selectedExercise).toEqual(squat));
     expect(result.current.weight).toBe("80");
@@ -65,7 +68,9 @@ describe("useWorkoutForm: repeating a set", () => {
     });
     get.mockResolvedValue({ lastMeasure: "weight_reps" });
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
 
     await waitFor(() => expect(result.current.selectedExercise).toEqual(curl));
     expect(result.current.seconds).toBe("45");
@@ -79,7 +84,10 @@ describe("useWorkoutForm: repeating a set", () => {
 
     const { result, rerender } = renderHook(
       ({ list, loading }) => useWorkoutForm(list, loading),
-      { initialProps: { list: [] as Exercise[], loading: true } },
+      {
+        initialProps: { list: [] as Exercise[], loading: true },
+        wrapper: IntlWrapper,
+      },
     );
     expect(result.current.selectedExercise).toBeNull();
     expect(result.current.weight).toBe("");
@@ -94,8 +102,11 @@ describe("useWorkoutForm: repeating a set", () => {
     searchParams = new URLSearchParams("repeat=true");
     saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5" });
 
-    const { result, rerender } = renderHook(() =>
-      useWorkoutForm(exercises, false),
+    const { result, rerender } = renderHook(
+      () => useWorkoutForm(exercises, false),
+      {
+        wrapper: IntlWrapper,
+      },
     );
     await waitFor(() => expect(result.current.selectedExercise).toEqual(squat));
 
@@ -108,7 +119,9 @@ describe("useWorkoutForm: repeating a set", () => {
   it("ignores the stored set without ?repeat=true", () => {
     saveRepeat({ exerciseId: "ex-squat", weight: "80", reps: "5" });
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
 
     expect(result.current.selectedExercise).toBeNull();
     expect(result.current.weight).toBe("");
@@ -119,14 +132,18 @@ describe("useWorkoutForm: picking an exercise", () => {
   it("takes the last equipment used for that exercise", async () => {
     rememberEquipment({ "ex-squat": "eq-rack" });
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
     act(() => result.current.setSelectedExercise(squat));
 
     await waitFor(() => expect(result.current.equipmentId).toBe("eq-rack"));
   });
 
   it("has no equipment without an exercise", () => {
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
 
     expect(result.current.equipmentId).toBeNull();
   });
@@ -134,7 +151,9 @@ describe("useWorkoutForm: picking an exercise", () => {
   it("uses the last measure the API returns", async () => {
     get.mockResolvedValue({ lastMeasure: "reps" });
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
     act(() => result.current.setSelectedExercise(curl));
 
     await waitFor(() => expect(result.current.measure).toBe("reps"));
@@ -144,7 +163,9 @@ describe("useWorkoutForm: picking an exercise", () => {
     let resolve!: (value: { lastMeasure: string }) => void;
     get.mockReturnValue(new Promise((r) => (resolve = r)));
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
     act(() => result.current.setSelectedExercise(curl));
     act(() => result.current.changeMeasure("time"));
     await act(async () => resolve({ lastMeasure: "reps" }));
@@ -155,7 +176,9 @@ describe("useWorkoutForm: picking an exercise", () => {
   it("switching exercise goes back to weight and reps while the API responds", async () => {
     get.mockReturnValue(new Promise(() => {}));
 
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
     act(() => result.current.setSelectedExercise(squat));
     act(() => result.current.changeMeasure("time"));
     act(() => result.current.setSelectedExercise(curl));
@@ -166,7 +189,9 @@ describe("useWorkoutForm: picking an exercise", () => {
 
 describe("useWorkoutForm: saving a free set", () => {
   const submit = async () => {
-    const { result } = renderHook(() => useWorkoutForm(exercises, false));
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
     act(() => result.current.setSelectedExercise(squat));
     act(() => {
       result.current.setWeight("60");

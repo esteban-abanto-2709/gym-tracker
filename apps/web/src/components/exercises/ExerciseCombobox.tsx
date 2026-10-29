@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 import type { Exercise } from "@/lib/types";
 import { Search, Plus, Dumbbell, X } from "lucide-react";
@@ -28,6 +29,7 @@ export function ExerciseCombobox({
   onClearSelection,
   onCreateClick,
 }: ExerciseComboboxProps) {
+  const t = useTranslations("exercises");
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +50,7 @@ export function ExerciseCombobox({
   return (
     <div className="space-y-2 relative" ref={wrapperRef}>
       <label className="kicker text-muted-foreground text-4xs ml-1">
-        Ejercicio <span className="text-primary">*</span>
+        {t("label")} <span className="text-primary">*</span>
       </label>
 
       {selectedExercise && !isOpen ? (
@@ -109,10 +111,10 @@ export function ExerciseCombobox({
             autoFocus={isOpen}
             placeholder={
               loadingExercises
-                ? "Cargando ejercicios..."
+                ? t("loading")
                 : selectedExercise
-                  ? "Buscar otro ejercicio..."
-                  : "Busca o escribe para crear..."
+                  ? t("searchOther")
+                  : t("searchOrCreate")
             }
             disabled={loadingExercises}
             className="w-full bg-transparent px-3 py-4 focus:outline-none text-foreground text-lg disabled:opacity-50 placeholder:text-muted-foreground/70"
@@ -159,7 +161,7 @@ export function ExerciseCombobox({
                     <span className="truncate pr-2">{ex.name}</span>
                     {ex.createdById && (
                       <span className="kicker shrink-0 text-4xs text-muted-foreground">
-                        No oficial
+                        {t("unofficial")}
                       </span>
                     )}
                   </button>
@@ -179,7 +181,7 @@ export function ExerciseCombobox({
               >
                 <Plus className="w-4 h-4 shrink-0" strokeWidth={3} />
                 <span className="truncate">
-                  Crear &quot;{search || "Nuevo"}&quot;...
+                  {t("create", { name: search || t("newName") })}
                 </span>
               </button>
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Dumbbell } from "lucide-react";
 import {
@@ -25,6 +26,7 @@ export function CreateExerciseModal({
   loading,
   onCreate,
 }: CreateExerciseModalProps) {
+  const t = useTranslations("exercises");
   const [name, setName] = useState(initialName);
   const [prevOpen, setPrevOpen] = useState(false);
 
@@ -42,20 +44,20 @@ export function CreateExerciseModal({
         <DialogHeader className="pt-4">
           <DialogTitle className="flex items-center gap-2 font-display uppercase text-2xl tracking-tight">
             <Dumbbell className="w-5 h-5 text-primary" />
-            Nuevo Ejercicio
+            {t("newTitle")}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           <div className="space-y-3">
             <label className="kicker text-muted-foreground text-4xs ml-1">
-              ¿Cómo se llama?
+              {t("nameQuestion")}
             </label>
             <input
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ej. Prensa a una pierna"
+              placeholder={t("namePlaceholder")}
               className="w-full px-4 py-4 bg-muted border-2 border-transparent focus:border-primary focus:bg-background outline-none rounded-2xl transition-all font-bold text-lg"
             />
           </div>
@@ -67,7 +69,7 @@ export function CreateExerciseModal({
             disabled={loading || !name.trim()}
             className="w-full bg-primary text-primary-foreground font-display uppercase tracking-wide py-4 rounded-xl text-xl shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-50"
           >
-            {loading ? "Creando..." : "Crear y Seleccionar"}
+            {t(loading ? "creating" : "createAndSelect")}
           </button>
         </DialogFooter>
       </DialogContent>

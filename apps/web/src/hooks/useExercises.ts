@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { notifyError } from "@/lib/notify";
@@ -10,6 +11,7 @@ import { addExercise, matchesSearch } from "@/lib/exercises";
 const NONE: Exercise[] = [];
 
 export function useExercises() {
+  const t = useTranslations("exercises");
   const queryClient = useQueryClient();
   const { data: exercises = NONE, isPending: loadingExercises } =
     useQuery(exercisesQuery);
@@ -35,13 +37,13 @@ export function useExercises() {
 
         return created;
       } catch (e) {
-        notifyError("No se pudo crear el ejercicio");
+        notifyError(t("createError"));
         throw e;
       } finally {
         setCreatingExercise(false);
       }
     },
-    [queryClient],
+    [queryClient, t],
   );
 
   return {

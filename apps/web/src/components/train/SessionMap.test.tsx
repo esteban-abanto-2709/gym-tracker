@@ -1,10 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithIntl } from "@/i18n/testing";
 import { SessionMap } from "./SessionMap";
 
 const renderMap = (remainingCount: number) => {
   const onFinish = vi.fn();
-  render(
+  renderWithIntl(
     <SessionMap
       items={[]}
       position={1}

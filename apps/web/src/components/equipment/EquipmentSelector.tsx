@@ -1,6 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Equipment } from "@/lib/types";
+import { useEquipmentName } from "@/hooks/useEquipment";
 import { equipmentIcon } from "@/lib/equipmentIcons";
 import { cn } from "@/lib/utils";
 
@@ -15,11 +17,15 @@ export function EquipmentSelector({
   value,
   onChange,
 }: EquipmentSelectorProps) {
+  const t = useTranslations("equipment");
+  const equipmentName = useEquipmentName();
   if (equipment.length === 0) return null;
 
   return (
     <div className="space-y-2">
-      <label className="kicker text-muted-foreground text-4xs">Equipo</label>
+      <label className="kicker text-muted-foreground text-4xs">
+        {t("label")}
+      </label>
       <div className="flex flex-wrap gap-2">
         {equipment.map((eq) => {
           const Icon = equipmentIcon(eq.id);
@@ -37,7 +43,7 @@ export function EquipmentSelector({
               )}
             >
               <Icon className="w-4 h-4" />
-              {eq.name}
+              {equipmentName(eq.id, eq.name)}
             </button>
           );
         })}

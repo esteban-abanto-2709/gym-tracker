@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
 import { routes } from "@/lib/routes";
 import { routineQuery } from "@/lib/queries";
@@ -78,6 +79,7 @@ function pendingSet(
 }
 
 export function useGuidedSession() {
+  const t = useTranslations("train");
   const router = useRouter();
   const [session, setSession] = useState<ActiveSession | null>(
     readActiveSession,
@@ -233,12 +235,12 @@ export function useGuidedSession() {
       const setNumber = (progress[currentIndex] ?? 0) + 1;
       rememberEquipment(currentItem.exerciseId, input.equipmentId ?? null);
       await saveWithFlash(
-        `Serie ${setNumber}`,
+        t("setNumber", { number: setNumber }),
         `${currentItem.exercise.name} · ${describeInput(input)}`,
         [pendingSet(currentItem.exercise, session, input)],
       );
     },
-    [session, currentItem, progress, currentIndex, saveWithFlash],
+    [session, currentItem, progress, currentIndex, saveWithFlash, t],
   );
 
   const logRamp = useCallback(
@@ -249,12 +251,12 @@ export function useGuidedSession() {
         sets.at(-1)?.equipmentId ?? null,
       );
       await saveWithFlash(
-        "Rampa",
-        `${currentItem.exercise.name} · ${sets.length} series`,
+        t("ramp"),
+        `${currentItem.exercise.name} · ${t("rampSets", { count: sets.length })}`,
         sets.map((set) => pendingSet(currentItem.exercise, session, set)),
       );
     },
-    [session, currentItem, saveWithFlash],
+    [session, currentItem, saveWithFlash, t],
   );
 
   // Stay on the same exercise and log the next set.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
+import { useTranslations } from "next-intl";
 import { useExercises } from "@/hooks/useExercises";
 import { useEquipment } from "@/hooks/useEquipment";
 import { useWorkoutForm } from "@/hooks/useWorkoutForm";
@@ -22,6 +23,8 @@ import { cn } from "@/lib/utils";
 import { surfaceClass } from "@/components/base/surface";
 
 function LogContent() {
+  const t = useTranslations("log");
+  const tCommon = useTranslations("common");
   const {
     exercises,
     loadingExercises,
@@ -71,11 +74,11 @@ function LogContent() {
   return (
     <PageShell>
       {/* Loading Overlay */}
-      {loading && <LoadingOverlay label="Guardando..." />}
+      {loading && <LoadingOverlay label={tCommon("saving")} />}
 
       <AppHeader
         leftAction={<BackAction href={routes.home()} />}
-        title="Día libre"
+        title={t("title")}
       />
 
       {/* Main Content */}
@@ -88,9 +91,7 @@ function LogContent() {
           className="max-w-md mx-auto space-y-6"
           autoComplete="off"
         >
-          <p className="kicker text-primary text-2xs mb-2">
-            {"// registra tu set"}
-          </p>
+          <p className="kicker text-primary text-2xs mb-2">{t("kicker")}</p>
 
           {/* Exercise Selector */}
           <ExerciseCombobox
@@ -119,12 +120,12 @@ function LogContent() {
           {measure === "time" ? (
             <div className="space-y-2">
               <label className="kicker text-muted-foreground text-3xs">
-                Tiempo <span className="text-primary">*</span>
+                {t("time")} <span className="text-primary">*</span>
               </label>
               <DurationField
                 value={seconds}
                 onChange={setSeconds}
-                label="Tiempo"
+                label={t("time")}
               />
             </div>
           ) : (
@@ -141,7 +142,8 @@ function LogContent() {
                       htmlFor="weight"
                       className="kicker text-muted-foreground text-3xs"
                     >
-                      Peso ({unit}) <span className="text-primary">*</span>
+                      {t("weight", { unit })}{" "}
+                      <span className="text-primary">*</span>
                     </label>
                     <UnitToggle unit={unit} onToggle={toggleUnit} />
                   </div>
@@ -180,7 +182,7 @@ function LogContent() {
                   htmlFor="reps"
                   className="kicker text-muted-foreground text-3xs"
                 >
-                  Repeticiones <span className="text-primary">*</span>
+                  {t("reps")} <span className="text-primary">*</span>
                 </label>
                 <input
                   id="reps"
@@ -212,13 +214,13 @@ function LogContent() {
             className="group relative hover:shadow-xl hover:shadow-primary/30 overflow-hidden animate-scale-in [animation-delay:0.6s] flex"
           >
             <Check className="w-6 h-6" strokeWidth={3} />
-            Registrar Set
+            {t("submit")}
             <div className="absolute inset-0 bg-linear-to-r from-brand-end to-brand-start opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Button>
 
           {/* Hint */}
           <p className="text-xs text-muted-foreground text-center px-4 opacity-70">
-            Se guardará automáticamente con fecha y hora
+            {t("hint")}
           </p>
         </form>
       </main>
