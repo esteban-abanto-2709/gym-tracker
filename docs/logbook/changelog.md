@@ -12,6 +12,9 @@ Summary in ≤2 lines of what was done.
 
 ---
 
+## [TD-167] One rejected set blocks the whole pending queue (2026-11-13 10:16)
+A set the API rejects is set aside with its reason and shown when the workout ends, so the rest of the queue keeps saving. The set forms refuse numbers the API would reject, and the API logs every rejected request.
+
 ## [TD-166] Tapping a tab does nothing for a second (2026-10-29 14:29)
 Reading the locale cookie made every page dynamic, so Next stopped prefetching and a tap waited for the server with no feedback. The bottom nav prefetches its tabs, the buttons that start or finish training prefetch where they go, and a root `loading.tsx` answers every other tap at once.
 

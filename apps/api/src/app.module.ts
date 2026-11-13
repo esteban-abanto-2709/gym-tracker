@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { RejectedRequestFilter } from './common/filters/rejected-request.filter';
 import { ExerciseNamesInterceptor } from './common/interceptors/exercise-names.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -33,6 +34,7 @@ import { SessionsModule } from './modules/sessions/sessions.module';
     AppService,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_INTERCEPTOR, useClass: ExerciseNamesInterceptor },
+    { provide: APP_FILTER, useClass: RejectedRequestFilter },
   ],
 })
 export class AppModule {}
