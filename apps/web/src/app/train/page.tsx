@@ -15,6 +15,7 @@ import { SetLogger } from "@/components/train/SetLogger";
 import { SetDoneScreen } from "@/components/train/SetDoneScreen";
 import { SaveOverlay } from "@/components/train/SaveOverlay";
 import { UnsavedSetsDialog } from "@/components/train/UnsavedSetsDialog";
+import { RejectedSetsDialog } from "@/components/train/RejectedSetsDialog";
 import { SessionMap } from "@/components/train/SessionMap";
 import { ExerciseProgress } from "@/components/train/ExerciseProgress";
 import { TikTokButton } from "@/components/exercises/TikTokButton";
@@ -53,6 +54,9 @@ export default function TrainPage() {
     retryUnsaved,
     discardUnsaved,
     closeUnsaved,
+    rejected,
+    discardRejected,
+    closeRejected,
   } = useGuidedSession();
 
   const t = useTranslations("train");
@@ -206,6 +210,12 @@ export default function TrainPage() {
         onRetry={retryUnsaved}
         onDiscard={discardUnsaved}
         onClose={closeUnsaved}
+      />
+
+      <RejectedSetsDialog
+        sets={rejected}
+        onDiscard={discardRejected}
+        onClose={closeRejected}
       />
 
       {mapOpen && (

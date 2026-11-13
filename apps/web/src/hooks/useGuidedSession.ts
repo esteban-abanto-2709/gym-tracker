@@ -17,11 +17,14 @@ import { plannedSetCount } from "@/lib/blocks";
 import type { LogSetInput } from "@/components/train/SetForm";
 import {
   type PendingSet,
+  type RejectedSet,
   addPendingSets,
   discardPendingSets,
+  discardRejectedSets,
   flushPendingSets,
   newClientId,
   readPendingSets,
+  readRejectedSets,
   setMoment,
 } from "@/lib/pendingSets";
 import { describeSet } from "@/lib/setDisplay";
@@ -94,6 +97,7 @@ export function useGuidedSession() {
   const savingRef = useRef(false);
   const [unsaved, setUnsaved] = useState<PendingSet[] | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [rejected, setRejected] = useState<RejectedSet[] | null>(null);
 
   useEffect(() => {
     const sync = () => void flushPendingSets();
@@ -345,14 +349,25 @@ export function useGuidedSession() {
     setRetrying(true);
     const left = await flushPendingSets();
     setRetrying(false);
-    if (left === 0) leave();
-    else setUnsaved(readPendingSets());
+    if (left > 0) setUnsaved(readPendingSets());
+    else if (readRejectedSets().length > 0) {
+      setUnsaved(null);
+      setRejected(readRejectedSets());
+    } else leave();
   }, [leave]);
 
   const finish = useCallback(() => {
-    if (readPendingSets().length === 0) leave();
-    else void retryUnsaved();
+    if (readPendingSets().length > 0) void retryUnsaved();
+    else if (readRejectedSets().length > 0) setRejected(readRejectedSets());
+    else leave();
   }, [leave, retryUnsaved]);
+
+  const discardRejected = useCallback(() => {
+    discardRejectedSets();
+    leave();
+  }, [leave]);
+
+  const closeRejected = useCallback(() => setRejected(null), []);
 
   const discardUnsaved = useCallback(() => {
     discardPendingSets();
@@ -391,5 +406,8 @@ export function useGuidedSession() {
     retryUnsaved,
     discardUnsaved,
     closeUnsaved,
+    rejected,
+    discardRejected,
+    closeRejected,
   };
 }

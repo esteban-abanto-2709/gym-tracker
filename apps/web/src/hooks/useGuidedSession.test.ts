@@ -1,11 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGuidedSession } from "./useGuidedSession";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { queryWrapper } from "@/lib/queryTesting";
 import { routineQuery } from "@/lib/queries";
 import { readActiveSession, type ActiveSession } from "@/lib/activeSession";
-import { addPendingSets, readPendingSets } from "@/lib/pendingSets";
+import {
+  addPendingSets,
+  readPendingSets,
+  readRejectedSets,
+} from "@/lib/pendingSets";
 import type { Routine } from "@/lib/types";
 
 vi.mock("next/navigation", () => ({
@@ -338,6 +342,43 @@ describe("useGuidedSession", () => {
 
         act(() => result.current.discardUnsaved());
         expect(readPendingSets()).toHaveLength(0);
+        expect(readActiveSession()).toBeNull();
+      });
+
+      it("leaves on finish when nothing is pending or rejected", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        await act(async () => result.current.finish());
+        expect(result.current.unsaved).toBeNull();
+        expect(result.current.rejected).toBeNull();
+        expect(readActiveSession()).toBeNull();
+      });
+
+      it("shows the rejected sets on finish once the rest is saved", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockRejectedValueOnce(
+          new ApiError("reps must be a positive number", 400),
+        );
+        await act(() => result.current.logSet(set));
+        await act(async () => result.current.finish());
+        await waitFor(() => expect(result.current.rejected).toHaveLength(1));
+        expect(result.current.rejected?.[0].reason).toBe(
+          "reps must be a positive number",
+        );
+        expect(result.current.unsaved).toBeNull();
+        expect(readActiveSession()).not.toBeNull();
+      });
+
+      it("deletes the rejected sets and leaves", async () => {
+        const result = await start(legs, { currentIndex: 0, progress: {} });
+        vi.mocked(api.post).mockRejectedValueOnce(
+          new ApiError("reps must be a positive number", 400),
+        );
+        await act(() => result.current.logSet(set));
+        await act(async () => result.current.finish());
+        await waitFor(() => expect(result.current.rejected).toHaveLength(1));
+
+        act(() => result.current.discardRejected());
+        expect(readRejectedSets()).toHaveLength(0);
         expect(readActiveSession()).toBeNull();
       });
 

@@ -155,6 +155,11 @@
       "failed": "No se pudieron enviar. Revisa tu conexión y reintenta.",
       "discard": "Descartar y salir"
     },
+    "rejected": {
+      "title": "{count, plural, one {# serie no se guardó} other {# series no se guardaron}}",
+      "body": "{count, plural, one {El servidor no la aceptó. El resto de tu entreno sí quedó guardado.} other {El servidor no las aceptó. El resto de tu entreno sí quedó guardado.}}",
+      "discard": "Borrar y salir"
+    },
     "set": {
       "noPrevious": "Sin registro previo",
       "last": "La última vez · {value}",

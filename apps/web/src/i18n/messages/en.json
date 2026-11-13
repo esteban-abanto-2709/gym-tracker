@@ -155,6 +155,11 @@
       "failed": "Couldn't send them. Check your connection and retry.",
       "discard": "Discard and leave"
     },
+    "rejected": {
+      "title": "{count, plural, one {# set wasn't saved} other {# sets weren't saved}}",
+      "body": "{count, plural, one {The server didn't accept it. The rest of your workout is saved.} other {The server didn't accept them. The rest of your workout is saved.}}",
+      "discard": "Delete and leave"
+    },
     "set": {
       "noPrevious": "No previous record",
       "last": "Last time · {value}",
