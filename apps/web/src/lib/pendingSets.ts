@@ -1,14 +1,15 @@
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { getQueryClient } from "@/lib/query";
 import { activeProgramQuery, sessionsQuery } from "@/lib/queries";
 import type { SetType } from "@/lib/types";
 
 const KEY = "gymtrack-pending-sets";
+const REJECTED_KEY = "gymtrack-rejected-sets";
 
 let owner: string | null = null;
 
-const key = () => (owner ? `${KEY}:${owner}` : KEY);
+const key = (base = KEY) => (owner ? `${base}:${owner}` : base);
 
 export interface PendingSet {
   clientId: string;
@@ -27,6 +28,8 @@ export interface PendingSet {
     step: number | null;
   };
 }
+
+export type RejectedSet = PendingSet & { reason: string; status: number };
 
 export const newClientId = (): string =>
   crypto.randomUUID?.() ??
@@ -52,6 +55,32 @@ export function readPendingSets(): PendingSet[] {
     return [];
   }
 }
+
+export function readRejectedSets(): RejectedSet[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(
+      window.localStorage.getItem(key(REJECTED_KEY)) ?? "[]",
+    ) as RejectedSet[];
+  } catch {
+    return [];
+  }
+}
+
+function writeRejectedSets(sets: RejectedSet[]): void {
+  if (sets.length === 0) window.localStorage.removeItem(key(REJECTED_KEY));
+  else window.localStorage.setItem(key(REJECTED_KEY), JSON.stringify(sets));
+}
+
+export function discardRejectedSets(): void {
+  writeRejectedSets([]);
+}
+
+const isRejection = (e: unknown): e is ApiError =>
+  e instanceof ApiError &&
+  e.status >= 400 &&
+  e.status < 500 &&
+  ![401, 408, 429].includes(e.status);
 
 function writePendingSets(sets: PendingSet[]): void {
   if (sets.length === 0) window.localStorage.removeItem(key());
@@ -79,14 +108,22 @@ async function drain(): Promise<number> {
   let sent = 0;
   try {
     for (let set = readPendingSets()[0]; set; set = readPendingSets()[0]) {
-      await api.post(routes.api.workouts.create(), {
-        ...set.body,
-        clientId: set.clientId,
-      });
+      try {
+        await api.post(routes.api.workouts.create(), {
+          ...set.body,
+          clientId: set.clientId,
+        });
+        sent++;
+      } catch (e) {
+        if (!isRejection(e)) throw e;
+        writeRejectedSets([
+          ...readRejectedSets(),
+          { ...set, reason: e.message, status: e.status },
+        ]);
+      }
       writePendingSets(
         readPendingSets().filter((s) => s.clientId !== set.clientId),
       );
-      sent++;
     }
   } catch (e) {
     console.error("Error sending pending sets:", e);

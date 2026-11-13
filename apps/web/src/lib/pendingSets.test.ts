@@ -1,13 +1,15 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { getQueryClient } from "@/lib/query";
 import { activeProgramQuery, sessionsQuery } from "@/lib/queries";
 import {
   type PendingSet,
   addPendingSets,
   discardPendingSets,
+  discardRejectedSets,
   flushPendingSets,
   readPendingSets,
+  readRejectedSets,
   setPendingOwner,
 } from "@/lib/pendingSets";
 
@@ -149,6 +151,68 @@ describe("pendingSets", () => {
     expect(readPendingSets()).toEqual([]);
     expect(localStorage.getItem("gymtrack-pending-sets")).toBeNull();
   });
+
+  it("sets a rejected set aside and keeps sending the rest", async () => {
+    vi.mocked(api.post)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(
+        new ApiError("reps must be a positive number", 400),
+      )
+      .mockResolvedValueOnce(undefined);
+    addPendingSets([pending("a"), pending("b"), pending("c")]);
+
+    expect(await flushPendingSets()).toBe(0);
+
+    expect(sent()).toEqual(["a", "b", "c"]);
+    expect(queued()).toEqual([]);
+    expect(readRejectedSets()).toEqual([
+      expect.objectContaining({
+        clientId: "b",
+        reason: "reps must be a positive number",
+        status: 400,
+      }),
+    ]);
+    expect(readRejectedSets()).toHaveLength(1);
+  });
+
+  it("stops at a set the server could not process", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(api.post)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new ApiError("boom", 500));
+    addPendingSets([pending("a"), pending("b"), pending("c")]);
+
+    expect(await flushPendingSets()).toBe(2);
+
+    expect(queued()).toEqual(["b", "c"]);
+    expect(readRejectedSets()).toEqual([]);
+  });
+
+  it.each([401, 408, 429])(
+    "retries later on status %i instead of setting the set aside",
+    async (status) => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.mocked(api.post).mockRejectedValueOnce(new ApiError("nope", status));
+      addPendingSets([pending("a")]);
+
+      expect(await flushPendingSets()).toBe(1);
+
+      expect(queued()).toEqual(["a"]);
+      expect(readRejectedSets()).toEqual([]);
+    },
+  );
+
+  it("discards the rejected sets", async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new ApiError("bad", 400));
+    addPendingSets([pending("a")]);
+    await flushPendingSets();
+    expect(readRejectedSets()).toHaveLength(1);
+
+    discardRejectedSets();
+
+    expect(readRejectedSets()).toEqual([]);
+    expect(localStorage.getItem("gymtrack-rejected-sets")).toBeNull();
+  });
 });
 
 describe("pendingSets per account", () => {
@@ -169,6 +233,20 @@ describe("pendingSets per account", () => {
     expect(queued()).toEqual(["a"]);
     expect(await flushPendingSets()).toBe(0);
     expect(sent()).toEqual(["a"]);
+  });
+
+  it("keeps one account's rejected sets away from the next account on the device", async () => {
+    vi.mocked(api.post).mockRejectedValueOnce(new ApiError("bad", 400));
+    setPendingOwner("u-ana");
+    addPendingSets([pending("a")]);
+    await flushPendingSets();
+    expect(readRejectedSets()).toHaveLength(1);
+
+    setPendingOwner("u-ben");
+    expect(readRejectedSets()).toEqual([]);
+
+    setPendingOwner("u-ana");
+    expect(readRejectedSets()).toHaveLength(1);
   });
 
   it("gives a queue saved before accounts to the first one that signs in", () => {
