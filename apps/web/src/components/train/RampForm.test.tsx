@@ -68,6 +68,23 @@ describe("RampForm", () => {
     expect(screen.queryByRole("button", { name: /^Sube a/ })).toBeNull();
   });
 
+  it("keeps the save button disabled when a row has zero reps", async () => {
+    get.mockResolvedValue(rec({ workingWeight: 100 }));
+
+    renderWithIntl(<RampForm {...props} onLog={vi.fn()} />);
+    await waitFor(() => expect(weights()).toEqual(["50", "70", "85"]));
+    const done = screen.getByRole("button", {
+      name: /rampa hecha/i,
+    }) as HTMLButtonElement;
+    expect(done.disabled).toBe(false);
+
+    fireEvent.change(screen.getByLabelText("Reps del escalón 2"), {
+      target: { value: "0" },
+    });
+
+    expect(done.disabled).toBe(true);
+  });
+
   it("one tap logs every step as a ramp", async () => {
     get.mockResolvedValue(rec({ workingWeight: 100 }));
     const onLog = vi.fn().mockResolvedValue(undefined);

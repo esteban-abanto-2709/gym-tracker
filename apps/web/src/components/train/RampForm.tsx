@@ -8,6 +8,7 @@ import type { Equipment } from "@/lib/types";
 import { rampSuggestedWeight, type RampStepPlan } from "@/lib/blocks";
 import { convertWeight, roundHalf, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
+import { validCount, validWeight } from "@/lib/setInput";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { UnitToggle } from "@/components/UnitToggle";
 import type { LogSetInput } from "@/components/train/SetForm";
@@ -130,7 +131,9 @@ export function RampForm({
     setUnit(next);
   };
 
-  const incomplete = rows.some((r) => r.reps === "" || r.weight === "");
+  const incomplete = rows.some(
+    (r) => !validCount(r.reps) || !validWeight(r.weight),
+  );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

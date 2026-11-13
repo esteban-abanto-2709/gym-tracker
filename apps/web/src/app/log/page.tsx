@@ -51,6 +51,7 @@ function LogContent() {
     measure,
     changeMeasure,
     loading,
+    incomplete,
     handleSubmit,
   } = useWorkoutForm(exercises, loadingExercises);
 
@@ -206,11 +207,7 @@ function LogContent() {
           {/* Submit Button */}
           <Button
             type="submit"
-            disabled={
-              loading ||
-              !selectedExercise ||
-              (measure === "time" && !(Number(seconds) > 0))
-            }
+            disabled={loading || !selectedExercise || incomplete}
             className="group relative hover:shadow-xl hover:shadow-primary/30 overflow-hidden animate-scale-in [animation-delay:0.6s] flex"
           >
             <Check className="w-6 h-6" strokeWidth={3} />

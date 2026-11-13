@@ -3,12 +3,15 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWorkoutForm } from "./useWorkoutForm";
 import { IntlWrapper } from "@/i18n/testing";
 import { api } from "@/lib/api";
+import { readPendingSets } from "@/lib/pendingSets";
 import type { Exercise } from "@/lib/types";
 
 let searchParams = new URLSearchParams();
 
+const push = vi.fn();
+
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn(), prefetch: vi.fn() }),
+  useRouter: () => ({ push, prefetch: vi.fn() }),
   useSearchParams: () => searchParams,
 }));
 
@@ -221,6 +224,27 @@ describe("useWorkoutForm: saving a free set", () => {
     });
     expect(body.sessionId).toEqual(expect.any(String));
     expect(body.clientId).toEqual(expect.any(String));
+  });
+
+  it("does not queue a set with zero reps", () => {
+    push.mockClear();
+    const { result } = renderHook(() => useWorkoutForm(exercises, false), {
+      wrapper: IntlWrapper,
+    });
+    act(() => result.current.setSelectedExercise(squat));
+    act(() => {
+      result.current.setWeight("60");
+      result.current.setReps("0");
+    });
+    expect(result.current.incomplete).toBe(true);
+    act(() =>
+      result.current.handleSubmit({
+        preventDefault: () => {},
+      } as React.FormEvent<HTMLFormElement>),
+    );
+
+    expect(readPendingSets()).toEqual([]);
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("two free sets in a row land in the same session", async () => {

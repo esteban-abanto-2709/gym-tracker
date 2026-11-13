@@ -147,6 +147,21 @@ describe("SetForm", () => {
     expect(values()).toEqual(["12"]);
   });
 
+  it("keeps the save button disabled with zero reps", async () => {
+    get.mockResolvedValue(rec({ lastWeight: 60, lastReps: 8 }));
+
+    const { container } = renderWithIntl(<SetForm {...props} />);
+    await waitFor(() => expect(values()).toEqual(["60", "8"]));
+    const submit = container.querySelector<HTMLButtonElement>(
+      "button[type=submit]",
+    )!;
+    expect(submit.disabled).toBe(false);
+
+    fireEvent.change(inputs()[1], { target: { value: "0" } });
+
+    expect(submit.disabled).toBe(true);
+  });
+
   it("a timed set is logged without reps", async () => {
     get.mockResolvedValue(rec({ lastDurationSec: 45 }));
     const onLog = vi.fn();

@@ -8,6 +8,7 @@ import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment, rememberEquipment } from "@/lib/equipmentMemory";
 import { describeSet, type SetMeasure } from "@/lib/setDisplay";
 import { freeSessionId } from "@/lib/activeSession";
+import { setInputComplete } from "@/lib/setInput";
 import {
   type PendingSet,
   addPendingSets,
@@ -141,6 +142,8 @@ export function useWorkoutForm(
     });
   }, []);
 
+  const incomplete = !setInputComplete(measure, { weight, reps, seconds });
+
   // Submit workout set
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -149,6 +152,7 @@ export function useWorkoutForm(
         alert(t("pickExercise"));
         return;
       }
+      if (incomplete) return;
 
       setLoading(true);
 
@@ -196,6 +200,7 @@ export function useWorkoutForm(
     },
     [
       selectedExercise,
+      incomplete,
       measure,
       reps,
       seconds,
@@ -223,6 +228,7 @@ export function useWorkoutForm(
     measure,
     changeMeasure,
     loading,
+    incomplete,
     handleSubmit,
   };
 }

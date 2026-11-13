@@ -13,6 +13,7 @@ import {
 } from "@/lib/blocks";
 import { convertWeight, toKg, type Unit } from "@/lib/units";
 import { getLastEquipment } from "@/lib/equipmentMemory";
+import { setInputComplete } from "@/lib/setInput";
 import { EquipmentSelector } from "@/components/equipment/EquipmentSelector";
 import { formatClock, formatDuration, type SetMeasure } from "@/lib/setDisplay";
 import { DurationField } from "@/components/DurationPicker";
@@ -159,10 +160,7 @@ export function SetForm({
     });
   };
 
-  const incomplete =
-    measure === "time"
-      ? !(Number(seconds) > 0)
-      : reps === "" || (measure === "weight_reps" && weight === "");
+  const incomplete = !setInputComplete(measure, { weight, reps, seconds });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
